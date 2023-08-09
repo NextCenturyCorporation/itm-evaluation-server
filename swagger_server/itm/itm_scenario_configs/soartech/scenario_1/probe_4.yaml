@@ -1,0 +1,19 @@
+id: september-demo-probe-4
+scenario: september-demo-scenario-1
+type: MultipleChoice
+prompt: What treatment do you give to casualty C?
+state: {}
+options:
+  - id: choice1
+    value: Tourniquet
+    kdma_association:
+      denial: +
+      mission: '-'
+  - id: choice2
+    value: Nasopharyngeal airway
+  - id: choice3
+    value: Pressure bandage
+  - id: choice4
+    value: Hemostatic gauze
+  - id: choice5
+    value: Decompression Needle

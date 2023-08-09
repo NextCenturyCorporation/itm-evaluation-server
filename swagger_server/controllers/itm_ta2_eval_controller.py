@@ -8,6 +8,14 @@ from swagger_server.models.state import State  # noqa: E501
 from swagger_server.models.vitals import Vitals  # noqa: E501
 from swagger_server import util
 
+from ..itm import ITMScenarioSession
+
+ITM_SESSION = ITMScenarioSession()
+"""
+The internal controller for ITM Server.
+`TODO support multiple sessions on the same server simultaneously`
+"""
+
 
 def apply_decompression_needle(session_id, casualty_id, location):  # noqa: E501
     """Apply a decompression needle to a casualty
@@ -140,7 +148,7 @@ def check_vitals(session_id, casualty_id):  # noqa: E501
 
     :rtype: Vitals
     """
-    return 'do some magic!'
+    return ITM_SESSION.get_vitals(session_id=session_id, casualty_id=casualty_id)
 
 
 def direct_to_safezone(session_id, scenario_id):  # noqa: E501
@@ -170,7 +178,7 @@ def get_alignment_target(session_id, scenario_id):  # noqa: E501
 
     :rtype: AlignmentTarget
     """
-    return 'do some magic!'
+    return ITM_SESSION.get_alignment_target(session_id=session_id, scenario_id=scenario_id)
 
 
 def get_available_actions(session_id, scenario_id):  # noqa: E501
@@ -230,7 +238,7 @@ def get_heart_rate(session_id, casualty_id):  # noqa: E501
 
     :rtype: int
     """
-    return 'do some magic!'
+    return ITM_SESSION.get_heart_rate(session_id=session_id, casualty_id=casualty_id)
 
 
 def get_respiratory_rate(session_id, casualty_id):  # noqa: E501
@@ -260,7 +268,7 @@ def get_scenario_state(session_id, scenario_id):  # noqa: E501
 
     :rtype: State
     """
-    return 'do some magic!'
+    return ITM_SESSION.get_scenario_state(session_id=session_id, scenario_id=scenario_id)
 
 
 def start_scenario(session_id, scenario_id=None):  # noqa: E501
@@ -275,7 +283,7 @@ def start_scenario(session_id, scenario_id=None):  # noqa: E501
 
     :rtype: Scenario
     """
-    return 'do some magic!'
+    return ITM_SESSION.start_scenario(session_id=session_id, scenario_id=scenario_id)
 
 
 def start_session(adm_name, session_type, max_scenarios=None):  # noqa: E501
@@ -292,7 +300,11 @@ def start_session(adm_name, session_type, max_scenarios=None):  # noqa: E501
 
     :rtype: str
     """
-    return 'do some magic!'
+    return ITM_SESSION.start_session(
+        adm_name=adm_name,
+        session_type=session_type,
+        max_scenarios=max_scenarios,
+    )
 
 
 def tag_casualty(session_id, casualty_id, tag):  # noqa: E501
@@ -309,7 +321,7 @@ def tag_casualty(session_id, casualty_id, tag):  # noqa: E501
 
     :rtype: State
     """
-    return 'do some magic!'
+    return ITM_SESSION.tag_casualty(session_id=session_id, casualty_id=casualty_id, tag=tag)
 
 
 def take_action(session_id, body=None):  # noqa: E501
