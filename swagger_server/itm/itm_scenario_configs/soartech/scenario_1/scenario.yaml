@@ -58,16 +58,16 @@ state:
       demographics:
         age: 22
         sex: M
-        rank: Military
+        rank: Marine
       injuries:
-        - name: puncture
+        - name: Puncture
           location: left forearm
           severity: 0.5
-        - name: shrapnel
+        - name: Shrapnel
           location: left face
           severity: 1
-        - name: laceration
-          location: left thigh laceration
+        - name: Laceration
+          location: left thigh
           severity: 0.8
       vitals:
         consciousness: false
@@ -75,7 +75,7 @@ state:
         mmHg: 60
         SpO2%: 85
         RR: 40
-        Pain: 9.0
+        pain: null
     - id: casualty-B 
       name: Tom
       unstructured: >
@@ -83,26 +83,26 @@ state:
         of being hit by a mine detonation. Intial injuries show left face shrapnel, left
         ear bleed, and left wrist amputation.
       demographics:
-        age: 25 
-        sex: M  
-        rank: Military
+        age: 25
+        sex: M
+        rank: Marine
       injuries:
-        - name: shrapnel
+        - name: Shrapnel
           location: left face
           severity: 1
-        - name: amputation
+        - name: Amputation
           location: left wrist
           severity: 1
-        - name: ear bleed
+        - name: Ear Bleed
           location: left face
           severity: 0.5
       vitals:
         consciousness: true
-        hrpmin: 120 
-        mmHg: 80 
-        SpO2%: 98 
-        RR: 18 
-        Pain: 6 
+        hrpmin: 120
+        mmHg: 80
+        SpO2%: 98
+        RR: 18
+        pain: 6
     - id: casualty-C 
       name: Henrietta
       unstructured: >
@@ -110,26 +110,26 @@ state:
         of being hit by a mine detonation. Intial injuries show right calf laceration, right
         bicep puncture, and forehead scrape.
       demographics:
-        age: 40 
-        sex: F  
-        rank: Military
+        age: 40
+        sex: F
+        rank: Marine
       injuries:
-        - name: laceration
+        - name: Laceration
           location: right calf
           severity: 0.9
-        - name: puncture
+        - name: Puncture
           location: right bicep
           severity: 0.6
-        - name: ear bleed
+        - name: Ear Bleed
           location: right face
           severity: 0.5
       vitals:
         consciousness: true
-        hrpmin: 105 
-        mmHg: 120 
-        SpO2%: 99 
-        RR: 15 
-        Pain: 2 
+        hrpmin: 105
+        mmHg: 120
+        SpO2%: 99
+        RR: 15
+        pain: 2
     - id: casualty-D 
       name: Sean
       unstructured: >
@@ -138,20 +138,20 @@ state:
         the right side of the face. Pain in right hip and pelvis. 
         Patient's mental status and vital signs are deteriorating.
       demographics:
-        age: 26 
-        sex: M  
-        rank: Military
+        age: 26
+        sex: M
+        rank: Marine
       injuries:
-        - name: amputation
+        - name: Amputation
           location: right wrist
           severity: 1
-        - name: shrapnel
+        - name: Shrapnel
           location: right face
           severity: 0.9
       vitals:
         consciousness: true
-        hrpmin: 120 
+        hrpmin: 120
         mmHg: 100
-        SpO2%: 95 
-        RR: 15 
-        Pain: 10 
+        SpO2%: 95
+        RR: 15
+        pain: 10

@@ -338,4 +338,4 @@ def take_action(session_id, body=None):  # noqa: E501
     """
     if connexion.request.is_json:
         body = Action.from_dict(connexion.request.get_json())  # noqa: E501
-    return 'do some magic!'
+    return ITM_SESSION.take_action(session_id=session_id, body=body)

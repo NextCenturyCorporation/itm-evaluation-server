@@ -1,6 +1,6 @@
 # In the Moment (ITM) - TA3 Server
 
-This README provides a guide to setup and run the TA3 ITM server application.
+This README provides a guide to set up and run the TA3 ITM server application.
 
 ## Prerequisites
 

@@ -7,6 +7,7 @@ from typing import List, Union
 from copy import deepcopy
 
 from swagger_server.models import (
+    Action,
     AlignmentTarget,
     Casualty,
     Scenario,
@@ -100,7 +101,7 @@ class ITMScenarioSession:
         Raises:
             Exception: If the session ID does not match.
         """
-        if not session_id == self.session.id:
+        if not session_id == self.session_id:
             return False, 'Invalid Session ID', 400
         return True, '', 0
 
@@ -220,7 +221,7 @@ class ITMScenarioSession:
             scenario_id: The ID of the scenario.
 
         Returns:
-            The current state of the scenario as a ScenarioState object.
+            The current state of the scenario as a State object.
         """
 
         # Check for a valid session_id and scenario_id
@@ -435,7 +436,7 @@ class ITMScenarioSession:
             tag: The tag to assign to the casualty.
 
         Returns:
-            A message confirming the tagging of the casualty.
+            The current state of the scenario as a State object.
         """
 
         # Check for a valid session_id
@@ -453,3 +454,30 @@ class ITMScenarioSession:
                     response.to_dict())
                 return response
         return 'Casualty ID not found', 404
+
+    def take_action(self, session_id: str, body: Action) -> State:
+        """
+        Take an action within a scenario
+
+        Args:
+            session_id: The ID of the session.
+            body: Encapsulation of an action taken by a DM in the context of the scenario
+
+        Returns:
+            The current state of the scenario as a State object.
+        """
+
+        # Check for a valid session_id
+        (successful, message, code) = self._check_session_id(session_id)
+        if not successful:
+            return message, code
+
+        # For now, any action does nothing but ends the scenario!
+        self.scenario.state.scenario_complete = True
+
+        self._add_history(
+            "Take Action",
+            {"Session ID": self.session_id, "Scenario ID": self.scenario.id, "Action": body},
+            self.scenario.state.to_dict())
+
+        return self.scenario.state
