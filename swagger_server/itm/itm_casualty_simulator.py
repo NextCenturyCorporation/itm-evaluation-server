@@ -84,8 +84,10 @@ class ITMCasualtySimulator:
         #     casualty.rr_change, 'rr_index', casualty)
         # spo2_change = self.get_change(
         #     casualty.spo2_change, 'spo2_index', casualty)
-        # consciousness = True # TBD
-        # return (consciousness, hrpmin_change, mmhg_change, rr_change, spo2_change)
+        # conscious = True # TBD
+        # responsive = True # TBD
+        # breathing = True # TBD
+        # return (conscious, responsive, breathing, hrpmin_change, mmhg_change, rr_change, spo2_change)
         pass
 
     def update_vitals(self, time_elapsed_scenario_time: float) -> None:
@@ -109,11 +111,13 @@ class ITMCasualtySimulator:
         #            continue
         #
         #    vital_changes = self.get_vital_changes(casualty)
-        #    casualty.current_vitals.consciousness += vital_changes[0]
-        #    casualty.current_vitals.hrpmin += vital_changes[1]
-        #    casualty.current_vitals.mm_hg += vital_changes[2]
-        #    casualty.current_vitals.rr += vital_changes[3]
-        #    casualty.current_vitals.sp_o2 += vital_changes[4]
+        #    casualty.current_vitals.conscious += vital_changes[0]
+        #    casualty.current_vitals.responsive += vital_changes[1]
+        #    casualty.current_vitals.breathing += vital_changes[2]
+        #    casualty.current_vitals.hrpmin += vital_changes[3]
+        #    casualty.current_vitals.mm_hg += vital_changes[4]
+        #    casualty.current_vitals.rr += vital_changes[5]
+        #    casualty.current_vitals.sp_o2 += vital_changes[6]
         #    casualty.casualty.vitals = copy.deepcopy(casualty.current_vitals)
         pass
 
@@ -128,11 +132,13 @@ class ITMCasualtySimulator:
         Returns:
             None.
         """
-        casualty.current_vitals.consciousness = False
+        casualty.current_vitals.conscious = False
+        casualty.current_vitals.responsive = False
+        casualty.current_vitals.breathing = "NONE"
         casualty.current_vitals.hrpmin = 0
-        casualty.current_vitals.mm_hg = 0
-        casualty.current_vitals.rr = 0
-        casualty.current_vitals.sp_o2 = 0
+        #casualty.current_vitals.mm_hg = 0
+        #casualty.current_vitals.rr = 0
+        #casualty.current_vitals.sp_o2 = 0
         casualty.casualty.vitals = copy.deepcopy(casualty.current_vitals)
 
     def treat_casualty(self, casualty_id: str, supply: str) -> float:
@@ -158,7 +164,7 @@ class ITMCasualtySimulator:
         #         # time_elapsed = medical_supply_details[medical_supply].time_to_apply
         #         return time_elapsed
         return time_elapsed
-        
+
 
     def check_on_setup_if_casualties_are_deceased(self) -> None:
         """

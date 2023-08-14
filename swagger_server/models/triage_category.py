@@ -68,7 +68,7 @@ class TriageCategory(Model):
         :param tag_label: The tag_label of this TriageCategory.
         :type tag_label: str
         """
-        allowed_values = ["minimal", "delayed", "immediate", "expectant", "deceased"]  # noqa: E501
+        allowed_values = ["MINIMAL", "DELAYED", "IMMEDIATE", "EXPECTANT"]  # noqa: E501
         if tag_label not in allowed_values:
             raise ValueError(
                 "Invalid value for `tag_label` ({0}), must be one of {1}"

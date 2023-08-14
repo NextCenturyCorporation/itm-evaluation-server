@@ -6,7 +6,6 @@ from datetime import date, datetime  # noqa: F401
 from typing import List, Dict  # noqa: F401
 
 from swagger_server.models.base_model_ import Model
-from swagger_server.models.supplies import Supplies  # noqa: F401,E501
 from swagger_server import util
 
 
@@ -15,7 +14,7 @@ class Action(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, scenario_id: str=None, action_type: str=None, casualty_id: str=None, unstructured: str=None, justification: str=None, parameter1: str=None, parameter2: str=None, parameters: List[Dict[str, str]]=None, supplies: List[Supplies]=None, timestamp: str=None):  # noqa: E501
+    def __init__(self, scenario_id: str=None, action_type: str=None, casualty_id: str=None, unstructured: str=None, justification: str=None, parameters: List[Dict[str, str]]=None):  # noqa: E501
         """Action - a model defined in Swagger
 
         :param scenario_id: The scenario_id of this Action.  # noqa: E501
@@ -28,16 +27,8 @@ class Action(Model):
         :type unstructured: str
         :param justification: The justification of this Action.  # noqa: E501
         :type justification: str
-        :param parameter1: The parameter1 of this Action.  # noqa: E501
-        :type parameter1: str
-        :param parameter2: The parameter2 of this Action.  # noqa: E501
-        :type parameter2: str
         :param parameters: The parameters of this Action.  # noqa: E501
         :type parameters: List[Dict[str, str]]
-        :param supplies: The supplies of this Action.  # noqa: E501
-        :type supplies: List[Supplies]
-        :param timestamp: The timestamp of this Action.  # noqa: E501
-        :type timestamp: str
         """
         self.swagger_types = {
             'scenario_id': str,
@@ -45,11 +36,7 @@ class Action(Model):
             'casualty_id': str,
             'unstructured': str,
             'justification': str,
-            'parameter1': str,
-            'parameter2': str,
-            'parameters': List[Dict[str, str]],
-            'supplies': List[Supplies],
-            'timestamp': str
+            'parameters': List[Dict[str, str]]
         }
 
         self.attribute_map = {
@@ -58,22 +45,14 @@ class Action(Model):
             'casualty_id': 'casualty_id',
             'unstructured': 'unstructured',
             'justification': 'justification',
-            'parameter1': 'parameter1',
-            'parameter2': 'parameter2',
-            'parameters': 'parameters',
-            'supplies': 'supplies',
-            'timestamp': 'timestamp'
+            'parameters': 'parameters'
         }
         self._scenario_id = scenario_id
         self._action_type = action_type
         self._casualty_id = casualty_id
         self._unstructured = unstructured
         self._justification = justification
-        self._parameter1 = parameter1
-        self._parameter2 = parameter2
         self._parameters = parameters
-        self._supplies = supplies
-        self._timestamp = timestamp
 
     @classmethod
     def from_dict(cls, dikt) -> 'Action':
@@ -115,7 +94,7 @@ class Action(Model):
     def action_type(self) -> str:
         """Gets the action_type of this Action.
 
-        The action type taken from a controlled vocabulary  # noqa: E501
+        The action type taken from a controlled vocabulary.  # noqa: E501
 
         :return: The action_type of this Action.
         :rtype: str
@@ -126,12 +105,12 @@ class Action(Model):
     def action_type(self, action_type: str):
         """Sets the action_type of this Action.
 
-        The action type taken from a controlled vocabulary  # noqa: E501
+        The action type taken from a controlled vocabulary.  # noqa: E501
 
         :param action_type: The action_type of this Action.
         :type action_type: str
         """
-        allowed_values = ["TREAT_PATIENT", "TAG_PATIENT", "DIRECT_PATIENT_TO_SAFE_ZONE", "CHECK_PULSE", "CHECK_RESPIRATION", "CHECK_CONSCIOUSNESS", "CHECK_VITAL", "CHECK_VITALS", "TBD_MORE"]  # noqa: E501
+        allowed_values = ["APPLY_TREATMENT", "DIRECT_MOBILE_CASUALTIES", "CHECK_ALL_VITALS", "CHECK_PULSE", "CHECK_RESPIRATION", "SITREP", "TAG_CASUALTY"]  # noqa: E501
         if action_type not in allowed_values:
             raise ValueError(
                 "Invalid value for `action_type` ({0}), must be one of {1}"
@@ -160,8 +139,6 @@ class Action(Model):
         :param casualty_id: The casualty_id of this Action.
         :type casualty_id: str
         """
-        if casualty_id is None:
-            raise ValueError("Invalid value for `casualty_id`, must not be `None`")  # noqa: E501
 
         self._casualty_id = casualty_id
 
@@ -212,56 +189,10 @@ class Action(Model):
         self._justification = justification
 
     @property
-    def parameter1(self) -> str:
-        """Gets the parameter1 of this Action.
-
-        Possible approach-- the first action-specific parameter; see action reference  # noqa: E501
-
-        :return: The parameter1 of this Action.
-        :rtype: str
-        """
-        return self._parameter1
-
-    @parameter1.setter
-    def parameter1(self, parameter1: str):
-        """Sets the parameter1 of this Action.
-
-        Possible approach-- the first action-specific parameter; see action reference  # noqa: E501
-
-        :param parameter1: The parameter1 of this Action.
-        :type parameter1: str
-        """
-
-        self._parameter1 = parameter1
-
-    @property
-    def parameter2(self) -> str:
-        """Gets the parameter2 of this Action.
-
-        Possible approach-- the second action-specific parameter; see action reference  # noqa: E501
-
-        :return: The parameter2 of this Action.
-        :rtype: str
-        """
-        return self._parameter2
-
-    @parameter2.setter
-    def parameter2(self, parameter2: str):
-        """Sets the parameter2 of this Action.
-
-        Possible approach-- the second action-specific parameter; see action reference  # noqa: E501
-
-        :param parameter2: The parameter2 of this Action.
-        :type parameter2: str
-        """
-
-        self._parameter2 = parameter2
-
-    @property
     def parameters(self) -> List[Dict[str, str]]:
         """Gets the parameters of this Action.
 
-        Possible approach-- an array of parameters  # noqa: E501
+        an array of action-specific parameters  # noqa: E501
 
         :return: The parameters of this Action.
         :rtype: List[Dict[str, str]]
@@ -272,56 +203,10 @@ class Action(Model):
     def parameters(self, parameters: List[Dict[str, str]]):
         """Sets the parameters of this Action.
 
-        Possible approach-- an array of parameters  # noqa: E501
+        an array of action-specific parameters  # noqa: E501
 
         :param parameters: The parameters of this Action.
         :type parameters: List[Dict[str, str]]
         """
 
         self._parameters = parameters
-
-    @property
-    def supplies(self) -> List[Supplies]:
-        """Gets the supplies of this Action.
-
-        Possible approach-- a list of supplies used as part of the action  # noqa: E501
-
-        :return: The supplies of this Action.
-        :rtype: List[Supplies]
-        """
-        return self._supplies
-
-    @supplies.setter
-    def supplies(self, supplies: List[Supplies]):
-        """Sets the supplies of this Action.
-
-        Possible approach-- a list of supplies used as part of the action  # noqa: E501
-
-        :param supplies: The supplies of this Action.
-        :type supplies: List[Supplies]
-        """
-
-        self._supplies = supplies
-
-    @property
-    def timestamp(self) -> str:
-        """Gets the timestamp of this Action.
-
-        The current time in the scenario as populated by TA3  # noqa: E501
-
-        :return: The timestamp of this Action.
-        :rtype: str
-        """
-        return self._timestamp
-
-    @timestamp.setter
-    def timestamp(self, timestamp: str):
-        """Sets the timestamp of this Action.
-
-        The current time in the scenario as populated by TA3  # noqa: E501
-
-        :param timestamp: The timestamp of this Action.
-        :type timestamp: str
-        """
-
-        self._timestamp = timestamp

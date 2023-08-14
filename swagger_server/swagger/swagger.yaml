@@ -5,7 +5,7 @@ info:
     This is the specification of the TA3 API for In The Moment (ITM).  Currently, the Evaluation API for TA2 supports functionality for the September milestone.
 
     The API is based on the OpenAPI 3.0 specification.
-  version: 0.2.0
+  version: 0.2.1
 servers:
 - url: /
 tags:
@@ -243,95 +243,6 @@ paths:
                 type: string
                 x-content-type: text/plain
       x-openapi-router-controller: swagger_server.controllers.itm_ta2_eval_controller
-  /ta2/{scenario_id}/getAvailableActionTypes:
-    get:
-      tags:
-      - itm-ta2-eval
-      summary: Get a list of currently available ADM action types
-      description: Retrieve a list of currently available actions in the scenario
-        with the specified id
-      operationId: get_available_actions2
-      parameters:
-      - name: session_id
-        in: query
-        description: "a unique session_id, as returned by /ta2/startSession"
-        required: true
-        style: form
-        explode: true
-        schema:
-          type: string
-      - name: scenario_id
-        in: path
-        description: The ID of the scenario for which to retrieve avaialble actions
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: string
-      responses:
-        "200":
-          description: Successful operation; array of possible action types returned
-            (see Action.action_type)
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  type: string
-                x-content-type: application/json
-        "404":
-          description: Invalid scenario ID supplied
-        "500":
-          description: An exception occurred on the server; see returned error string.
-          content:
-            text/plain:
-              schema:
-                type: string
-                x-content-type: text/plain
-      x-openapi-router-controller: swagger_server.controllers.itm_ta2_eval_controller
-  /ta2/{scenario_id}/directToSafezone:
-    post:
-      tags:
-      - itm-ta2-eval
-      summary: Direct casualties to the safe zone
-      description: Verbally direct all mobile casualties to the safe zone
-      operationId: direct_to_safezone
-      parameters:
-      - name: session_id
-        in: query
-        description: "a unique session_id, as returned by /ta2/startSession"
-        required: true
-        style: form
-        explode: true
-        schema:
-          type: string
-      - name: scenario_id
-        in: path
-        description: The ID of the scenario to direct mobile casualties
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: string
-      responses:
-        "200":
-          description: "Successful operation, scenario state returned"
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/State'
-        "400":
-          description: Invalid session id
-        "404":
-          description: Scenario not found
-        "500":
-          description: An exception occurred on the server; see returned error string.
-          content:
-            text/plain:
-              schema:
-                type: string
-                x-content-type: text/plain
-      x-openapi-router-controller: swagger_server.controllers.itm_ta2_eval_controller
   /ta2/takeAction:
     post:
       tags:
@@ -364,611 +275,6 @@ paths:
                 $ref: '#/components/schemas/State'
         "400":
           description: Invalid action or session_id
-        "500":
-          description: An exception occurred on the server; see returned error string.
-          content:
-            text/plain:
-              schema:
-                type: string
-                x-content-type: text/plain
-      x-openapi-router-controller: swagger_server.controllers.itm_ta2_eval_controller
-  /ta2/casualty/{casualty_id}/checkVital:
-    get:
-      tags:
-      - itm-ta2-eval
-      summary: Assess and retrieve a vital sign
-      description: Retrieve the specified vital sign of the specified casualty.
-      operationId: check_vital
-      parameters:
-      - name: session_id
-        in: query
-        description: "a unique session_id, as returned by /ta2/startSession"
-        required: true
-        style: form
-        explode: true
-        schema:
-          type: string
-      - name: casualty_id
-        in: path
-        description: The ID of the casualty to query
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: string
-      - name: vital_sign
-        in: query
-        description: "The vital sign to retrieve, taken from controlled vocabulary"
-        required: true
-        style: form
-        explode: true
-        schema:
-          type: string
-          example: RESPIRATION
-          enum:
-          - CONSCIOUSNESS
-          - PULSE
-          - RESPIRATION
-          - ALL
-      responses:
-        "200":
-          description: "Successful operation, casualty vitals returned"
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Vitals'
-        "400":
-          description: Invalid session id or vital sign supplied
-        "404":
-          description: Casualty not found
-        "500":
-          description: An exception occurred on the server; see returned error string.
-          content:
-            text/plain:
-              schema:
-                type: string
-                x-content-type: text/plain
-      x-openapi-router-controller: swagger_server.controllers.itm_ta2_eval_controller
-  /ta2/casualty/{casualty_id}/checkVitals:
-    get:
-      tags:
-      - itm-ta2-eval
-      summary: Assess and retrieve all casualty vital signs
-      description: Retrieve all vital signs of the specified casualty.
-      operationId: check_vitals
-      parameters:
-      - name: session_id
-        in: query
-        description: "a unique session_id, as returned by /ta2/startSession"
-        required: true
-        style: form
-        explode: true
-        schema:
-          type: string
-      - name: casualty_id
-        in: path
-        description: The ID of the casualty to query
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: string
-      responses:
-        "200":
-          description: "Successful operation, casualty vitals returned"
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Vitals'
-        "400":
-          description: Invalid session id
-        "404":
-          description: Casualty not found
-        "500":
-          description: An exception occurred on the server; see returned error string.
-          content:
-            text/plain:
-              schema:
-                type: string
-                x-content-type: text/plain
-      x-openapi-router-controller: swagger_server.controllers.itm_ta2_eval_controller
-  /ta2/casualty/{casualty_id}/tag:
-    post:
-      tags:
-      - itm-ta2-eval
-      summary: Tag a casualty with a triage category
-      description: Apply a triage tag to the specified casualty with the specified
-        tag
-      operationId: tag_casualty
-      parameters:
-      - name: session_id
-        in: query
-        description: "a unique session_id, as returned by /ta2/startSession"
-        required: true
-        style: form
-        explode: true
-        schema:
-          type: string
-      - name: casualty_id
-        in: path
-        description: The ID of the casualty to tag
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: string
-      - name: tag
-        in: query
-        description: "The tag to apply to the casualty, chosen from triage categories"
-        required: true
-        style: form
-        explode: true
-        schema:
-          type: string
-          example: delayed
-      responses:
-        "200":
-          description: "Successful operation, scenario state returned"
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/State'
-        "400":
-          description: Invalid session id or tag supplied
-        "404":
-          description: Casualty not found
-        "500":
-          description: An exception occurred on the server; see returned error string.
-          content:
-            text/plain:
-              schema:
-                type: string
-                x-content-type: text/plain
-      x-openapi-router-controller: swagger_server.controllers.itm_ta2_eval_controller
-  /ta2/casualty/{casualty_id}/applyTreatment:
-    post:
-      tags:
-      - itm-ta2-eval
-      summary: Apply a treatment to a casualty
-      description: Treat the specified casualty with the specified tool in the specified
-        location
-      operationId: apply_treatment
-      parameters:
-      - name: session_id
-        in: query
-        description: "a unique session_id, as returned by /ta2/startSession"
-        required: true
-        style: form
-        explode: true
-        schema:
-          type: string
-      - name: casualty_id
-        in: path
-        description: The ID of the casualty to tag
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: string
-      - name: tool
-        in: query
-        description: The tool to use to apply treatment (see Supplies)
-        required: true
-        style: form
-        explode: true
-        schema:
-          type: string
-          example: Tourniquet
-      - name: location
-        in: query
-        description: the injury location on the casualty's body (see Injury `location`)
-        required: false
-        style: form
-        explode: true
-        schema:
-          type: string
-          example: right forearm
-      responses:
-        "200":
-          description: "Successful operation, scenario state returned"
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/State'
-        "400":
-          description: "Invalid session id, tool, or location supplied"
-        "404":
-          description: Casualty not found
-        "500":
-          description: An exception occurred on the server; see returned error string.
-          content:
-            text/plain:
-              schema:
-                type: string
-                x-content-type: text/plain
-      x-openapi-router-controller: swagger_server.controllers.itm_ta2_eval_controller
-  /ta2/casualty/{casualty_id}/checkHeartRate:
-    get:
-      tags:
-      - itm-ta2-eval
-      summary: Check casualty heart rate
-      description: Check the heart rate of the specified casualty.
-      operationId: get_heart_rate
-      parameters:
-      - name: session_id
-        in: query
-        description: "a unique session_id, as returned by /ta2/startSession"
-        required: true
-        style: form
-        explode: true
-        schema:
-          type: string
-      - name: casualty_id
-        in: path
-        description: The ID of the casualty to for which to request heart rate
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: string
-      responses:
-        "200":
-          description: "Successful operation, heart rate returned in beats per minute"
-          content:
-            text/plain:
-              schema:
-                type: integer
-                format: int16
-                x-content-type: text/plain
-        "400":
-          description: Invalid session id
-        "404":
-          description: Casualty ID not found
-        "500":
-          description: An exception occurred on the server; see returned error string.
-          content:
-            text/plain:
-              schema:
-                type: string
-                x-content-type: text/plain
-      x-openapi-router-controller: swagger_server.controllers.itm_ta2_eval_controller
-  /ta2/casualty/{casualty_id}/checkRespiratoryRate:
-    get:
-      tags:
-      - itm-ta2-eval
-      summary: Check casualty respiratory rate
-      description: Check the respiratory rate of the specified casualty.
-      operationId: get_respiratory_rate
-      parameters:
-      - name: session_id
-        in: query
-        description: "a unique session_id, as returned by /ta2/startSession"
-        required: true
-        style: form
-        explode: true
-        schema:
-          type: string
-      - name: casualty_id
-        in: path
-        description: The ID of the casualty to for which to request respiratory rate
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: string
-      responses:
-        "200":
-          description: "Successful operation, respiratory rate returned in breaths/minute"
-          content:
-            text/plain:
-              schema:
-                type: integer
-                format: int16
-                x-content-type: text/plain
-        "400":
-          description: Invalid session id
-        "404":
-          description: Casualty ID not found
-        "500":
-          description: An exception occurred on the server; see returned error string.
-          content:
-            text/plain:
-              schema:
-                type: string
-                x-content-type: text/plain
-      x-openapi-router-controller: swagger_server.controllers.itm_ta2_eval_controller
-  /ta2/casualty/{casualty_id}/checkConsciousness:
-    get:
-      tags:
-      - itm-ta2-eval
-      summary: Check casualty consciousness
-      description: Check the consciousness of the specified casualty
-      operationId: get_consciousness
-      parameters:
-      - name: session_id
-        in: query
-        description: "a unique session_id, as returned by /ta2/startSession"
-        required: true
-        style: form
-        explode: true
-        schema:
-          type: string
-      - name: casualty_id
-        in: path
-        description: The ID of the casualty to for which to check consciousness
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: string
-      responses:
-        "200":
-          description: "Successful operation, consciousness returned as true or false"
-          content:
-            text/plain:
-              schema:
-                type: boolean
-                x-content-type: text/plain
-        "400":
-          description: Invalid session id
-        "404":
-          description: Casualty ID not found
-        "500":
-          description: An exception occurred on the server; see returned error string.
-          content:
-            text/plain:
-              schema:
-                type: string
-                x-content-type: text/plain
-      x-openapi-router-controller: swagger_server.controllers.itm_ta2_eval_controller
-  /ta2/casualty/{casualty_id}/applyTourniquet:
-    post:
-      tags:
-      - itm-ta2-eval
-      summary: Apply a tourniquet to a casualty
-      description: Treat the specified casualty with a tourniquet in the specified
-        location
-      operationId: apply_tourniquet
-      parameters:
-      - name: session_id
-        in: query
-        description: "a unique session_id, as returned by /ta2/startSession"
-        required: true
-        style: form
-        explode: true
-        schema:
-          type: string
-      - name: casualty_id
-        in: path
-        description: The ID of the casualty to treat
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: string
-      - name: location
-        in: query
-        description: the injury location on the casualty's body (see Injury `location`)
-        required: true
-        style: form
-        explode: true
-        schema:
-          type: string
-          example: right forearm
-      responses:
-        "200":
-          description: "Successful operation, scenario state returned"
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/State'
-        "400":
-          description: Invalid session id or location supplied
-        "404":
-          description: Casualty not found
-        "500":
-          description: An exception occurred on the server; see returned error string.
-          content:
-            text/plain:
-              schema:
-                type: string
-                x-content-type: text/plain
-      x-openapi-router-controller: swagger_server.controllers.itm_ta2_eval_controller
-  /ta2/casualty/{casualty_id}/applyHemostaticGauze:
-    post:
-      tags:
-      - itm-ta2-eval
-      summary: Apply hemostatic gauze to a casualty
-      description: Treat the specified casualty with hemostatic gauze in the specified
-        location
-      operationId: apply_hemostatic_gauze
-      parameters:
-      - name: session_id
-        in: query
-        description: "a unique session_id, as returned by /ta2/startSession"
-        required: true
-        style: form
-        explode: true
-        schema:
-          type: string
-      - name: casualty_id
-        in: path
-        description: The ID of the casualty to treat
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: string
-      - name: location
-        in: query
-        description: the injury location on the casualty's body (see Injury `location`)
-        required: true
-        style: form
-        explode: true
-        schema:
-          type: string
-          example: right forearm
-      responses:
-        "200":
-          description: "Successful operation, scenario state returned"
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/State'
-        "400":
-          description: Invalid session id or location supplied
-        "404":
-          description: Casualty not found
-        "500":
-          description: An exception occurred on the server; see returned error string.
-          content:
-            text/plain:
-              schema:
-                type: string
-                x-content-type: text/plain
-      x-openapi-router-controller: swagger_server.controllers.itm_ta2_eval_controller
-  /ta2/casualty/{casualty_id}/applyPressureBandage:
-    post:
-      tags:
-      - itm-ta2-eval
-      summary: Apply a pressure bandage to a casualty
-      description: Treat the specified casualty with a pressure bandage in the specified
-        location
-      operationId: apply_pressure_bandage
-      parameters:
-      - name: session_id
-        in: query
-        description: "a unique session_id, as returned by /ta2/startSession"
-        required: true
-        style: form
-        explode: true
-        schema:
-          type: string
-      - name: casualty_id
-        in: path
-        description: The ID of the casualty to treat
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: string
-      - name: location
-        in: query
-        description: the injury location on the casualty's body (see Injury `location`)
-        required: true
-        style: form
-        explode: true
-        schema:
-          type: string
-          example: right forearm
-      responses:
-        "200":
-          description: "Successful operation, scenario state returned"
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/State'
-        "400":
-          description: Invalid session id or location supplied
-        "404":
-          description: Casualty not found
-        "500":
-          description: An exception occurred on the server; see returned error string.
-          content:
-            text/plain:
-              schema:
-                type: string
-                x-content-type: text/plain
-      x-openapi-router-controller: swagger_server.controllers.itm_ta2_eval_controller
-  /ta2/casualty/{casualty_id}/applyDecompressionNeedle:
-    post:
-      tags:
-      - itm-ta2-eval
-      summary: Apply a decompression needle to a casualty
-      description: Treat the specified casualty with a decompression needle in the
-        specified location
-      operationId: apply_decompression_needle
-      parameters:
-      - name: session_id
-        in: query
-        description: "a unique session_id, as returned by /ta2/startSession"
-        required: true
-        style: form
-        explode: true
-        schema:
-          type: string
-      - name: casualty_id
-        in: path
-        description: The ID of the casualty to treat
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: string
-      - name: location
-        in: query
-        description: the injury location on the casualty's body (see Injury `location`)
-        required: true
-        style: form
-        explode: true
-        schema:
-          type: string
-          example: right chest
-      responses:
-        "200":
-          description: "Successful operation, scenario state returned"
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/State'
-        "400":
-          description: Invalid session id or location supplied
-        "404":
-          description: Casualty not found
-        "500":
-          description: An exception occurred on the server; see returned error string.
-          content:
-            text/plain:
-              schema:
-                type: string
-                x-content-type: text/plain
-      x-openapi-router-controller: swagger_server.controllers.itm_ta2_eval_controller
-  /ta2/casualty/{casualty_id}/applyNasalTrumpet:
-    post:
-      tags:
-      - itm-ta2-eval
-      summary: Apply a nasal trumpet to a casualty
-      description: Treat the specified casualty with a nasal trumpet in the specified
-        location
-      operationId: apply_nasal_trumpet
-      parameters:
-      - name: session_id
-        in: query
-        description: "a unique session_id, as returned by /ta2/startSession"
-        required: true
-        style: form
-        explode: true
-        schema:
-          type: string
-      - name: casualty_id
-        in: path
-        description: The ID of the casualty to treat
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: string
-      responses:
-        "200":
-          description: "Successful operation, scenario state returned"
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/State'
-        "400":
-          description: Invalid session id or location supplied
-        "404":
-          description: Casualty not found
         "500":
           description: An exception occurred on the server; see returned error string.
           content:
@@ -1017,7 +323,7 @@ components:
         id: "1234"
         state:
           mission:
-            unstructured: Protect the high value intelligence officer.
+            unstructured: Place sensors in and around the jungle base.
             mission_type: Listening/Observation
           environment:
             visibility: 0.5
@@ -1063,8 +369,10 @@ components:
               RR: 40
               SpO2%: 95
               pain: 8
-              consciousness: true
+              breathing: NORMAL
+              responsive: true
               mmHg: 180
+              conscious: true
               hrpmin: 150
             demographics:
               sex: F
@@ -1086,8 +394,10 @@ components:
               RR: 40
               SpO2%: 95
               pain: 8
-              consciousness: true
+              breathing: NORMAL
+              responsive: true
               mmHg: 180
+              conscious: true
               hrpmin: 150
             demographics:
               sex: F
@@ -1097,10 +407,10 @@ components:
         triage_categories:
         - criteria: criteria
           description: description
-          tagLabel: minimal
+          tagLabel: MINIMAL
         - criteria: criteria
           description: description
-          tagLabel: minimal
+          tagLabel: MINIMAL
     AlignmentTarget:
       required:
       - id
@@ -1179,7 +489,7 @@ components:
         of its casualties.
       example:
         mission:
-          unstructured: Protect the high value intelligence officer.
+          unstructured: Place sensors in and around the jungle base.
           mission_type: Listening/Observation
         environment:
           visibility: 0.5
@@ -1225,8 +535,10 @@ components:
             RR: 40
             SpO2%: 95
             pain: 8
-            consciousness: true
+            breathing: NORMAL
+            responsive: true
             mmHg: 180
+            conscious: true
             hrpmin: 150
           demographics:
             sex: F
@@ -1248,8 +560,10 @@ components:
             RR: 40
             SpO2%: 95
             pain: 8
-            consciousness: true
+            breathing: NORMAL
+            responsive: true
             mmHg: 180
+            conscious: true
             hrpmin: 150
           demographics:
             sex: F
@@ -1265,7 +579,7 @@ components:
         unstructured:
           type: string
           description: natural language description of current mission
-          example: Protect the high value intelligence officer.
+          example: Place sensors in and around the jungle base.
         mission_type:
           type: string
           description: enum of possible mission types
@@ -1284,7 +598,7 @@ components:
           - Nuclear deterrence
       description: encapsulates the scenario's strategic mission
       example:
-        unstructured: Protect the high value intelligence officer.
+        unstructured: Place sensors in and around the jungle base.
         mission_type: Listening/Observation
     Environment:
       required:
@@ -1456,11 +770,10 @@ components:
           description: "the tag assigned to this casualty, omit if untagged"
           example: delayed
           enum:
-          - minimal
-          - delayed
-          - immediate
-          - expectant
-          - deceased
+          - MINIMAL
+          - DELAYED
+          - IMMEDIATE
+          - EXPECTANT
       description: encapulation of a single casualty/patient in the scenario
       example:
         assessed: false
@@ -1479,8 +792,10 @@ components:
           RR: 40
           SpO2%: 95
           pain: 8
-          consciousness: true
+          breathing: NORMAL
+          responsive: true
           mmHg: 180
+          conscious: true
           hrpmin: 150
         demographics:
           sex: F
@@ -1516,6 +831,9 @@ components:
         rank: Marine
         age: 32
     Injury:
+      required:
+      - location
+      - name
       type: object
       properties:
         name:
@@ -1556,13 +874,11 @@ components:
           - left wrist
           - left face
           - right face
-          - unknown or unspecified
         severity:
           type: number
           description: the apparent severity of the injury from 0 (low) to 1.0 (high)
           example: 0.8
-      description: an injury on a casualty. This could potentially use a controlled
-        vocabulary.
+      description: an injury on a casualty. The name field defines a controlled vocabulary.
       example:
         severity: 0.8
         name: Laceration
@@ -1570,10 +886,23 @@ components:
     Vitals:
       type: object
       properties:
-        consciousness:
+        conscious:
           type: boolean
           description: whether or not the patient is conscious
           example: true
+        responsive:
+          type: boolean
+          description: whether or not the patient is responsive
+          example: true
+        breathing:
+          type: string
+          description: a descriptor for the casualty's breathing
+          example: NORMAL
+          enum:
+          - NORMAL
+          - FAST
+          - RESTRICTED
+          - NONE
         hrpmin:
           type: integer
           description: heart rate in beats per minute
@@ -1604,21 +933,22 @@ components:
         RR: 40
         SpO2%: 95
         pain: 8
-        consciousness: true
+        breathing: NORMAL
+        responsive: true
         mmHg: 180
+        conscious: true
         hrpmin: 150
     TriageCategory:
       type: object
       properties:
         tagLabel:
           type: string
-          example: minimal
+          example: MINIMAL
           enum:
-          - minimal
-          - delayed
-          - immediate
-          - expectant
-          - deceased
+          - MINIMAL
+          - DELAYED
+          - IMMEDIATE
+          - EXPECTANT
         description:
           type: string
           description: a one-line description of the tagLabel category
@@ -1629,11 +959,10 @@ components:
       example:
         criteria: criteria
         description: description
-        tagLabel: minimal
+        tagLabel: MINIMAL
     Action:
       required:
       - action_type
-      - casualty_id
       - scenario_id
       type: object
       properties:
@@ -1642,76 +971,50 @@ components:
           description: scenario ID this probe is for
         action_type:
           type: string
-          description: The action type taken from a controlled vocabulary
-          example: TREAT_PATIENT
+          description: The action type taken from a controlled vocabulary.
+          example: APPLY_TREATMENT
           enum:
-          - TREAT_PATIENT
-          - TAG_PATIENT
-          - DIRECT_PATIENT_TO_SAFE_ZONE
+          - APPLY_TREATMENT
+          - DIRECT_MOBILE_CASUALTIES
+          - CHECK_ALL_VITALS
           - CHECK_PULSE
           - CHECK_RESPIRATION
-          - CHECK_CONSCIOUSNESS
-          - CHECK_VITAL
-          - CHECK_VITALS
-          - TBD_MORE
+          - SITREP
+          - TAG_CASUALTY
         casualty_id:
           type: string
           description: The ID of the casualty being acted upon
         unstructured:
           type: string
           description: a plain text unstructured description of the action
-          example: "Check heart rate of casualty [1234]."
+          example: "Check pulse of casualty [1234]."
         justification:
           type: string
           description: A justification of the action taken
           example: Casualty is the VIP of the scenario
-        parameter1:
-          type: string
-          description: Possible approach-- the first action-specific parameter; see
-            action reference
-          example: Tourniquet
-        parameter2:
-          type: string
-          description: Possible approach-- the second action-specific parameter; see
-            action reference
-          example: right forearm
         parameters:
           type: array
-          description: Possible approach-- an array of parameters
+          description: an array of action-specific parameters
           items:
             type: object
             additionalProperties:
               type: string
-            description: key-value pairs containing additional action parameters
+            description: key-value pairs containing additional action-specific parameters
             example:
-              units: 1
-        supplies:
-          type: array
-          description: Possible approach-- a list of supplies used as part of the
-            action
-          items:
-            $ref: '#/components/schemas/Supplies'
-        timestamp:
-          type: string
-          description: The current time in the scenario as populated by TA3
+            - treatment: Tourniquet
+            - location: right forearm
       description: An encapulation of a single action taken by a DM
       example:
-        action_type: TREAT_PATIENT
+        action_type: APPLY_TREATMENT
         casualty_id: casualty_id
-        supplies:
-        - quantity: 4
-          type: Tourniquet
-        - quantity: 4
-          type: Tourniquet
-        unstructured: "Check heart rate of casualty [1234]."
+        unstructured: "Check pulse of casualty [1234]."
         justification: Casualty is the VIP of the scenario
         parameters:
-        - units: 1
-        - units: 1
+        - - treatment: Tourniquet
+          - location: right forearm
+        - - treatment: Tourniquet
+          - location: right forearm
         scenario_id: scenario_id
-        parameter2: right forearm
-        parameter1: Tourniquet
-        timestamp: timestamp
   responses:
     server_error:
       description: An exception occurred on the server; see returned error string.

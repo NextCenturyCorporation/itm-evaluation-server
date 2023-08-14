@@ -259,7 +259,7 @@ class Casualty(Model):
         :param tag: The tag of this Casualty.
         :type tag: str
         """
-        allowed_values = ["minimal", "delayed", "immediate", "expectant", "deceased"]  # noqa: E501
+        allowed_values = ["MINIMAL", "DELAYED", "IMMEDIATE", "EXPECTANT"]  # noqa: E501
         if tag not in allowed_values:
             raise ValueError(
                 "Invalid value for `tag` ({0}), must be one of {1}"

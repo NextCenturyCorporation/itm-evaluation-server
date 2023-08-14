@@ -99,7 +99,7 @@ class Injury(Model):
         :param location: The location of this Injury.
         :type location: str
         """
-        allowed_values = ["right forearm", "left forearm", "right calf", "left calf", "right thigh", "left thigh", "right stomach", "left stomach", "right bicep", "left bicep", "right shoulder", "left shoulder", "right side", "left side", "right calf", "left calf", "right wrist", "left wrist", "left face", "right face", "unknown or unspecified"]  # noqa: E501
+        allowed_values = ["right forearm", "left forearm", "right calf", "left calf", "right thigh", "left thigh", "right stomach", "left stomach", "right bicep", "left bicep", "right shoulder", "left shoulder", "right side", "left side", "right calf", "left calf", "right wrist", "left wrist", "left face", "right face"]  # noqa: E501
         if location not in allowed_values:
             raise ValueError(
                 "Invalid value for `location` ({0}), must be one of {1}"

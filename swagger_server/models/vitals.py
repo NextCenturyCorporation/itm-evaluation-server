@@ -14,11 +14,15 @@ class Vitals(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, consciousness: bool=None, hrpmin: int=None, mm_hg: int=None, rr: int=None, sp_o2: int=None, pain: int=None):  # noqa: E501
+    def __init__(self, conscious: bool=None, responsive: bool=None, breathing: str=None, hrpmin: int=None, mm_hg: int=None, rr: int=None, sp_o2: int=None, pain: int=None):  # noqa: E501
         """Vitals - a model defined in Swagger
 
-        :param consciousness: The consciousness of this Vitals.  # noqa: E501
-        :type consciousness: bool
+        :param conscious: The conscious of this Vitals.  # noqa: E501
+        :type conscious: bool
+        :param responsive: The responsive of this Vitals.  # noqa: E501
+        :type responsive: bool
+        :param breathing: The breathing of this Vitals.  # noqa: E501
+        :type breathing: str
         :param hrpmin: The hrpmin of this Vitals.  # noqa: E501
         :type hrpmin: int
         :param mm_hg: The mm_hg of this Vitals.  # noqa: E501
@@ -31,7 +35,9 @@ class Vitals(Model):
         :type pain: int
         """
         self.swagger_types = {
-            'consciousness': bool,
+            'conscious': bool,
+            'responsive': bool,
+            'breathing': str,
             'hrpmin': int,
             'mm_hg': int,
             'rr': int,
@@ -40,14 +46,18 @@ class Vitals(Model):
         }
 
         self.attribute_map = {
-            'consciousness': 'consciousness',
+            'conscious': 'conscious',
+            'responsive': 'responsive',
+            'breathing': 'breathing',
             'hrpmin': 'hrpmin',
             'mm_hg': 'mmHg',
             'rr': 'RR',
             'sp_o2': 'SpO2%',
             'pain': 'pain'
         }
-        self._consciousness = consciousness
+        self._conscious = conscious
+        self._responsive = responsive
+        self._breathing = breathing
         self._hrpmin = hrpmin
         self._mm_hg = mm_hg
         self._rr = rr
@@ -66,27 +76,79 @@ class Vitals(Model):
         return util.deserialize_model(dikt, cls)
 
     @property
-    def consciousness(self) -> bool:
-        """Gets the consciousness of this Vitals.
+    def conscious(self) -> bool:
+        """Gets the conscious of this Vitals.
 
         whether or not the patient is conscious  # noqa: E501
 
-        :return: The consciousness of this Vitals.
+        :return: The conscious of this Vitals.
         :rtype: bool
         """
-        return self._consciousness
+        return self._conscious
 
-    @consciousness.setter
-    def consciousness(self, consciousness: bool):
-        """Sets the consciousness of this Vitals.
+    @conscious.setter
+    def conscious(self, conscious: bool):
+        """Sets the conscious of this Vitals.
 
         whether or not the patient is conscious  # noqa: E501
 
-        :param consciousness: The consciousness of this Vitals.
-        :type consciousness: bool
+        :param conscious: The conscious of this Vitals.
+        :type conscious: bool
         """
 
-        self._consciousness = consciousness
+        self._conscious = conscious
+
+    @property
+    def responsive(self) -> bool:
+        """Gets the responsive of this Vitals.
+
+        whether or not the patient is responsive  # noqa: E501
+
+        :return: The responsive of this Vitals.
+        :rtype: bool
+        """
+        return self._responsive
+
+    @responsive.setter
+    def responsive(self, responsive: bool):
+        """Sets the responsive of this Vitals.
+
+        whether or not the patient is responsive  # noqa: E501
+
+        :param responsive: The responsive of this Vitals.
+        :type responsive: bool
+        """
+
+        self._responsive = responsive
+
+    @property
+    def breathing(self) -> str:
+        """Gets the breathing of this Vitals.
+
+        a descriptor for the casualty's breathing  # noqa: E501
+
+        :return: The breathing of this Vitals.
+        :rtype: str
+        """
+        return self._breathing
+
+    @breathing.setter
+    def breathing(self, breathing: str):
+        """Sets the breathing of this Vitals.
+
+        a descriptor for the casualty's breathing  # noqa: E501
+
+        :param breathing: The breathing of this Vitals.
+        :type breathing: str
+        """
+        allowed_values = ["NORMAL", "FAST", "RESTRICTED", "NONE"]  # noqa: E501
+        if breathing not in allowed_values:
+            raise ValueError(
+                "Invalid value for `breathing` ({0}), must be one of {1}"
+                .format(breathing, allowed_values)
+            )
+
+        self._breathing = breathing
 
     @property
     def hrpmin(self) -> int:

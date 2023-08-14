@@ -177,12 +177,14 @@ class ITMScenarioReader:
         ]
         vital_data = casualty_data.get('vitals', {})
         vitals = Vitals(
-            consciousness=vital_data['consciousness'],
-            hrpmin=vital_data['hrpmin'],
-            mm_hg=vital_data['mmHg'],
-            rr=vital_data['RR'],
-            sp_o2=vital_data['SpO2%'],
-            pain=vital_data['pain']
+            conscious=vital_data['conscious'],
+            responsive=vital_data['responsive'],
+            breathing=vital_data['breathing'],
+            hrpmin=vital_data['hrpmin']
+            #mm_hg=vital_data['mmHg'],
+            #rr=vital_data['RR'],
+            #sp_o2=vital_data['SpO2%'],
+            #pain=vital_data['pain']
         )
         casualty = Casualty(
             id="casualty_" + str(uuid.uuid4()),
@@ -229,5 +231,5 @@ class ITMScenarioReader:
 
     def _generate_triage_categories(self) -> List[TriageCategory]:
         return [
-            TriageCategory("minimal", "", "")
+            TriageCategory("MINIMAL", "", "")
         ]

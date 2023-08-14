@@ -42,7 +42,7 @@ state:
 
   supplies:
     - {type: Hemostatic gauze, quantity: 8}
-    - {type: Tourniquet, quantity: 2}
+    - {type: Tourniquet, quantity: 5}
     - {type: Pressure bandage, quantity: 5}
     - {type: Decompression Needle, quantity: 1}
     - {type: Nasopharyngeal airway, quantity: 1}
@@ -70,13 +70,12 @@ state:
           location: left thigh
           severity: 0.8
       vitals:
-        consciousness: false
+        conscious: false
+        responsive: false
+        breathing: FAST
         hrpmin: 145
-        mmHg: 60
-        SpO2%: 85
         RR: 40
-        pain: null
-    - id: casualty-B 
+    - id: casualty-B
       name: Tom
       unstructured: >
         Casualty B is a 25 YO male marine and sensor specialist in the vehicle suspected
@@ -97,13 +96,13 @@ state:
           location: left face
           severity: 0.5
       vitals:
-        consciousness: true
+        conscious: true
+        responsive: false
+        breathing: FAST
         hrpmin: 120
-        mmHg: 80
-        SpO2%: 98
-        RR: 18
-        pain: 6
-    - id: casualty-C 
+        RR: 38
+        pain: 8
+    - id: casualty-C
       name: Henrietta
       unstructured: >
         Casualty C is a 26 YO female marine and sensor specialist in the vehicle suspected
@@ -124,18 +123,18 @@ state:
           location: right face
           severity: 0.5
       vitals:
-        consciousness: true
+        conscious: true
+        responsive: true
+        breathing: NORMAL
         hrpmin: 105
-        mmHg: 120
-        SpO2%: 99
         RR: 15
-        pain: 2
-    - id: casualty-D 
+        pain: 3
+    - id: casualty-D
       name: Sean
       unstructured: >
         Casualty D is a 26 YO Male caught in a vehicle explosion.
         Immediate partial amputation of right wrist and shrapnel wounds on
-        the right side of the face. Pain in right hip and pelvis. 
+        the right side of the face.
         Patient's mental status and vital signs are deteriorating.
       demographics:
         age: 26
@@ -149,9 +148,9 @@ state:
           location: right face
           severity: 0.9
       vitals:
-        consciousness: true
+        conscious: true
+        responsive: true
+        breathing: RESTRICTED
         hrpmin: 120
-        mmHg: 100
-        SpO2%: 95
-        RR: 15
+        RR: 8
         pain: 10
