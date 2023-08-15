@@ -13,7 +13,8 @@ from ..itm import ITMScenarioSession
 ITM_SESSION = ITMScenarioSession()
 """
 The internal controller for ITM Server.
-`TODO support multiple sessions on the same server simultaneously`
+`TODO ITM-73: support multiple sessions`
+Bonus: add timeouts to inactive clients/sessions
 """
 
 
@@ -44,7 +45,7 @@ def get_available_actions(session_id, scenario_id):  # noqa: E501
 
     :rtype: List[Action]
     """
-    return 'do some magic!'
+    return ITM_SESSION.get_available_actions(session_id=session_id, scenario_id=scenario_id)
 
 
 def get_scenario_state(session_id, scenario_id):  # noqa: E501

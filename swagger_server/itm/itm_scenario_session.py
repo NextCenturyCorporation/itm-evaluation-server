@@ -14,6 +14,7 @@ from swagger_server.models import (
     State,
     Vitals,
 )
+from swagger_server.models.probe_response import ProbeResponse
 from .itm_database.itm_mongo import MongoDB
 from .itm_session_scenario_object import (
     ITMSessionScenarioObjectHandler,
@@ -105,6 +106,20 @@ class ITMScenarioSession:
             return False, 'Invalid Session ID', 400
         return True, '', 0
 
+    def _validate_action(self, action: Action) -> None:
+        """
+        Validate that action is a valid, well-formed action.
+
+        Args:
+            action: The action to validate.
+
+        Raises:
+            Exception: If the action is malformed.
+        """
+        # TODO ITM-74: Validate that action is well-formed
+        if action is None:
+            return False, 'Invalid or Malformed Action', 400
+        return True, '', 0
 
     def _end_scenario(self):
         """
@@ -324,7 +339,8 @@ class ITMScenarioSession:
 
             return self.scenario
         except:
-            # Empty Scenario
+            # Empty Scenario means we can end the session
+            self.__init__()
             return Scenario(session_complete=True, id='', name='',
                             start_time=None, state=None, triage_categories=None)
 
@@ -359,13 +375,6 @@ class ITMScenarioSession:
         self.history = []
         self.probes_responded_to = []
 
-        """
-        Note For ITM DARPA Demo. Use the commented out code starting with
-        self.session_type = 'soartech' and then comment out this block.
-        Using the commented out block instead of this will serve up
-        only a soartech scene and integrate it with TA1 and the 
-        database
-        """
         # Save to database based on adm_name.
         if self.adm_name.endswith("_db_"):
             self.adm_name = self.adm_name.removesuffix("_db_")
@@ -374,19 +383,6 @@ class ITMScenarioSession:
             self.save_to_database = True
             self.ta1_integration = True
             max_scenarios = None
-
-        """
-        self.session_type = 'soartech'
-        session_type = 'soartech'
-        # Save to database based on adm_name. This is good enough for now but should be changed.
-        if self.adm_name.endswith("_db_"):
-            self.adm_name = self.adm_name.removesuffix("_db_")
-            self.save_to_database = True
-        if self.session_type in ['eval', 'soartech', 'adept']:
-            self.save_to_database = True
-            self.ta1_integration = True
-            max_scenarios = None
-        """
 
         self._add_history(
                 "Start Session",
@@ -455,6 +451,81 @@ class ITMScenarioSession:
                 return response
         return 'Casualty ID not found', 404
 
+    def respond_to_probe(self, body: ProbeResponse):
+        """
+        Respond to a probe from the probe system.
+
+        Args:
+            body: The probe response body as a dict.
+        """
+        self.probes_responded_to.append(body.probe_id)
+        body.justification = '' if body.justification == None else body.justification
+        self.current_isso.probe_system.generate_probe(self.scenario.state)
+        self.current_isso.probe_system.respond_to_probe(
+            probe_id=body.probe_id,
+            choice=body.choice,
+            justification=body.justification
+        )
+
+        self.current_isso.probe_system.probe_count -= 1
+        self.current_isso.probe_system.current_probe_index += 1
+        self.scenario.state.scenario_complete = \
+            self.current_isso.probe_system.probe_count <= 0
+
+        self._add_history(
+            "Respond to TA1 Probe",
+            {"Session ID": self.session_id, "Scenario ID": body.scenario_id, "Probe ID": body.probe_id,
+             "Choice": body.choice, "Justification": body.justification},
+            self.scenario.state.to_dict())
+
+        if self.ta1_integration == True:
+            self.current_isso.ta1_controller.post_probe(body)
+            probe_response_alignment = \
+                self.current_isso.ta1_controller.get_probe_response_alignment(
+                body.scenario_id,
+                body.probe_id
+            )
+            self._add_history(
+                "TA1 Probe Response Alignment",
+                {"Session ID": self.current_isso.ta1_controller.session_id,
+                "Scenario ID": body.scenario_id,
+                "Target ID": self.current_isso.ta1_controller.alignment_target_id,
+                "Probe ID": body.probe_id},
+                probe_response_alignment
+            )
+
+    def lookup_probe_response(self, action: Action) -> ProbeResponse:
+        """
+        Look up a probe response from the probe system based on the specified action
+
+        Args:
+            body: The probe response body as a dict.
+        """
+
+        # TODO ITM-75: Map ADM action back to a TA1 probe response
+        return ProbeResponse(scenario_id=action.scenario_id, probe_id="september-demo-probe-1", choice="choice1")
+
+
+    def update_state(self, action: Action):
+        # TODO ITM-69: Update scenario state based on action
+
+        # For now, any action does nothing but ends the scenario!
+        self.scenario.state.scenario_complete = True
+
+        # TODO ITM-72: Enhance casualty deterioration/amelioration
+        # Ultimately, this should update values based DIRECTLY on how the sim does it
+        time_elapsed_during_treatment = self.current_isso.casualty_simulator.treat_casualty(
+            casualty_id=action.casualty_id,
+            supply=action.justification
+        )
+
+        # TODO ITM-70: Add hard-coded elapsed time model, and update in state
+        # Bonus: make it externally configurable
+        self.time_elapsed_scenario_time += time_elapsed_during_treatment
+        self.current_isso.casualty_simulator.update_vitals(time_elapsed_during_treatment)
+        self.scenario.state.elapsed_time = self.time_elapsed_scenario_time
+
+
     def take_action(self, session_id: str, body: Action) -> State:
         """
         Take an action within a scenario
@@ -472,8 +543,20 @@ class ITMScenarioSession:
         if not successful:
             return message, code
 
-        # For now, any action does nothing but ends the scenario!
-        self.scenario.state.scenario_complete = True
+        # Validate that action is a valid, well-formed action
+        (successful, message, code) = self._validate_action(body)
+        if not successful:
+            return message, code
+
+        # Map action to probe response
+        response = self.lookup_probe_response(action=body)
+
+        # Respond to probe with TA1
+        # NOTE: Not all actions will necessarily result in a probe response
+        #self.respond_to_probe(body=response)
+
+        # Update scenario state
+        self.update_state(action=body)
 
         self._add_history(
             "Take Action",
@@ -481,3 +564,31 @@ class ITMScenarioSession:
             self.scenario.state.to_dict())
 
         return self.scenario.state
+
+
+    def get_available_actions(self, session_id: str, scenario_id: str) -> List[Action]:
+        """
+        Take an action within a scenario
+
+        Args:
+            session_id: The ID of the session.
+            body: Encapsulation of an action taken by a DM in the context of the scenario
+
+        Returns:
+            The current state of the scenario as a State object.
+        """
+
+        # Check for a valid session_id and scenario_id
+        (successful, message, code) = self._check_session_id(session_id)
+        if not successful:
+            return message, code
+        (successful, message, code) = self._check_scenario_id(scenario_id)
+        if not successful:
+            return message, code
+
+        # TODO ITM-71: Add "training mode" that returns KDMA associations
+        # TODO ITM-67: Return a list of available actions based on associated actions in scenario/probe configuration
+        actions: List[Action] = []
+        actions.append(Action(scenario_id=self.scenario.id, action_type="SITREP"))
+
+        return actions

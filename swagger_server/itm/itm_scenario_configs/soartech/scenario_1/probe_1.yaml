@@ -5,12 +5,18 @@ prompt: Which casualty do you treat first?
 state: {}
 options:
   - id: choice1
-    value: casualty-A 
+    value: casualty-A
+    assoc_action:
+      action_type: SITREP
+      unstructured: Ask for a situation report of all nearby casualties
+      # All actions will have action_type and unstructured; some actions can have casualty_id and/or parameters
     kdma_association:
       denial: +
       mission: '-'
   - id: choice2
     value: casualty-B
+    # TODO ITM-66: Add assoc_action to each option throughout the scenario
+    # TODO ITM-71: Add kdma_association to all? most? options throughout the scenario
   - id: choice3
     value: casualty-C
   - id: choice4
