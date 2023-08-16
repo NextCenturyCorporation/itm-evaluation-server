@@ -12,7 +12,7 @@ from swagger_server.models import (
     Casualty,
     Scenario,
     State,
-    Vitals,
+    Vitals
 )
 from swagger_server.models.probe_response import ProbeResponse
 from .itm_database.itm_mongo import MongoDB
@@ -589,6 +589,9 @@ class ITMScenarioSession:
         # TODO ITM-71: Add "training mode" that returns KDMA associations
         # TODO ITM-67: Return a list of available actions based on associated actions in scenario/probe configuration
         actions: List[Action] = []
-        actions.append(Action(scenario_id=self.scenario.id, action_type="SITREP"))
+        # read probe from yaml requires path to the yaml file leaving blank for now
+        probeYaml = self.current_isso.probe_system.read_probe_from_yaml()
+        for option in probeYaml.options:
+            actions.append(option.assoc_action)
 
         return actions
