@@ -590,8 +590,9 @@ class ITMScenarioSession:
         # TODO ITM-67: Return a list of available actions based on associated actions in scenario/probe configuration
         actions: List[Action] = []
         # read probe from yaml requires path to the yaml file leaving blank for now
-        probeYaml = self.current_isso.probe_system.read_probe_from_yaml()
-        for option in probeYaml.options:
-            actions.append(option.assoc_action)
+        probeYamlList = self.current_isso.probe_system.read_all_probes_yamls_for_scenario()
+        for probeYaml in probeYamlList:
+            for option in probeYaml.options:
+                actions.append(option.assoc_action)
 
         return actions
