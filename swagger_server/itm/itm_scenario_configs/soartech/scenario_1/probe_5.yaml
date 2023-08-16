@@ -30,7 +30,6 @@ options:
       casualty_id: casualty-D
       parameters:
         treatment: Pressure bandage
-        Location: left shoulder
   - id: choice4
     value: Hemostatic gauze
     action_type: APPLY_TREATMENT
