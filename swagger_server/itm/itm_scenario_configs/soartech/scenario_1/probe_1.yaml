@@ -15,9 +15,23 @@ options:
       mission: '-'
   - id: choice2
     value: casualty-B
-    # TODO ITM-66: Add assoc_action to each option throughout the scenario
+    assoc_action:
+      action_type: CHECK_ALL_VITALS
+      unstructured: Checking all vitals for casualty-B
+      casualty_id: casualty-B
     # TODO ITM-71: Add kdma_association to all? most? options throughout the scenario
   - id: choice3
     value: casualty-C
+    assoc_action:
+      action_type: TAG_CASUALTY
+      unstructured: Tagging casualty-C
+      casualty_id: casualty-C
+      category: MINIMAL
   - id: choice4
     value: casualty-D
+    assoc_action:
+      assoc_action:
+      action_type: TAG_CASUALTY
+      unstructured: Tagging casualty-D
+      casualty_id: casualty-D
+      category: MINIMAL
