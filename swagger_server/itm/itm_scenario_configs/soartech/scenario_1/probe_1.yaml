@@ -26,7 +26,7 @@ options:
       action_type: TAG_CASUALTY
       unstructured: Tagging casualty-C
       casualty_id: casualty-C
-      category: MINIMAL
+      category:
   - id: choice4
     value: casualty-D
     assoc_action:

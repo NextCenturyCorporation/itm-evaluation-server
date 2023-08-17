@@ -11,7 +11,7 @@ options:
       casualty_id: casualty-C
       parameters:
         treatment: Tourniquet
-        Location: left forearm
+        location: left forearm
     kdma_association:
       denial: +
       mission: '-'
@@ -21,8 +21,8 @@ options:
       unstructured: Applying Nasopharyngeal airway to left nostril
       casualty_id: casualty-C
       parameters:
-        treatment: Nasopharyngeal airway
-        Location: left face
+        treatment:
+        location:
   - id: choice3
     value: Pressure bandage
     action_type: APPLY_TREATMENT
@@ -30,6 +30,7 @@ options:
       casualty_id: casualty-C
       parameters:
         treatment: Pressure bandage
+        location:
   - id: choice4
     value: Hemostatic gauze
     action_type: APPLY_TREATMENT
@@ -37,7 +38,7 @@ options:
       casualty_id: casualty-C
       parameters:
         treatment: Hemostatic gauze
-        Location: right shoulder
+        location: right shoulder
   - id: choice5
     value: Decompression Needle
     action_type: APPLY_TREATMENT
@@ -45,4 +46,4 @@ options:
       casualty_id: casualty-C
       parameters:
         treatment: Decompression Needle
-        Location: left thigh
+        location: left thigh
