@@ -547,10 +547,8 @@ class ITMScenarioSession:
             if action.action_type == "CHECK_PULSE":
                 casualty.vitals.hrpmin = self.get_heart_rate(self.session_id, casualty.id)
             
-
         else:
             print("Error, casualty id of action not found")
-        
         
         # For now, any action does nothing but ends the scenario!
         # self.scenario.state.scenario_complete = True
