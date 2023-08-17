@@ -225,6 +225,34 @@ class ITMScenarioSession:
                     response)
                 return response
         return 'Casualty ID not found', 404
+    
+    def get_respiration(self, session_id: str, casualty_id: str) -> int:
+        """
+        Get the heart rate of a casualty_id in the scenario.
+
+        Args:
+            session_id: The ID of the session.
+            casualty_id: The ID of the casualty_id.
+
+        Returns:
+            The heart rate of the casualty as an integer.
+        """
+
+        # Check for a valid session_id
+        (successful, message, code) = self._check_session_id(session_id)
+        if not successful:
+            return message, code
+
+        casualties: List[Casualty] = self.scenario.state.casualties
+        for casualty in casualties:
+            if casualty.id == casualty_id:
+                response = casualty.vitals.breathing
+                self._add_history(
+                    "Get Respiration",
+                    {"Session ID": self.session_id, "Casualty ID": casualty_id},
+                    response)
+                return response
+        return 'Casualty ID not found', 404
 
 
     def get_scenario_state(self, session_id: str, scenario_id: str) -> State:
@@ -508,16 +536,29 @@ class ITMScenarioSession:
 
     def update_state(self, action: Action):
         # TODO ITM-69: Update scenario state based on action
+        # keeps track of time passed based on action taken (in seconds)
+        time_passed = 0
         # Look up casualty action is applied to
         casualty = next((casualty for casualty in self.scenario.state.casualties if casualty.id == action.casualty_id), None)
         # Check we have a reference to the casualty
         if casualty:
             if action.action_type == "APPLY_TREATMENT":
+                # time in seconds each treatment type takes
+                supply_times = {
+                    "Tourniquet": 60,
+                    "Pressure bandage": 120,
+                    "Hemostatic gauze": 30,
+                    "Decompression Needle": 60,
+                    "Nasopharyngeal airway": 30
+                }
                 # using getattr in case treatment not provided as parameter
                 supplies_used = getattr(action.parameters, 'treatment', None)
                 if supplies_used in self.scenario.state.supplies:
                     # removing one instance of the supplies_used e.g Tourniquet from supplies list
                     self.scenario.state.supplies.remove(supplies_used)
+                    if supplies_used in supply_times:
+                        # increment time passed during treatment
+                        time_passed += supply_times[supplies_used]
                 else:
                     print(f"{supplies_used} is not found in the supplies list. (Possible that no parameter was supplied)")
                 
@@ -532,20 +573,31 @@ class ITMScenarioSession:
                  # getattr to account for partially specified action. If they don't tell us what to change the tag to keep it the same
                 tag = getattr(action.parameters, 'category', casualty.tag)
                 self.tag_casualty(self.session_id, casualty.id, tag)
+                time_passed += 10
             
             # I don't think updating vitals does anything here because the get_vitals and get heart rate funcs 
             # just return what is already in the casualties vitals field. Probably not needed but was included in ticket
             if action.action_type == "CHECK_ALL_VITALS":
                 vitals = self.get_vitals(self.session_id, casualty.id)
-                casualty.vitals.hrpmin = vitals.hrpmin
-                casualty.vitals.breathing = vitals.breathing
-                casualty.vitals.responsive = vitals.responsive
-                casualty.vitals.rr = vitals.rr
-                casualty.vitals.conscious = vitals.conscious
-                casualty._vitals.mm_hg = vitals.mm_hg
+                casualty.vitals = vitals
+                time_passed += 20
 
             if action.action_type == "CHECK_PULSE":
                 casualty.vitals.hrpmin = self.get_heart_rate(self.session_id, casualty.id)
+                time_passed += 10
+
+            if action.action_type == "CHECK_RESPIRATION":
+                casualty.vitals.breathing = self.get_respiration(self.session_id, casualty.id)
+                time_passed += 10
+
+            if action.action_type == "DIRECT_MOBILE_CASUALTIES":
+                time_passed += 10
+
+            if action.action_type == "SITREP":
+                # takes 10 seconds for each responsive casualty during sitrep
+                for curr_casualty in self.scenario.state.casualties:
+                    if curr_casualty.vitals.responsive:
+                        time_passed += 10
             
         else:
             print("Error, casualty id of action not found")
@@ -562,7 +614,7 @@ class ITMScenarioSession:
 
         # TODO ITM-70: Add hard-coded elapsed time model, and update in state
         # Bonus: make it externally configurable
-        self.time_elapsed_scenario_time += time_elapsed_during_treatment
+        self.time_elapsed_scenario_time += time_elapsed_during_treatment + time_passed
         self.current_isso.casualty_simulator.update_vitals(time_elapsed_during_treatment)
         self.scenario.state.elapsed_time = self.time_elapsed_scenario_time
 
