@@ -1015,6 +1015,34 @@ components:
         - - treatment: Tourniquet
           - location: right forearm
         scenario_id: scenario_id
+    ProbeOption:
+      required:
+      - id
+      - value
+      type: object
+      properties:
+        id:
+          type: string
+          description: "the choice id, having scenario scope"
+        value:
+          type: string
+          description: "a label for the choice"
+          example: Choice 5
+        assoc_action:
+          $ref: "#/components/schemas/Action"  # Reference to the Action schema
+          description: "the action associated with the choice"
+        kdma_association:
+          type: object
+          additionalProperties:
+            type: string
+          description: KDMA association of this option; always omitted in TA2 API.
+        description: an option associated with a probe
+        example:
+          kdma_association:
+            denial: "+"
+            mission: "-"
+          id: id
+          value: Choice 5
   responses:
     server_error:
       description: An exception occurred on the server; see returned error string.

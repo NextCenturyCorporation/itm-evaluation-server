@@ -5,6 +5,7 @@ from typing import List, Dict
 from dataclasses import dataclass, field
 from swagger_server.models.probe import Probe  # noqa: F401,E501
 from swagger_server.models.probe_option import ProbeOption  # noqa: F401,E501
+from swagger_server.models.action import Action
 from .itm_probe_system import ITMProbeSystem
 
 
@@ -35,6 +36,7 @@ class ProbeYamlKDMAAssociation:
 class ProbeYamlOptions:
     id: str = None
     value: str = None
+    assoc_action: Action = None
     kdma_association: ProbeYamlKDMAAssociation = None
 
     @staticmethod
@@ -42,6 +44,7 @@ class ProbeYamlOptions:
         return ProbeYamlOptions(
             id=obj.get("id"),
             value=obj.get("value"),
+            assoc_action=obj.get("assoc_action"),
             kdma_association=ProbeYamlKDMAAssociation.from_dict(obj.get("kdma_association", {}))
         )
     
@@ -49,6 +52,7 @@ class ProbeYamlOptions:
         return ProbeOption(
             id=self.id,
             value=self.value,
+            assoc_action = self.assoc_action,
             kdma_association=self.kdma_association.to_kdma_associtation()
         )
 

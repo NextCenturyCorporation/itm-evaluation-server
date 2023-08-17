@@ -12,7 +12,7 @@ from swagger_server.models import (
     Casualty,
     Scenario,
     State,
-    Vitals,
+    Vitals
 )
 from swagger_server.models.probe_response import ProbeResponse
 from .itm_database.itm_mongo import MongoDB
@@ -508,9 +508,50 @@ class ITMScenarioSession:
 
     def update_state(self, action: Action):
         # TODO ITM-69: Update scenario state based on action
+        # Look up casualty action is applied to
+        casualty = next((casualty for casualty in self.scenario.state.casualties if casualty.id == action.casualty_id), None)
+        # Check we have a reference to the casualty
+        if casualty:
+            if action.action_type == "APPLY_TREATMENT":
+                # using getattr in case treatment not provided as parameter
+                supplies_used = getattr(action.parameters, 'treatment', None)
+                if supplies_used in self.scenario.state.supplies:
+                    # removing one instance of the supplies_used e.g Tourniquet from supplies list
+                    self.scenario.state.supplies.remove(supplies_used)
+                else:
+                    print(f"{supplies_used} is not found in the supplies list. (Possible that no parameter was supplied)")
+                
+                # remove injury from casualty
+                for injury in casualty.injuries:
+                    if injury.location == action.parameters.location:
+                        casualty.remove(injury)
+                        break
+            
+            # if tagging a casualty then update the tag to the category parameter
+            if action.action_type == "TAG_CASUALTY":
+                 # getattr to account for partially specified action. If they don't tell us what to change the tag to keep it the same
+                tag = getattr(action.parameters, 'category', casualty.tag)
+                self.tag_casualty(self.session_id, casualty.id, tag)
+            
+            # I don't think updating vitals does anything here because the get_vitals and get heart rate funcs 
+            # just return what is already in the casualties vitals field. Probably not needed but was included in ticket
+            if action.action_type == "CHECK_ALL_VITALS":
+                vitals = self.get_vitals(self.session_id, casualty.id)
+                casualty.vitals.hrpmin = vitals.hrpmin
+                casualty.vitals.breathing = vitals.breathing
+                casualty.vitals.responsive = vitals.responsive
+                casualty.vitals.rr = vitals.rr
+                casualty.vitals.conscious = vitals.conscious
+                casualty._vitals.mm_hg = vitals.mm_hg
 
+            if action.action_type == "CHECK_PULSE":
+                casualty.vitals.hrpmin = self.get_heart_rate(self.session_id, casualty.id)
+            
+        else:
+            print("Error, casualty id of action not found")
+        
         # For now, any action does nothing but ends the scenario!
-        self.scenario.state.scenario_complete = True
+        # self.scenario.state.scenario_complete = True
 
         # TODO ITM-72: Enhance casualty deterioration/amelioration
         # Ultimately, this should update values based DIRECTLY on how the sim does it
@@ -589,6 +630,10 @@ class ITMScenarioSession:
         # TODO ITM-71: Add "training mode" that returns KDMA associations
         # TODO ITM-67: Return a list of available actions based on associated actions in scenario/probe configuration
         actions: List[Action] = []
-        actions.append(Action(scenario_id=self.scenario.id, action_type="SITREP"))
+        # read probe from yaml requires path to the yaml file leaving blank for now
+        probeYamlList = self.current_isso.probe_system.read_all_probes_yamls_for_scenario()
+        for probeYaml in probeYamlList:
+            for option in probeYaml.options:
+                actions.append(option.assoc_action)
 
         return actions
