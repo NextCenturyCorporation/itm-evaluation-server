@@ -3,6 +3,7 @@ import uuid
 import random
 import os
 import connexion
+import json
 from typing import List, Union
 from copy import deepcopy
 
@@ -544,21 +545,16 @@ class ITMScenarioSession:
         if casualty:
             if action.action_type == "APPLY_TREATMENT":
                 # time in seconds each treatment type takes
-                supply_times = {
-                    "Tourniquet": 60,
-                    "Pressure bandage": 120,
-                    "Hemostatic gauze": 30,
-                    "Decompression Needle": 60,
-                    "Nasopharyngeal airway": 30
-                }
+                with open("treatment_times_config/example.json", 'r') as json_file:
+                    treatment_times_dict = json.load(json_file)
                 # using getattr in case treatment not provided as parameter
                 supplies_used = getattr(action.parameters, 'treatment', None)
                 if supplies_used in self.scenario.state.supplies:
                     # removing one instance of the supplies_used e.g Tourniquet from supplies list
                     self.scenario.state.supplies.remove(supplies_used)
-                    if supplies_used in supply_times:
+                    if supplies_used in treatment_times_dict:
                         # increment time passed during treatment
-                        time_passed += supply_times[supplies_used]
+                        time_passed += treatment_times_dict[supplies_used]
                 else:
                     print(f"{supplies_used} is not found in the supplies list. (Possible that no parameter was supplied)")
                 
