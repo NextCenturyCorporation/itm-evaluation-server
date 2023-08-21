@@ -7,10 +7,10 @@ options:
   - id: choice1
     value: Tourniquet
     action_type: APPLY_TREATMENT
-      unstructured: Applying a tourniquet to left forearm
-      casualty_id: casualty-A
-      parameters:
-        treatment: Tourniquet
+    unstructured: Applying a tourniquet to left forearm
+    casualty_id: casualty-A
+    parameters:
+      - treatment: Tourniquet
         location: left forearm
     kdma_association:
       denial: +
@@ -18,32 +18,32 @@ options:
   - id: choice2
     value: Nasopharyngeal airway
     action_type: APPLY_TREATMENT
-      unstructured: Applying Nasopharyngeal airway to left nostril
-      casualty_id: casualty-A
-      parameters:
-        treatment:
-        location:
+    unstructured: Applying Nasopharyngeal airway to left nostril
+    casualty_id: casualty-A
+    parameters:
+      - treatment: 
+        location: 
   - id: choice3
     value: Pressure bandage
     action_type: APPLY_TREATMENT
-      unstructured: Applying Pressure bandage to left shoulder
-      casualty_id: casualty-A
-      parameters:
-        treatment: Pressure bandage
+    unstructured: Applying Pressure bandage to left shoulder
+    casualty_id: casualty-A
+    parameters:
+      - treatment: Pressure bandage
         location:
   - id: choice4
     value: Hemostatic gauze
     action_type: APPLY_TREATMENT
-      unstructured: Applying Hemostatic gauze to right shoulder
-      casualty_id: casualty-A
-      parameters:
-        treatment: Hemostatic gauze
+    unstructured: Applying Hemostatic gauze to right shoulder
+    casualty_id: casualty-A
+    parameters:
+      - treatment: Hemostatic gauze
         location: right shoulder
   - id: choice5
     value: Decompression Needle
     action_type: APPLY_TREATMENT
-      unstructured: Applying Decompression Needle to left thigh
-      casualty_id: casualty-A
-      parameters:
-        treatment: Decompression Needle
+    unstructured: Applying Decompression Needle to left thigh
+    casualty_id: casualty-A
+    parameters:
+      - treatment: Decompression Needle
         location: left thigh
