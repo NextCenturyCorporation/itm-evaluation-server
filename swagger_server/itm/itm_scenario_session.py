@@ -125,8 +125,15 @@ class ITMScenarioSession:
             raise ValueError('Invalid or Malformed Action: Missing scenario_id or action_type')
         
         if action.casualty_id and not isinstance(action.casualty_id, str):
-            raise ValueError('Invalid or Malformed Action: Invalid casualty_id')
-        
+            # if casualty id is not a str
+            if not isinstance(action.casualty_id, str):
+                raise ValueError('Invalid or Malformed Action: Invalid casualty_id')
+            else:
+                # see if casualty id of action actually maps to a casualty id in state
+                casualty = next((casualty for casualty in self.scenario.state.casualties if casualty.id == action.casualty_id), None)
+                if casualty is None:
+                    raise ValueError('Casualty id not found in state')
+                
         if action.unstructured and not isinstance(action.unstructured, str):
             raise ValueError('Invalid or Malformed Action: Invalid unstructured description')
         
@@ -584,7 +591,7 @@ class ITMScenarioSession:
         
         # if tagging a casualty then update the tag to the category parameter
         if action.action_type == "TAG_CASUALTY":
-                # getattr to account for partially specified action. If they don't tell us what to change the tag to keep it the same
+            # getattr to account for partially specified action. If they don't tell us what to change the tag to keep it the same
             tag = getattr(action.parameters, 'category', casualty.tag)
             self.tag_casualty(self.session_id, casualty.id, tag)
             time_passed += 10
