@@ -1036,13 +1036,13 @@ components:
           additionalProperties:
             type: string
           description: KDMA association of this option; always omitted in TA2 API.
-        description: an option associated with a probe
-        example:
-          kdma_association:
-            denial: "+"
-            mission: "-"
-          id: id
-          value: Choice 5
+      description: an option associated with a probe
+      example:
+        kdma_association:
+          denial: "+"
+          mission: "-"
+        id: id
+        value: Choice 5
   responses:
     server_error:
       description: An exception occurred on the server; see returned error string.
