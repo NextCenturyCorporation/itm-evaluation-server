@@ -106,6 +106,9 @@ class ITMProbeReader(ITMProbeSystem):
         Reads all probe YAML files from the provided 'yaml_path' directory and 
         its subdirectory named after 'scenario_name', and stores them in a list.
         """
+        # normalize slashes in path according to operating system (linux vs windows)
+        yaml_path = os.path.normpath(yaml_path)
+        
         probe_yamls = []
         probe_files = sorted(glob.glob(os.path.join(yaml_path, 'probe*.yaml')))
         for filepath in probe_files:
