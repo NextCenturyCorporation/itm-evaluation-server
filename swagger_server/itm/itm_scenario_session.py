@@ -562,62 +562,57 @@ class ITMScenarioSession:
         # Look up casualty action is applied to
         casualty = next((casualty for casualty in self.scenario.state.casualties if casualty.id == action.casualty_id), None)
         # Check we have a reference to the casualty
-        if casualty:
-            if action.action_type == "APPLY_TREATMENT":
-                # load in time (in seconds) each treatment type takes
-                with open("treatment_times_config/example.json", 'r') as json_file:
-                    treatment_times_dict = json.load(json_file)
-                # using getattr in case treatment not provided as parameter
-                supplies_used = getattr(action.parameters, 'treatment', None)
-                if supplies_used in self.scenario.state.supplies:
+        if action.action_type == "APPLY_TREATMENT":
+            # load in time (in seconds) each treatment type takes
+            with open("treatment_times_config/example.json", 'r') as json_file:
+                treatment_times_dict = json.load(json_file)
+            # using getattr in case treatment not provided as parameter
+            supplies_used = getattr(action.parameters, 'treatment', None)
+            for supply in self.scenario.state.supplies:
+                if supply.type == supplies_used:
                     # removing one instance of the supplies_used e.g Tourniquet from supplies list
-                    self.scenario.state.supplies.remove(supplies_used)
+                    supply.quantity -= 1
                     if supplies_used in treatment_times_dict:
                         # increment time passed during treatment
                         time_passed += treatment_times_dict[supplies_used]
-                else:
-                    print(f"{supplies_used} is not found in the supplies list. (Possible that no parameter was supplied)")
-                
-                # remove injury from casualty
-                for injury in casualty.injuries:
-                    if injury.location == action.parameters.location:
-                        casualty.remove(injury)
-                        break
             
-            # if tagging a casualty then update the tag to the category parameter
-            if action.action_type == "TAG_CASUALTY":
-                 # getattr to account for partially specified action. If they don't tell us what to change the tag to keep it the same
-                tag = getattr(action.parameters, 'category', casualty.tag)
-                self.tag_casualty(self.session_id, casualty.id, tag)
-                time_passed += 10
-            
-            # I don't think updating vitals does anything here because the get_vitals and get heart rate funcs 
-            # just return what is already in the casualties vitals field. Probably not needed but was included in ticket
-            if action.action_type == "CHECK_ALL_VITALS":
-                vitals = self.get_vitals(self.session_id, casualty.id)
-                casualty.vitals = vitals
-                time_passed += 20
-
-            if action.action_type == "CHECK_PULSE":
-                casualty.vitals.hrpmin = self.get_heart_rate(self.session_id, casualty.id)
-                time_passed += 10
-
-            if action.action_type == "CHECK_RESPIRATION":
-                casualty.vitals.breathing = self.get_respiration(self.session_id, casualty.id)
-                time_passed += 10
-
-            if action.action_type == "DIRECT_MOBILE_CASUALTIES":
-                time_passed += 10
-
-            if action.action_type == "SITREP":
-                # takes 10 seconds for each responsive casualty during sitrep
-                for curr_casualty in self.scenario.state.casualties:
-                    if curr_casualty.vitals.responsive:
-                        time_passed += 10
-            
-        else:
-            print("Error, casualty id of action not found")
+            # remove injury from casualty
+            for injury in casualty.injuries:
+                if injury.location == action.parameters.location:
+                    casualty.remove(injury)
+                    break
         
+        # if tagging a casualty then update the tag to the category parameter
+        if action.action_type == "TAG_CASUALTY":
+                # getattr to account for partially specified action. If they don't tell us what to change the tag to keep it the same
+            tag = getattr(action.parameters, 'category', casualty.tag)
+            self.tag_casualty(self.session_id, casualty.id, tag)
+            time_passed += 10
+        
+        # I don't think updating vitals does anything here because the get_vitals and get heart rate funcs 
+        # just return what is already in the casualties vitals field. Probably not needed but was included in ticket
+        if action.action_type == "CHECK_ALL_VITALS":
+            vitals = self.get_vitals(self.session_id, casualty.id)
+            casualty.vitals = vitals
+            time_passed += 20
+
+        if action.action_type == "CHECK_PULSE":
+            casualty.vitals.hrpmin = self.get_heart_rate(self.session_id, casualty.id)
+            time_passed += 10
+
+        if action.action_type == "CHECK_RESPIRATION":
+            casualty.vitals.breathing = self.get_respiration(self.session_id, casualty.id)
+            time_passed += 10
+
+        if action.action_type == "DIRECT_MOBILE_CASUALTIES":
+            time_passed += 10
+
+        if action.action_type == "SITREP":
+            # takes 10 seconds for each responsive casualty during sitrep
+            for curr_casualty in self.scenario.state.casualties:
+                if curr_casualty.vitals.responsive:
+                    time_passed += 10
+    
         # For now, any action does nothing but ends the scenario!
         # self.scenario.state.scenario_complete = True
 
