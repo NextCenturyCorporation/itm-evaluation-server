@@ -119,7 +119,27 @@ class ITMScenarioSession:
         """
         # TODO ITM-74: Validate that action is well-formed
         if action is None:
-            return False, 'Invalid or Malformed Action', 400
+            raise ValueError('Invalid or Malformed Action')
+        
+        if not action.scenario_id or not action.action_type or action.scenario_id == "" or action.action_type == "":
+            raise ValueError('Invalid or Malformed Action: Missing scenario_id or action_type')
+        
+        if action.casualty_id and not isinstance(action.casualty_id, str):
+            raise ValueError('Invalid or Malformed Action: Invalid casualty_id')
+        
+        if action.unstructured and not isinstance(action.unstructured, str):
+            raise ValueError('Invalid or Malformed Action: Invalid unstructured description')
+        
+        if action.justification and not isinstance(action.justification, str):
+            raise ValueError('Invalid or Malformed Action: Invalid justification')
+        
+        if action.parameters:
+            if not isinstance(action.parameters, list):
+                raise ValueError('Invalid or Malformed Action: Parameters must be a list')
+            for param in action.parameters:
+                if not isinstance(param, dict) or any(key != 'str' or value != 'str' for key, value in param.items()):
+                    raise ValueError('Invalid or Malformed Action: Invalid parameter format')
+        
         return True, '', 0
 
     def _end_scenario(self):
@@ -544,7 +564,7 @@ class ITMScenarioSession:
         # Check we have a reference to the casualty
         if casualty:
             if action.action_type == "APPLY_TREATMENT":
-                # time in seconds each treatment type takes
+                # load in time (in seconds) each treatment type takes
                 with open("treatment_times_config/example.json", 'r') as json_file:
                     treatment_times_dict = json.load(json_file)
                 # using getattr in case treatment not provided as parameter
