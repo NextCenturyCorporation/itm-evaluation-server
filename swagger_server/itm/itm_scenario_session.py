@@ -147,8 +147,9 @@ class ITMScenarioSession:
             if not isinstance(action.parameters, list):
                 raise ValueError('Invalid or Malformed Action: Parameters must be a list')
             for param in action.parameters:
-                if not isinstance(param, dict) or any(key != 'str' or value != 'str' for key, value in param.items()):
+                if not isinstance(param, dict) or any(not isinstance(key, str) or not isinstance(value, str) for key, value in param.items()):
                     raise ValueError('Invalid or Malformed Action: Invalid parameter format')
+
         
         return True, '', 0
 
