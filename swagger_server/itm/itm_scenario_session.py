@@ -22,10 +22,6 @@ from .itm_session_scenario_object import (
     ITMSessionScenarioObject
 )
 
-from itm_probe_reader import (
-    ProbeYaml,
-    ProbeYamlOptions
-)
 class ITMScenarioSession:
     """
     Class for representing and manipulating a simulation scenario session.
@@ -692,7 +688,6 @@ class ITMScenarioSession:
         Returns:
             The current state of the scenario as a State object.
         """
-
         # Check for a valid session_id and scenario_id
         (successful, message, code) = self._check_session_id(session_id)
         if not successful:

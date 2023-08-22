@@ -6,44 +6,54 @@ state: {}
 options:
   - id: choice1
     value: Tourniquet
-    action_type: APPLY_TREATMENT
-    unstructured: Applying a tourniquet to left forearm
-    casualty_id: casualty-D
-    parameters:
-      - treatment: Tourniquet
-        location: left forearm
+    assoc_action:
+      scenario_id: september-demo-scenario-1
+      action_type: APPLY_TREATMENT
+      unstructured: Applying a tourniquet to left forearm
+      casualty_id: casualty-D
+      parameters:
+        - treatment: Tourniquet
+          location: left forearm
     kdma_association:
       denial: +
       mission: '-'
   - id: choice2
     value: Nasopharyngeal airway
-    action_type: APPLY_TREATMENT
-    unstructured: Applying Nasopharyngeal airway to left nostril
-    casualty_id: casualty-D
-    parameters:
-      - treatment: Nasopharyngeal airway
-        location: left face
+    assoc_action:
+      scenario_id: september-demo-scenario-1
+      action_type: APPLY_TREATMENT
+      unstructured: Applying Nasopharyngeal airway to left nostril
+      casualty_id: casualty-D
+      parameters:
+        - treatment: Nasopharyngeal airway
+          location: left face
   - id: choice3
     value: Pressure bandage
-    action_type: APPLY_TREATMENT
-    unstructured: Applying Pressure bandage to left shoulder
-    casualty_id: casualty-D
-    parameters:
-      - treatment: Pressure bandage
-        location:
+    assoc_action:
+      scenario_id: september-demo-scenario-1
+      action_type: APPLY_TREATMENT
+      unstructured: Applying Pressure bandage to left shoulder
+      casualty_id: casualty-D
+      parameters:
+        - treatment: Pressure bandage
+          location:
   - id: choice4
     value: Hemostatic gauze
-    action_type: APPLY_TREATMENT
-    unstructured: Applying Hemostatic gauze to right shoulder
-    casualty_id: casualty-D
-    parameters:
-      - treatment: Hemostatic gauze
-        location: right shoulder
+    assoc_action:
+      scenario_id: september-demo-scenario-1
+      action_type: APPLY_TREATMENT
+      unstructured: Applying Hemostatic gauze to right shoulder
+      casualty_id: casualty-D
+      parameters:
+        - treatment: Hemostatic gauze
+          location: right shoulder
   - id: choice5
     value: Decompression Needle
-    action_type: APPLY_TREATMENT
-    unstructured: Applying Decompression Needle to left thigh
-    casualty_id: casualty-D
-    parameters:
-      - treatment: Decompression Needle
-        location: left thigh
+    assoc_action:
+      scenario_id: september-demo-scenario-1
+      action_type: APPLY_TREATMENT
+      unstructured: Applying Decompression Needle to left thigh
+      casualty_id: casualty-D
+      parameters:
+        - treatment: Decompression Needle
+          location: left thigh
