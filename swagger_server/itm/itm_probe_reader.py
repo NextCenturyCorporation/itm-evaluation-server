@@ -97,20 +97,21 @@ class ITMProbeReader(ITMProbeSystem):
         Initialize an instance of ITMProbeReader.
         """
         super().__init__()
-        self.probe_yamls: List[ProbeYaml] = self.read_all_probes_yamls_for_scenario(yaml_path)
+        self.yaml_path = yaml_path
+        self.probe_yamls: List[ProbeYaml] = self.read_all_probes_yamls_for_scenario()
         self.current_probe_index = 0
         self.probe_count = len(self.probe_yamls)
 
-    def read_all_probes_yamls_for_scenario(self, yaml_path: str) -> List[ProbeYaml]:
+    def read_all_probes_yamls_for_scenario(self) -> List[ProbeYaml]:
         """
         Reads all probe YAML files from the provided 'yaml_path' directory and 
         its subdirectory named after 'scenario_name', and stores them in a list.
         """
         # normalize slashes in path according to operating system (linux vs windows)
-        yaml_path = os.path.normpath(yaml_path)
+        self.yaml_path = os.path.normpath(self.yaml_path)
         
         probe_yamls = []
-        probe_files = sorted(glob.glob(os.path.join(yaml_path, 'probe*.yaml')))
+        probe_files = sorted(glob.glob(os.path.join(self.yaml_path, 'probe*.yaml')))
         for filepath in probe_files:
             with open(filepath, 'r') as file:
                 yaml_text = file.read()
