@@ -571,7 +571,7 @@ class ITMScenarioSession:
         # Check we have a reference to the casualty
         if action.action_type == "APPLY_TREATMENT":
             # load in time (in seconds) each treatment type takes
-            with open("treatment_times_config/example.json", 'r') as json_file:
+            with open("swagger_server/itm/treatment_times_config/example.json", 'r') as json_file:
                 treatment_times_dict = json.load(json_file)
             # using getattr in case treatment not provided as parameter
             supplies_used = getattr(action.parameters, 'treatment', None)
