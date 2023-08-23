@@ -14,9 +14,11 @@ class Action(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, scenario_id: str=None, action_type: str=None, casualty_id: str=None, unstructured: str=None, justification: str=None, parameters: List[Dict[str, str]]=None):  # noqa: E501
+    def __init__(self, kdma_association: List[Dict[str, str]]=None, scenario_id: str=None, action_type: str=None, casualty_id: str=None, unstructured: str=None, justification: str=None, parameters: List[Dict[str, str]]=None):  # noqa: E501
         """Action - a model defined in Swagger
 
+        :param kdma_association: The kdma_association of this Action.  # noqa: E501
+        :type kdma_association: List[Dict[str, str]]
         :param scenario_id: The scenario_id of this Action.  # noqa: E501
         :type scenario_id: str
         :param action_type: The action_type of this Action.  # noqa: E501
@@ -31,6 +33,7 @@ class Action(Model):
         :type parameters: List[Dict[str, str]]
         """
         self.swagger_types = {
+            'kdma_association': List[Dict[str, str]],
             'scenario_id': str,
             'action_type': str,
             'casualty_id': str,
@@ -40,6 +43,7 @@ class Action(Model):
         }
 
         self.attribute_map = {
+            'kdma_association': 'kdma_association',
             'scenario_id': 'scenario_id',
             'action_type': 'action_type',
             'casualty_id': 'casualty_id',
@@ -47,6 +51,7 @@ class Action(Model):
             'justification': 'justification',
             'parameters': 'parameters'
         }
+        self._kdma_association = kdma_association
         self._scenario_id = scenario_id
         self._action_type = action_type
         self._casualty_id = casualty_id
@@ -64,6 +69,29 @@ class Action(Model):
         :rtype: Action
         """
         return util.deserialize_model(dikt, cls)
+
+    @property
+    def kdma_association(self) -> List[Dict[str, str]]:
+        """Gets the kdma_association of this Action.
+
+        an array of action-specific parameters  # noqa: E501
+
+        :return: The kdma_association of this Action.
+        :rtype: List[Dict[str, str]]
+        """
+        return self._kdma_association
+
+    @kdma_association.setter
+    def kdma_association(self, kdma_association: List[Dict[str, str]]):
+        """Sets the kdma_association of this Action.
+
+        an array of action-specific parameters  # noqa: E501
+
+        :param kdma_association: The kdma_association of this Action.
+        :type kdma_association: List[Dict[str, str]]
+        """
+
+        self._kdma_association = kdma_association
 
     @property
     def scenario_id(self) -> str:

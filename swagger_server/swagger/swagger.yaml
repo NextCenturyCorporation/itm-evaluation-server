@@ -966,6 +966,17 @@ components:
       - scenario_id
       type: object
       properties:
+        kdma_association:
+          type: array
+          description: an array of action-specific parameters
+          items:
+            type: object
+            additionalProperties:
+              type: string
+            description: key-value pairs containing additional action-specific parameters
+            example:
+            - denial: +
+            - mission: '-'
         scenario_id:
           type: string
           description: scenario ID this probe is for
