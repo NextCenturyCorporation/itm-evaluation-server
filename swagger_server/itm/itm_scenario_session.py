@@ -592,9 +592,12 @@ class ITMScenarioSession:
         # if tagging a casualty then update the tag to the category parameter
         if action.action_type == "TAG_CASUALTY":
             # getattr to account for partially specified action. If they don't tell us what to change the tag to keep it the same
-            tag = getattr(action.parameters, 'category', casualty.tag)
-            self.tag_casualty(self.session_id, casualty.id, tag)
-            time_passed += 10
+            tag = getattr(action.parameters, 'category', None)
+            if tag is not None:
+                self.tag_casualty(self.session_id, casualty.id, tag)
+                time_passed += 10
+            else:
+                raise ValueError("Error. No category for tag provided.")
         
         # I don't think updating vitals does anything here because the get_vitals and get heart rate funcs 
         # just return what is already in the casualties vitals field. Probably not needed but was included in ticket
