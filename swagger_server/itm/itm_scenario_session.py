@@ -122,17 +122,36 @@ class ITMScenarioSession:
         
         if not action.scenario_id or not action.action_type or action.scenario_id == "" or action.action_type == "":
             raise ValueError('Invalid or Malformed Action: Missing scenario_id or action_type')
+
+
+        if action.action_type == "APPLY_TREATMENT":
+            # Apply treatment requires a casualty id and parameters, casualty and location 
+            if not action.casualty_id:
+                raise ValueError('Invalid or Malformed Action: Missing casualty_id for APPLY_TREATMENT')
+            # treatment and location
+            if not action.parameters or not "treatment" in action.parameters or not "location" in action.parameters:
+                raise ValueError('Invalid or Malformed Action: Missing parameters for APPLY_TREATMENT')
         
-        if action.casualty_id and not isinstance(action.casualty_id, str):
-            # if casualty id is not a str
-            if not isinstance(action.casualty_id, str):
-                raise ValueError('Invalid or Malformed Action: Invalid casualty_id')
-            else:
-                # see if casualty id of action actually maps to a casualty id in state
-                casualty = next((casualty for casualty in self.scenario.state.casualties if casualty.id == action.casualty_id), None)
-                if casualty is None:
-                    raise ValueError('Casualty id not found in state')
-                
+        elif action.action_type == "DIRECT_MOBILE_CASUALTIES" or action.action_type == "SITREP":
+            # sitrep optionally takes a casualty id and direct_mobile_casualties doesn't need one
+            pass 
+        
+        elif action.action_type == "CHECK_ALL_VITALS" or action.action_type == "CHECK_PULSE" or action.action_type == "CHECK_RESPIRATION":
+            # All require casualty_id
+            if not action.casualty_id:
+                raise ValueError('Invalid or Malformed Action: Missing casualty_id for CHECK_ALL_VITALS')
+        
+        elif action.action_type == "TAG_CASUALTY":
+            # Requires casualty_id and category parameter
+            if not action.casualty_id:
+                raise ValueError('Invalid or Malformed Action: Missing casualty_id for TAG_CASUALTY')
+            if not action.parameters or not "category" in action.parameters:
+                raise ValueError('Invalid or Malformed Action: Missing parameters for TAG_CASUALTY')
+        
+        else:
+            raise ValueError('Invalid action_type')
+        
+        # type checks for possible fields
         if action.unstructured and not isinstance(action.unstructured, str):
             raise ValueError('Invalid or Malformed Action: Invalid unstructured description')
         
