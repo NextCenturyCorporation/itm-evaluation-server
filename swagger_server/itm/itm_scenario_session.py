@@ -123,6 +123,10 @@ class ITMScenarioSession:
         if not action.scenario_id or not action.action_type or action.scenario_id == "" or action.action_type == "":
             raise ValueError('Invalid or Malformed Action: Missing scenario_id or action_type')
 
+        # lookup casualty id in state
+        casualty = None
+        if action.casualty_id:
+            casualty = next((casualty for casualty in self.scenario.state.casualties if casualty.id == action.casualty_id), None)
 
         if action.action_type == "APPLY_TREATMENT":
             # Apply treatment requires a casualty id and parameters, casualty and location 
@@ -131,6 +135,8 @@ class ITMScenarioSession:
             # treatment and location
             if not action.parameters or not "treatment" in action.parameters or not "location" in action.parameters:
                 raise ValueError('Invalid or Malformed Action: Missing parameters for APPLY_TREATMENT')
+            if not casualty:
+                raise ValueError('Casualty not found in state')
         
         elif action.action_type == "DIRECT_MOBILE_CASUALTIES" or action.action_type == "SITREP":
             # sitrep optionally takes a casualty id and direct_mobile_casualties doesn't need one
@@ -140,11 +146,16 @@ class ITMScenarioSession:
             # All require casualty_id
             if not action.casualty_id:
                 raise ValueError('Invalid or Malformed Action: Missing casualty_id for CHECK_ALL_VITALS')
+            if not casualty:
+                raise ValueError('Casualty not found in state')
+            
         
         elif action.action_type == "TAG_CASUALTY":
             # Requires casualty_id and category parameter
             if not action.casualty_id:
                 raise ValueError('Invalid or Malformed Action: Missing casualty_id for TAG_CASUALTY')
+            if not casualty:
+                raise ValueError('Casualty not found in state')
             if not action.parameters or not "category" in action.parameters:
                 raise ValueError('Invalid or Malformed Action: Missing parameters for TAG_CASUALTY')
         
@@ -610,12 +621,13 @@ class ITMScenarioSession:
         
         # if tagging a casualty then update the tag to the category parameter
         if action.action_type == "TAG_CASUALTY":
-            # getattr to account for partially specified action. If they don't tell us what to change the tag to keep it the same
+            # getattr to account for partially specified action
             tag = getattr(action.parameters, 'category', None)
             if tag is not None:
                 self.tag_casualty(self.session_id, casualty.id, tag)
                 time_passed += 10
             else:
+                # If validate action is used, there should always be a category
                 raise ValueError("Error. No category for tag provided.")
         
         # I don't think updating vitals does anything here because the get_vitals and get heart rate funcs 
