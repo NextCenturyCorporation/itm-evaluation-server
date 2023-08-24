@@ -670,6 +670,9 @@ class ITMScenarioSession:
         self.current_isso.casualty_simulator.update_vitals(time_elapsed_during_treatment)
         self.scenario.state.elapsed_time = self.time_elapsed_scenario_time
 
+        # Action has been taken, move on to next probe
+        self.current_isso.probe_system.remaining_probes.pop(0)
+
 
     def take_action(self, session_id: str, body: Action) -> State:
         """
@@ -739,9 +742,6 @@ class ITMScenarioSession:
         if self.current_isso.probe_system.remaining_probes:
             for option in self.current_isso.probe_system.remaining_probes[0].options:
                 actions.append(option.assoc_action)
-
-             # Remove the first element from remaining_probes
-            self.current_isso.probe_system.remaining_probes.pop(0)
         else:
             print("No remaining probes respond to")
 
