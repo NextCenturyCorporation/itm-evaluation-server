@@ -137,19 +137,15 @@ class ITMScenarioSession:
                 raise ValueError('Invalid or Malformed Action: Missing parameters for APPLY_TREATMENT')
             if not casualty:
                 raise ValueError('Casualty not found in state')
-        
         elif action.action_type == "DIRECT_MOBILE_CASUALTIES" or action.action_type == "SITREP":
             # sitrep optionally takes a casualty id and direct_mobile_casualties doesn't need one
             pass 
-        
         elif action.action_type == "CHECK_ALL_VITALS" or action.action_type == "CHECK_PULSE" or action.action_type == "CHECK_RESPIRATION":
             # All require casualty_id
             if not action.casualty_id:
                 raise ValueError('Invalid or Malformed Action: Missing casualty_id for CHECK_ALL_VITALS')
             if not casualty:
                 raise ValueError('Casualty not found in state')
-            
-        
         elif action.action_type == "TAG_CASUALTY":
             # Requires casualty_id and category parameter
             if not action.casualty_id:
@@ -158,7 +154,6 @@ class ITMScenarioSession:
                 raise ValueError('Casualty not found in state')
             if not action.parameters or not "category" in action.parameters:
                 raise ValueError('Invalid or Malformed Action: Missing parameters for TAG_CASUALTY')
-        
         else:
             raise ValueError('Invalid action_type')
         
@@ -587,9 +582,14 @@ class ITMScenarioSession:
         Args:
             body: The probe response body as a dict.
         """
-
+        currentProbe = self.current_isso.probe_system.remaining_probes[0]
+        choice_id = ""
+        # need to go back through to find the choice from probeYamlOption (not stored in action)
+        for option in currentProbe.options:
+            if option.assoc_action.__dict__ == action.__dict__:
+                choice_id = option.id
         # TODO ITM-75: Map ADM action back to a TA1 probe response
-        return ProbeResponse(scenario_id=action.scenario_id, probe_id="september-demo-probe-1", choice="choice1")
+        return ProbeResponse(scenario_id=action.scenario_id, probe_id=currentProbe.id, choice=choice_id)
 
 
     def update_state(self, action: Action):
@@ -701,7 +701,7 @@ class ITMScenarioSession:
 
         # Respond to probe with TA1
         # NOTE: Not all actions will necessarily result in a probe response
-        #self.respond_to_probe(body=response)
+        self.respond_to_probe(body=response)
 
         # Update scenario state
         self.update_state(action=body)
