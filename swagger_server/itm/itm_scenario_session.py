@@ -733,9 +733,16 @@ class ITMScenarioSession:
         # TODO ITM-71: Add "training mode" that returns KDMA associations
         # TODO ITM-67: Return a list of available actions based on associated actions in scenario/probe configuration
         actions: List[Action] = []
-        # read probe from yaml requires path to the yaml file leaving blank for now
-        for probeYaml in self.current_isso.probe_system.probe_yamls:
-            for option in probeYaml.options:
+        
+        # TODO When an action takes place, that action should be removed from the probeYaml's option list!
+        # tackle one probe at a time, after all available actions are returned for that probe remove it from reamingin probes
+        if self.current_isso.probe_system.remaining_probes:
+            for option in self.current_isso.probe_system.remaining_probes[0].options:
                 actions.append(option.assoc_action)
+
+             # Remove the first element from remaining_probes
+            self.current_isso.probe_system.remaining_probes.pop(0)
+        else:
+            print("No remaining probes respond to")
 
         return actions
