@@ -401,7 +401,7 @@ class ITMScenarioSession:
                             start_time=None, state=None, triage_categories=None)
 
 
-    def start_session(self, adm_name: str, session_type: str, max_scenarios=None) -> str:
+    def start_session(self, adm_name: str, session_type: str, kdma_training: bool, max_scenarios=None) -> str:
         """
         Start a new session.
 
@@ -424,7 +424,8 @@ class ITMScenarioSession:
             self.session_id = str(uuid.uuid4())
         else:
             return 'System Overload', 418
-
+        
+        self.kdma_training = kdma_training
         self.adm_name = adm_name
         self.session_issos = []
         self.session_type = session_type
@@ -585,14 +586,14 @@ class ITMScenarioSession:
             
             # remove injury from casualty
             for injury in casualty.injuries:
-                if injury.location == action.parameters.location:
+                if injury.location == getattr(action.parameters, 'location', None):
                     casualty.remove(injury)
                     break
-        
+
         # if tagging a casualty then update the tag to the category parameter
         if action.action_type == "TAG_CASUALTY":
             # getattr to account for partially specified action. If they don't tell us what to change the tag to keep it the same
-            tag = getattr(action.parameters, 'category', None)
+            tag = getattr(action.parameters, 'category', casualty.tag)
             if tag is not None:
                 self.tag_casualty(self.session_id, casualty.id, tag)
                 time_passed += 10
@@ -698,13 +699,15 @@ class ITMScenarioSession:
         (successful, message, code) = self._check_scenario_id(scenario_id)
         if not successful:
             return message, code
-
+        
         # TODO ITM-71: Add "training mode" that returns KDMA associations
         # TODO ITM-67: Return a list of available actions based on associated actions in scenario/probe configuration
         actions: List[Action] = []
         # read probe from yaml requires path to the yaml file leaving blank for now
         for probeYaml in self.current_isso.probe_system.probe_yamls:
             for option in probeYaml.options:
+                # remove kdma_assoc if flag is not flipped
+                if (not self.kdma_training):
+                    option.assoc_action.pop('kdma_association', None)
                 actions.append(option.assoc_action)
-
         return actions

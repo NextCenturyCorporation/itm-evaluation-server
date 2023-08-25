@@ -14,7 +14,7 @@ class Action(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, kdma_association: List[Dict[str, str]]=None, scenario_id: str=None, action_type: str=None, casualty_id: str=None, unstructured: str=None, justification: str=None, parameters: List[Dict[str, str]]=None):  # noqa: E501
+    def __init__(self, kdma_association: List[Dict[str, str]]=None, scenario_id: str=None, action_type: str=None, casualty_id: str=None, unstructured: str=None, justification: str=None, parameters: Dict[str, str]=None):  # noqa: E501
         """Action - a model defined in Swagger
 
         :param kdma_association: The kdma_association of this Action.  # noqa: E501
@@ -30,7 +30,7 @@ class Action(Model):
         :param justification: The justification of this Action.  # noqa: E501
         :type justification: str
         :param parameters: The parameters of this Action.  # noqa: E501
-        :type parameters: List[Dict[str, str]]
+        :type parameters: Dict[str, str]
         """
         self.swagger_types = {
             'kdma_association': List[Dict[str, str]],
@@ -39,7 +39,7 @@ class Action(Model):
             'casualty_id': str,
             'unstructured': str,
             'justification': str,
-            'parameters': List[Dict[str, str]]
+            'parameters': Dict[str, str]
         }
 
         self.attribute_map = {
@@ -217,24 +217,24 @@ class Action(Model):
         self._justification = justification
 
     @property
-    def parameters(self) -> List[Dict[str, str]]:
+    def parameters(self) -> Dict[str, str]:
         """Gets the parameters of this Action.
 
-        an array of action-specific parameters  # noqa: E501
+        key-value pairs containing additional action-specific parameters  # noqa: E501
 
         :return: The parameters of this Action.
-        :rtype: List[Dict[str, str]]
+        :rtype: Dict[str, str]
         """
         return self._parameters
 
     @parameters.setter
-    def parameters(self, parameters: List[Dict[str, str]]):
+    def parameters(self, parameters: Dict[str, str]):
         """Sets the parameters of this Action.
 
-        an array of action-specific parameters  # noqa: E501
+        key-value pairs containing additional action-specific parameters  # noqa: E501
 
         :param parameters: The parameters of this Action.
-        :type parameters: List[Dict[str, str]]
+        :type parameters: Dict[str, str]
         """
 
         self._parameters = parameters
