@@ -123,6 +123,8 @@ class ITMScenarioSession:
         if not action.scenario_id or not action.action_type or action.scenario_id == "" or action.action_type == "":
             raise ValueError('Invalid or Malformed Action: Missing scenario_id or action_type')
 
+        if action.parameters and not isinstance(action.parameters, dict):
+            raise ValueError('Invalid or Malformed Action: Invalid Parameter Structure')
         # lookup casualty id in state
         casualty = None
         if action.casualty_id:
@@ -163,10 +165,6 @@ class ITMScenarioSession:
         
         if action.justification and not isinstance(action.justification, str):
             raise ValueError('Invalid or Malformed Action: Invalid justification')
-        
-        if action.parameters and not isinstance(action.parameters, dict[str, str]):
-            raise ValueError('Invalid or Malformed Action: Invalid Parameter Structure')
-
         
         return True, '', 0
 
