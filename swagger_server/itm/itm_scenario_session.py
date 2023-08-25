@@ -6,7 +6,7 @@ import connexion
 import json
 from typing import List, Union
 from copy import deepcopy
-
+from util import Utility
 from swagger_server.models import (
     Action,
     AlignmentTarget,
@@ -582,7 +582,7 @@ class ITMScenarioSession:
         choice_id = ""
         # need to go back through to find the choice from probeYamlOption (not stored in action)
         for option in currentProbe.options:
-            if option.assoc_action == action:
+            if Utility.compare_actions(option.assoc_action, action):
                 choice_id = option.id
                 break
         # TODO ITM-75: Map ADM action back to a TA1 probe response
