@@ -883,6 +883,8 @@ components:
           - left wrist
           - left face
           - right face
+          - left neck
+          - right neck
         severity:
           type: number
           description: the apparent severity of the injury from 0 (low) to 1.0 (high)

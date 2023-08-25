@@ -1,5 +1,6 @@
 import glob
 import os
+import copy
 import yaml
 from typing import List, Dict
 from dataclasses import dataclass, field
@@ -99,6 +100,7 @@ class ITMProbeReader(ITMProbeSystem):
         super().__init__()
         self.yaml_path = yaml_path
         self.probe_yamls: List[ProbeYaml] = self.read_all_probes_yamls_for_scenario()
+        self.remaining_probes: List[ProbeYaml] = copy.deepcopy(self.probe_yamls)
         self.current_probe_index = 0
         self.probe_count = len(self.probe_yamls)
 
