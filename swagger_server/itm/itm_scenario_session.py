@@ -164,12 +164,8 @@ class ITMScenarioSession:
         if action.justification and not isinstance(action.justification, str):
             raise ValueError('Invalid or Malformed Action: Invalid justification')
         
-        if action.parameters:
-            if not isinstance(action.parameters, list):
-                raise ValueError('Invalid or Malformed Action: Parameters must be a list')
-            for param in action.parameters:
-                if not isinstance(param, dict) or any(not isinstance(key, str) or not isinstance(value, str) for key, value in param.items()):
-                    raise ValueError('Invalid or Malformed Action: Invalid parameter format')
+        if action.parameters and not isinstance(action.parameters, dict[str, str]):
+            raise ValueError('Invalid or Malformed Action: Invalid Parameter Structure')
 
         
         return True, '', 0
@@ -603,8 +599,7 @@ class ITMScenarioSession:
             # load in time (in seconds) each treatment type takes
             with open("swagger_server/itm/treatment_times_config/example.json", 'r') as json_file:
                 treatment_times_dict = json.load(json_file)
-            # using getattr in case treatment not provided as parameter
-            supplies_used = getattr(action.parameters, 'treatment', None)
+            supplies_used = action.parameters.get('treatment', None)
             for supply in self.scenario.state.supplies:
                 if supply.type == supplies_used:
                     # removing one instance of the supplies_used e.g Tourniquet from supplies list
@@ -615,14 +610,13 @@ class ITMScenarioSession:
             
             # remove injury from casualty
             for injury in casualty.injuries:
-                if injury.location == action.parameters.location:
+                if injury.location == action.parameters.get('location', None):
                     casualty.remove(injury)
                     break
         
         # if tagging a casualty then update the tag to the category parameter
         if action.action_type == "TAG_CASUALTY":
-            # getattr to account for partially specified action
-            tag = getattr(action.parameters, 'category', None)
+            tag = action.parameters.get('category', None)
             if tag is not None:
                 self.tag_casualty(self.session_id, casualty.id, tag)
                 time_passed += 10
