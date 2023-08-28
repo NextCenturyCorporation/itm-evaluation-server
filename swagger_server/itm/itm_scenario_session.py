@@ -740,7 +740,6 @@ class ITMScenarioSession:
                 if (not self.kdma_training):
                     option.assoc_action.pop('kdma_association', None)
                 actions.append(option.assoc_action)
-                print(option.assoc_action)
         else:
             print("No remaining probes respond to")
             
