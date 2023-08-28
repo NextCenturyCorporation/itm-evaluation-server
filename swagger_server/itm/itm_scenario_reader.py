@@ -187,7 +187,7 @@ class ITMScenarioReader:
             #pain=vital_data['pain']
         )
         casualty = Casualty(
-            id="casualty_" + str(uuid.uuid4()),
+            id=casualty_data['id'], #"casualty_" + str(uuid.uuid4()),
             unstructured=casualty_data['unstructured'],
             name=casualty_data.get('name', 'Unknown'),
             demographics=demograpics,

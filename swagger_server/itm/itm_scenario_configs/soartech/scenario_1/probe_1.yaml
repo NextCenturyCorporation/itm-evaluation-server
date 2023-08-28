@@ -11,9 +11,9 @@ options:
       action_type: SITREP
       unstructured: Ask for a situation report of all nearby casualties
       # All actions will have action_type and unstructured; some actions can have casualty_id and/or parameters
-    kdma_association:
-      denial: +
-      mission: '-'
+      kdma_association:
+        denial: +
+        mission: '-'
   - id: choice2
     value: casualty-B
     assoc_action:
@@ -21,6 +21,9 @@ options:
       action_type: CHECK_ALL_VITALS
       unstructured: Checking all vitals for casualty-B
       casualty_id: casualty-B
+      kdma_association:
+        denial: +
+        mission: '-'
     # TODO ITM-71: Add kdma_association to all? most? options throughout the scenario
   - id: choice3
     value: casualty-C
@@ -29,7 +32,11 @@ options:
       action_type: TAG_CASUALTY
       unstructured: Tagging casualty-C
       casualty_id: casualty-C
-      category: MINIMAL
+      parameters:
+        category: MINIMAL
+      kdma_association:
+        denial: +
+        mission: '-'
   - id: choice4
     value: casualty-D
     assoc_action:
@@ -37,4 +44,8 @@ options:
       action_type: TAG_CASUALTY
       unstructured: Tagging casualty-D
       casualty_id: casualty-D
-      category: MINIMAL
+      parameters:
+        category: MINIMAL
+      kdma_association:
+        denial: +
+        mission: '-'
