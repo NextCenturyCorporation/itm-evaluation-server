@@ -536,7 +536,8 @@ class ITMScenarioSession:
         """
         self.probes_responded_to.append(body.probe_id)
         body.justification = '' if body.justification == None else body.justification
-        self.current_isso.probe_system.generate_probe(self.scenario.state)
+        # self.current_isso.probe_system.generate_probe(self.scenario.state)]
+        #TODO: this is currently broken
         self.current_isso.probe_system.respond_to_probe(
             probe_id=body.probe_id,
             choice=body.choice,
@@ -582,7 +583,7 @@ class ITMScenarioSession:
         choice_id = ""
         # need to go back through to find the choice from probeYamlOption (not stored in action)
         for option in currentProbe.options:
-            if Utility.compare_actions(option.assoc_action, action):
+            if isinstance(option.assoc_action, Action) and Utility.compare_actions(option.assoc_action, action):
                 choice_id = option.id
                 break
         # TODO ITM-75: Map ADM action back to a TA1 probe response

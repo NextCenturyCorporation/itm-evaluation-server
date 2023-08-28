@@ -1,5 +1,5 @@
 name: Sensor emplacement with mine detonation
-id: september-demo-scenario-1
+id: september-demo-scenario
 state:
   unstructured: >
     Initial setting:
