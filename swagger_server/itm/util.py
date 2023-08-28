@@ -1,4 +1,4 @@
-from models import Action
+from swagger_server.models import Action
 class Utility:
     def compare_actions(action1: Action, action2: Action):
         check: bool = True
