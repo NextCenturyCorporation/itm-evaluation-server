@@ -543,6 +543,7 @@ class ITMScenarioSession:
         )
 
         self.current_isso.probe_system.probe_count -= 1
+        # ASK DARREN ABOUT INCREMENTING INDEX
         self.current_isso.probe_system.current_probe_index += 1
         self.scenario.state.scenario_complete = \
             self.current_isso.probe_system.probe_count <= 0

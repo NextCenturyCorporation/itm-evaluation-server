@@ -1,5 +1,5 @@
+from models import Action
 class Utility:
-    from models import Action
     def compare_actions(action1: Action, action2: Action):
         check: bool = True
         check = (action1.casualty_id == action2.casualty_id and action1.scenario_id == action2.scenario_id 
