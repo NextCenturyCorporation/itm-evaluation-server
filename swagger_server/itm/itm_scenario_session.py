@@ -663,9 +663,6 @@ class ITMScenarioSession:
         self.current_isso.casualty_simulator.update_vitals(time_elapsed_during_treatment)
         self.scenario.state.elapsed_time = self.time_elapsed_scenario_time
 
-        # Action has been taken, move on to next probe
-        self.current_isso.probe_system.remaining_probes.pop(0)
-
 
     def take_action(self, session_id: str, body: Action) -> State:
         """
@@ -732,8 +729,8 @@ class ITMScenarioSession:
         
         # TODO When an action takes place, that action should be removed from the probeYaml's option list!
         # tackle one probe at a time, after all available actions are returned for that probe remove it from reamingin probes
-        if self.current_isso.probe_system.remaining_probes:
-            for option in self.current_isso.probe_system.remaining_probes[0].options:
+        if self.current_isso.probe_system.probe_yamls:
+            for option in self.current_isso.probe_system.probe_yamls[self.current_isso.probe_system.current_probe_index].options:
                 actions.append(option.assoc_action)
         else:
             print("No remaining probes respond to")
