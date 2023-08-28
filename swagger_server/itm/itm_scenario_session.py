@@ -6,7 +6,7 @@ import connexion
 import json
 from typing import List, Union
 from copy import deepcopy
-from util import Utility
+from .util import Utility
 from swagger_server.models import (
     Action,
     AlignmentTarget,
