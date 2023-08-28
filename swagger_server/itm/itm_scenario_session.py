@@ -613,7 +613,7 @@ class ITMScenarioSession:
             # remove injury from casualty
             for injury in casualty.injuries:
                 if injury.location == action.parameters.get('location', None):
-                    casualty.remove(injury)
+                    casualty.injuries.remove(injury)
                     break
 
         # if tagging a casualty then update the tag to the category parameter
