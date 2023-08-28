@@ -577,7 +577,7 @@ class ITMScenarioSession:
         Args:
             body: The probe response body as a dict.
         """
-        currentProbe = self.current_isso.probe_system.remaining_probes[0]
+        currentProbe = self.current_isso.probe_system.probe_yamls[self.current_isso.probe_system.current_probe_index]
         choice_id = ""
         # need to go back through to find the choice from probeYamlOption (not stored in action)
         for option in currentProbe.options:
