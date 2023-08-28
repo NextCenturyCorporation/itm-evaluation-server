@@ -48,6 +48,15 @@ paths:
         schema:
           type: integer
           format: int16
+      - name: kdma_training
+        in: query
+        description: "Flag to return kdma_Association from actions when calling get_available_actions"
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: boolean
+          default: false
       responses:
         "200":
           description: Successful operation
@@ -968,6 +977,14 @@ components:
       - scenario_id
       type: object
       properties:
+        kdma_association:
+          type: object
+          additionalProperties:
+            type: string
+          description: key-value pairs containing additional action-specific parameters
+          example:
+          - denial: +
+          - mission: '-'
         scenario_id:
           type: string
           description: scenario ID this probe is for
@@ -995,16 +1012,13 @@ components:
           description: A justification of the action taken
           example: Casualty is the VIP of the scenario
         parameters:
-          type: array
-          description: an array of action-specific parameters
-          items:
-            type: object
-            additionalProperties:
-              type: string
-            description: key-value pairs containing additional action-specific parameters
-            example:
-            - treatment: Tourniquet
-            - location: right forearm
+          type: object
+          additionalProperties:
+            type: string
+          description: key-value pairs containing additional action-specific parameters
+          example:
+          - treatment: Tourniquet
+          - location: right forearm
       description: An encapulation of a single action taken by a DM
       example:
         action_type: APPLY_TREATMENT

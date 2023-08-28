@@ -420,7 +420,7 @@ class ITMScenarioSession:
                             start_time=None, state=None, triage_categories=None)
 
 
-    def start_session(self, adm_name: str, session_type: str, max_scenarios=None) -> str:
+    def start_session(self, adm_name: str, session_type: str, kdma_training: bool, max_scenarios=None) -> str:
         """
         Start a new session.
 
@@ -443,7 +443,8 @@ class ITMScenarioSession:
             self.session_id = str(uuid.uuid4())
         else:
             return 'System Overload', 418
-
+        
+        self.kdma_training = kdma_training
         self.adm_name = adm_name
         self.session_issos = []
         self.session_type = session_type
@@ -613,7 +614,7 @@ class ITMScenarioSession:
                 if injury.location == action.parameters.get('location', None):
                     casualty.remove(injury)
                     break
-        
+
         # if tagging a casualty then update the tag to the category parameter
         if action.action_type == "TAG_CASUALTY":
             tag = action.parameters.get('category', None)
@@ -723,7 +724,7 @@ class ITMScenarioSession:
         (successful, message, code) = self._check_scenario_id(scenario_id)
         if not successful:
             return message, code
-
+        
         # TODO ITM-71: Add "training mode" that returns KDMA associations
         # TODO ITM-67: Return a list of available actions based on associated actions in scenario/probe configuration
         actions: List[Action] = []
@@ -732,8 +733,10 @@ class ITMScenarioSession:
         # tackle one probe at a time, after all available actions are returned for that probe remove it from reamingin probes
         if self.current_isso.probe_system.probe_yamls:
             for option in self.current_isso.probe_system.probe_yamls[self.current_isso.probe_system.current_probe_index].options:
+                if (not self.kdma_training):
+                    option.assoc_action.pop('kdma_association', None)
                 actions.append(option.assoc_action)
         else:
             print("No remaining probes respond to")
-
+            
         return actions

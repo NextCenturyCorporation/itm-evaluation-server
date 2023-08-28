@@ -78,7 +78,7 @@ def start_scenario(session_id, scenario_id=None):  # noqa: E501
     return ITM_SESSION.start_scenario(session_id=session_id, scenario_id=scenario_id)
 
 
-def start_session(adm_name, session_type, max_scenarios=None):  # noqa: E501
+def start_session(adm_name, session_type, max_scenarios=None, kdma_training=None):  # noqa: E501
     """Start a new session
 
     Get unique session id for grouping answers from a collection of scenarios/probes together # noqa: E501
@@ -96,6 +96,7 @@ def start_session(adm_name, session_type, max_scenarios=None):  # noqa: E501
         adm_name=adm_name,
         session_type=session_type,
         max_scenarios=max_scenarios,
+        kdma_training=kdma_training
     )
 
 
