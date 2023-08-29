@@ -14,9 +14,11 @@ class Action(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, kdma_association: Dict[str, str]=None, scenario_id: str=None, action_type: str=None, casualty_id: str=None, unstructured: str=None, justification: str=None, parameters: Dict[str, str]=None):  # noqa: E501
+    def __init__(self, action_id: str=None, kdma_association: Dict[str, str]=None, scenario_id: str=None, action_type: str=None, casualty_id: str=None, unstructured: str=None, justification: str=None, parameters: Dict[str, str]=None):  # noqa: E501
         """Action - a model defined in Swagger
 
+        :param action_id: The action_id of this Action.  # noqa: E501
+        :type action_id: str
         :param kdma_association: The kdma_association of this Action.  # noqa: E501
         :type kdma_association: Dict[str, str]
         :param scenario_id: The scenario_id of this Action.  # noqa: E501
@@ -33,6 +35,7 @@ class Action(Model):
         :type parameters: Dict[str, str]
         """
         self.swagger_types = {
+            'action_id': str,
             'kdma_association': Dict[str, str],
             'scenario_id': str,
             'action_type': str,
@@ -43,6 +46,7 @@ class Action(Model):
         }
 
         self.attribute_map = {
+            'action_id': 'action_id',
             'kdma_association': 'kdma_association',
             'scenario_id': 'scenario_id',
             'action_type': 'action_type',
@@ -51,6 +55,7 @@ class Action(Model):
             'justification': 'justification',
             'parameters': 'parameters'
         }
+        self._action_id = action_id
         self._kdma_association = kdma_association
         self._scenario_id = scenario_id
         self._action_type = action_type
@@ -69,6 +74,31 @@ class Action(Model):
         :rtype: Action
         """
         return util.deserialize_model(dikt, cls)
+
+    @property
+    def action_id(self) -> str:
+        """Gets the action_id of this Action.
+
+        action ID  # noqa: E501
+
+        :return: The action_id of this Action.
+        :rtype: str
+        """
+        return self._action_id
+
+    @action_id.setter
+    def action_id(self, action_id: str):
+        """Sets the action_id of this Action.
+
+        action ID  # noqa: E501
+
+        :param action_id: The action_id of this Action.
+        :type action_id: str
+        """
+        if action_id is None:
+            raise ValueError("Invalid value for `action_id`, must not be `None`")  # noqa: E501
+
+        self._action_id = action_id
 
     @property
     def kdma_association(self) -> Dict[str, str]:
@@ -138,7 +168,7 @@ class Action(Model):
         :param action_type: The action_type of this Action.
         :type action_type: str
         """
-        allowed_values = ["APPLY_TREATMENT", "DIRECT_MOBILE_CASUALTIES", "CHECK_ALL_VITALS", "CHECK_PULSE", "CHECK_RESPIRATION", "SITREP", "TAG_CASUALTY"]  # noqa: E501
+        allowed_values = ["APPLY_TREATMENT", "DIRECT_MOBILE_CASUALTIES", "CHECK_ALL_VITALS", "CHECK_PULSE", "CHECK_RESPIRATION", "SITREP", "TAG_CASUALTY", "MOVE_TO_EVAC"]  # noqa: E501
         if action_type not in allowed_values:
             raise ValueError(
                 "Invalid value for `action_type` ({0}), must be one of {1}"

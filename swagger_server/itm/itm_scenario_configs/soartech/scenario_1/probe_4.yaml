@@ -7,6 +7,7 @@ options:
   - id: choice1
     value: Tourniquet
     assoc_action:
+      action_id: action15
       scenario_id: september-demo-scenario-1
       action_type: APPLY_TREATMENT
       unstructured: Applying a tourniquet to left forearm
@@ -20,6 +21,7 @@ options:
   - id: choice2
     value: Nasopharyngeal airway
     assoc_action:
+      action_id: action16
       scenario_id: september-demo-scenario-1
       action_type: APPLY_TREATMENT
       unstructured: Applying Nasopharyngeal airway to left nostril
@@ -30,6 +32,7 @@ options:
   - id: choice3
     value: Pressure bandage
     assoc_action:
+      action_id: action17
       scenario_id: september-demo-scenario-1
       action_type: APPLY_TREATMENT
       unstructured: Applying Pressure bandage to left shoulder
@@ -40,6 +43,7 @@ options:
   - id: choice4
     value: Hemostatic gauze
     assoc_action:
+      action_id: action18
       scenario_id: september-demo-scenario-1
       action_type: APPLY_TREATMENT
       unstructured: Applying Hemostatic gauze to right shoulder
@@ -50,6 +54,7 @@ options:
   - id: choice5
     value: Decompression Needle
     assoc_action:
+      action_id: action19
       scenario_id: september-demo-scenario-1
       action_type: APPLY_TREATMENT
       unstructured: Applying Decompression Needle to left thigh

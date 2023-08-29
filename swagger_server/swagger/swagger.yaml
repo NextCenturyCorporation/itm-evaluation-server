@@ -38,6 +38,15 @@ paths:
         schema:
           type: string
           example: test
+      - name: kdma_training
+        in: query
+        description: "Flag to return kdma_Association from actions when calling get_available_actions"
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: boolean
+          default: false
       - name: max_scenarios
         in: query
         description: "the maximum number of scenarios requested, supported only in\
@@ -48,15 +57,6 @@ paths:
         schema:
           type: integer
           format: int16
-      - name: kdma_training
-        in: query
-        description: "Flag to return kdma_Association from actions when calling get_available_actions"
-        required: false
-        style: form
-        explode: true
-        schema:
-          type: boolean
-          default: false
       responses:
         "200":
           description: Successful operation
@@ -156,6 +156,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AlignmentTarget'
+        "400":
+          description: Scenario Complete
         "404":
           description: Session or Scenario ID not found
         "500":
@@ -858,6 +860,7 @@ components:
           - Shrapnel
           - Chest Collapse
           - Amputation
+          - Burn
         location:
           type: string
           description: the injury location on the casualty's body
@@ -973,10 +976,14 @@ components:
         tagLabel: MINIMAL
     Action:
       required:
+      - action_id
       - action_type
       - scenario_id
       type: object
       properties:
+        action_id:
+          type: string
+          description: action ID
         kdma_association:
           type: object
           additionalProperties:
@@ -1000,6 +1007,7 @@ components:
           - CHECK_RESPIRATION
           - SITREP
           - TAG_CASUALTY
+          - MOVE_TO_EVAC
         casualty_id:
           type: string
           description: The ID of the casualty being acted upon
@@ -1026,39 +1034,9 @@ components:
         unstructured: "Check pulse of casualty [1234]."
         justification: Casualty is the VIP of the scenario
         parameters:
-        - - treatment: Tourniquet
-          - location: right forearm
-        - - treatment: Tourniquet
-          - location: right forearm
+        - treatment: Tourniquet
+        - location: right forearm
         scenario_id: scenario_id
-    ProbeOption:
-      required:
-      - id
-      - value
-      type: object
-      properties:
-        id:
-          type: string
-          description: "the choice id, having scenario scope"
-        value:
-          type: string
-          description: "a label for the choice"
-          example: Choice 5
-        assoc_action:
-          $ref: "#/components/schemas/Action"  # Reference to the Action schema
-          description: "the action associated with the choice"
-        kdma_association:
-          type: object
-          additionalProperties:
-            type: string
-          description: KDMA association of this option; always omitted in TA2 API.
-      description: an option associated with a probe
-      example:
-        kdma_association:
-          denial: "+"
-          mission: "-"
-        id: id
-        value: Choice 5
   responses:
     server_error:
       description: An exception occurred on the server; see returned error string.

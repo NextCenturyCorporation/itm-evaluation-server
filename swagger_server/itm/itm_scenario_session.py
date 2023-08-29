@@ -6,7 +6,6 @@ import connexion
 import json
 from typing import List, Union
 from copy import deepcopy
-from .util import Utility
 from swagger_server.models import (
     Action,
     AlignmentTarget,
@@ -146,7 +145,8 @@ class ITMScenarioSession:
         elif action.action_type == "DIRECT_MOBILE_CASUALTIES" or action.action_type == "SITREP":
             # sitrep optionally takes a casualty id and direct_mobile_casualties doesn't need one
             pass 
-        elif action.action_type == "CHECK_ALL_VITALS" or action.action_type == "CHECK_PULSE" or action.action_type == "CHECK_RESPIRATION":
+        elif action.action_type == "CHECK_ALL_VITALS" or action.action_type == "CHECK_PULSE" \
+            or action.action_type == "CHECK_RESPIRATION" or action.action_type == "MOVE_TO_EVAC":
             # All require casualty_id
             if not action.casualty_id:
                 raise ValueError('Invalid or Malformed Action: Missing casualty_id for CHECK_ALL_VITALS')
@@ -592,7 +592,7 @@ class ITMScenarioSession:
         choice_id = ""
         # need to go back through to find the choice from probeYamlOption (not stored in action)
         for option in currentProbe.options:
-            if Utility.compare_actions(option.assoc_action, action):
+            if option.assoc_action["action_id"] == action.action_id:
                 choice_id = option.id
                 break
         # TODO ITM-75: Map ADM action back to a TA1 probe response
@@ -644,6 +644,10 @@ class ITMScenarioSession:
             time_passed += self.times_dict["CHECK_RESPIRATION"]
 
         if action.action_type == "DIRECT_MOBILE_CASUALTIES":
+            time_passed += self.times_dict["DIRECT_MOBILE_CASUALTIES"]
+
+        #TODO this timing most likely will change
+        if action.action_type == "MOVE_TO_EVAC":
             time_passed += self.times_dict["DIRECT_MOBILE_CASUALTIES"]
 
         if action.action_type == "SITREP":
