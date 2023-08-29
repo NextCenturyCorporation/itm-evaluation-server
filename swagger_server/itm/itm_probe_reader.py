@@ -144,7 +144,7 @@ class ITMProbeReader(ITMProbeSystem):
         Returns:
             None.
         """
-        probe = next((probe for probe in self.probe_yamls if probe.get('id') == probe_id), None)
+        probe = next((probe for probe in self.probe_yamls if probe.id == probe_id), None)
         if probe:
             probe.choice = choice
             probe.justification = justification
