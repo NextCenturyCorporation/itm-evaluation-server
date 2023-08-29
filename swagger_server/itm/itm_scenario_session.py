@@ -583,7 +583,7 @@ class ITMScenarioSession:
         choice_id = ""
         # need to go back through to find the choice from probeYamlOption (not stored in action)
         for option in currentProbe.options:
-            if isinstance(option.assoc_action, Action) and Utility.compare_actions(option.assoc_action, action):
+            if Utility.compare_actions(option.assoc_action, action):
                 choice_id = option.id
                 break
         # TODO ITM-75: Map ADM action back to a TA1 probe response
