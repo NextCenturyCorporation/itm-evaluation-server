@@ -54,6 +54,10 @@ class ITMScenarioSession:
         self.save_to_database = False
         self.mongo_db = MongoDB('dashroot', 'dashr00tp@ssw0rd',
                                 'localhost', '27017', 'dashboard')
+        
+        with open("swagger_server/itm/treatment_times_config/actionTimes.json", 'r') as json_file:
+                self.times_dict = json.load(json_file)
+
         self.history = []
 
 
@@ -156,6 +160,11 @@ class ITMScenarioSession:
                 raise ValueError('Casualty not found in state')
             if not action.parameters or not "category" in action.parameters:
                 raise ValueError('Invalid or Malformed Action: Missing parameters for TAG_CASUALTY')
+            else:
+                allowed_values = ["MINIMAL", "DELAYED", "IMMEDIATE", "EXPECTANT"]
+                tag = action.parameters.get("category")
+                if not tag in allowed_values:
+                    raise ValueError('Invalid or Malformed Action: Invalid Tag')
         else:
             raise ValueError('Invalid action_type')
         
@@ -598,17 +607,14 @@ class ITMScenarioSession:
         casualty = next((casualty for casualty in self.scenario.state.casualties if casualty.id == action.casualty_id), None)
         # Check we have a reference to the casualty
         if action.action_type == "APPLY_TREATMENT":
-            # load in time (in seconds) each treatment type takes
-            with open("swagger_server/itm/treatment_times_config/example.json", 'r') as json_file:
-                treatment_times_dict = json.load(json_file)
             supplies_used = action.parameters.get('treatment', None)
             for supply in self.scenario.state.supplies:
                 if supply.type == supplies_used:
                     # removing one instance of the supplies_used e.g Tourniquet from supplies list
                     supply.quantity -= 1
-                    if supplies_used in treatment_times_dict:
+                    if supplies_used in self.times_dict["treatmentTimes"]:
                         # increment time passed during treatment
-                        time_passed += treatment_times_dict[supplies_used]
+                        time_passed += self.times_dict["treatmentTimes"][supplies_used]
             
             # remove injury from casualty
             for injury in casualty.injuries:
@@ -618,38 +624,39 @@ class ITMScenarioSession:
 
         # if tagging a casualty then update the tag to the category parameter
         if action.action_type == "TAG_CASUALTY":
-            tag = action.parameters.get('category', None)
-            if tag is not None:
-                self.tag_casualty(self.session_id, casualty.id, tag)
-                time_passed += 10
-            else:
-                # If validate action is used, there should always be a category
-                raise ValueError("Error. No category for tag provided.")
+            tag = action.parameters.get('category')
+            self.tag_casualty(self.session_id, casualty.id, tag)
+            time_passed += self.times_dict["TAG_CASUALTY"]
         
         # I don't think updating vitals does anything here because the get_vitals and get heart rate funcs 
         # just return what is already in the casualties vitals field. Probably not needed but was included in ticket
         if action.action_type == "CHECK_ALL_VITALS":
             vitals = self.get_vitals(self.session_id, casualty.id)
             casualty.vitals = vitals
-            time_passed += 20
+            time_passed += self.times_dict["CHECK_ALL_VITALS"]
 
         if action.action_type == "CHECK_PULSE":
             casualty.vitals.hrpmin = self.get_heart_rate(self.session_id, casualty.id)
-            time_passed += 10
+            time_passed += self.times_dict["CHECK_PULSE"]
 
         if action.action_type == "CHECK_RESPIRATION":
             casualty.vitals.breathing = self.get_respiration(self.session_id, casualty.id)
-            time_passed += 10
+            time_passed += self.times_dict["CHECK_RESPIRATION"]
 
         if action.action_type == "DIRECT_MOBILE_CASUALTIES":
-            time_passed += 10
+            time_passed += self.times_dict["DIRECT_MOBILE_CASUALTIES"]
 
         if action.action_type == "SITREP":
-            # takes 10 seconds for each responsive casualty during sitrep
-            for curr_casualty in self.scenario.state.casualties:
-                if curr_casualty.vitals.responsive:
-                    time_passed += 10
-    
+            # if a casualty is specified then only sitrep that casualty
+            # otherwise, sitrep all responsive casualties
+            if casualty:
+                self.times_dict["SITREP"]
+            else:
+                # takes 10 seconds for each responsive casualty during sitrep
+                for curr_casualty in self.scenario.state.casualties:
+                    if curr_casualty.vitals.responsive:
+                        self.times_dict["SITREP"]
+        
         # For now, any action does nothing but ends the scenario!
         # self.scenario.state.scenario_complete = True
 
