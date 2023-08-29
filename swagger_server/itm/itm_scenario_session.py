@@ -618,7 +618,7 @@ class ITMScenarioSession:
             
             # remove injury from casualty
             for injury in casualty.injuries:
-                if injury.location == action.parameters.get('location', None):
+                if injury.location == action.parameters.get('location', None) and injury.name == action.parameters.get('name', None):
                     casualty.injuries.remove(injury)
                     break
 
@@ -650,12 +650,12 @@ class ITMScenarioSession:
             # if a casualty is specified then only sitrep that casualty
             # otherwise, sitrep all responsive casualties
             if casualty:
-                self.times_dict["SITREP"]
+                time_passed += self.times_dict["SITREP"]
             else:
                 # takes 10 seconds for each responsive casualty during sitrep
                 for curr_casualty in self.scenario.state.casualties:
                     if curr_casualty.vitals.responsive:
-                        self.times_dict["SITREP"]
+                        time_passed += self.times_dict["SITREP"]
         
         # For now, any action does nothing but ends the scenario!
         # self.scenario.state.scenario_complete = True
@@ -745,6 +745,6 @@ class ITMScenarioSession:
                     option.assoc_action.pop('kdma_association', None)
                 actions.append(option.assoc_action)
         else:
-            print("No remaining probes respond to")
+            raise ValueError("Scenario Complete")
             
         return actions
