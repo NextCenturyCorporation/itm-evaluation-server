@@ -65,6 +65,8 @@ class ProbeYaml:
     type: str = None
     prompt: str = None
     state: Dict = None
+    choice: str = None
+    justification: str = None
     options: List[ProbeYamlOptions] = field(default_factory=list)
 
     @staticmethod
@@ -124,3 +126,30 @@ class ITMProbeReader(ITMProbeSystem):
         probe_dict = yaml.safe_load(yaml_text)
         probe_yaml = ProbeYaml.from_dict(probe_dict)
         return probe_yaml
+    
+    def respond_to_probe(
+            self,
+            probe_id: str,
+            choice: str,
+            justification: str = None
+        ) -> None:
+        """
+        Respond to a probe from the probe system.
+
+        Args:
+            probe_id: The ID of the probe.
+            casualty_id: The ID of the casualty chosen to respond to the probe.
+            explanation: An explanation for the response (optional).
+
+        Returns:
+            None.
+        """
+        probe = next((probe for probe in self.probe_yamls if probe.get('id') == probe_id), None)
+        if probe:
+            probe.choice = choice
+            probe.justification = justification
+        # Possibly add assessed checks from probe answers
+        # for p in self.scenario.state.casualties:
+        #     if p.id == choice:
+        #         p.assessed = True
+        #         break

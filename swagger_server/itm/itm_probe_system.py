@@ -28,14 +28,15 @@ class ITMProbeSystem(ABC):
         self.scenario: Scenario = None
         self.probe_count = 0
         self.probes = {}
-
+    """
+    commenting out to test using probeYaml in itm_probe_reader to do this
     def respond_to_probe(
             self,
             probe_id: str,
             choice: str,
             justification: str = None
         ) -> None:
-        """
+        \"""
         Respond to a probe from the probe system.
 
         Args:
@@ -45,7 +46,7 @@ class ITMProbeSystem(ABC):
 
         Returns:
             None.
-        """
+        \"""
         probe: ProbeObject = self.probes[probe_id]
         probe.choice = choice
         probe.justification = justification
@@ -54,6 +55,7 @@ class ITMProbeSystem(ABC):
         #     if p.id == choice:
         #         p.assessed = True
         #         break
+        """
 
     def _get_probe_id(self):
         return "probe_" + str(uuid.uuid4())
