@@ -43,12 +43,13 @@ class ITMScenarioSession:
         self.session_issos = []
         self.number_of_scenarios = None
         self.scenario: Scenario = None
-
+        self.first_answer: bool = True
+        self.casualty_ids = []
         self.probes_responded_to = []
 
         # This determines whether the server makes calls to TA1
         self.ta1_integration = False
-
+    
         # This calls the dashboard's MongoDB
         self.save_to_database = False
         self.mongo_db = MongoDB('dashroot', 'dashr00tp@ssw0rd',
@@ -553,13 +554,6 @@ class ITMScenarioSession:
             justification=body.justification
         )
 
-        # move on to next probe when no options remaining
-        if not self.current_isso.probe_system.probe_yamls[self.current_isso.probe_system.current_probe_index].options:
-            self.current_isso.probe_system.probe_count -= 1
-            self.current_isso.probe_system.current_probe_index += 1
-            self.scenario.state.scenario_complete = \
-                self.current_isso.probe_system.probe_count <= 0
-
         self._add_history(
             "Respond to TA1 Probe",
             {"Session ID": self.session_id, "Scenario ID": body.scenario_id, "Probe ID": body.probe_id,
@@ -705,18 +699,40 @@ class ITMScenarioSession:
 
         # Map action to probe response
         response = self.lookup_probe_response(action=body)
+        
+        # keep track of which casualty_id's have been addressed in this probe
+        if not body.casualty_id in self.casualty_ids:
+            self.casualty_ids.append(body.casualty_id)
 
-        # remove other options for casualty after first action is taken for that casualty, as we discussed (probably change after september?)
-        # placed before respond_to_probe so I can increment probe_index when there are no options left
+        # remove option taken from being returned in get_available_actions
         if body.casualty_id:
             self.current_isso.probe_system.probe_yamls[self.current_isso.probe_system.current_probe_index].options = [
                 option for option in self.current_isso.probe_system.probe_yamls[self.current_isso.probe_system.current_probe_index].options
-                if option.assoc_action.casualty_id != body.casualty_id
+                if option.assoc_action.action_id != body.action_id
             ]
 
         # Respond to probe with TA1
         # NOTE: Not all actions will necessarily result in a probe response
-        self.respond_to_probe(body=response)
+        # only respond to probe with first action taken in a probe
+        if self.first_answer:
+            self.respond_to_probe(body=response)
+            self.first_answer = False
+
+        # move on to next probe when all casualty id's have at least one action towards them
+        unanswered_casualty_id = False
+        for option in self.current_isso.probe_system.probe_yamls[self.current_isso.probe_system.current_probe_index].options:
+            if option.id not in self.casualty_ids:
+                unanswered_casualty_id = True
+                break  # No need to continue checking once we find one unmatched id
+        
+        if not unanswered_casualty_id:
+            self.current_isso.probe_system.probe_count -= 1
+            self.current_isso.probe_system.current_probe_index += 1
+            self.scenario.state.scenario_complete = \
+                self.current_isso.probe_system.probe_count <= 0
+            # reset casualty_id list when going to next probe
+            self.casualty_ids = []
+            self.first_answer = True
 
         # Update scenario state
         self.update_state(action=body)
