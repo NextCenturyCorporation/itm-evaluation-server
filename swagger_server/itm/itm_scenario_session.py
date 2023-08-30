@@ -553,11 +553,12 @@ class ITMScenarioSession:
             justification=body.justification
         )
 
-        self.current_isso.probe_system.probe_count -= 1
-        # ASK DARREN ABOUT INCREMENTING INDEX
-        self.current_isso.probe_system.current_probe_index += 1
-        self.scenario.state.scenario_complete = \
-            self.current_isso.probe_system.probe_count <= 0
+        # move on to next probe when no options remaining
+        if not self.current_isso.probe_system.probe_yamls[self.current_isso.probe_system.current_probe_index].options:
+            self.current_isso.probe_system.probe_count -= 1
+            self.current_isso.probe_system.current_probe_index += 1
+            self.scenario.state.scenario_complete = \
+                self.current_isso.probe_system.probe_count <= 0
 
         self._add_history(
             "Respond to TA1 Probe",
@@ -678,6 +679,8 @@ class ITMScenarioSession:
         self.scenario.state.elapsed_time = self.time_elapsed_scenario_time
 
 
+
+
     def take_action(self, session_id: str, body: Action) -> State:
         """
         Take an action within a scenario
@@ -702,6 +705,14 @@ class ITMScenarioSession:
 
         # Map action to probe response
         response = self.lookup_probe_response(action=body)
+
+        # remove other options for casualty after first action is taken for that casualty, as we discussed (probably change after september?)
+        # placed before respond_to_probe so I can increment probe_index when there are no options left
+        if body.casualty_id:
+            self.current_isso.probe_system.probe_yamls[self.current_isso.probe_system.current_probe_index].options = [
+                option for option in self.current_isso.probe_system.probe_yamls[self.current_isso.probe_system.current_probe_index].options
+                if option.assoc_action.casualty_id != body.casualty_id
+            ]
 
         # Respond to probe with TA1
         # NOTE: Not all actions will necessarily result in a probe response
