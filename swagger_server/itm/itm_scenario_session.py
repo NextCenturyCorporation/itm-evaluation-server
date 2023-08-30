@@ -397,7 +397,7 @@ class ITMScenarioSession:
         # placeholder for System Overload error code
         system_overload = False
         if system_overload:
-            return "System Overload", 418
+            return "System Overload", 503
 
         try:
             self.current_isso: ITMSessionScenarioObject = self.session_issos[self.current_isso_index]
@@ -708,7 +708,7 @@ class ITMScenarioSession:
         if body.casualty_id:
             self.current_isso.probe_system.probe_yamls[self.current_isso.probe_system.current_probe_index].options = [
                 option for option in self.current_isso.probe_system.probe_yamls[self.current_isso.probe_system.current_probe_index].options
-                if option.assoc_action.action_id != body.action_id
+                if option.assoc_action["action_id"] != body.action_id
             ]
 
         # Respond to probe with TA1
