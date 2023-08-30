@@ -275,7 +275,7 @@ class ITMScenarioSession:
         casualties: List[Casualty] = self.scenario.state.casualties
         for casualty in casualties:
             if casualty.id == casualty_id:
-                response = casualty.vitals.hrpmin
+                response = casualty.read_heart_rate()
                 self._add_history(
                     "Get Heart Rate",
                     {"Session ID": self.session_id, "Casualty ID": casualty_id},
@@ -303,7 +303,7 @@ class ITMScenarioSession:
         casualties: List[Casualty] = self.scenario.state.casualties
         for casualty in casualties:
             if casualty.id == casualty_id:
-                response = casualty.vitals.breathing
+                response = casualty.read_breathing()
                 self._add_history(
                     "Get Respiration",
                     {"Session ID": self.session_id, "Casualty ID": casualty_id},
@@ -360,7 +360,7 @@ class ITMScenarioSession:
         casualties: List[Casualty] = self.scenario.state.casualties
         for casualty in casualties:
             if casualty.id == casualty_id:
-                response = casualty.vitals.to_dict()
+                response = casualty.read_all_vitals()
                 self._add_history(
                     "Get Vitals",
                     {"Session ID": self.session_id, "Casualty ID": casualty_id},

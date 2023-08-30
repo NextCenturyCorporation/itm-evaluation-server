@@ -17,7 +17,7 @@ class Casualty(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, id: str=None, unstructured: str=None, name: str=None, demographics: Demographics=None, injuries: List[Injury]=None, vitals: Vitals=None, assessed: bool=False, tag: str=None):  # noqa: E501
+    def __init__(self, id: str=None, unstructured: str=None, name: str=None, demographics: Demographics=None, injuries: List[Injury]=None, vitals: Vitals=None, known_vitals: Vitals=None, assessed: bool=False, tag: str=None):  # noqa: E501
         """Casualty - a model defined in Swagger
 
         :param id: The id of this Casualty.  # noqa: E501
@@ -63,9 +63,27 @@ class Casualty(Model):
         self._name = name
         self._demographics = demographics
         self._injuries = injuries
-        self._vitals = vitals
+        # double underscore to make private
+        self.__vitals = vitals
+        # will be empty until actions cause it to be filled out, pulls from vitals
+        self._known_vitals = Vitals()
         self._assessed = assessed
         self._tag = tag
+
+    @classmethod
+    def read_all_vitals(self):
+        self._known_vitals = self.__vitals
+        return self._known_vitals
+
+    @classmethod
+    def read_heart_rate(self):
+        self._known_vitals.hrpmin = self.__vitals.hrpmin
+        return self._known_vitals.hrpmin
+
+    @classmethod
+    def read_breathing(self):
+        self._known_vitals.breathing = self.__vitals.breathing
+        return self._known_vitals.breathing
 
     @classmethod
     def from_dict(cls, dikt) -> 'Casualty':
@@ -203,7 +221,7 @@ class Casualty(Model):
         :return: The vitals of this Casualty.
         :rtype: Vitals
         """
-        return self._vitals
+        return self.__vitals
 
     @vitals.setter
     def vitals(self, vitals: Vitals):
@@ -214,7 +232,18 @@ class Casualty(Model):
         :type vitals: Vitals
         """
 
-        self._vitals = vitals
+        self.__vitals = vitals
+
+    @property
+    def known_vitals(self) -> Vitals:
+        """Gets the vitals of this Casualty.
+
+
+        :return: The vitals of this Casualty.
+        :rtype: Vitals
+        """
+        return self._known_vitals
+
 
     @property
     def assessed(self) -> bool:
