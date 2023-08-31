@@ -44,8 +44,13 @@ class ITMScenarioSession:
         self.number_of_scenarios = None
         self.scenario: Scenario = None
         self.first_answer: bool = True
+        # hacky stuff for adept
         self.casualty_ids = []
         self.probes_responded_to = []
+        # hacky thing for ST
+        self.patients_treated = 0
+        # adept or ST
+        self.secnario_rules = ""
 
         # This determines whether the server makes calls to TA1
         self.ta1_integration = False
@@ -403,6 +408,12 @@ class ITMScenarioSession:
             self.scenario = self.current_isso.scenario
             self.current_isso_index += 1
 
+            # the rules are different... so we need to know which group the scenario is from
+            if self.scenario.id.__contains__("adept"):
+                self.secnario_rules = "ADEPT"
+            else:
+                self.secnario_rules = "SOARTECH"
+
             self._add_history(
                 "Start Scenario",
                 {"Session ID": self.session_id},
@@ -722,30 +733,48 @@ class ITMScenarioSession:
             self.respond_to_probe(body=response)
             self.first_answer = False
 
-        # move on to next probe when all casualty id's have at least one action towards them
-        unanswered_casualty_id = False
-        for option in self.current_isso.probe_system.probe_yamls[self.current_isso.probe_system.current_probe_index].options:
-            if option.assoc_action["casualty_id"] not in self.casualty_ids:
-                unanswered_casualty_id = True
-                break  # No need to continue checking once we find one unmatched id
-        
-        # if no unanswered casualties left, (or no options left)
-        if not unanswered_casualty_id or not self.current_isso.probe_system.probe_yamls[self.current_isso.probe_system.current_probe_index]:
-            self.current_isso.probe_system.probe_count -= 1
-            self.current_isso.probe_system.current_probe_index += 1
-            self.scenario.state.scenario_complete = \
-                self.current_isso.probe_system.probe_count <= 0
-            # reset casualty_id list when going to next probe
-            self.casualty_ids = []
-            self.first_answer = True
-
-        # Update scenario state
-        self.update_state(action=body)
-
         self._add_history(
             "Take Action",
             {"Session ID": self.session_id, "Scenario ID": self.scenario.id, "Action": body},
             self.scenario.state.to_dict())
+
+        # PROBE HANDLING FOR ADEPT
+        if self.secnario_rules == "ADEPT":
+            # move on to next probe when all casualty id's have at least one action towards them
+            unanswered_casualty_id = False
+            for option in self.current_isso.probe_system.probe_yamls[self.current_isso.probe_system.current_probe_index].options:
+                if option.assoc_action["casualty_id"] not in self.casualty_ids:
+                    unanswered_casualty_id = True
+                    break  # No need to continue checking once we find one unmatched id
+        
+            # if no unanswered casualties left, (or no options left)
+            if not unanswered_casualty_id or not self.current_isso.probe_system.probe_yamls[self.current_isso.probe_system.current_probe_index]:
+                self.current_isso.probe_system.probe_count -= 1
+                self.current_isso.probe_system.current_probe_index += 1
+                self.scenario.state.scenario_complete = \
+                    self.current_isso.probe_system.probe_count <= 0
+                # reset casualty_id list when going to next probe
+                self.casualty_ids = []
+                self.first_answer = True
+             
+            
+            # Update scenario state
+            self.update_state(action=body)
+
+        else:
+            #PROBE HANDLING FOR ST
+            if body.action_type == "APPLY_TREATMENT": self.patients_treated += 1
+            self.update_state(action=body)
+            # TEMPORARY HACK
+            if self.patients_treated >= 3:
+                self.current_isso.probe_system.probe_count -= 1
+                self.current_isso.probe_system.current_probe_index += 1
+                self.scenario.state.scenario_complete = \
+                    self.current_isso.probe_system.probe_count <= 0
+                self.first_answer = True
+                # Only one probe, scenario ends when all three patients treated
+                self._end_scenario()
+
 
         return self.scenario.state
 
