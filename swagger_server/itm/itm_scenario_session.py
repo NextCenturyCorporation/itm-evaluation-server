@@ -648,6 +648,7 @@ class ITMScenarioSession:
         if action.action_type == "MOVE_TO_EVAC":
             time_passed += self.times_dict["MOVE_TO_EVAC"]
 
+
         if action.action_type == "SITREP":
             # if a casualty is specified then only sitrep that casualty
             # otherwise, sitrep all responsive casualties
@@ -675,6 +676,8 @@ class ITMScenarioSession:
         self.current_isso.casualty_simulator.update_vitals(time_elapsed_during_treatment)
         self.scenario.state.elapsed_time = self.time_elapsed_scenario_time
 
+        if action.action_type == "MOVE_TO_EVAC":
+            self._end_scenario()
 
     def take_action(self, session_id: str, body: Action) -> State:
         """
@@ -726,7 +729,8 @@ class ITMScenarioSession:
                 unanswered_casualty_id = True
                 break  # No need to continue checking once we find one unmatched id
         
-        if not unanswered_casualty_id:
+        # if no unanswered casualties left, (or no options left)
+        if not unanswered_casualty_id or not self.current_isso.probe_system.probe_yamls[self.current_isso.probe_system.current_probe_index]:
             self.current_isso.probe_system.probe_count -= 1
             self.current_isso.probe_system.current_probe_index += 1
             self.scenario.state.scenario_complete = \
