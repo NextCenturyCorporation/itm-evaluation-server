@@ -252,6 +252,8 @@ class ITMScenarioSession:
         (successful, message, code) = self._check_scenario_id(scenario_id)
         if not successful:
             return message, code
+        if self.scenario.session_complete:
+            raise ValueError("Scenario Complete")
         return self.current_isso.alignment_target_reader.alignment_target
 
 
@@ -275,7 +277,8 @@ class ITMScenarioSession:
         casualties: List[Casualty] = self.scenario.state.casualties
         for casualty in casualties:
             if casualty.id == casualty_id:
-                response = casualty.read_heart_rate()
+                response = casualty.complete_vitals.hrpmin
+                casualty.vitals.hrpmin = response
                 self._add_history(
                     "Get Heart Rate",
                     {"Session ID": self.session_id, "Casualty ID": casualty_id},
@@ -303,7 +306,8 @@ class ITMScenarioSession:
         casualties: List[Casualty] = self.scenario.state.casualties
         for casualty in casualties:
             if casualty.id == casualty_id:
-                response = casualty.read_breathing()
+                response = casualty.complete_vitals.breathing
+                casualty.vitals.breathing = response
                 self._add_history(
                     "Get Respiration",
                     {"Session ID": self.session_id, "Casualty ID": casualty_id},
@@ -360,7 +364,8 @@ class ITMScenarioSession:
         casualties: List[Casualty] = self.scenario.state.casualties
         for casualty in casualties:
             if casualty.id == casualty_id:
-                response = casualty.read_all_vitals()
+                response = casualty.complete_vitals.to_dict()
+                casualty.vitals = casualty.complete_vitals
                 self._add_history(
                     "Get Vitals",
                     {"Session ID": self.session_id, "Casualty ID": casualty_id},
@@ -388,17 +393,12 @@ class ITMScenarioSession:
 
         # TODO this needs to get a specific scenario by id
         if scenario_id:
-            raise connexion.ProblemException(status=403, title="Forbidden", detail="Sorry, internal TA3 only")
+            raise connexion.ProblemException(status=403, title="Forbidden", detail="Specifying a scenario ID is unauthorized")
         
         # TODO this needs to check if we don't have this scenario id
         if scenario_id and not scenario_id not in ['scenario_id_list']:
             return "Scenario ID does not exist", 404
         
-        # placeholder for System Overload error code
-        system_overload = False
-        if system_overload:
-            return "System Overload", 503
-
         try:
             self.current_isso: ITMSessionScenarioObject = self.session_issos[self.current_isso_index]
             self.scenario = self.current_isso.scenario
@@ -442,7 +442,7 @@ class ITMScenarioSession:
         Returns:
             A new session Id to use in subsequent calls
         """
-        if session_type not in ['test', 'adept', 'soartech', 'eval']:
+        if session_type not in ['test', 'adept', 'soartech', 'eval', 'devtest']:
             return (
                 'Invalid session type. Must be "test, adept, soartech, or eval"',
                 400
@@ -452,8 +452,8 @@ class ITMScenarioSession:
         if self.session_id == None:
             self.session_id = str(uuid.uuid4())
         else:
-            return 'System Overload', 418
-        
+            return 'System Overload', 503
+
         self.kdma_training = kdma_training
         self.adm_name = adm_name
         self.session_issos = []
@@ -763,7 +763,9 @@ class ITMScenarioSession:
         (successful, message, code) = self._check_scenario_id(scenario_id)
         if not successful:
             return message, code
-        
+        if self.scenario.session_complete:
+            raise ValueError("Scenario Complete")
+
         # TODO ITM-71: Add "training mode" that returns KDMA associations
         # TODO ITM-67: Return a list of available actions based on associated actions in scenario/probe configuration
         actions: List[Action] = []

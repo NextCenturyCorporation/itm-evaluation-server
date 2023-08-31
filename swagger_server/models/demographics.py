@@ -122,7 +122,7 @@ class Demographics(Model):
         :param rank: The rank of this Demographics.
         :type rank: str
         """
-        allowed_values = ["Marine", "FMF Corpsman", "Sailor", "Civilian", "SEAL"]  # noqa: E501
+        allowed_values = ["Marine", "FMF Corpsman", "Sailor", "Civilian", "SEAL", "Intel Officer"]  # noqa: E501
         if rank not in allowed_values:
             raise ValueError(
                 "Invalid value for `rank` ({0}), must be one of {1}"

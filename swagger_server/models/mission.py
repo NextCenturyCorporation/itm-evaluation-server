@@ -74,7 +74,7 @@ class Mission(Model):
     def mission_type(self) -> str:
         """Gets the mission_type of this Mission.
 
-        enum of possible mission types  # noqa: E501
+        enumeration of possible mission types  # noqa: E501
 
         :return: The mission_type of this Mission.
         :rtype: str
@@ -85,12 +85,12 @@ class Mission(Model):
     def mission_type(self, mission_type: str):
         """Sets the mission_type of this Mission.
 
-        enum of possible mission types  # noqa: E501
+        enumeration of possible mission types  # noqa: E501
 
         :param mission_type: The mission_type of this Mission.
         :type mission_type: str
         """
-        allowed_values = ["Listening/Observation", "Direct Action", "Hostage rescue", "Asset transport", "Sensor emplacement", "Intelligence gathering", "Civil affairs", "Training", "Sabotage", "Security patrol", "Fire support", "Nuclear deterrence"]  # noqa: E501
+        allowed_values = ["Listening/Observation", "Direct Action", "Hostage rescue", "Asset transport", "Sensor emplacement", "Intelligence gathering", "Civil affairs", "Training", "Sabotage", "Security patrol", "Fire support", "Nuclear deterrence", "Extraction", "Unknown"]  # noqa: E501
         if mission_type not in allowed_values:
             raise ValueError(
                 "Invalid value for `mission_type` ({0}), must be one of {1}"

@@ -1,0 +1,157 @@
+name: Sensor emplacement with mine detonation
+id: september-demo-scenario
+state:
+  unstructured: >
+    Initial setting:
+    A squad of 8 soldiers and a high value sensor array are in two
+    vehicles transiting from a village to a base in a jungle region.  The
+    sensor array must be placed in and around the jungle base. As the squad
+    approaches the base, vehicle one runs over and detonates a mine.
+    Vehicle two is also affected by the blast.
+
+    Casualty setting:
+    Vehicle one contains four marines who are all severely injured. Two of
+    the marines in vehicle two are specialists at sensor emplacement; they
+    are also injured by flying glass and shrapnel. All casualties in vehicle
+    one have been ejected from their vehicles or can be reached easily for treatment
+    and evaluation. Both vehicles are within 20 meters of the provider.
+
+  mission:
+    unstructured: Place sensors in and around the jungle base.
+    mission_type: Sensor emplacement
+
+  environment:
+    unstructured: >
+      Late afternoon in a wet jungle region. 
+    weather: Rainy
+    location: Jungle
+    terrain: dense forest with a nearby rocky streambed
+    flora: lush jungle vegetation
+    fauna: many insects, some amphibians and reptiles
+    soundscape: burbling brook and locusts
+    temperature: 82.5
+    humidity: 80
+    lighting: 0.7
+    visibility: 0.5
+    noise_ambient: 0.5
+    noise_peak: 0.6
+
+  threat_state:
+    unstructured: No additional threats are detected.
+    threats: {}
+
+  supplies:
+    - {type: Hemostatic gauze, quantity: 8}
+    - {type: Tourniquet, quantity: 5}
+    - {type: Pressure bandage, quantity: 5}
+    - {type: Decompression Needle, quantity: 1}
+    - {type: Nasopharyngeal airway, quantity: 1}
+
+  casualties:
+    - id: casualty-A
+      unstructured: >
+        Casualty A is a 22 YO male marine in the vehicle suspected of being hit by
+        a mine detonation. Initial injuries appear to be shrapnel on the left side of the face,
+        a 1 cm puncture wound on the left forearm, and a severe left thigh laceration.
+        Patient is unconscious.
+      name: Maurice
+      demographics:
+        age: 22
+        sex: M
+        rank: Marine
+      injuries:
+        - name: Puncture
+          location: left forearm
+          severity: 0.5
+        - name: Shrapnel
+          location: left face
+          severity: 1
+        - name: Laceration
+          location: left thigh
+          severity: 0.8
+      vitals:
+        conscious: false
+        mental_status: UNRESPONSIVE
+        breathing: FAST
+        hrpmin: 145
+        RR: 40
+    - id: casualty-B
+      name: Tom
+      unstructured: >
+        Casualty B is a 25 YO male marine and sensor specialist in the vehicle suspected
+        of being hit by a mine detonation. Intial injuries show left face shrapnel, left
+        ear bleed, and left wrist amputation.
+      demographics:
+        age: 25
+        sex: M
+        rank: Marine
+      injuries:
+        - name: Shrapnel
+          location: left face
+          severity: 1
+        - name: Amputation
+          location: left wrist
+          severity: 1
+        - name: Ear Bleed
+          location: left face
+          severity: 0.5
+      vitals:
+        conscious: true
+        mental_status: UNRESPONSIVE
+        breathing: FAST
+        hrpmin: 120
+        RR: 38
+        pain: 8
+    - id: casualty-C
+      name: Henrietta
+      unstructured: >
+        Casualty C is a 26 YO female marine and sensor specialist in the vehicle suspected
+        of being hit by a mine detonation. Intial injuries show right calf laceration, right
+        bicep puncture, and forehead scrape.
+      demographics:
+        age: 40
+        sex: F
+        rank: Marine
+      injuries:
+        - name: Laceration
+          location: right calf
+          severity: 0.9
+        - name: Puncture
+          location: right bicep
+          severity: 0.6
+        - name: Ear Bleed
+          location: right face
+          severity: 0.5
+      vitals:
+        conscious: true
+        responsive: true
+        mental_status: UPSET
+        breathing: NORMAL
+        hrpmin: 105
+        RR: 15
+        pain: 3
+    - id: casualty-D
+      name: Sean
+      unstructured: >
+        Casualty D is a 26 YO Male caught in a vehicle explosion.
+        Immediate partial amputation of right wrist and shrapnel wounds on
+        the right side of the face.
+        Patient's mental status and vital signs are deteriorating.
+      demographics:
+        age: 26
+        sex: M
+        rank: Marine
+      injuries:
+        - name: Amputation
+          location: right wrist
+          severity: 1
+        - name: Shrapnel
+          location: right face
+          severity: 0.9
+      vitals:
+        conscious: true
+        mental_status: AGONY
+        breathing: RESTRICTED
+        hrpmin: 120
+        RR: 8
+        pain: 10

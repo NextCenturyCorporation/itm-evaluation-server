@@ -14,55 +14,35 @@ class Vitals(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, conscious: bool=None, responsive: bool=None, breathing: str=None, hrpmin: int=None, mm_hg: int=None, rr: int=None, sp_o2: int=None, pain: int=None):  # noqa: E501
+    def __init__(self, conscious: bool=None, mental_status: str=None, breathing: str=None, hrpmin: int=None):  # noqa: E501
         """Vitals - a model defined in Swagger
 
         :param conscious: The conscious of this Vitals.  # noqa: E501
         :type conscious: bool
-        :param responsive: The responsive of this Vitals.  # noqa: E501
-        :type responsive: bool
+        :param mental_status: The mental_status of this Vitals.  # noqa: E501
+        :type mental_status: str
         :param breathing: The breathing of this Vitals.  # noqa: E501
         :type breathing: str
         :param hrpmin: The hrpmin of this Vitals.  # noqa: E501
         :type hrpmin: int
-        :param mm_hg: The mm_hg of this Vitals.  # noqa: E501
-        :type mm_hg: int
-        :param rr: The rr of this Vitals.  # noqa: E501
-        :type rr: int
-        :param sp_o2: The sp_o2 of this Vitals.  # noqa: E501
-        :type sp_o2: int
-        :param pain: The pain of this Vitals.  # noqa: E501
-        :type pain: int
         """
         self.swagger_types = {
             'conscious': bool,
-            'responsive': bool,
+            'mental_status': str,
             'breathing': str,
-            'hrpmin': int,
-            'mm_hg': int,
-            'rr': int,
-            'sp_o2': int,
-            'pain': int
+            'hrpmin': int
         }
 
         self.attribute_map = {
             'conscious': 'conscious',
-            'responsive': 'responsive',
+            'mental_status': 'mental_status',
             'breathing': 'breathing',
-            'hrpmin': 'hrpmin',
-            'mm_hg': 'mmHg',
-            'rr': 'RR',
-            'sp_o2': 'SpO2%',
-            'pain': 'pain'
+            'hrpmin': 'hrpmin'
         }
         self._conscious = conscious
-        self._responsive = responsive
+        self._mental_status = mental_status
         self._breathing = breathing
         self._hrpmin = hrpmin
-        self._mm_hg = mm_hg
-        self._rr = rr
-        self._sp_o2 = sp_o2
-        self._pain = pain
 
     @classmethod
     def from_dict(cls, dikt) -> 'Vitals':
@@ -79,7 +59,7 @@ class Vitals(Model):
     def conscious(self) -> bool:
         """Gets the conscious of this Vitals.
 
-        whether or not the patient is conscious  # noqa: E501
+        whether or not the casualty is conscious  # noqa: E501
 
         :return: The conscious of this Vitals.
         :rtype: bool
@@ -90,7 +70,7 @@ class Vitals(Model):
     def conscious(self, conscious: bool):
         """Sets the conscious of this Vitals.
 
-        whether or not the patient is conscious  # noqa: E501
+        whether or not the casualty is conscious  # noqa: E501
 
         :param conscious: The conscious of this Vitals.
         :type conscious: bool
@@ -99,27 +79,33 @@ class Vitals(Model):
         self._conscious = conscious
 
     @property
-    def responsive(self) -> bool:
-        """Gets the responsive of this Vitals.
+    def mental_status(self) -> str:
+        """Gets the mental_status of this Vitals.
 
-        whether or not the patient is responsive  # noqa: E501
+        description of the casualty's overall demeanor  # noqa: E501
 
-        :return: The responsive of this Vitals.
-        :rtype: bool
+        :return: The mental_status of this Vitals.
+        :rtype: str
         """
-        return self._responsive
+        return self._mental_status
 
-    @responsive.setter
-    def responsive(self, responsive: bool):
-        """Sets the responsive of this Vitals.
+    @mental_status.setter
+    def mental_status(self, mental_status: str):
+        """Sets the mental_status of this Vitals.
 
-        whether or not the patient is responsive  # noqa: E501
+        description of the casualty's overall demeanor  # noqa: E501
 
-        :param responsive: The responsive of this Vitals.
-        :type responsive: bool
+        :param mental_status: The mental_status of this Vitals.
+        :type mental_status: str
         """
+        allowed_values = ["AGONY", "CALM", "CONFUSED", "UPSET", "UNRESPONSIVE"]  # noqa: E501
+        if mental_status not in allowed_values:
+            raise ValueError(
+                "Invalid value for `mental_status` ({0}), must be one of {1}"
+                .format(mental_status, allowed_values)
+            )
 
-        self._responsive = responsive
+        self._mental_status = mental_status
 
     @property
     def breathing(self) -> str:
@@ -172,95 +158,3 @@ class Vitals(Model):
         """
 
         self._hrpmin = hrpmin
-
-    @property
-    def mm_hg(self) -> int:
-        """Gets the mm_hg of this Vitals.
-
-        blood pressure in mmHg  # noqa: E501
-
-        :return: The mm_hg of this Vitals.
-        :rtype: int
-        """
-        return self._mm_hg
-
-    @mm_hg.setter
-    def mm_hg(self, mm_hg: int):
-        """Sets the mm_hg of this Vitals.
-
-        blood pressure in mmHg  # noqa: E501
-
-        :param mm_hg: The mm_hg of this Vitals.
-        :type mm_hg: int
-        """
-
-        self._mm_hg = mm_hg
-
-    @property
-    def rr(self) -> int:
-        """Gets the rr of this Vitals.
-
-        respiratory rate in breaths/minute  # noqa: E501
-
-        :return: The rr of this Vitals.
-        :rtype: int
-        """
-        return self._rr
-
-    @rr.setter
-    def rr(self, rr: int):
-        """Sets the rr of this Vitals.
-
-        respiratory rate in breaths/minute  # noqa: E501
-
-        :param rr: The rr of this Vitals.
-        :type rr: int
-        """
-
-        self._rr = rr
-
-    @property
-    def sp_o2(self) -> int:
-        """Gets the sp_o2 of this Vitals.
-
-        Oxygen saturation level, expressed as a percentage  # noqa: E501
-
-        :return: The sp_o2 of this Vitals.
-        :rtype: int
-        """
-        return self._sp_o2
-
-    @sp_o2.setter
-    def sp_o2(self, sp_o2: int):
-        """Sets the sp_o2 of this Vitals.
-
-        Oxygen saturation level, expressed as a percentage  # noqa: E501
-
-        :param sp_o2: The sp_o2 of this Vitals.
-        :type sp_o2: int
-        """
-
-        self._sp_o2 = sp_o2
-
-    @property
-    def pain(self) -> int:
-        """Gets the pain of this Vitals.
-
-        1-10 scale, omit if unknown or unconscious  # noqa: E501
-
-        :return: The pain of this Vitals.
-        :rtype: int
-        """
-        return self._pain
-
-    @pain.setter
-    def pain(self, pain: int):
-        """Sets the pain of this Vitals.
-
-        1-10 scale, omit if unknown or unconscious  # noqa: E501
-
-        :param pain: The pain of this Vitals.
-        :type pain: int
-        """
-
-        self._pain = pain

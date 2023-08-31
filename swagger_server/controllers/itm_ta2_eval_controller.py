@@ -5,7 +5,6 @@ from swagger_server.models.action import Action  # noqa: E501
 from swagger_server.models.alignment_target import AlignmentTarget  # noqa: E501
 from swagger_server.models.scenario import Scenario  # noqa: E501
 from swagger_server.models.state import State  # noqa: E501
-from swagger_server.models.vitals import Vitals  # noqa: E501
 from swagger_server import util
 
 from ..itm import ITMScenarioSession
@@ -87,6 +86,8 @@ def start_session(adm_name, session_type, kdma_training=None, max_scenarios=None
     :type adm_name: str
     :param session_type: the type of session to start (&#x60;test&#x60;, &#x60;eval&#x60;, or a TA1 name)
     :type session_type: str
+    :param kdma_training: whether or not this is a training session with TA2
+    :type kdma_training: bool
     :param max_scenarios: the maximum number of scenarios requested, supported only in &#x60;test&#x60; sessions
     :type max_scenarios: int
 
@@ -95,8 +96,8 @@ def start_session(adm_name, session_type, kdma_training=None, max_scenarios=None
     return ITM_SESSION.start_session(
         adm_name=adm_name,
         session_type=session_type,
-        max_scenarios=max_scenarios,
         kdma_training=kdma_training,
+        max_scenarios=max_scenarios
     )
 
 
