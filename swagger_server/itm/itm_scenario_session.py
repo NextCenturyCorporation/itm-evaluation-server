@@ -687,9 +687,6 @@ class ITMScenarioSession:
         self.current_isso.casualty_simulator.update_vitals(time_elapsed_during_treatment)
         self.scenario.state.elapsed_time = self.time_elapsed_scenario_time
 
-        if action.action_type == "MOVE_TO_EVAC":
-            self._end_scenario()
-
     def take_action(self, session_id: str, body: Action) -> State:
         """
         Take an action within a scenario
@@ -749,31 +746,33 @@ class ITMScenarioSession:
             
             # Update scenario state
             self.update_state(action=body)
+            if body.action_type == "MOVE_TO_EVAC":
+                self.end_probe()
+                self._end_scenario()
             # if no unanswered casualties left, (or no options left)
-            if not unanswered_casualty_id or not self.current_isso.probe_system.probe_yamls[self.current_isso.probe_system.current_probe_index]:
-                self.current_isso.probe_system.probe_count -= 1
-                self.current_isso.probe_system.current_probe_index += 1
-                self.scenario.state.scenario_complete = \
-                    self.current_isso.probe_system.probe_count <= 0
-                # reset casualty_id list when going to next probe
-                self.casualty_ids = []
-                self.first_answer = True
+            elif not unanswered_casualty_id or not self.current_isso.probe_system.probe_yamls[self.current_isso.probe_system.current_probe_index]:
+                self.end_probe()
         else:
             #PROBE HANDLING FOR ST
             if body.action_type == "APPLY_TREATMENT": self.patients_treated += 1
             self.update_state(action=body)
             # TEMPORARY HACK
             if self.patients_treated >= 3:
-                self.current_isso.probe_system.probe_count -= 1
-                self.current_isso.probe_system.current_probe_index += 1
-                self.scenario.state.scenario_complete = \
-                    self.current_isso.probe_system.probe_count <= 0
-                self.first_answer = True
+                self.end_probe()
                 # Only one probe, scenario ends when all three patients treated
                 self._end_scenario()
 
 
         return self.scenario.state
+    
+    def end_probe(self):
+        self.current_isso.probe_system.probe_count -= 1
+        self.current_isso.probe_system.current_probe_index += 1
+        self.scenario.state.scenario_complete = \
+        self.current_isso.probe_system.probe_count <= 0
+        # reset casualty_id list when going to next probe
+        self.casualty_ids = []
+        self.first_answer = True
 
 
     def get_available_actions(self, session_id: str, scenario_id: str) -> List[Action]:
