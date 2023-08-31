@@ -764,7 +764,7 @@ class ITMScenarioSession:
         if not successful:
             return message, code
         if self.scenario.session_complete:
-            raise ValueError("Scenario Complete")
+            return "Scenario Complete" , 400
 
         # TODO ITM-71: Add "training mode" that returns KDMA associations
         # TODO ITM-67: Return a list of available actions based on associated actions in scenario/probe configuration
@@ -778,6 +778,6 @@ class ITMScenarioSession:
                     option.assoc_action.pop('kdma_association', None)
                 actions.append(option.assoc_action)
         else:
-            raise ValueError("Scenario Complete")
-            
+             return "Scenario Complete" , 400
+        print(actions)
         return actions
