@@ -721,7 +721,7 @@ class ITMScenarioSession:
         # move on to next probe when all casualty id's have at least one action towards them
         unanswered_casualty_id = False
         for option in self.current_isso.probe_system.probe_yamls[self.current_isso.probe_system.current_probe_index].options:
-            if option.id not in self.casualty_ids:
+            if option.assoc_action.casualty_id not in self.casualty_ids:
                 unanswered_casualty_id = True
                 break  # No need to continue checking once we find one unmatched id
         
