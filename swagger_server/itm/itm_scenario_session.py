@@ -746,7 +746,9 @@ class ITMScenarioSession:
                 if option.assoc_action["casualty_id"] not in self.casualty_ids:
                     unanswered_casualty_id = True
                     break  # No need to continue checking once we find one unmatched id
-        
+            
+            # Update scenario state
+            self.update_state(action=body)
             # if no unanswered casualties left, (or no options left)
             if not unanswered_casualty_id or not self.current_isso.probe_system.probe_yamls[self.current_isso.probe_system.current_probe_index]:
                 self.current_isso.probe_system.probe_count -= 1
@@ -756,11 +758,6 @@ class ITMScenarioSession:
                 # reset casualty_id list when going to next probe
                 self.casualty_ids = []
                 self.first_answer = True
-             
-            
-            # Update scenario state
-            self.update_state(action=body)
-
         else:
             #PROBE HANDLING FOR ST
             if body.action_type == "APPLY_TREATMENT": self.patients_treated += 1
