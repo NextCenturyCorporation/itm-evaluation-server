@@ -120,7 +120,7 @@ class ITMScenarioSession:
         Raises:
             Exception: If the action is malformed.
         """
-        # TODO ITM-74: Validate that action is well-formed
+
         if action is None:
             raise ValueError('Invalid or Malformed Action')
         
@@ -395,7 +395,6 @@ class ITMScenarioSession:
         if scenario_id:
             raise connexion.ProblemException(status=403, title="Forbidden", detail="Specifying a scenario ID is unauthorized")
         
-        # TODO this needs to check if we don't have this scenario id
         if scenario_id and not scenario_id not in ['scenario_id_list']:
             return "Scenario ID does not exist", 404
         
@@ -595,13 +594,15 @@ class ITMScenarioSession:
 
 
     def update_state(self, action: Action):
-        # TODO ITM-69: Update scenario state based on action
+        # Update scenario state based on action
+
         # keeps track of time passed based on action taken (in seconds)
         time_passed = 0
         # Look up casualty action is applied to
         casualty = next((casualty for casualty in self.scenario.state.casualties if casualty.id == action.casualty_id), None)
         # Check we have a reference to the casualty
         if action.action_type == "APPLY_TREATMENT":
+            casualty.assessed = True
             supplies_used = action.parameters.get('treatment', None)
             for supply in self.scenario.state.supplies:
                 if supply.type == supplies_used:
@@ -626,34 +627,38 @@ class ITMScenarioSession:
         # I don't think updating vitals does anything here because the get_vitals and get heart rate funcs 
         # just return what is already in the casualties vitals field. Probably not needed but was included in ticket
         if action.action_type == "CHECK_ALL_VITALS":
+            casualty.assessed = True
             vitals = self.get_vitals(self.session_id, casualty.id)
             casualty.vitals = vitals
             time_passed += self.times_dict["CHECK_ALL_VITALS"]
 
         if action.action_type == "CHECK_PULSE":
+            casualty.assessed = True
             casualty.vitals.hrpmin = self.get_heart_rate(self.session_id, casualty.id)
             time_passed += self.times_dict["CHECK_PULSE"]
 
         if action.action_type == "CHECK_RESPIRATION":
+            casualty.assessed = True
             casualty.vitals.breathing = self.get_respiration(self.session_id, casualty.id)
             time_passed += self.times_dict["CHECK_RESPIRATION"]
 
         if action.action_type == "DIRECT_MOBILE_CASUALTIES":
             time_passed += self.times_dict["DIRECT_MOBILE_CASUALTIES"]
 
-        #TODO this timing most likely will change
         if action.action_type == "MOVE_TO_EVAC":
-            time_passed += self.times_dict["DIRECT_MOBILE_CASUALTIES"]
+            time_passed += self.times_dict["MOVE_TO_EVAC"]
 
         if action.action_type == "SITREP":
             # if a casualty is specified then only sitrep that casualty
             # otherwise, sitrep all responsive casualties
             if casualty:
+                casualty.assessed = True
                 time_passed += self.times_dict["SITREP"]
             else:
                 # takes 10 seconds for each responsive casualty during sitrep
                 for curr_casualty in self.scenario.state.casualties:
                     if curr_casualty.vitals.responsive:
+                        casualty.assessed = True
                         time_passed += self.times_dict["SITREP"]
         
         # For now, any action does nothing but ends the scenario!
@@ -666,13 +671,9 @@ class ITMScenarioSession:
             supply=action.justification
         )
 
-        # TODO ITM-70: Add hard-coded elapsed time model, and update in state
-        # Bonus: make it externally configurable
         self.time_elapsed_scenario_time += time_elapsed_during_treatment + time_passed
         self.current_isso.casualty_simulator.update_vitals(time_elapsed_during_treatment)
         self.scenario.state.elapsed_time = self.time_elapsed_scenario_time
-
-
 
 
     def take_action(self, session_id: str, body: Action) -> State:
@@ -766,8 +767,6 @@ class ITMScenarioSession:
         if self.scenario.session_complete:
             return "Scenario Complete" , 400
 
-        # TODO ITM-71: Add "training mode" that returns KDMA associations
-        # TODO ITM-67: Return a list of available actions based on associated actions in scenario/probe configuration
         actions: List[Action] = []
         
         # TODO When an action takes place, that action should be removed from the probeYaml's option list!
