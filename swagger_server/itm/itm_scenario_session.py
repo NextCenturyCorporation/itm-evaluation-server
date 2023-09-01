@@ -50,7 +50,7 @@ class ITMScenarioSession:
         # hacky thing for ST
         self.patients_treated = 0
         # adept or ST
-        self.secnario_rules = ""
+        self.scenario_rules = ""
 
         # This determines whether the server makes calls to TA1
         self.ta1_integration = False
@@ -196,6 +196,8 @@ class ITMScenarioSession:
                 "Target ID": self.current_isso.ta1_controller.alignment_target_id},
                 alignment_target_session_alignment
             )
+        else:
+            print("--> Getting session alignment from TA1.")
         if not self.save_to_database:
             self.history = []
             self.probes_responded_to = []
@@ -410,9 +412,9 @@ class ITMScenarioSession:
 
             # the rules are different... so we need to know which group the scenario is from
             if self.scenario.id.__contains__("adept"):
-                self.secnario_rules = "ADEPT"
+                self.scenario_rules = "ADEPT"
             else:
-                self.secnario_rules = "SOARTECH"
+                self.scenario_rules = "SOARTECH"
 
             self._add_history(
                 "Start Scenario",
@@ -431,6 +433,8 @@ class ITMScenarioSession:
                     "Scenario ID": self.current_isso.scenario.id},
                     scenario_alignment
                 )
+            else:
+                print("--> Getting alignment target from TA1.")
 
             return self.scenario
         except:
@@ -556,8 +560,6 @@ class ITMScenarioSession:
         """
         self.probes_responded_to.append(body.probe_id)
         body.justification = '' if body.justification == None else body.justification
-        # self.current_isso.probe_system.generate_probe(self.scenario.state)]
-        #TODO: this is currently broken
         self.current_isso.probe_system.respond_to_probe(
             probe_id=body.probe_id,
             choice=body.choice,
@@ -585,6 +587,8 @@ class ITMScenarioSession:
                 "Probe ID": body.probe_id},
                 probe_response_alignment
             )
+        else:
+            print(f"--> Responding to probe {body.probe_id} from scenario {body.scenario_id} with choice {body.choice}.")
 
     def lookup_probe_response(self, action: Action) -> ProbeResponse:
         """
@@ -598,9 +602,8 @@ class ITMScenarioSession:
         # need to go back through to find the choice from probeYamlOption (not stored in action)
         for option in currentProbe.options:
             if option.assoc_action["action_id"] == action.action_id:
-                choice_id = option.id
+                choice_id = option.ta1_id
                 break
-        # TODO ITM-75: Map ADM action back to a TA1 probe response
         return ProbeResponse(scenario_id=action.scenario_id, probe_id=currentProbe.id, choice=choice_id)
 
 
@@ -711,7 +714,7 @@ class ITMScenarioSession:
 
         # Map action to probe response
         response = self.lookup_probe_response(action=body)
-        
+
         # keep track of which casualty_id's have been addressed in this probe
         if not body.casualty_id in self.casualty_ids:
             self.casualty_ids.append(body.casualty_id)
@@ -725,8 +728,9 @@ class ITMScenarioSession:
 
         # Respond to probe with TA1
         # NOTE: Not all actions will necessarily result in a probe response
-        # only respond to probe with first action taken in a probe
+        # In the September scenarios, only the first action taken results in a response to a probe.
         if self.first_answer:
+            print(f"--> ADM chose action {body.action_type} with casualty {body.casualty_id} resulting in TA1 response with choice {response.choice}.")
             self.respond_to_probe(body=response)
             self.first_answer = False
 
@@ -736,7 +740,7 @@ class ITMScenarioSession:
             self.scenario.state.to_dict())
 
         # PROBE HANDLING FOR ADEPT
-        if self.secnario_rules == "ADEPT":
+        if self.scenario_rules == "ADEPT":
             # move on to next probe when all casualty id's have at least one action towards them
             unanswered_casualty_id = False
             for option in self.current_isso.probe_system.probe_yamls[self.current_isso.probe_system.current_probe_index].options:
@@ -756,7 +760,6 @@ class ITMScenarioSession:
             #PROBE HANDLING FOR ST
             if body.action_type == "APPLY_TREATMENT": self.patients_treated += 1
             self.update_state(action=body)
-            # TEMPORARY HACK
             if self.patients_treated >= 3:
                 self.end_probe()
                 # Only one probe, scenario ends when all three patients treated
@@ -799,7 +802,7 @@ class ITMScenarioSession:
         actions: List[Action] = []
         
         # TODO When an action takes place, that action should be removed from the probeYaml's option list!
-        # tackle one probe at a time, after all available actions are returned for that probe remove it from reamingin probes
+        # tackle one probe at a time, after all available actions are returned for that probe remove it from remaining probes
         if self.current_isso.probe_system.probe_yamls:
             for option in self.current_isso.probe_system.probe_yamls[self.current_isso.probe_system.current_probe_index].options:
                 if (not self.kdma_training):
@@ -807,5 +810,5 @@ class ITMScenarioSession:
                 actions.append(option.assoc_action)
         else:
              return "Scenario Complete" , 400
-        print(actions)
+        #print(actions)
         return actions

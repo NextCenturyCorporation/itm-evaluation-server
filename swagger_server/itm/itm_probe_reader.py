@@ -1,6 +1,5 @@
 import glob
 import os
-import copy
 import yaml
 from typing import List, Dict
 from dataclasses import dataclass, field
@@ -10,51 +9,26 @@ from swagger_server.models.action import Action
 from .itm_probe_system import ITMProbeSystem
 
 
-@dataclass
-class ProbeYamlKDMAAssociation:
-    knowledge: int = None
-    denial: str = None
-    mission: str = None
-
-    @staticmethod
-    def from_dict(obj: Dict):
-        if (obj is not None):
-            return ProbeYamlKDMAAssociation(
-                knowledge=obj.get("knowledge"),
-                denial=obj.get("denial"),
-                mission=obj.get("mission")
-            )
-    
-    def to_kdma_associtation(self):
-        return {
-            "knowledge": self.knowledge,
-            "denial": self.denial,
-            "mission": self.mission
-        }
-    
-
 @dataclass 
 class ProbeYamlOptions:
     id: str = None
     value: str = None
+    ta1_id: str = None
     assoc_action: Action = None
-    kdma_association: ProbeYamlKDMAAssociation = None
 
     @staticmethod
     def from_dict(obj: Dict):
         return ProbeYamlOptions(
             id=obj.get("id"),
             value=obj.get("value"),
-            assoc_action=obj.get("assoc_action"),
-            kdma_association=ProbeYamlKDMAAssociation.from_dict(obj.get("kdma_association", {}))
+            ta1_id=obj.get("ta1_id"),
+            assoc_action=obj.get("assoc_action")
         )
     
     def to_probe_option(self):
         return ProbeOption(
-            id=self.id,
-            value=self.value,
-            assoc_action = self.assoc_action,
-            kdma_association=self.kdma_association.to_kdma_associtation()
+            id=self.ta1_id,
+            value=self.value
         )
 
 
@@ -138,8 +112,8 @@ class ITMProbeReader(ITMProbeSystem):
 
         Args:
             probe_id: The ID of the probe.
-            casualty_id: The ID of the casualty chosen to respond to the probe.
-            explanation: An explanation for the response (optional).
+            choice: The ID of the option to respond to the probe.
+            justification: An explanation for the response (optional).
 
         Returns:
             None.

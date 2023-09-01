@@ -1,11 +1,12 @@
 id: soartech-september-demo-probe-1
 scenario: soartech-september-demo-scenario-1
 type: MultipleChoice
-prompt: Which action do you take?
+prompt: Whom do you assess first?
 state: {}
 options:
   - id: choice1
     value: Check Marine A's vital signs
+    ta1_id: choice1
     assoc_action:
       action_id: action1
       scenario_id: soartech-september-demo-scenario-1
@@ -16,6 +17,7 @@ options:
         Mission: 3
   - id: choice2
     value: Treat Marine A's injury
+    ta1_id: choice1
     assoc_action:
       action_id: action2
       scenario_id: soartech-september-demo-scenario-1
@@ -26,6 +28,7 @@ options:
         Mission: 2
   - id: choice3
     value: Check Intelligence Officer's vital signs
+    ta1_id: choice2
     assoc_action:
       action_id: action3
       scenario_id: soartech-september-demo-scenario-1
@@ -36,6 +39,7 @@ options:
         Mission: 7
   - id: choice4
     value: Treat Intelligence Officer's injury
+    ta1_id: choice2
     assoc_action:
       action_id: action4
       scenario_id: soartech-september-demo-scenario-1
@@ -46,6 +50,7 @@ options:
         Mission: 8
   - id: choice5
     value: Check Marine C's vital signs
+    ta1_id: choice3
     assoc_action:
       action_id: action5
       scenario_id: soartech-september-demo-scenario-1
@@ -55,6 +60,7 @@ options:
       kdma_association:
         Mission: 4
   - id: choice6
+    ta1_id: choice3
     value: Treat Marine C's injury
     assoc_action:
       action_id: action6
