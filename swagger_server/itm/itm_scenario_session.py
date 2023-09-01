@@ -506,7 +506,8 @@ class ITMScenarioSession:
                 selected_yaml_directories.append(random_directory)
         else:
             max_scenarios = len(selected_yaml_directories)
-        random.shuffle(selected_yaml_directories)
+        if session_type != 'eval':
+            random.shuffle(selected_yaml_directories)
         for i in range(max_scenarios):
             scenario_object_handler = ITMSessionScenarioObjectHandler(yaml_path=selected_yaml_directories[i])
             itm_scenario_object = \
