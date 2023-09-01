@@ -284,8 +284,9 @@ class ITMScenarioSession:
         casualties: List[Casualty] = self.scenario.state.casualties
         for casualty in casualties:
             if casualty.id == casualty_id:
-                response = casualty.complete_vitals.hrpmin
-                casualty.vitals.hrpmin = response
+                response = casualty.vitals.hrpmin
+                #response = casualty.complete_vitals.hrpmin
+                #casualty.vitals.hrpmin = response
                 self._add_history(
                     "Get Heart Rate",
                     {"Session ID": self.session_id, "Casualty ID": casualty_id},
@@ -313,8 +314,9 @@ class ITMScenarioSession:
         casualties: List[Casualty] = self.scenario.state.casualties
         for casualty in casualties:
             if casualty.id == casualty_id:
-                response = casualty.complete_vitals.breathing
-                casualty.vitals.breathing = response
+                response = casualty.vitals.breathing
+                #response = casualty.complete_vitals.breathing
+                #casualty.vitals.breathing = response
                 self._add_history(
                     "Get Respiration",
                     {"Session ID": self.session_id, "Casualty ID": casualty_id},
@@ -371,13 +373,14 @@ class ITMScenarioSession:
         casualties: List[Casualty] = self.scenario.state.casualties
         for casualty in casualties:
             if casualty.id == casualty_id:
-                response = casualty.complete_vitals.to_dict()
-                casualty.vitals = casualty.complete_vitals
+                response = casualty.vitals
+                #response = casualty.complete_vitals.to_dict()
+                #casualty.vitals = casualty.complete_vitals
                 self._add_history(
                     "Get Vitals",
                     {"Session ID": self.session_id, "Casualty ID": casualty_id},
                     response)
-                return casualty.vitals
+                return response
         return 'Casualty ID not found', 404
 
 
@@ -456,7 +459,7 @@ class ITMScenarioSession:
         Returns:
             A new session Id to use in subsequent calls
         """
-        if session_type not in ['test', 'adept', 'soartech', 'eval', 'devtest']:
+        if session_type not in ['test', 'adept', 'soartech', 'eval']:
             return (
                 'Invalid session type. Must be "test, adept, soartech, or eval"',
                 400
@@ -638,8 +641,6 @@ class ITMScenarioSession:
             self.tag_casualty(self.session_id, casualty.id, tag)
             time_passed += self.times_dict["TAG_CASUALTY"]
         
-        # I don't think updating vitals does anything here because the get_vitals and get heart rate funcs 
-        # just return what is already in the casualties vitals field. Probably not needed but was included in ticket
         if action.action_type == "CHECK_ALL_VITALS":
             casualty.assessed = True
             vitals = self.get_vitals(self.session_id, casualty.id)
@@ -686,9 +687,10 @@ class ITMScenarioSession:
             supply=action.justification
         )
 
-        self.time_elapsed_scenario_time += time_elapsed_during_treatment + time_passed
-        self.current_isso.casualty_simulator.update_vitals(time_elapsed_during_treatment)
-        self.scenario.state.elapsed_time = self.time_elapsed_scenario_time
+        #self.time_elapsed_scenario_time += time_elapsed_during_treatment + time_passed
+        #self.current_isso.casualty_simulator.update_vitals(time_elapsed_during_treatment)
+        #self.scenario.state.elapsed_time = self.time_elapsed_scenario_time
+        self.scenario.state.elapsed_time += time_passed
 
     def take_action(self, session_id: str, body: Action) -> State:
         """

@@ -1,5 +1,4 @@
 import copy
-import uuid
 import yaml
 from typing import List, Tuple
 
@@ -184,14 +183,15 @@ class ITMScenarioReader:
             #rr=vital_data['RR'],
             #sp_o2=vital_data['SpO2%'],
         )
+        vitals = copy.deepcopy(complete_vitals)
         casualty = Casualty(
             id=casualty_data['id'],
             unstructured=casualty_data['unstructured'],
             name=casualty_data.get('name', 'Unknown'),
             demographics=demograpics,
             injuries=injuries,
-            vitals=Vitals(),
-            complete_vitals=complete_vitals,
+            vitals=vitals,
+            complete_vitals=None,
             assessed=False,
             tag=None
         )

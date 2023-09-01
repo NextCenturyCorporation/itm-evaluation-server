@@ -17,7 +17,7 @@ class ITMSessionScenarioObject:
     probe_system: ITMProbeReader = None
     alignment_target_reader: ITMAlignmentTargetReader = None
     casualty_simulations: List[CasualtySimulation] = None
-    casualty_simulator = None
+    casualty_simulator: ITMCasualtySimulator = None
     supplies: ITMSupplies = None
     ta1_controller: ITMTa1Controller = None
 
