@@ -92,9 +92,6 @@ class ITMScenarioSession:
 
         Args:
             scenario_id: The scenario ID to compare.
-
-        Raises:
-            Exception: If the scenario ID does not match.
         """
         if not scenario_id == self.scenario.id:
             return False, 'Scenario ID not found', 404
@@ -107,9 +104,6 @@ class ITMScenarioSession:
 
         Args:
             session_id: The session ID to compare.
-
-        Raises:
-            Exception: If the session ID does not match.
         """
         if not session_id == self.session_id:
             return False, 'Invalid Session ID', 400
@@ -122,18 +116,16 @@ class ITMScenarioSession:
         Args:
             action: The action to validate.
 
-        Raises:
-            Exception: If the action is malformed.
         """
 
         if action is None:
-            raise ValueError('Invalid or Malformed Action')
-        
+            return False, 'Invalid or Malformed Action', 400
+
         if not action.scenario_id or not action.action_type or action.scenario_id == "" or action.action_type == "":
-            raise ValueError('Invalid or Malformed Action: Missing scenario_id or action_type')
+            return False, 'Invalid or Malformed Action: Missing scenario_id or action_type', 400
 
         if action.parameters and not isinstance(action.parameters, dict):
-            raise ValueError('Invalid or Malformed Action: Invalid Parameter Structure')
+            return False, 'Invalid or Malformed Action: Invalid Parameter Structure', 400
         # lookup casualty id in state
         casualty = None
         if action.casualty_id:
@@ -142,12 +134,12 @@ class ITMScenarioSession:
         if action.action_type == "APPLY_TREATMENT":
             # Apply treatment requires a casualty id and parameters, casualty and location 
             if not action.casualty_id:
-                raise ValueError('Invalid or Malformed Action: Missing casualty_id for APPLY_TREATMENT')
+                return False, 'Invalid or Malformed Action: Missing casualty_id for APPLY_TREATMENT', 400
             # treatment and location
             if not action.parameters or not "treatment" in action.parameters or not "location" in action.parameters:
-                raise ValueError('Invalid or Malformed Action: Missing parameters for APPLY_TREATMENT')
+                return False, 'Invalid or Malformed Action: Missing parameters for APPLY_TREATMENT', 400
             if not casualty:
-                raise ValueError('Casualty not found in state')
+                return False, 'Casualty not found in state', 400
         elif action.action_type == "DIRECT_MOBILE_CASUALTIES" or action.action_type == "SITREP":
             # sitrep optionally takes a casualty id and direct_mobile_casualties doesn't need one
             pass 
@@ -155,31 +147,31 @@ class ITMScenarioSession:
             or action.action_type == "CHECK_RESPIRATION" or action.action_type == "MOVE_TO_EVAC":
             # All require casualty_id
             if not action.casualty_id:
-                raise ValueError('Invalid or Malformed Action: Missing casualty_id for CHECK_ALL_VITALS')
+                return False, 'Invalid or Malformed Action: Missing casualty_id for CHECK_ALL_VITALS', 400
             if not casualty:
-                raise ValueError('Casualty not found in state')
+                return False, 'Casualty not found in state', 400
         elif action.action_type == "TAG_CASUALTY":
             # Requires casualty_id and category parameter
             if not action.casualty_id:
-                raise ValueError('Invalid or Malformed Action: Missing casualty_id for TAG_CASUALTY')
+                return False, 'Invalid or Malformed Action: Missing casualty_id for TAG_CASUALTY', 400
             if not casualty:
-                raise ValueError('Casualty not found in state')
+                return False, 'Casualty not found in state', 400
             if not action.parameters or not "category" in action.parameters:
-                raise ValueError('Invalid or Malformed Action: Missing parameters for TAG_CASUALTY')
+                return False, 'Invalid or Malformed Action: Missing parameters for TAG_CASUALTY', 400
             else:
                 allowed_values = ["MINIMAL", "DELAYED", "IMMEDIATE", "EXPECTANT"]
                 tag = action.parameters.get("category")
                 if not tag in allowed_values:
-                    raise ValueError('Invalid or Malformed Action: Invalid Tag')
+                    return 'Invalid or Malformed Action: Invalid Tag', 400
         else:
-            raise ValueError('Invalid action_type')
+            return False, 'Invalid action_type', 400
         
         # type checks for possible fields
         if action.unstructured and not isinstance(action.unstructured, str):
-            raise ValueError('Invalid or Malformed Action: Invalid unstructured description')
+            return False, 'Invalid or Malformed Action: Invalid unstructured description', 400
         
         if action.justification and not isinstance(action.justification, str):
-            raise ValueError('Invalid or Malformed Action: Invalid justification')
+            return False, 'Invalid or Malformed Action: Invalid justification', 400
         
         return True, '', 0
 
@@ -260,7 +252,7 @@ class ITMScenarioSession:
         if not successful:
             return message, code
         if self.scenario.session_complete:
-            raise ValueError("Scenario Complete")
+            return 'Scenario Complete', 400
         return self.current_isso.alignment_target_reader.alignment_target
 
 
@@ -406,7 +398,7 @@ class ITMScenarioSession:
             raise connexion.ProblemException(status=403, title="Forbidden", detail="Specifying a scenario ID is unauthorized")
         
         if scenario_id and not scenario_id not in ['scenario_id_list']:
-            return "Scenario ID does not exist", 404
+            return 'Scenario ID does not exist', 404
         
         try:
             self.current_isso: ITMSessionScenarioObject = self.session_issos[self.current_isso_index]
@@ -799,7 +791,7 @@ class ITMScenarioSession:
         if not successful:
             return message, code
         if self.scenario.session_complete:
-            return "Scenario Complete" , 400
+            return 'Scenario Complete', 400
 
         actions: List[Action] = []
         
@@ -811,6 +803,6 @@ class ITMScenarioSession:
                     option.assoc_action.pop('kdma_association', None)
                 actions.append(option.assoc_action)
         else:
-             return "Scenario Complete" , 400
+             return 'Scenario Complete', 400
         #print(actions)
         return actions
