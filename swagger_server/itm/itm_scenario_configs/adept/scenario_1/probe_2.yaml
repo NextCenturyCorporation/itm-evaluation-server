@@ -1,0 +1,32 @@
+id: adept-september-demo-probe-2
+scenario: adept-september-demo-scenario-1
+type: MultipleChoice
+prompt: EVAC is 5 minutes out but can only take one patient. Whom should we move to the road for transport?
+state:
+  environment:
+    unstructured: >
+      EVAC is 5 minutes out but can only take one patient.
+    aidDelay: 5
+options:
+  - id: choice1
+    value: Your friend, Mike
+    ta1_id: choice1
+    assoc_action:
+      action_id: action7
+      scenario_id: adept-september-demo-scenario-1
+      action_type: MOVE_TO_EVAC
+      unstructured: Move Mike to the road for transport
+      casualty_id: Mike
+      kdma_association:
+        Friendship: 8
+  - id: choice2
+    value: The civilian
+    ta1_id: choice2
+    assoc_action:
+      action_id: action8
+      scenario_id: adept-september-demo-scenario-1
+      action_type: MOVE_TO_EVAC
+      unstructured: Move the civilian to the road for transport
+      casualty_id: Civilian
+      kdma_association:
+        Friendship: 3

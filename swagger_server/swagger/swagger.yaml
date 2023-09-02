@@ -5,7 +5,7 @@ info:
     This is the specification of the TA3 API for In The Moment (ITM).  Currently, the Evaluation API for TA2 supports functionality for the September milestone.
 
     The API is based on the OpenAPI 3.0 specification.
-  version: 0.2.1
+  version: 0.2.2
 servers:
 - url: /
 tags:
@@ -38,6 +38,15 @@ paths:
         schema:
           type: string
           example: test
+      - name: kdma_training
+        in: query
+        description: whether or not this is a training session with TA2
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: boolean
+          default: false
       - name: max_scenarios
         in: query
         description: "the maximum number of scenarios requested, supported only in\
@@ -59,8 +68,6 @@ paths:
                 x-content-type: text/plain
         "400":
           description: Invalid session type or max_scenarios
-        "418":
-          description: The server is not ready to start a session
         "500":
           description: An exception occurred on the server; see returned error string.
           content:
@@ -68,6 +75,8 @@ paths:
               schema:
                 type: string
                 x-content-type: text/plain
+        "503":
+          description: The server is not ready to start a session
       x-openapi-router-controller: swagger_server.controllers.itm_ta2_eval_controller
   /ta2/scenario:
     get:
@@ -106,8 +115,6 @@ paths:
           description: Specifying a scenario ID is unauthorized
         "404":
           description: Session or Scenario ID not found
-        "418":
-          description: The server is not ready to start a scenario
         "500":
           description: An exception occurred on the server; see returned error string.
           content:
@@ -147,6 +154,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AlignmentTarget'
+        "400":
+          description: Scenario Complete
         "404":
           description: Session or Scenario ID not found
         "500":
@@ -175,7 +184,7 @@ paths:
           type: string
       - name: scenario_id
         in: path
-        description: The ID of the scenario for which to retrieve status
+        description: the ID of the scenario for which to retrieve status
         required: true
         style: simple
         explode: false
@@ -233,6 +242,8 @@ paths:
                 items:
                   $ref: '#/components/schemas/Action'
                 x-content-type: application/json
+        "400":
+          description: Scenario Complete
         "404":
           description: Invalid scenario ID supplied
         "500":
@@ -248,7 +259,7 @@ paths:
       tags:
       - itm-ta2-eval
       summary: Take an action within a scenario
-      description: Take an action with
+      description: Take the specified Action within a scenario
       operationId: take_action
       parameters:
       - name: session_id
@@ -323,7 +334,7 @@ components:
         id: "1234"
         state:
           mission:
-            unstructured: Place sensors in and around the jungle base.
+            unstructured: Place sensors in and around the jungle base
             mission_type: Listening/Observation
           environment:
             visibility: 0.5
@@ -347,13 +358,16 @@ components:
             type: Tourniquet
           unstructured: unstructured
           threat_state:
-            unstructured: No additional threats are detected.
+            unstructured: No additional threats are detected
             threats:
-            - key: threats
-            - key: threats
+            - type: Gunfire
+              severity: 0.5
+            - type: Gunfire
+              severity: 0.5
           scenario_complete: false
           casualties:
           - assessed: false
+            complete_vitals: null
             injuries:
             - severity: 0.8
               name: Laceration
@@ -364,21 +378,19 @@ components:
             unstructured: unstructured
             name: Mary
             id: id
-            tag: delayed
+            tag: DELAYED
+            relationship: NONE
             vitals:
-              RR: 40
-              SpO2%: 95
-              pain: 8
               breathing: NORMAL
-              responsive: true
-              mmHg: 180
               conscious: true
+              mental_status: CALM
               hrpmin: 150
             demographics:
               sex: F
               rank: Marine
               age: 32
           - assessed: false
+            complete_vitals: null
             injuries:
             - severity: 0.8
               name: Laceration
@@ -389,15 +401,12 @@ components:
             unstructured: unstructured
             name: Mary
             id: id
-            tag: delayed
+            tag: DELAYED
+            relationship: NONE
             vitals:
-              RR: 40
-              SpO2%: 95
-              pain: 8
               breathing: NORMAL
-              responsive: true
-              mmHg: 180
               conscious: true
+              mental_status: CALM
               hrpmin: 150
             demographics:
               sex: F
@@ -482,14 +491,14 @@ components:
             $ref: '#/components/schemas/Supplies'
         casualties:
           type: array
-          description: the list of casualties/patients in the scenario
+          description: the list of casualties in the scenario
           items:
             $ref: '#/components/schemas/Casualty'
       description: the current tactical & environmental state of the scenario and
         of its casualties.
       example:
         mission:
-          unstructured: Place sensors in and around the jungle base.
+          unstructured: Place sensors in and around the jungle base
           mission_type: Listening/Observation
         environment:
           visibility: 0.5
@@ -513,13 +522,16 @@ components:
           type: Tourniquet
         unstructured: unstructured
         threat_state:
-          unstructured: No additional threats are detected.
+          unstructured: No additional threats are detected
           threats:
-          - key: threats
-          - key: threats
+          - type: Gunfire
+            severity: 0.5
+          - type: Gunfire
+            severity: 0.5
         scenario_complete: false
         casualties:
         - assessed: false
+          complete_vitals: null
           injuries:
           - severity: 0.8
             name: Laceration
@@ -530,21 +542,19 @@ components:
           unstructured: unstructured
           name: Mary
           id: id
-          tag: delayed
+          tag: DELAYED
+          relationship: NONE
           vitals:
-            RR: 40
-            SpO2%: 95
-            pain: 8
             breathing: NORMAL
-            responsive: true
-            mmHg: 180
             conscious: true
+            mental_status: CALM
             hrpmin: 150
           demographics:
             sex: F
             rank: Marine
             age: 32
         - assessed: false
+          complete_vitals: null
           injuries:
           - severity: 0.8
             name: Laceration
@@ -555,15 +565,12 @@ components:
           unstructured: unstructured
           name: Mary
           id: id
-          tag: delayed
+          tag: DELAYED
+          relationship: NONE
           vitals:
-            RR: 40
-            SpO2%: 95
-            pain: 8
             breathing: NORMAL
-            responsive: true
-            mmHg: 180
             conscious: true
+            mental_status: CALM
             hrpmin: 150
           demographics:
             sex: F
@@ -579,10 +586,10 @@ components:
         unstructured:
           type: string
           description: natural language description of current mission
-          example: Place sensors in and around the jungle base.
+          example: Place sensors in and around the jungle base
         mission_type:
           type: string
-          description: enum of possible mission types
+          description: enumeration of possible mission types
           enum:
           - Listening/Observation
           - Direct Action
@@ -596,9 +603,11 @@ components:
           - Security patrol
           - Fire support
           - Nuclear deterrence
+          - Extraction
+          - Unknown
       description: encapsulates the scenario's strategic mission
       example:
-        unstructured: Place sensors in and around the jungle base.
+        unstructured: Place sensors in and around the jungle base
         mission_type: Listening/Observation
     Environment:
       required:
@@ -690,7 +699,7 @@ components:
         unstructured:
           type: string
           description: text description of current threat state
-          example: No additional threats are detected.
+          example: No additional threats are detected
         threats:
           type: array
           description: An array of threats
@@ -698,10 +707,12 @@ components:
             $ref: '#/components/schemas/Threat'
       description: encapsulation of the state of threat for participants in the scenario
       example:
-        unstructured: No additional threats are detected.
+        unstructured: No additional threats are detected
         threats:
-        - key: threats
-        - key: threats
+        - type: Gunfire
+          severity: 0.5
+        - type: Gunfire
+          severity: 0.5
     Threat:
       type: object
       additionalProperties:
@@ -709,6 +720,9 @@ components:
       description: |-
         list of pairs of type (enum like IED, Gunshots, fire, etc)
         and severity (float 0 (no threat) - 1 (max severity))
+      example:
+        type: Gunfire
+        severity: 0.5
     Supplies:
       required:
       - quantity
@@ -717,7 +731,7 @@ components:
       properties:
         type:
           type: string
-          description: an enum of available supply types
+          description: an enumeration of available supply types
           example: Tourniquet
           enum:
           - Tourniquet
@@ -751,6 +765,16 @@ components:
           type: string
           description: "the name of the casualty, omit if unknown"
           example: Mary
+        relationship:
+          type: string
+          description: the relationship between the medic and the casualty
+          example: NONE
+          enum:
+          - NONE
+          - ALLY
+          - FRIEND
+          - HOSTILE
+          - EXPECTANT
         demographics:
           $ref: '#/components/schemas/Demographics'
         injuries:
@@ -760,6 +784,8 @@ components:
             $ref: '#/components/schemas/Injury'
         vitals:
           $ref: '#/components/schemas/Vitals'
+        complete_vitals:
+          $ref: '#/components/schemas/Vitals'
         assessed:
           type: boolean
           description: whether or not this casualty has been assessed in the current
@@ -768,15 +794,16 @@ components:
         tag:
           type: string
           description: "the tag assigned to this casualty, omit if untagged"
-          example: delayed
+          example: DELAYED
           enum:
           - MINIMAL
           - DELAYED
           - IMMEDIATE
           - EXPECTANT
-      description: encapulation of a single casualty/patient in the scenario
+      description: encapulation of a single casualty in the scenario
       example:
         assessed: false
+        complete_vitals: null
         injuries:
         - severity: 0.8
           name: Laceration
@@ -787,15 +814,12 @@ components:
         unstructured: unstructured
         name: Mary
         id: id
-        tag: delayed
+        tag: DELAYED
+        relationship: NONE
         vitals:
-          RR: 40
-          SpO2%: 95
-          pain: 8
           breathing: NORMAL
-          responsive: true
-          mmHg: 180
           conscious: true
+          mental_status: CALM
           hrpmin: 150
         demographics:
           sex: F
@@ -825,6 +849,7 @@ components:
           - Sailor
           - Civilian
           - SEAL
+          - Intel Officer
       description: demographic profile of a casualty
       example:
         sex: F
@@ -849,6 +874,7 @@ components:
           - Shrapnel
           - Chest Collapse
           - Amputation
+          - Burn
         location:
           type: string
           description: the injury location on the casualty's body
@@ -868,17 +894,20 @@ components:
           - left shoulder
           - right side
           - left side
-          - right calf
-          - left calf
+          - right chest
+          - left chest
           - right wrist
           - left wrist
           - left face
           - right face
+          - left neck
+          - right neck
+          - unspecified
         severity:
           type: number
           description: the apparent severity of the injury from 0 (low) to 1.0 (high)
           example: 0.8
-      description: an injury on a casualty. The name field defines a controlled vocabulary.
+      description: An injury on a casualty. The name field defines a controlled vocabulary.
       example:
         severity: 0.8
         name: Laceration
@@ -888,12 +917,18 @@ components:
       properties:
         conscious:
           type: boolean
-          description: whether or not the patient is conscious
+          description: whether or not the casualty is conscious
           example: true
-        responsive:
-          type: boolean
-          description: whether or not the patient is responsive
-          example: true
+        mental_status:
+          type: string
+          description: description of the casualty's overall demeanor
+          example: CALM
+          enum:
+          - AGONY
+          - CALM
+          - CONFUSED
+          - UPSET
+          - UNRESPONSIVE
         breathing:
           type: string
           description: a descriptor for the casualty's breathing
@@ -908,35 +943,11 @@ components:
           description: heart rate in beats per minute
           format: int16
           example: 150
-        mmHg:
-          type: integer
-          description: blood pressure in mmHg
-          format: int16
-          example: 180
-        RR:
-          type: integer
-          description: respiratory rate in breaths/minute
-          format: int16
-          example: 40
-        SpO2%:
-          type: integer
-          description: "Oxygen saturation level, expressed as a percentage"
-          format: int16
-          example: 95
-        pain:
-          type: integer
-          description: "1-10 scale, omit if unknown or unconscious"
-          format: int16
-          example: 8
       description: "vital levels for a casualty, omit properties if unknown"
       example:
-        RR: 40
-        SpO2%: 95
-        pain: 8
         breathing: NORMAL
-        responsive: true
-        mmHg: 180
         conscious: true
+        mental_status: CALM
         hrpmin: 150
     TriageCategory:
       type: object
@@ -962,23 +973,28 @@ components:
         tagLabel: MINIMAL
     Action:
       required:
+      - action_id
       - action_type
       - scenario_id
       type: object
       properties:
+        action_id:
+          type: string
+          description: action ID
         scenario_id:
           type: string
           description: scenario ID this probe is for
         action_type:
           type: string
-          description: The action type taken from a controlled vocabulary.
+          description: The action type taken from a controlled vocabulary
           example: APPLY_TREATMENT
           enum:
           - APPLY_TREATMENT
-          - DIRECT_MOBILE_CASUALTIES
           - CHECK_ALL_VITALS
           - CHECK_PULSE
           - CHECK_RESPIRATION
+          - DIRECT_MOBILE_CASUALTIES
+          - MOVE_TO_EVAC
           - SITREP
           - TAG_CASUALTY
         casualty_id:
@@ -992,28 +1008,33 @@ components:
           type: string
           description: A justification of the action taken
           example: Casualty is the VIP of the scenario
+        kdma_association:
+          type: object
+          additionalProperties:
+            type: string
+          description: KDML associations with this action used in training
+          example:
+          - Mission: 0.8
         parameters:
-          type: array
-          description: an array of action-specific parameters
-          items:
-            type: object
-            additionalProperties:
-              type: string
-            description: key-value pairs containing additional action-specific parameters
-            example:
-            - treatment: Tourniquet
-            - location: right forearm
+          type: object
+          additionalProperties:
+            type: string
+          description: key-value pairs containing additional action-specific parameters
+          example:
+          - treatment: Tourniquet
+          - location: right forearm
       description: An encapulation of a single action taken by a DM
       example:
+        action_id: action_id
         action_type: APPLY_TREATMENT
         casualty_id: casualty_id
         unstructured: "Check pulse of casualty [1234]."
+        kdma_association:
+        - Mission: 0.8
         justification: Casualty is the VIP of the scenario
         parameters:
-        - - treatment: Tourniquet
-          - location: right forearm
-        - - treatment: Tourniquet
-          - location: right forearm
+        - treatment: Tourniquet
+        - location: right forearm
         scenario_id: scenario_id
   responses:
     server_error:

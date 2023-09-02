@@ -1,5 +1,4 @@
 import copy
-import uuid
 import yaml
 from typing import List, Tuple
 
@@ -44,7 +43,6 @@ class ITMScenarioReader:
         triage_categories = self._generate_triage_categories()
 
         id_actual = self.yaml_data['id']
-        # id_generated = "scenario_" + str(uuid.uuid4())
 
         scenario = Scenario(
             id=id_actual,
@@ -170,29 +168,30 @@ class ITMScenarioReader:
         injuries = [
             Injury(
                 name=injury['name'],
-                location=injury['location'],
-                severity=injury['severity']
+                location=injury.get('location'),
+                severity=injury.get('severity')
             )
             for injury in casualty_data.get('injuries', [])
         ]
         vital_data = casualty_data.get('vitals', {})
-        vitals = Vitals(
+        complete_vitals = Vitals(
             conscious=vital_data['conscious'],
-            responsive=vital_data['responsive'],
+            mental_status=vital_data['mental_status'],
             breathing=vital_data['breathing'],
             hrpmin=vital_data['hrpmin']
             #mm_hg=vital_data['mmHg'],
             #rr=vital_data['RR'],
             #sp_o2=vital_data['SpO2%'],
-            #pain=vital_data['pain']
         )
+        vitals = copy.deepcopy(complete_vitals)
         casualty = Casualty(
-            id="casualty_" + str(uuid.uuid4()),
+            id=casualty_data['id'],
             unstructured=casualty_data['unstructured'],
             name=casualty_data.get('name', 'Unknown'),
             demographics=demograpics,
             injuries=injuries,
             vitals=vitals,
+            complete_vitals=None,
             assessed=False,
             tag=None
         )

@@ -3,16 +3,16 @@ import uuid
 import random
 import os
 import connexion
+import json
 from typing import List, Union
 from copy import deepcopy
-
 from swagger_server.models import (
     Action,
     AlignmentTarget,
     Casualty,
     Scenario,
     State,
-    Vitals,
+    Vitals
 )
 from swagger_server.models.probe_response import ProbeResponse
 from .itm_database.itm_mongo import MongoDB
@@ -20,7 +20,6 @@ from .itm_session_scenario_object import (
     ITMSessionScenarioObjectHandler,
     ITMSessionScenarioObject
 )
-
 
 class ITMScenarioSession:
     """
@@ -44,16 +43,26 @@ class ITMScenarioSession:
         self.session_issos = []
         self.number_of_scenarios = None
         self.scenario: Scenario = None
-
+        self.first_answer: bool = True
+        # hacky stuff for adept
+        self.casualty_ids = []
         self.probes_responded_to = []
+        # hacky thing for ST
+        self.patients_treated = 0
+        # adept or ST
+        self.scenario_rules = ""
 
         # This determines whether the server makes calls to TA1
         self.ta1_integration = False
-
+    
         # This calls the dashboard's MongoDB
         self.save_to_database = False
         self.mongo_db = MongoDB('dashroot', 'dashr00tp@ssw0rd',
                                 'localhost', '27017', 'dashboard')
+        
+        with open("swagger_server/itm/treatment_times_config/actionTimes.json", 'r') as json_file:
+                self.times_dict = json.load(json_file)
+
         self.history = []
 
 
@@ -83,9 +92,6 @@ class ITMScenarioSession:
 
         Args:
             scenario_id: The scenario ID to compare.
-
-        Raises:
-            Exception: If the scenario ID does not match.
         """
         if not scenario_id == self.scenario.id:
             return False, 'Scenario ID not found', 404
@@ -98,9 +104,6 @@ class ITMScenarioSession:
 
         Args:
             session_id: The session ID to compare.
-
-        Raises:
-            Exception: If the session ID does not match.
         """
         if not session_id == self.session_id:
             return False, 'Invalid Session ID', 400
@@ -109,16 +112,69 @@ class ITMScenarioSession:
     def _validate_action(self, action: Action) -> None:
         """
         Validate that action is a valid, well-formed action.
+        TODO: Should we validate that the treatment cures the injury, or that the casualty has the specified injury?
+        TODO: Can ADMs treat injuries they haven't yet discovered?
 
         Args:
             action: The action to validate.
 
-        Raises:
-            Exception: If the action is malformed.
         """
-        # TODO ITM-74: Validate that action is well-formed
+
         if action is None:
             return False, 'Invalid or Malformed Action', 400
+
+        if not action.scenario_id or not action.action_type or action.scenario_id == "" or action.action_type == "":
+            return False, 'Invalid or Malformed Action: Missing scenario_id or action_type', 400
+
+        if action.parameters and not isinstance(action.parameters, dict):
+            return False, 'Invalid or Malformed Action: Invalid Parameter Structure', 400
+        # lookup casualty id in state
+        casualty = None
+        if action.casualty_id:
+            casualty = next((casualty for casualty in self.scenario.state.casualties if casualty.id == action.casualty_id), None)
+
+        if action.action_type == "APPLY_TREATMENT":
+            # Apply treatment requires a casualty id and parameters, casualty and location 
+            if not action.casualty_id:
+                return False, 'Invalid or Malformed Action: Missing casualty_id for APPLY_TREATMENT', 400
+            # treatment and location
+            if not action.parameters or not "treatment" in action.parameters or not "location" in action.parameters:
+                return False, 'Invalid or Malformed Action: Missing parameters for APPLY_TREATMENT', 400
+            if not casualty:
+                return False, 'Casualty not found in state', 400
+        elif action.action_type == "DIRECT_MOBILE_CASUALTIES" or action.action_type == "SITREP":
+            # sitrep optionally takes a casualty id and direct_mobile_casualties doesn't need one
+            pass 
+        elif action.action_type == "CHECK_ALL_VITALS" or action.action_type == "CHECK_PULSE" \
+            or action.action_type == "CHECK_RESPIRATION" or action.action_type == "MOVE_TO_EVAC":
+            # All require casualty_id
+            if not action.casualty_id:
+                return False, 'Invalid or Malformed Action: Missing casualty_id for CHECK_ALL_VITALS', 400
+            if not casualty:
+                return False, 'Casualty not found in state', 400
+        elif action.action_type == "TAG_CASUALTY":
+            # Requires casualty_id and category parameter
+            if not action.casualty_id:
+                return False, 'Invalid or Malformed Action: Missing casualty_id for TAG_CASUALTY', 400
+            if not casualty:
+                return False, 'Casualty not found in state', 400
+            if not action.parameters or not "category" in action.parameters:
+                return False, 'Invalid or Malformed Action: Missing parameters for TAG_CASUALTY', 400
+            else:
+                allowed_values = ["MINIMAL", "DELAYED", "IMMEDIATE", "EXPECTANT"]
+                tag = action.parameters.get("category")
+                if not tag in allowed_values:
+                    return 'Invalid or Malformed Action: Invalid Tag', 400
+        else:
+            return False, 'Invalid action_type', 400
+        
+        # type checks for possible fields
+        if action.unstructured and not isinstance(action.unstructured, str):
+            return False, 'Invalid or Malformed Action: Invalid unstructured description', 400
+        
+        if action.justification and not isinstance(action.justification, str):
+            return False, 'Invalid or Malformed Action: Invalid justification', 400
+        
         return True, '', 0
 
     def _end_scenario(self):
@@ -134,6 +190,8 @@ class ITMScenarioSession:
                 "Target ID": self.current_isso.ta1_controller.alignment_target_id},
                 alignment_target_session_alignment
             )
+        else:
+            print("--> Getting session alignment from TA1.")
         if not self.save_to_database:
             self.history = []
             self.probes_responded_to = []
@@ -195,36 +253,53 @@ class ITMScenarioSession:
         (successful, message, code) = self._check_scenario_id(scenario_id)
         if not successful:
             return message, code
+        if self.scenario.session_complete:
+            return 'Scenario Complete', 400
         return self.current_isso.alignment_target_reader.alignment_target
 
 
-    def get_heart_rate(self, session_id: str, casualty_id: str) -> int:
+    def check_pulse(self, casualty: Casualty):
         """
-        Get the heart rate of a casualty_id in the scenario.
+        Process checking the pulse (heart rate) of the specified casualty.
 
         Args:
-            session_id: The ID of the session.
-            casualty_id: The ID of the casualty_id.
-
-        Returns:
-            The heart rate of the casualty as an integer.
+            casualty: The casualty to check.
         """
 
-        # Check for a valid session_id
-        (successful, message, code) = self._check_session_id(session_id)
-        if not successful:
-            return message, code
-
-        casualties: List[Casualty] = self.scenario.state.casualties
-        for casualty in casualties:
-            if casualty.id == casualty_id:
-                response = casualty.vitals.hrpmin
+        casualty.assessed = True
+        casualties: List[Casualty] = self.current_isso.scenario.state.casualties
+        for isso_casualty in casualties:
+            if isso_casualty.id == casualty.id:
+                casualty.vitals.breathing = isso_casualty.vitals.breathing
+                casualty.vitals.conscious = isso_casualty.vitals.conscious
+                casualty.vitals.mental_status = isso_casualty.vitals.mental_status
+                casualty.vitals.hrpmin = isso_casualty.vitals.hrpmin
                 self._add_history(
-                    "Get Heart Rate",
-                    {"Session ID": self.session_id, "Casualty ID": casualty_id},
-                    response)
-                return response
-        return 'Casualty ID not found', 404
+                    "Check Pulse",
+                    {"Session ID": self.session_id, "Casualty ID": casualty.id},
+                    casualty.vitals.hrpmin)
+                return
+    
+    def check_respiration(self, casualty: Casualty):
+        """
+        Check the respiration of the specified casualty in the scenario.
+
+        Args:
+            casualty: The casualty to check.
+        """
+
+        casualty.assessed = True
+        casualties: List[Casualty] = self.current_isso.scenario.state.casualties
+        for isso_casualty in casualties:
+            if isso_casualty.id == casualty.id:
+                casualty.vitals.breathing = isso_casualty.vitals.breathing
+                casualty.vitals.conscious = isso_casualty.vitals.conscious
+                casualty.vitals.mental_status = isso_casualty.vitals.mental_status
+                self._add_history(
+                    "Check Respiration",
+                    {"Session ID": self.session_id, "Casualty ID": casualty.id},
+                    casualty.vitals.breathing)
+                return
 
 
     def get_scenario_state(self, session_id: str, scenario_id: str) -> State:
@@ -255,34 +330,33 @@ class ITMScenarioSession:
         return self.scenario.state
 
 
-    def get_vitals(self, session_id: str, casualty_id: str) -> Vitals:
+    def check_all_vitals(self, casualty: Casualty):
         """
-        Get the vitals of a casualty in the scenario.
+        Check all vitals of the specified casualty in the scenario.
 
         Args:
-            session_id: The ID of the session.
-            casualty_id: The ID of the casualty.
-
-        Returns:
-            The vitals of the casualty as a Vitals object.
+            casualty: The casualty to check.
         """
 
-        # Check for a valid session_id
-        (successful, message, code) = self._check_session_id(session_id)
-        if not successful:
-            return message, code
-
-        casualties: List[Casualty] = self.scenario.state.casualties
-        for casualty in casualties:
-            if casualty.id == casualty_id:
-                response = casualty.vitals.to_dict()
+        casualty.assessed = True
+        casualties: List[Casualty] = self.current_isso.scenario.state.casualties
+        for isso_casualty in casualties:
+            if isso_casualty.id == casualty.id:
+                casualty.vitals = isso_casualty.vitals
                 self._add_history(
-                    "Get Vitals",
-                    {"Session ID": self.session_id, "Casualty ID": casualty_id},
-                    response)
-                return casualty.vitals
-        return 'Casualty ID not found', 404
+                    "Check All Vitals",
+                    {"Session ID": self.session_id, "Casualty ID": casualty.id},
+                    casualty.vitals)
+                return
 
+    def _clear_hidden_data(self):
+        for casualty in self.scenario.state.casualties:
+            for injury in casualty.injuries:
+                if injury.name == 'Burn':
+                    #casualty.injuries.remove(injury)
+                    pass # TODO: hide Burn injuries until assessment
+            casualty.vitals = Vitals()
+        pass
 
     def start_scenario(self, session_id: str, scenario_id: str=None) -> Scenario:
         """
@@ -303,21 +377,22 @@ class ITMScenarioSession:
 
         # TODO this needs to get a specific scenario by id
         if scenario_id:
-            raise connexion.ProblemException(status=403, title="Forbidden", detail="Sorry, internal TA3 only")
+            raise connexion.ProblemException(status=403, title="Forbidden", detail="Specifying a scenario ID is unauthorized")
         
-        # TODO this needs to check if we don't have this scenario id
         if scenario_id and not scenario_id not in ['scenario_id_list']:
-            return "Scenario ID does not exist", 404
+            return 'Scenario ID does not exist', 404
         
-        # placeholder for System Overload error code
-        system_overload = False
-        if system_overload:
-            return "System Overload", 418
-
         try:
             self.current_isso: ITMSessionScenarioObject = self.session_issos[self.current_isso_index]
-            self.scenario = self.current_isso.scenario
+            self.scenario = deepcopy(self.current_isso.scenario)
+            self._clear_hidden_data()
             self.current_isso_index += 1
+
+            # the rules are different... so we need to know which group the scenario is from
+            if self.scenario.id.__contains__("adept"):
+                self.scenario_rules = "ADEPT"
+            else:
+                self.scenario_rules = "SOARTECH"
 
             self._add_history(
                 "Start Scenario",
@@ -336,6 +411,8 @@ class ITMScenarioSession:
                     "Scenario ID": self.current_isso.scenario.id},
                     scenario_alignment
                 )
+            else:
+                print("--> Getting alignment target from TA1.")
 
             return self.scenario
         except:
@@ -345,7 +422,7 @@ class ITMScenarioSession:
                             start_time=None, state=None, triage_categories=None)
 
 
-    def start_session(self, adm_name: str, session_type: str, max_scenarios=None) -> str:
+    def start_session(self, adm_name: str, session_type: str, kdma_training: bool, max_scenarios=None) -> str:
         """
         Start a new session.
 
@@ -367,8 +444,9 @@ class ITMScenarioSession:
         if self.session_id == None:
             self.session_id = str(uuid.uuid4())
         else:
-            return 'System Overload', 418
+            return 'System Overload', 503
 
+        self.kdma_training = kdma_training
         self.adm_name = adm_name
         self.session_issos = []
         self.session_type = session_type
@@ -411,7 +489,8 @@ class ITMScenarioSession:
                 selected_yaml_directories.append(random_directory)
         else:
             max_scenarios = len(selected_yaml_directories)
-        random.shuffle(selected_yaml_directories)
+        if session_type != 'eval':
+            random.shuffle(selected_yaml_directories)
         for i in range(max_scenarios):
             scenario_object_handler = ITMSessionScenarioObjectHandler(yaml_path=selected_yaml_directories[i])
             itm_scenario_object = \
@@ -422,34 +501,61 @@ class ITMScenarioSession:
         return self.session_id
 
 
-    def tag_casualty(self, session_id: str, casualty_id: str, tag: str) -> str:
+    def tag_casualty(self, casualty: Casualty, tag: str):
         """
-        Tag a casualty with a triage category
+        Tag the specified casualty with a triage category
 
         Args:
-            session_id: The ID of the session.
-            casualty_id: The ID of the casualty.
+            casualty: The casualty to tag
             tag: The tag to assign to the casualty.
-
-        Returns:
-            The current state of the scenario as a State object.
         """
 
-        # Check for a valid session_id
-        (successful, message, code) = self._check_session_id(session_id)
-        if not successful:
-            return message, code
-
-        for casualty in self.scenario.state.casualties:
-            if casualty.id == casualty_id:
-                casualty.tag = tag
-                response = self.scenario.state
+        casualty.tag = tag
+        casualties: List[Casualty] = self.current_isso.scenario.state.casualties
+        for isso_casualty in casualties:
+            if isso_casualty.id == casualty.id:
+                # Certain basic vitals are discovered when a casualty is approached.
+                casualty.vitals.breathing = isso_casualty.vitals.breathing
+                casualty.vitals.conscious = isso_casualty.vitals.conscious
+                casualty.vitals.mental_status = isso_casualty.vitals.mental_status
                 self._add_history(
                     "Tag Casualty",
-                    {"Session ID": self.session_id, "Casualty ID": casualty_id, "Tag": tag},
-                    response.to_dict())
-                return response
-        return 'Casualty ID not found', 404
+                    {"Session ID": self.session_id, "Casualty ID": casualty.id, "Tag": tag},
+                    self.scenario.state.to_dict())
+                return
+
+    def process_sitrep(self, casualty: Casualty) -> int:
+        # if a casualty is specified then only sitrep that casualty
+        # otherwise, sitrep all responsive casualties
+        time_passed = 0
+        if casualty:
+            for isso_casualty in self.current_isso.scenario.state.casualties:
+                if isso_casualty.id == casualty.id:
+                    casualty.assessed = True
+                    casualty.vitals.mental_status = isso_casualty.vitals.mental_status
+                    if casualty.vitals.mental_status != "UNRESPONSIVE":
+                        casualty.vitals.breathing = isso_casualty.vitals.breathing
+                        casualty.vitals.conscious = isso_casualty.vitals.conscious
+                    time_passed = self.times_dict["SITREP"]
+        else:
+            # takes time for each responsive casualty during sitrep
+            for curr_casualty in self.scenario.state.casualties:
+                for isso_casualty in self.current_isso.scenario.state.casualties:
+                    if isso_casualty.id == curr_casualty.id:
+                        curr_casualty.vitals.mental_status = isso_casualty.vitals.mental_status
+                        if curr_casualty.vitals.mental_status != "UNRESPONSIVE":
+                            curr_casualty.assessed = True
+                            curr_casualty.vitals.conscious = isso_casualty.vitals.conscious
+                            curr_casualty.vitals.breathing = isso_casualty.vitals.breathing
+                        time_passed += self.times_dict["SITREP"]
+
+        self._add_history(
+            "Request SITREP", {"Session ID": self.session_id,
+             "Casualty ID": casualty.id if casualty else "All casualties"},
+            self.scenario.state.to_dict())
+
+        return time_passed
+
 
     def respond_to_probe(self, body: ProbeResponse):
         """
@@ -460,17 +566,11 @@ class ITMScenarioSession:
         """
         self.probes_responded_to.append(body.probe_id)
         body.justification = '' if body.justification == None else body.justification
-        self.current_isso.probe_system.generate_probe(self.scenario.state)
         self.current_isso.probe_system.respond_to_probe(
             probe_id=body.probe_id,
             choice=body.choice,
             justification=body.justification
         )
-
-        self.current_isso.probe_system.probe_count -= 1
-        self.current_isso.probe_system.current_probe_index += 1
-        self.scenario.state.scenario_complete = \
-            self.current_isso.probe_system.probe_count <= 0
 
         self._add_history(
             "Respond to TA1 Probe",
@@ -493,6 +593,8 @@ class ITMScenarioSession:
                 "Probe ID": body.probe_id},
                 probe_response_alignment
             )
+        else:
+            print(f"--> Responding to probe {body.probe_id} from scenario {body.scenario_id} with choice {body.choice}.")
 
     def lookup_probe_response(self, action: Action) -> ProbeResponse:
         """
@@ -501,30 +603,100 @@ class ITMScenarioSession:
         Args:
             body: The probe response body as a dict.
         """
-
-        # TODO ITM-75: Map ADM action back to a TA1 probe response
-        return ProbeResponse(scenario_id=action.scenario_id, probe_id="september-demo-probe-1", choice="choice1")
+        currentProbe = self.current_isso.probe_system.probe_yamls[self.current_isso.probe_system.current_probe_index]
+        choice_id = ""
+        # need to go back through to find the choice from probeYamlOption (not stored in action)
+        for option in currentProbe.options:
+            if option.assoc_action["action_id"] == action.action_id:
+                choice_id = option.ta1_id
+                break
+        return ProbeResponse(scenario_id=action.scenario_id, probe_id=currentProbe.id, choice=choice_id)
 
 
     def update_state(self, action: Action):
-        # TODO ITM-69: Update scenario state based on action
+        # Update scenario state based on action
+        # Note that by this time, the action has been fully validated
 
-        # For now, any action does nothing but ends the scenario!
-        self.scenario.state.scenario_complete = True
+        # keeps track of time passed based on action taken (in seconds)
+        time_passed = 0
+        # Look up casualty action is applied to
+        casualty = next((casualty for casualty in self.scenario.state.casualties if casualty.id == action.casualty_id), None)
+        # Check we have a reference to the casualty
+        if action.action_type == "APPLY_TREATMENT":
+            for isso_casualty in self.current_isso.scenario.state.casualties:
+                if isso_casualty.id == casualty.id:
+                    # Certain basic vitals are discovered when a casualty is approached.
+                    casualty.vitals.breathing = isso_casualty.vitals.breathing
+                    casualty.vitals.conscious = isso_casualty.vitals.conscious
+                    casualty.vitals.mental_status = isso_casualty.vitals.mental_status
+            casualty.assessed = True
+            supplies_used = action.parameters.get('treatment', None)
+            for supply in self.scenario.state.supplies:
+                if supply.type == supplies_used:
+                    # removing one instance of the supplies_used e.g Tourniquet from supplies list
+                    supply.quantity -= 1
+                    if supplies_used in self.times_dict["treatmentTimes"]:
+                        # increment time passed during treatment
+                        time_passed += self.times_dict["treatmentTimes"][supplies_used]
+
+            self._add_history(
+                "Apply Treatment", {"Session ID": self.session_id, "Casualty ID": casualty.id, "Parameters": action.parameters},
+                self.scenario.state.to_dict())
+
+            # remove injury from casualty
+            # TODO: this assumes that the treatment actually cures/removes the injury.
+            # NOTE: this assumes there is only one injury per location.
+            for injury in casualty.injuries:
+                if injury.location == action.parameters.get('location', None):
+                    if injury.name != 'Burn': # Burns are currently untreatable
+                        casualty.injuries.remove(injury)
+                    break
+
+        # if tagging a casualty then update the tag to the category parameter
+        if action.action_type == "TAG_CASUALTY":
+            self.tag_casualty(casualty, action.parameters.get('category'))
+            time_passed += self.times_dict["TAG_CASUALTY"]
+        
+        if action.action_type == "CHECK_ALL_VITALS":
+            self.check_all_vitals(casualty)
+            time_passed += self.times_dict["CHECK_ALL_VITALS"]
+
+        if action.action_type == "CHECK_PULSE":
+            self.check_pulse(casualty)
+            time_passed += self.times_dict["CHECK_PULSE"]
+
+        if action.action_type == "CHECK_RESPIRATION":
+            self.check_respiration(casualty)
+            time_passed += self.times_dict["CHECK_RESPIRATION"]
+
+        if action.action_type == "DIRECT_MOBILE_CASUALTIES":
+            self._add_history(
+                "Direct Mobile Casualties", {"Session ID": self.session_id},
+                self.scenario.state.to_dict())
+            time_passed += self.times_dict["DIRECT_MOBILE_CASUALTIES"]
+
+        if action.action_type == "MOVE_TO_EVAC":
+            self._add_history(
+                "Move to EVAC", {"Session ID": self.session_id, "Casualty ID": casualty.id},
+                self.scenario.state.to_dict())
+            time_passed += self.times_dict["MOVE_TO_EVAC"]
+
+        if action.action_type == "SITREP":
+            time_passed += self.process_sitrep(casualty)
 
         # TODO ITM-72: Enhance casualty deterioration/amelioration
         # Ultimately, this should update values based DIRECTLY on how the sim does it
+        """
         time_elapsed_during_treatment = self.current_isso.casualty_simulator.treat_casualty(
             casualty_id=action.casualty_id,
             supply=action.justification
         )
 
-        # TODO ITM-70: Add hard-coded elapsed time model, and update in state
-        # Bonus: make it externally configurable
-        self.time_elapsed_scenario_time += time_elapsed_during_treatment
+        self.time_elapsed_scenario_time += time_elapsed_during_treatment + time_passed
         self.current_isso.casualty_simulator.update_vitals(time_elapsed_during_treatment)
         self.scenario.state.elapsed_time = self.time_elapsed_scenario_time
-
+        """
+        self.scenario.state.elapsed_time += time_passed
 
     def take_action(self, session_id: str, body: Action) -> State:
         """
@@ -551,19 +723,67 @@ class ITMScenarioSession:
         # Map action to probe response
         response = self.lookup_probe_response(action=body)
 
+        # keep track of which casualty_id's have been addressed in this probe
+        if not body.casualty_id in self.casualty_ids:
+            self.casualty_ids.append(body.casualty_id)
+
+        # remove option taken from being returned in get_available_actions
+        if body.casualty_id:
+            self.current_isso.probe_system.probe_yamls[self.current_isso.probe_system.current_probe_index].options = [
+                option for option in self.current_isso.probe_system.probe_yamls[self.current_isso.probe_system.current_probe_index].options
+                if option.assoc_action["action_id"] != body.action_id
+            ]
+
         # Respond to probe with TA1
         # NOTE: Not all actions will necessarily result in a probe response
-        #self.respond_to_probe(body=response)
-
-        # Update scenario state
-        self.update_state(action=body)
+        # In the September scenarios, only the first action taken results in a response to a probe.
+        if self.first_answer:
+            print(f"--> ADM chose action {body.action_type} with casualty {body.casualty_id} resulting in TA1 response with choice {response.choice}.")
+            self.respond_to_probe(body=response)
+            self.first_answer = False
 
         self._add_history(
             "Take Action",
             {"Session ID": self.session_id, "Scenario ID": self.scenario.id, "Action": body},
             self.scenario.state.to_dict())
 
+        # PROBE HANDLING FOR ADEPT
+        if self.scenario_rules == "ADEPT":
+            # move on to next probe when all casualty id's have at least one action towards them
+            unanswered_casualty_id = False
+            for option in self.current_isso.probe_system.probe_yamls[self.current_isso.probe_system.current_probe_index].options:
+                if option.assoc_action.get("casualty_id") not in self.casualty_ids:
+                    unanswered_casualty_id = True
+                    break  # No need to continue checking once we find one unmatched id
+            
+            # Update scenario state
+            self.update_state(action=body)
+            if body.action_type == "MOVE_TO_EVAC":
+                self.end_probe()
+                self._end_scenario()
+            # if no unanswered casualties left, (or no options left)
+            elif not unanswered_casualty_id or not self.current_isso.probe_system.probe_yamls[self.current_isso.probe_system.current_probe_index]:
+                self.end_probe()
+        else:
+            #PROBE HANDLING FOR ST
+            if body.action_type == "APPLY_TREATMENT": self.patients_treated += 1
+            self.update_state(action=body)
+            if self.patients_treated >= 3:
+                self.end_probe()
+                # Only one probe, scenario ends when all three patients treated
+                self._end_scenario()
+
+
         return self.scenario.state
+    
+    def end_probe(self):
+        self.current_isso.probe_system.probe_count -= 1
+        self.current_isso.probe_system.current_probe_index += 1
+        self.scenario.state.scenario_complete = \
+        self.current_isso.probe_system.probe_count <= 0
+        # reset casualty_id list when going to next probe
+        self.casualty_ids = []
+        self.first_answer = True
 
 
     def get_available_actions(self, session_id: str, scenario_id: str) -> List[Action]:
@@ -577,7 +797,6 @@ class ITMScenarioSession:
         Returns:
             The current state of the scenario as a State object.
         """
-
         # Check for a valid session_id and scenario_id
         (successful, message, code) = self._check_session_id(session_id)
         if not successful:
@@ -585,10 +804,19 @@ class ITMScenarioSession:
         (successful, message, code) = self._check_scenario_id(scenario_id)
         if not successful:
             return message, code
+        if self.scenario.session_complete:
+            return 'Scenario Complete', 400
 
-        # TODO ITM-71: Add "training mode" that returns KDMA associations
-        # TODO ITM-67: Return a list of available actions based on associated actions in scenario/probe configuration
         actions: List[Action] = []
-        actions.append(Action(scenario_id=self.scenario.id, action_type="SITREP"))
-
+        
+        # TODO When an action takes place, that action should be removed from the probeYaml's option list!
+        # tackle one probe at a time, after all available actions are returned for that probe remove it from remaining probes
+        if self.current_isso.probe_system.probe_yamls:
+            for option in self.current_isso.probe_system.probe_yamls[self.current_isso.probe_system.current_probe_index].options:
+                if (not self.kdma_training):
+                    option.assoc_action.pop('kdma_association', None)
+                actions.append(option.assoc_action)
+        else:
+             return 'Scenario Complete', 400
+        #print(actions)
         return actions

@@ -241,7 +241,7 @@ class State(Model):
     def casualties(self) -> List[Casualty]:
         """Gets the casualties of this State.
 
-        the list of casualties/patients in the scenario  # noqa: E501
+        the list of casualties in the scenario  # noqa: E501
 
         :return: The casualties of this State.
         :rtype: List[Casualty]
@@ -252,7 +252,7 @@ class State(Model):
     def casualties(self, casualties: List[Casualty]):
         """Sets the casualties of this State.
 
-        the list of casualties/patients in the scenario  # noqa: E501
+        the list of casualties in the scenario  # noqa: E501
 
         :param casualties: The casualties of this State.
         :type casualties: List[Casualty]

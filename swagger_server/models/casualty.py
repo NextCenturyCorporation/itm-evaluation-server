@@ -17,7 +17,7 @@ class Casualty(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, id: str=None, unstructured: str=None, name: str=None, demographics: Demographics=None, injuries: List[Injury]=None, vitals: Vitals=None, assessed: bool=False, tag: str=None):  # noqa: E501
+    def __init__(self, id: str=None, unstructured: str=None, name: str=None, relationship: str=None, demographics: Demographics=None, injuries: List[Injury]=None, vitals: Vitals=None, complete_vitals: Vitals=None, assessed: bool=False, tag: str=None):  # noqa: E501
         """Casualty - a model defined in Swagger
 
         :param id: The id of this Casualty.  # noqa: E501
@@ -26,12 +26,16 @@ class Casualty(Model):
         :type unstructured: str
         :param name: The name of this Casualty.  # noqa: E501
         :type name: str
+        :param relationship: The relationship of this Casualty.  # noqa: E501
+        :type relationship: str
         :param demographics: The demographics of this Casualty.  # noqa: E501
         :type demographics: Demographics
         :param injuries: The injuries of this Casualty.  # noqa: E501
         :type injuries: List[Injury]
         :param vitals: The vitals of this Casualty.  # noqa: E501
         :type vitals: Vitals
+        :param complete_vitals: The complete_vitals of this Casualty.  # noqa: E501
+        :type complete_vitals: Vitals
         :param assessed: The assessed of this Casualty.  # noqa: E501
         :type assessed: bool
         :param tag: The tag of this Casualty.  # noqa: E501
@@ -41,9 +45,11 @@ class Casualty(Model):
             'id': str,
             'unstructured': str,
             'name': str,
+            'relationship': str,
             'demographics': Demographics,
             'injuries': List[Injury],
             'vitals': Vitals,
+            'complete_vitals': Vitals,
             'assessed': bool,
             'tag': str
         }
@@ -52,18 +58,22 @@ class Casualty(Model):
             'id': 'id',
             'unstructured': 'unstructured',
             'name': 'name',
+            'relationship': 'relationship',
             'demographics': 'demographics',
             'injuries': 'injuries',
             'vitals': 'vitals',
+            'complete_vitals': 'complete_vitals',
             'assessed': 'assessed',
             'tag': 'tag'
         }
         self._id = id
         self._unstructured = unstructured
         self._name = name
+        self._relationship = relationship
         self._demographics = demographics
         self._injuries = injuries
         self._vitals = vitals
+        self._complete_vitals = complete_vitals
         self._assessed = assessed
         self._tag = tag
 
@@ -152,6 +162,35 @@ class Casualty(Model):
         self._name = name
 
     @property
+    def relationship(self) -> str:
+        """Gets the relationship of this Casualty.
+
+        the relationship between the medic and the casualty  # noqa: E501
+
+        :return: The relationship of this Casualty.
+        :rtype: str
+        """
+        return self._relationship
+
+    @relationship.setter
+    def relationship(self, relationship: str):
+        """Sets the relationship of this Casualty.
+
+        the relationship between the medic and the casualty  # noqa: E501
+
+        :param relationship: The relationship of this Casualty.
+        :type relationship: str
+        """
+        allowed_values = ["NONE", "ALLY", "FRIEND", "HOSTILE", "EXPECTANT"]  # noqa: E501
+        if relationship not in allowed_values:
+            raise ValueError(
+                "Invalid value for `relationship` ({0}), must be one of {1}"
+                .format(relationship, allowed_values)
+            )
+
+        self._relationship = relationship
+
+    @property
     def demographics(self) -> Demographics:
         """Gets the demographics of this Casualty.
 
@@ -215,6 +254,27 @@ class Casualty(Model):
         """
 
         self._vitals = vitals
+
+    @property
+    def complete_vitals(self) -> Vitals:
+        """Gets the complete_vitals of this Casualty.
+
+
+        :return: The complete_vitals of this Casualty.
+        :rtype: Vitals
+        """
+        return self._complete_vitals
+
+    @complete_vitals.setter
+    def complete_vitals(self, complete_vitals: Vitals):
+        """Sets the complete_vitals of this Casualty.
+
+
+        :param complete_vitals: The complete_vitals of this Casualty.
+        :type complete_vitals: Vitals
+        """
+
+        self._complete_vitals = complete_vitals
 
     @property
     def assessed(self) -> bool:

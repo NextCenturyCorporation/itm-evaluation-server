@@ -49,7 +49,7 @@ class Supplies(Model):
     def type(self) -> str:
         """Gets the type of this Supplies.
 
-        an enum of available supply types  # noqa: E501
+        an enumeration of available supply types  # noqa: E501
 
         :return: The type of this Supplies.
         :rtype: str
@@ -60,7 +60,7 @@ class Supplies(Model):
     def type(self, type: str):
         """Sets the type of this Supplies.
 
-        an enum of available supply types  # noqa: E501
+        an enumeration of available supply types  # noqa: E501
 
         :param type: The type of this Supplies.
         :type type: str
