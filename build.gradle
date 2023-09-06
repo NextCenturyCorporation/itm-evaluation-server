@@ -36,6 +36,16 @@ generate.dependsOn(generateSwaggerCode)
 generate.mustRunAfter(generateSwaggerCode)
 
 swaggerSources {
+    mvp {
+        inputFile = file("swagger_server/swagger/ta1.yaml")
+        code {
+            language = 'python'
+            components = ['models']
+            outputDir = file (generatedApiDirectory)
+            configFile = file (apiDirectory+'/config.json')
+            wipeOutputDir = true
+        }
+    }
     server {
         inputFile = file("swagger_server/swagger/swagger.yaml")
         code {
@@ -43,13 +53,14 @@ swaggerSources {
             components = ['models','apis']
             outputDir = file (generatedApiDirectory)
             configFile = file (apiDirectory+'/config.json')
-            wipeOutputDir = true
-            doLast {
-                copy {
-                    from generatedApiDirectory+'openapi_client/*'
-                    into generatedApiDirectory
-                }
-            }
         }
+    }
+
+    doLast {
+        copy {
+            from generatedApiDirectory+'/openapi_client/'
+            into 'swagger_server/'
+        }
+        // delete generatedApiDirectory
     }
 }

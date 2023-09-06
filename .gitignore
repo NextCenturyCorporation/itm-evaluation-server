@@ -66,4 +66,6 @@ target/
 # gradle
 .gradle
 
+# generated files
 generated
+swagger_server/api
