@@ -25,14 +25,6 @@ paths:
                 x-content-type: text/plain
 components:
   schemas:
-    Threat:
-      type: object
-      additionalProperties:
-        type: string
-      description: |-
-        list of pairs of type (enum like IED, Gunshots, fire, etc)
-        and severity (float 0 (no threat) - 1 (max severity));
-        assumed empty for MVP
     Probe:
       required:
       - id

@@ -11,56 +11,76 @@ repositories {
 }
 
 dependencies {
-    swaggerCodegen 'org.openapitools:openapi-generator-cli:7.0.0'
+    swaggerCodegen 'org.slf4j:slf4j-simple:1.7.36'
+    swaggerCodegen 'io.swagger.codegen.v3:swagger-codegen-cli:3.0.46'
 }
 
-defaultTasks 'clean', 'generateSwaggerCode'
+defaultTasks 'clean', 'generateSwaggerCode', 'postGeneration'
 
-// The following are at least relatively unique to the zeus project
 task swaggerClean(type: Delete) {
     doFirst {
         delete generatedApiDirectory
     }
 }
-
-task generate(type: Delete) {
-    doFirst {
-        delete generatedApiDirectory + '/server/docs'
-        delete generatedApiDirectory + '/server/test'
-    }
-}
 swaggerClean.mustRunAfter(clean)
-generateSwaggerCode.dependsOn(swaggerClean)
-generateSwaggerCode.mustRunAfter(swaggerClean)
-generate.dependsOn(generateSwaggerCode)
-generate.mustRunAfter(generateSwaggerCode)
 
 swaggerSources {
     mvp {
         inputFile = file("swagger_server/swagger/ta1.yaml")
         code {
-            language = 'python'
+            language = 'python-flask'
             components = ['models']
             outputDir = file (generatedApiDirectory)
             configFile = file (apiDirectory+'/config.json')
-            wipeOutputDir = true
+            wipeOutputDir = false
         }
     }
     server {
         inputFile = file("swagger_server/swagger/swagger.yaml")
         code {
-            language = 'python'
-            components = ['models','apis']
+            language = 'python-flask'
+            components = ['models']
             outputDir = file (generatedApiDirectory)
             configFile = file (apiDirectory+'/config.json')
+            wipeOutputDir = false
         }
-    }
-
-    doLast {
-        copy {
-            from generatedApiDirectory+'/openapi_client/'
-            into 'swagger_server/'
-        }
-        // delete generatedApiDirectory
     }
 }
+generateSwaggerCode.dependsOn(swaggerClean)
+generateSwaggerCode.mustRunAfter(swaggerClean)
+
+
+task postGeneration() {
+    doLast() {
+        // Copy generated files into models folder
+        copy {
+            from generatedApiDirectory+'/swagger_server/'
+            into 'swagger_server/'
+        }
+
+        // delete generated api directory
+        delete generatedApiDirectory
+
+        // Copy basemodel file
+        copy {
+            from 'swagger_server/swagger/base_model_.py'
+            into 'swagger_server/models/'
+        }
+        println 'copied base_model.py'
+
+        // Generate models init file
+        def initFile = "swagger_server/models/__init__.py"
+        delete initFile
+        exec {
+            commandLine "bash", "-c", "echo -e \"from __future__ import absolute_import \n# import models into model package\" >> ${initFile}"
+        }
+        fileTree("swagger_server/models").matching{ include "**/*.py" exclude "__init__.py" }.visit{ FileVisitDetails details ->
+            def basename = details.file.name.take(details.file.name.lastIndexOf('.'))
+            exec {
+                commandLine "bash", "-c", "cat ${details.file} | grep '^class' | sed 's/class //g' | sed 's/(.*//g' | xargs echo from swagger_server.models.${basename} import >> ${initFile}"
+            }
+        }
+        println 'generated __init__.py for models'
+    }
+}
+postGeneration.mustRunAfter('generateSwaggerCode')
