@@ -62,3 +62,16 @@ docker build -t swagger_server .
 # starting up a container
 docker run -p 8080:8080 swagger_server
 ```
+
+## Running with docker on separate instances
+To run with TA1 on multiple systems set docker env vars for ITM(TA3) host, Soartech Host, Adept Host
+```bash
+docker run -d -p 8080:8080 -e "ITM_HOSTNAME=$CHANGE_ME_TO_CURRENTIP" -e "SOARTECH_HOSTNAME=$CHANGE_ME_TO_SOARTECHIP" -e "ADEPT_HOSTNAME=$CHANGE_ME_TO_ADEPTIP" -e "AWS_RUN=True" --name itm-server itm-server
+```
+
+## Manual runs on separate instances
+If running the command instead of docker set the environment variables for:
+- AWS_RUN=True (This is telling the system to use the below values whether or not hosted on AWS)
+- ITM_HOSTNAME
+- SOARTECH_HOSTNAME
+- ADEPT_HOSTNAME
