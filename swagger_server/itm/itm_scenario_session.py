@@ -233,6 +233,61 @@ class ITMScenarioSession:
                 directories.append(item)
         return directories
 
+    def _proper_treatment(self, treatment: str, injury_name: str, location: str) -> bool:
+        # NOTE: Asthmatic, Burns, Forehead Scrape, Ear Bleed are currently untreatable
+
+        """
+            Head Injuries
+            Forehead Scrape: None
+            Face Shrapnel: Airway
+            Ear Bleed: None
+
+            Neck Injuries
+            Neck Puncture: Hemostatic gauze
+
+            Hand Injuries
+            Wrist Amputation: Tourniquet
+            Palm Laceration: Pressure bandage
+
+            Arm Injuries
+            Forearm Laceration: Pressure bandage
+            Bicep Puncture: Tourniquet
+            Shoulder Puncture: Hemostatic gauze
+
+            Chest Injuries
+            Asthmatic: None
+            Chest Collapse: Decompression Needle
+
+            Stomach Injuries
+            Stomach Puncture: Hemostatic gauze
+            Side Puncture: Hemostatic gauze
+
+            Leg Injuries
+            Thigh Puncture: Tourniquet
+            Thigh Laceration: Tourniquet
+            Shin Amputation: Tourniquet
+            Calf Laceration: Pressure bandage
+        """
+        match injury_name:
+            case "Amputation":
+                return treatment == "Tourniquet"
+            case "Chest Collapse":
+                return treatment == "Decompression Needle"
+            case "Laceration":
+                if 'thigh' in location:
+                    return treatment == "Tourniquet"
+                else:
+                    return treatment == "Hemostatic gauze"
+            case "Puncture":
+                if 'bicep' in location or 'thigh' in location:
+                    return treatment == "Tourniquet"
+                else:
+                    return treatment == "Hemostatic gauze"
+            case "Shrapnel":
+                return treatment == "Nasopharyngeal airway"
+            case _:
+                return False
+
 
     def get_alignment_target(self, session_id: str, scenario_id: str) -> AlignmentTarget:
         """
@@ -643,12 +698,11 @@ class ITMScenarioSession:
                 "Apply Treatment", {"Session ID": self.session_id, "Casualty ID": casualty.id, "Parameters": action.parameters},
                 self.scenario.state.to_dict())
 
-            # remove injury from casualty
-            # TODO: this assumes that the treatment actually cures/removes the injury.
+            # If appropriate, remove injury from casualty
             # NOTE: this assumes there is only one injury per location.
             for injury in casualty.injuries:
                 if injury.location == action.parameters.get('location', None):
-                    if injury.name != 'Burn': # Burns are currently untreatable
+                    if self._proper_treatment(action.parameters.get('treatment'), injury.name, injury.location):
                         casualty.injuries.remove(injury)
                     break
 
