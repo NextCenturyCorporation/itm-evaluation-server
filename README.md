@@ -66,12 +66,14 @@ docker run -p 8080:8080 swagger_server
 ## Running with docker on separate instances
 To run with TA1 on multiple systems set docker env vars for ADM host, Soartech Host, and ADEPT Host.
 ```bash
-docker run -d -p 8080:8080 -e "ADM_HOSTNAME=$CHANGE_ME_TO_CURRENTIP" -e "SOARTECH_HOSTNAME=$CHANGE_ME_TO_SOARTECHIP" -e "ADEPT_HOSTNAME=$CHANGE_ME_TO_ADEPTIP" -e "AWS_RUN=True" --name itm-server itm-server
+docker run -d -p 8080:8080 -e "TA3_HOSTNAME=$CHANGE_ME_TO_CURRENTIP" -e "SOARTECH_HOSTNAME=$CHANGE_ME_TO_SOARTECHIP" -e "ADEPT_HOSTNAME=$CHANGE_ME_TO_ADEPTIP" -e "AWS_RUN=True" --name itm-server itm-server
 ```
 
 ## Manual runs on separate instances
 If running the command instead of docker set the environment variables for:
 - AWS_RUN=True (This is telling the system to use the below values whether or not hosted on AWS)
-- ADM_HOSTNAME
-- SOARTECH_HOSTNAME
-- ADEPT_HOSTNAME
+- TA3_HOSTNAME (default: localhost)
+- SOARTECH_HOSTNAME (default: localhost)
+- ADEPT_HOSTNAME (default: localhost)
+- ADEPT_PORT (default:8081)
+- SOARTECH_PORT (default:8084)

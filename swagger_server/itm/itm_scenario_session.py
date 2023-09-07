@@ -57,7 +57,7 @@ class ITMScenarioSession:
     
         # This calls the dashboard's MongoDB
         self.save_to_database = False
-        HOST = os.getenv("ADM_HOSTNAME")
+        HOST = os.getenv("TA3_HOSTNAME")
         if HOST is None or HOST == "":
             HOST = "localhost"
         self.mongo_db = MongoDB('dashroot', 'dashr00tp@ssw0rd',

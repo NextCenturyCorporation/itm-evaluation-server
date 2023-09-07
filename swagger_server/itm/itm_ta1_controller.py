@@ -5,8 +5,12 @@ import urllib
 from swagger_server.models.probe_response import ProbeResponse  # noqa: F401,E501
 
 # TODO: Add ports to configuration
-ADEPT_PORT = '8081'
-SOARTECH_PORT = '8084'
+ADEPT_PORT = os.getenv("ADEPT_PORT")
+if (ADEPT_PORT == None or ADEPT_PORT == ""):
+    ADEPT_PORT = '8081'
+SOARTECH_PORT = os.getenv("SOARTECH_PORT")
+if (SOARTECH_PORT == None or SOARTECH_PORT == ""):
+    SOARTECH_PORT = '8084'
 AWS_HOSTED = os.getenv("AWS_RUN")
 if (AWS_HOSTED == None or AWS_HOSTED == ""):
     AWS_HOSTED = False
