@@ -626,14 +626,14 @@ class ITMScenarioSession:
         """
 
         casualty.tag = tag
-        casualties: List[Casualty] = self.current_isso.scenario.state.casualties
-        for isso_casualty in casualties:
+        for isso_casualty in self.current_isso.scenario.state.casualties:
             if isso_casualty.id == casualty.id:
                 # Certain basic vitals are discovered when a casualty is approached.
                 casualty.vitals.breathing = isso_casualty.vitals.breathing
                 casualty.vitals.conscious = isso_casualty.vitals.conscious
                 casualty.vitals.mental_status = isso_casualty.vitals.mental_status
                 self._reveal_injuries(isso_casualty, casualty)
+                casualty.assessed = True
                 self._add_history(
                     "Tag Casualty",
                     {"Session ID": self.session_id, "Casualty ID": casualty.id, "Tag": tag},
