@@ -297,9 +297,10 @@ class ITMScenarioSession:
 
 
     def _reveal_injuries(self, source: Casualty, target: Casualty):
+        if target.assessed: # Don't reveal injuries in assessed casualties
+            return
         for source_injury in source.injuries:
             # TBD: Hidden injuries should be configurable by type or injury instance
-            # TBD: Eventually, this will need to be smart enough not to reveal treated injuries
             found_burn = False
             if source_injury.name == 'Burn': # Casualty has a burn injury
                 for target_injury in target.injuries:
@@ -353,15 +354,14 @@ class ITMScenarioSession:
             casualty: The casualty to check.
         """
 
-        casualty.assessed = True
-        casualties: List[Casualty] = self.current_isso.scenario.state.casualties
-        for isso_casualty in casualties:
+        for isso_casualty in self.current_isso.scenario.state.casualties:
             if isso_casualty.id == casualty.id:
                 casualty.vitals.breathing = isso_casualty.vitals.breathing
                 casualty.vitals.conscious = isso_casualty.vitals.conscious
                 casualty.vitals.mental_status = isso_casualty.vitals.mental_status
                 casualty.vitals.hrpmin = isso_casualty.vitals.hrpmin
                 self._reveal_injuries(isso_casualty, casualty)
+                casualty.assessed = True
                 self._add_history(
                     "Check Pulse",
                     {"Session ID": self.session_id, "Casualty ID": casualty.id},
@@ -376,14 +376,13 @@ class ITMScenarioSession:
             casualty: The casualty to check.
         """
 
-        casualty.assessed = True
-        casualties: List[Casualty] = self.current_isso.scenario.state.casualties
-        for isso_casualty in casualties:
+        for isso_casualty in self.current_isso.scenario.state.casualties:
             if isso_casualty.id == casualty.id:
                 casualty.vitals.breathing = isso_casualty.vitals.breathing
                 casualty.vitals.conscious = isso_casualty.vitals.conscious
                 casualty.vitals.mental_status = isso_casualty.vitals.mental_status
                 self._reveal_injuries(isso_casualty, casualty)
+                casualty.assessed = True
                 self._add_history(
                     "Check Respiration",
                     {"Session ID": self.session_id, "Casualty ID": casualty.id},
@@ -427,12 +426,11 @@ class ITMScenarioSession:
             casualty: The casualty to check.
         """
 
-        casualty.assessed = True
-        casualties: List[Casualty] = self.current_isso.scenario.state.casualties
-        for isso_casualty in casualties:
+        for isso_casualty in self.current_isso.scenario.state.casualties:
             if isso_casualty.id == casualty.id:
                 casualty.vitals = isso_casualty.vitals
                 self._reveal_injuries(isso_casualty, casualty)
+                casualty.assessed = True
                 self._add_history(
                     "Check All Vitals",
                     {"Session ID": self.session_id, "Casualty ID": casualty.id},
@@ -442,6 +440,7 @@ class ITMScenarioSession:
     def apply_treatment(self, action: Action, casualty: Casualty):
         # If appropriate, remove injury from casualty and decrement supplies
         # NOTE: this assumes there is only one injury per location.
+        time_passed = 0
         supply_used = action.parameters.get('treatment', None)
         for injury in casualty.injuries:
             if injury.location == action.parameters.get('location', None):
@@ -455,7 +454,7 @@ class ITMScenarioSession:
                                 # increment time passed during treatment
                                 # TBD: should time pass when using the wrong treatment?
                                 time_passed += self.times_dict["treatmentTimes"][supply_used]
-                break
+                            break
 
         # Injuries and certain basic vitals are discovered when a casualty is approached.
         for isso_casualty in self.current_isso.scenario.state.casualties:
@@ -464,12 +463,14 @@ class ITMScenarioSession:
                 casualty.vitals.conscious = isso_casualty.vitals.conscious
                 casualty.vitals.mental_status = isso_casualty.vitals.mental_status
                 self._reveal_injuries(isso_casualty, casualty)
-        casualty.assessed = True
+                casualty.assessed = True
 
-        # Finally, log the action
+        # Finally, log the action and return
         self._add_history(
             "Apply Treatment", {"Session ID": self.session_id, "Casualty ID": casualty.id, "Parameters": action.parameters},
             self.scenario.state.to_dict())
+
+        return time_passed
 
 
     def start_scenario(self, session_id: str, scenario_id: str=None) -> Scenario:
@@ -646,12 +647,12 @@ class ITMScenarioSession:
         if casualty:
             for isso_casualty in self.current_isso.scenario.state.casualties:
                 if isso_casualty.id == casualty.id:
-                    casualty.assessed = True
                     casualty.vitals.mental_status = isso_casualty.vitals.mental_status
                     if casualty.vitals.mental_status != "UNRESPONSIVE":
                         casualty.vitals.breathing = isso_casualty.vitals.breathing
                         casualty.vitals.conscious = isso_casualty.vitals.conscious
                         self._reveal_injuries(isso_casualty, casualty)
+                        casualty.assessed = True
                     time_passed = self.times_dict["SITREP"]
         else:
             # takes time for each responsive casualty during sitrep
@@ -660,10 +661,10 @@ class ITMScenarioSession:
                     if isso_casualty.id == curr_casualty.id:
                         curr_casualty.vitals.mental_status = isso_casualty.vitals.mental_status
                         if curr_casualty.vitals.mental_status != "UNRESPONSIVE":
-                            curr_casualty.assessed = True
                             curr_casualty.vitals.conscious = isso_casualty.vitals.conscious
                             curr_casualty.vitals.breathing = isso_casualty.vitals.breathing
                             self._reveal_injuries(isso_casualty, casualty)
+                            curr_casualty.assessed = True
                         time_passed += self.times_dict["SITREP"]
 
         self._add_history(
@@ -738,9 +739,9 @@ class ITMScenarioSession:
         time_passed = 0
         # Look up casualty action is applied to
         casualty = next((casualty for casualty in self.scenario.state.casualties if casualty.id == action.casualty_id), None)
-        # Check we have a reference to the casualty
+
         if action.action_type == "APPLY_TREATMENT":
-            self.apply_treatment(action, casualty)
+            time_passed += self.apply_treatment(action, casualty)
 
         # if tagging a casualty then update the tag to the category parameter
         if action.action_type == "TAG_CASUALTY":
@@ -824,6 +825,8 @@ class ITMScenarioSession:
                 if option.assoc_action["action_id"] != body.action_id
             ]
 
+        #print(f"--> ADM chose action {body.action_type} with casualty {body.casualty_id}.")
+
         # Respond to probe with TA1
         # NOTE: Not all actions will necessarily result in a probe response
         # In the September scenarios, only the first action taken results in a response to a probe.
@@ -863,9 +866,9 @@ class ITMScenarioSession:
                 # Only one probe, scenario ends when all three patients treated
                 self._end_scenario()
 
-
         return self.scenario.state
-    
+
+
     def end_probe(self):
         self.current_isso.probe_system.probe_count -= 1
         self.current_isso.probe_system.current_probe_index += 1
@@ -908,5 +911,5 @@ class ITMScenarioSession:
                 actions.append(option.assoc_action)
         else:
              return 'Scenario Complete', 400
-        #print(actions)
+
         return actions
