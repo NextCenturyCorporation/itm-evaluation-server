@@ -68,6 +68,8 @@ To run with TA1 on multiple systems set docker env vars for ADM host, Soartech H
 ```bash
 docker run -d -p 8080:8080 -e "TA3_HOSTNAME=$CHANGE_ME_TO_CURRENTIP" -e "SOARTECH_HOSTNAME=$CHANGE_ME_TO_SOARTECHIP" -e "ADEPT_HOSTNAME=$CHANGE_ME_TO_ADEPTIP" -e "AWS_RUN=True" --name itm-server itm-server
 ```
+** Note, If setting TA3_PORT to anything other then the default requires the docker run command to expose those ports. 
+Can write the above command as $TA3_PORT:$TA3_PORT however, this will not work if it is not set and won't default
 
 ## Manual runs on separate instances
 If running the command instead of docker set the environment variables for:
@@ -77,3 +79,4 @@ If running the command instead of docker set the environment variables for:
 - ADEPT_HOSTNAME (default: localhost)
 - ADEPT_PORT (default:8081)
 - SOARTECH_PORT (default:8084)
+- TA3_PORT (default:8080)
