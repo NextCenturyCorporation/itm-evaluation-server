@@ -299,27 +299,19 @@ class ITMScenarioSession:
     def _reveal_injuries(self, source: Casualty, target: Casualty):
         if target.assessed: # Don't reveal injuries in assessed casualties
             return
+
         for source_injury in source.injuries:
-            # TBD: Hidden injuries should be configurable by type or injury instance
-            found_burn = False
-            if source_injury.name == 'Burn': # Casualty has a burn injury
-                for target_injury in target.injuries:
-                    if target_injury.name == 'Burn': # Burn has already been revealed
-                        found_burn = True
-                        break
-                if not found_burn:
-                    target.injuries.append(source_injury)
+            if source_injury.name in self.current_isso.hidden_injury_types and \
+                not any(target_injury.name in self.current_isso.hidden_injury_types \
+                        for target_injury in target.injuries): \
+                            target.injuries.append(source_injury)
 
-
+    # Hide vitals and hidden injuries at start of scenario
     def _clear_hidden_data(self):
         for casualty in self.scenario.state.casualties:
-            for injury in casualty.injuries:
-                if injury.name == 'Burn':
-                    # Hide Burn injuries until action taken on casualty
-                    # TBD: hidden injuries should be configurable by type or injury instance
-                    casualty.injuries.remove(injury)
+            casualty.injuries[:] = \
+                [injury for injury in casualty.injuries if injury.name not in self.current_isso.hidden_injury_types]
             casualty.vitals = Vitals()
-        pass
 
 
     def get_alignment_target(self, session_id: str, scenario_id: str) -> AlignmentTarget:
