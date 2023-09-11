@@ -712,15 +712,22 @@ class ITMScenarioSession:
 
         Args:
             body: The probe response body as a dict.
+        Returns:
+            The probe corresponding to the action, or None if there is no corresponding probe.
         """
+
+        if action.action_id == None or action.action_id == '':
+            return None
+
         currentProbe = self.current_isso.probe_system.probe_yamls[self.current_isso.probe_system.current_probe_index]
-        choice_id = ""
+        choice_id = None
         # need to go back through to find the choice from probeYamlOption (not stored in action)
         for option in currentProbe.options:
             if option.assoc_action["action_id"] == action.action_id:
                 choice_id = option.ta1_id
                 break
-        return ProbeResponse(scenario_id=action.scenario_id, probe_id=currentProbe.id, choice=choice_id)
+
+        return ProbeResponse(scenario_id=action.scenario_id, probe_id=currentProbe.id, choice=choice_id) if choice_id != None else None
 
 
     def update_state(self, action: Action):
@@ -803,8 +810,19 @@ class ITMScenarioSession:
         if not successful:
             return message, code
 
+        self._add_history(
+            "Take Action",
+            {"Session ID": self.session_id, "Scenario ID": self.scenario.id, "Action": body},
+            self.scenario.state.to_dict())
+        print(f"--> ADM chose action {body.action_type} with casualty {body.casualty_id} and parameters {body.parameters}.")
+
         # Map action to probe response
         response = self.lookup_probe_response(action=body)
+
+        # Actions with no corresponding probe could be constructed by ADM or pre-configured repeatable actions
+        if response is None:
+            self.update_state(action=body)
+            return self.scenario.state
 
         # keep track of which casualty_id's have been addressed in this probe
         if not body.casualty_id in self.casualty_ids:
@@ -817,8 +835,6 @@ class ITMScenarioSession:
                 if option.assoc_action["action_id"] != body.action_id
             ]
 
-        #print(f"--> ADM chose action {body.action_type} with casualty {body.casualty_id}.")
-
         # Respond to probe with TA1
         # NOTE: Not all actions will necessarily result in a probe response
         # In the September scenarios, only the first action taken results in a response to a probe.
@@ -826,11 +842,6 @@ class ITMScenarioSession:
             print(f"--> ADM chose action {body.action_type} with casualty {body.casualty_id} resulting in TA1 response with choice {response.choice}.")
             self.respond_to_probe(body=response)
             self.first_answer = False
-
-        self._add_history(
-            "Take Action",
-            {"Session ID": self.session_id, "Scenario ID": self.scenario.id, "Action": body},
-            self.scenario.state.to_dict())
 
         # PROBE HANDLING FOR ADEPT
         if self.scenario_rules == "ADEPT":
@@ -894,13 +905,13 @@ class ITMScenarioSession:
 
         actions: List[Action] = []
         
-        # TODO When an action takes place, that action should be removed from the probeYaml's option list!
-        # tackle one probe at a time, after all available actions are returned for that probe remove it from remaining probes
         if self.current_isso.probe_system.probe_yamls:
             for option in self.current_isso.probe_system.probe_yamls[self.current_isso.probe_system.current_probe_index].options:
                 if (not self.kdma_training):
                     option.assoc_action.pop('kdma_association', None)
                 actions.append(option.assoc_action)
+            # Always allow tagging a casualty
+            actions.append(Action(action_id="tag_action", scenario_id=scenario_id, action_type='TAG_CASUALTY', unstructured="Tag a casualty"))
         else:
              return 'Scenario Complete', 400
 
