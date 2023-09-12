@@ -19,6 +19,7 @@ class ITMSessionScenarioObject:
     casualty_simulations: List[CasualtySimulation] = None
     casualty_simulator: ITMCasualtySimulator = None
     supplies: ITMSupplies = None
+    hidden_injury_types = ['Burn'] # TBD: Hidden injuries should be configurable by type or injury instance
     ta1_controller: ITMTa1Controller = None
 
 class ITMSessionScenarioObjectHandler:

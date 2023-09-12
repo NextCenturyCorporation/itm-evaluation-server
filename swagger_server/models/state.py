@@ -52,7 +52,7 @@ class State(Model):
 
         self.attribute_map = {
             'unstructured': 'unstructured',
-            'elapsed_time': 'elapsedTime',
+            'elapsed_time': 'elapsed_time',
             'scenario_complete': 'scenario_complete',
             'mission': 'mission',
             'environment': 'environment',

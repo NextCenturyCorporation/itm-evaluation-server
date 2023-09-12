@@ -45,7 +45,7 @@ class Scenario(Model):
             'id': 'id',
             'name': 'name',
             'session_complete': 'session_complete',
-            'start_time': 'startTime',
+            'start_time': 'start_time',
             'state': 'state',
             'triage_categories': 'triage_categories'
         }
