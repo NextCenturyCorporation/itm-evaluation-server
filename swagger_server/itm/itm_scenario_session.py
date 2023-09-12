@@ -57,8 +57,11 @@ class ITMScenarioSession:
     
         # This calls the dashboard's MongoDB
         self.save_to_database = False
+        HOST = os.getenv("DB_HOST")
+        if HOST is None or HOST == "":
+            HOST = "localhost"
         self.mongo_db = MongoDB('dashroot', 'dashr00tp@ssw0rd',
-                                'localhost', '27017', 'dashboard')
+                                HOST, '27017', 'dashboard')
         
         with open("swagger_server/itm/treatment_times_config/actionTimes.json", 'r') as json_file:
                 self.times_dict = json.load(json_file)
