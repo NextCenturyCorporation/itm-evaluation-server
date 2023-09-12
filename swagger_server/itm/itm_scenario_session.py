@@ -565,8 +565,8 @@ class ITMScenarioSession:
             self.adm_name = self.adm_name.removesuffix("_db_")
             self.save_to_database = True
         if self.session_type == 'eval':
-            #self.save_to_database = True
-            #self.ta1_integration = True
+            self.save_to_database = True
+            self.ta1_integration = True
             max_scenarios = None
 
         self._add_history(
