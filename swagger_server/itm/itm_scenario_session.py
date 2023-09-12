@@ -297,7 +297,7 @@ class ITMScenarioSession:
 
 
     def _reveal_injuries(self, source: Casualty, target: Casualty):
-        if target.assessed: # Don't reveal injuries in assessed casualties
+        if target.visited: # Don't reveal injuries in visited casualties
             return
 
         for source_injury in source.injuries:
@@ -353,7 +353,7 @@ class ITMScenarioSession:
                 casualty.vitals.mental_status = isso_casualty.vitals.mental_status
                 casualty.vitals.hrpmin = isso_casualty.vitals.hrpmin
                 self._reveal_injuries(isso_casualty, casualty)
-                casualty.assessed = True
+                casualty.visited = True
                 self._add_history(
                     "Check Pulse",
                     {"Session ID": self.session_id, "Casualty ID": casualty.id},
@@ -374,7 +374,7 @@ class ITMScenarioSession:
                 casualty.vitals.conscious = isso_casualty.vitals.conscious
                 casualty.vitals.mental_status = isso_casualty.vitals.mental_status
                 self._reveal_injuries(isso_casualty, casualty)
-                casualty.assessed = True
+                casualty.visited = True
                 self._add_history(
                     "Check Respiration",
                     {"Session ID": self.session_id, "Casualty ID": casualty.id},
@@ -422,7 +422,7 @@ class ITMScenarioSession:
             if isso_casualty.id == casualty.id:
                 casualty.vitals = isso_casualty.vitals
                 self._reveal_injuries(isso_casualty, casualty)
-                casualty.assessed = True
+                casualty.visited = True
                 self._add_history(
                     "Check All Vitals",
                     {"Session ID": self.session_id, "Casualty ID": casualty.id},
@@ -455,7 +455,7 @@ class ITMScenarioSession:
                 casualty.vitals.conscious = isso_casualty.vitals.conscious
                 casualty.vitals.mental_status = isso_casualty.vitals.mental_status
                 self._reveal_injuries(isso_casualty, casualty)
-                casualty.assessed = True
+                casualty.visited = True
 
         # Finally, log the action and return
         self._add_history(
@@ -625,7 +625,7 @@ class ITMScenarioSession:
                 casualty.vitals.conscious = isso_casualty.vitals.conscious
                 casualty.vitals.mental_status = isso_casualty.vitals.mental_status
                 self._reveal_injuries(isso_casualty, casualty)
-                casualty.assessed = True
+                casualty.visited = True
                 self._add_history(
                     "Tag Casualty",
                     {"Session ID": self.session_id, "Casualty ID": casualty.id, "Tag": tag},
@@ -644,7 +644,7 @@ class ITMScenarioSession:
                         casualty.vitals.breathing = isso_casualty.vitals.breathing
                         casualty.vitals.conscious = isso_casualty.vitals.conscious
                         self._reveal_injuries(isso_casualty, casualty)
-                        casualty.assessed = True
+                        casualty.visited = True
                     time_passed = self.times_dict["SITREP"]
         else:
             # takes time for each responsive casualty during sitrep
@@ -656,7 +656,7 @@ class ITMScenarioSession:
                             curr_casualty.vitals.conscious = isso_casualty.vitals.conscious
                             curr_casualty.vitals.breathing = isso_casualty.vitals.breathing
                             self._reveal_injuries(isso_casualty, casualty)
-                            curr_casualty.assessed = True
+                            curr_casualty.visited = True
                         time_passed += self.times_dict["SITREP"]
 
         self._add_history(
