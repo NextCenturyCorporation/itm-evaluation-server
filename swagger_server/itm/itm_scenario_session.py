@@ -716,7 +716,7 @@ class ITMScenarioSession:
             The probe corresponding to the action, or None if there is no corresponding probe.
         """
 
-        if action.action_id == None or action.action_id == '':
+        if not action.action_id:
             return None
 
         currentProbe = self.current_isso.probe_system.probe_yamls[self.current_isso.probe_system.current_probe_index]
