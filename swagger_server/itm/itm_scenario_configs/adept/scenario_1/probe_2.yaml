@@ -6,7 +6,7 @@ state:
   environment:
     unstructured: >
       EVAC is 5 minutes out but can only take one patient.
-    aidDelay: 5
+    aid_delay: 5
 options:
   - id: choice1
     value: Your friend, Mike

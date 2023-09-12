@@ -20,7 +20,7 @@ state:
   environment:
     unstructured: >
       Isolated jungle island
-    aidDelay: 40
+    aid_delay: 40
 
   threat_state:
     unstructured: Gunfire and shouting heard at a distance; Participant appears in scene in crouched position under cover by trees
@@ -40,7 +40,6 @@ state:
         22 YO male Marine hit by an IED.
         Burns of overall extremities and the majority of the torso and face, with peppered dirt and shrapnel on all extremities
         (BSA covers 90% of his body) and puncture wound left neck.
-      relationship: NONE
       demographics:
         age: 22
         sex: M
@@ -61,7 +60,6 @@ state:
         A 40 YO Intelligence officer hit by an IED.
         Initial injuries show 2nd and 3rd degree burns of the left half of his body (BSA is 50%),
         with peppered dirt and shrapnel over the same area.
-      relationship: NONE
       demographics:
         age: 40
         sex: M
@@ -79,7 +77,6 @@ state:
       unstructured: >
         A 26 YO male Marine hit by an IED. 
         Immediate partial amputation of RLE.
-      relationship: NONE
       demographics:
         age: 26
         sex: M
