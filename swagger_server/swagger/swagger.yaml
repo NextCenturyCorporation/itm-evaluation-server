@@ -315,7 +315,7 @@ components:
           description: "set to true if the session is complete; that is, there are\
             \ no more scenarios"
           example: false
-        startTime:
+        start_time:
           type: string
           description: "the wall clock local start time of the scenario, expressed\
             \ as hh:mm"
@@ -328,9 +328,9 @@ components:
             $ref: '#/components/schemas/TriageCategory'
       description: a tactical scenario
       example:
+        start_time: 14:02
         session_complete: false
         name: IED Explosion
-        startTime: 14:02
         id: "1234"
         state:
           mission:
@@ -338,12 +338,12 @@ components:
             mission_type: Listening/Observation
           environment:
             visibility: 0.5
+            aid_delay: 40
             fauna: "many insects, some amphibians and reptiles"
             flora: lush jungle vegetation
             lighting: 0.7
             noise_peak: 0.8
             noise_ambient: 0.5
-            aidDelay: 40
             unstructured: unstructured
             weather: rainy
             temperature: 82.5
@@ -357,6 +357,7 @@ components:
           - quantity: 4
             type: Tourniquet
           unstructured: unstructured
+          elapsed_time: 5.2
           threat_state:
             unstructured: No additional threats are detected
             threats:
@@ -366,9 +367,7 @@ components:
               severity: 0.5
           scenario_complete: false
           casualties:
-          - assessed: false
-            complete_vitals: null
-            injuries:
+          - injuries:
             - severity: 0.8
               name: Laceration
               location: right forearm
@@ -377,6 +376,7 @@ components:
               location: right forearm
             unstructured: unstructured
             name: Mary
+            visited: false
             id: id
             tag: DELAYED
             relationship: NONE
@@ -389,9 +389,7 @@ components:
               sex: F
               rank: Marine
               age: 32
-          - assessed: false
-            complete_vitals: null
-            injuries:
+          - injuries:
             - severity: 0.8
               name: Laceration
               location: right forearm
@@ -400,6 +398,7 @@ components:
               location: right forearm
             unstructured: unstructured
             name: Mary
+            visited: false
             id: id
             tag: DELAYED
             relationship: NONE
@@ -412,7 +411,6 @@ components:
               sex: F
               rank: Marine
               age: 32
-          elapsedTime: 5.2
         triage_categories:
         - criteria: criteria
           description: description
@@ -469,7 +467,7 @@ components:
         unstructured:
           type: string
           description: text description of current state
-        elapsedTime:
+        elapsed_time:
           type: number
           description: the elapsed time (in minutes) since the scenario started
           example: 5.2
@@ -502,12 +500,12 @@ components:
           mission_type: Listening/Observation
         environment:
           visibility: 0.5
+          aid_delay: 40
           fauna: "many insects, some amphibians and reptiles"
           flora: lush jungle vegetation
           lighting: 0.7
           noise_peak: 0.8
           noise_ambient: 0.5
-          aidDelay: 40
           unstructured: unstructured
           weather: rainy
           temperature: 82.5
@@ -521,6 +519,7 @@ components:
         - quantity: 4
           type: Tourniquet
         unstructured: unstructured
+        elapsed_time: 5.2
         threat_state:
           unstructured: No additional threats are detected
           threats:
@@ -530,9 +529,7 @@ components:
             severity: 0.5
         scenario_complete: false
         casualties:
-        - assessed: false
-          complete_vitals: null
-          injuries:
+        - injuries:
           - severity: 0.8
             name: Laceration
             location: right forearm
@@ -541,6 +538,7 @@ components:
             location: right forearm
           unstructured: unstructured
           name: Mary
+          visited: false
           id: id
           tag: DELAYED
           relationship: NONE
@@ -553,9 +551,7 @@ components:
             sex: F
             rank: Marine
             age: 32
-        - assessed: false
-          complete_vitals: null
-          injuries:
+        - injuries:
           - severity: 0.8
             name: Laceration
             location: right forearm
@@ -564,6 +560,7 @@ components:
             location: right forearm
           unstructured: unstructured
           name: Mary
+          visited: false
           id: id
           tag: DELAYED
           relationship: NONE
@@ -576,7 +573,6 @@ components:
             sex: F
             rank: Marine
             age: 32
-        elapsedTime: 5.2
     Mission:
       required:
       - mission_type
@@ -642,7 +638,7 @@ components:
           type: string
           description: a natural language description of the local soundscape
           example: burbling brook punctuated by enemy gunfire
-        aidDelay:
+        aid_delay:
           type: number
           description: "time until tactical evacuation or exfiltration, in minutes"
           example: 40
@@ -678,12 +674,12 @@ components:
       description: an encapsulation of environmental factors at the scenario location
       example:
         visibility: 0.5
+        aid_delay: 40
         fauna: "many insects, some amphibians and reptiles"
         flora: lush jungle vegetation
         lighting: 0.7
         noise_peak: 0.8
         noise_ambient: 0.5
-        aidDelay: 40
         unstructured: unstructured
         weather: rainy
         temperature: 82.5
@@ -784,11 +780,9 @@ components:
             $ref: '#/components/schemas/Injury'
         vitals:
           $ref: '#/components/schemas/Vitals'
-        complete_vitals:
-          $ref: '#/components/schemas/Vitals'
-        assessed:
+        visited:
           type: boolean
-          description: whether or not this casualty has been assessed in the current
+          description: whether or not this casualty has been visited in the current
             scenario
           default: false
         tag:
@@ -802,8 +796,6 @@ components:
           - EXPECTANT
       description: encapulation of a single casualty in the scenario
       example:
-        assessed: false
-        complete_vitals: null
         injuries:
         - severity: 0.8
           name: Laceration
@@ -813,6 +805,7 @@ components:
           location: right forearm
         unstructured: unstructured
         name: Mary
+        visited: false
         id: id
         tag: DELAYED
         relationship: NONE

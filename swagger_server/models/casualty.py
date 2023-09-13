@@ -17,7 +17,7 @@ class Casualty(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, id: str=None, unstructured: str=None, name: str=None, relationship: str=None, demographics: Demographics=None, injuries: List[Injury]=None, vitals: Vitals=None, complete_vitals: Vitals=None, assessed: bool=False, tag: str=None):  # noqa: E501
+    def __init__(self, id: str=None, unstructured: str=None, name: str=None, relationship: str=None, demographics: Demographics=None, injuries: List[Injury]=None, vitals: Vitals=None, visited: bool=False, tag: str=None):  # noqa: E501
         """Casualty - a model defined in Swagger
 
         :param id: The id of this Casualty.  # noqa: E501
@@ -34,10 +34,8 @@ class Casualty(Model):
         :type injuries: List[Injury]
         :param vitals: The vitals of this Casualty.  # noqa: E501
         :type vitals: Vitals
-        :param complete_vitals: The complete_vitals of this Casualty.  # noqa: E501
-        :type complete_vitals: Vitals
-        :param assessed: The assessed of this Casualty.  # noqa: E501
-        :type assessed: bool
+        :param visited: The visited of this Casualty.  # noqa: E501
+        :type visited: bool
         :param tag: The tag of this Casualty.  # noqa: E501
         :type tag: str
         """
@@ -49,8 +47,7 @@ class Casualty(Model):
             'demographics': Demographics,
             'injuries': List[Injury],
             'vitals': Vitals,
-            'complete_vitals': Vitals,
-            'assessed': bool,
+            'visited': bool,
             'tag': str
         }
 
@@ -62,8 +59,7 @@ class Casualty(Model):
             'demographics': 'demographics',
             'injuries': 'injuries',
             'vitals': 'vitals',
-            'complete_vitals': 'complete_vitals',
-            'assessed': 'assessed',
+            'visited': 'visited',
             'tag': 'tag'
         }
         self._id = id
@@ -73,8 +69,7 @@ class Casualty(Model):
         self._demographics = demographics
         self._injuries = injuries
         self._vitals = vitals
-        self._complete_vitals = complete_vitals
-        self._assessed = assessed
+        self._visited = visited
         self._tag = tag
 
     @classmethod
@@ -256,48 +251,27 @@ class Casualty(Model):
         self._vitals = vitals
 
     @property
-    def complete_vitals(self) -> Vitals:
-        """Gets the complete_vitals of this Casualty.
+    def visited(self) -> bool:
+        """Gets the visited of this Casualty.
 
+        whether or not this casualty has been visited in the current scenario  # noqa: E501
 
-        :return: The complete_vitals of this Casualty.
-        :rtype: Vitals
-        """
-        return self._complete_vitals
-
-    @complete_vitals.setter
-    def complete_vitals(self, complete_vitals: Vitals):
-        """Sets the complete_vitals of this Casualty.
-
-
-        :param complete_vitals: The complete_vitals of this Casualty.
-        :type complete_vitals: Vitals
-        """
-
-        self._complete_vitals = complete_vitals
-
-    @property
-    def assessed(self) -> bool:
-        """Gets the assessed of this Casualty.
-
-        whether or not this casualty has been assessed in the current scenario  # noqa: E501
-
-        :return: The assessed of this Casualty.
+        :return: The visited of this Casualty.
         :rtype: bool
         """
-        return self._assessed
+        return self._visited
 
-    @assessed.setter
-    def assessed(self, assessed: bool):
-        """Sets the assessed of this Casualty.
+    @visited.setter
+    def visited(self, visited: bool):
+        """Sets the visited of this Casualty.
 
-        whether or not this casualty has been assessed in the current scenario  # noqa: E501
+        whether or not this casualty has been visited in the current scenario  # noqa: E501
 
-        :param assessed: The assessed of this Casualty.
-        :type assessed: bool
+        :param visited: The visited of this Casualty.
+        :type visited: bool
         """
 
-        self._assessed = assessed
+        self._visited = visited
 
     @property
     def tag(self) -> str:
