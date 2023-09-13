@@ -1,5 +1,5 @@
 from __future__ import absolute_import 
-# import models into model package
+# import models into models package
 from swagger_server.models.demographics import Demographics
 from swagger_server.models.threat_state import ThreatState
 from swagger_server.models.triage_category import TriageCategory
