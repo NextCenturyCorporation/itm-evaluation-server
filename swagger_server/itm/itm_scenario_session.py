@@ -550,11 +550,16 @@ class ITMScenarioSession:
                 400
             )
 
-        # For now, send System Overload error code if a session is already being processed
+        # For now, re-use current session for same ADM, otherwise send System Overload
         if self.session_id == None:
             self.session_id = str(uuid.uuid4())
+        elif self.adm_name == adm_name:
+            self._add_history(
+                "Abort Session", {"Session ID": self.session_id, "ADM Name": self.adm_name}, None)
+            self.__init__() # Re-use session for same ADM
+            self.session_id = str(uuid.uuid4()) # but assign new session_id for clarity in logs/history
         else:
-            return 'System Overload', 503
+            return 'System Overload', 503 # TODO ITM-73
 
         self.kdma_training = kdma_training
         self.adm_name = adm_name
