@@ -49,7 +49,6 @@ swaggerSources {
 generateSwaggerCode.dependsOn(swaggerClean)
 generateSwaggerCode.mustRunAfter(swaggerClean)
 
-
 task postGeneration() {
     doLast() {
         // Copy generated files into models folder
@@ -60,6 +59,7 @@ task postGeneration() {
 
         // delete generated api directory
         delete generatedApiDirectory
+        println "removed ${generatedApiDirectory}"
 
         // Copy basemodel file
         copy {
