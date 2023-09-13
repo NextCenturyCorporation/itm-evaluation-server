@@ -174,7 +174,7 @@ class ITMScenarioReader:
             for injury in casualty_data.get('injuries', [])
         ]
         vital_data = casualty_data.get('vitals', {})
-        complete_vitals = Vitals(
+        vitals = Vitals(
             conscious=vital_data['conscious'],
             mental_status=vital_data['mental_status'],
             breathing=vital_data['breathing'],
@@ -183,16 +183,15 @@ class ITMScenarioReader:
             #rr=vital_data['RR'],
             #sp_o2=vital_data['SpO2%'],
         )
-        vitals = copy.deepcopy(complete_vitals)
         casualty = Casualty(
             id=casualty_data['id'],
             unstructured=casualty_data['unstructured'],
             name=casualty_data.get('name', 'Unknown'),
+            relationship=casualty_data.get('relationship', 'NONE'),
             demographics=demograpics,
             injuries=injuries,
             vitals=vitals,
-            complete_vitals=None,
-            assessed=False,
+            visited=False,
             tag=None
         )
         return casualty
