@@ -309,6 +309,17 @@ class ITMScenarioSession:
                         for target_injury in target.injuries): \
                             target.injuries.append(source_injury)
 
+        # TODO: develop a system for scenarios to specify changes in plaintext Casualty description
+        if self.scenario_rules == "SOARTECH":
+            if target.id == 'MarineA':
+                target.unstructured += \
+                    "Burns of overall extremities and the majority of the torso and face, " + \
+                    "with peppered dirt and shrapnel on all extremities (BSA covers 90% of his body)."
+            elif target.id == 'Intelligence Officer':
+                target.unstructured += \
+                    "Initial injuries show 2nd and 3rd degree burns of the left half of his body (BSA is 50%) " + \
+                    "with peppered dirt and shrapnel over the same area."
+
     # Hide vitals and hidden injuries at start of scenario
     def _clear_hidden_data(self):
         for casualty in self.scenario.state.casualties:
@@ -450,15 +461,6 @@ class ITMScenarioSession:
                                 # TBD: should time pass when using the wrong treatment?
                                 time_passed += self.times_dict["treatmentTimes"][supply_used]
                             break
-
-        # Injuries and certain basic vitals are discovered when a casualty is approached.
-        for isso_casualty in self.current_isso.scenario.state.casualties:
-            if isso_casualty.id == casualty.id:
-                casualty.vitals.breathing = isso_casualty.vitals.breathing
-                casualty.vitals.conscious = isso_casualty.vitals.conscious
-                casualty.vitals.mental_status = isso_casualty.vitals.mental_status
-                self._reveal_injuries(isso_casualty, casualty)
-                casualty.visited = True
 
         # Finally, log the action and return
         self._add_history(
@@ -628,12 +630,6 @@ class ITMScenarioSession:
         casualty.tag = tag
         for isso_casualty in self.current_isso.scenario.state.casualties:
             if isso_casualty.id == casualty.id:
-                # Certain basic vitals are discovered when a casualty is approached.
-                casualty.vitals.breathing = isso_casualty.vitals.breathing
-                casualty.vitals.conscious = isso_casualty.vitals.conscious
-                casualty.vitals.mental_status = isso_casualty.vitals.mental_status
-                self._reveal_injuries(isso_casualty, casualty)
-                casualty.visited = True
                 self._add_history(
                     "Tag Casualty",
                     {"Session ID": self.session_id, "Casualty ID": casualty.id, "Tag": tag},
@@ -869,7 +865,7 @@ class ITMScenarioSession:
             elif not unanswered_casualty_id or not self.current_isso.probe_system.probe_yamls[self.current_isso.probe_system.current_probe_index]:
                 self.end_probe()
         else:
-            #PROBE HANDLING FOR ST
+            #PROBE HANDLING FOR SOARTECH
             if body.action_type == "APPLY_TREATMENT": self.patients_treated += 1
             self.update_state(action=body)
             if self.patients_treated >= 3:
@@ -888,6 +884,15 @@ class ITMScenarioSession:
         # reset casualty_id list when going to next probe
         self.casualty_ids = []
         self.first_answer = True
+        # Copy certain state from probe to scenario
+        if not self.scenario.state.scenario_complete:
+            newState :dict = self.current_isso.probe_system.probe_yamls[self.current_isso.probe_system.current_probe_index].state
+            if newState.get("unstructured"):
+                self.scenario.state.environment = newState.get("unstructured")
+            if newState.get("environment"):
+                self.scenario.state.environment = newState.get("environment")
+            if newState.get("threat_state"):
+                self.scenario.state.environment = newState.get("threat_state")
 
 
     def get_available_actions(self, session_id: str, scenario_id: str) -> List[Action]:
