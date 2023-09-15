@@ -1,5 +1,5 @@
 id: adept-september-demo-probe-1
-scenario: adept-september-demo-scenario-1
+scenario_id: adept-september-demo-scenario-1
 type: MultipleChoice
 prompt: Whom do you assess first?
 state: {}

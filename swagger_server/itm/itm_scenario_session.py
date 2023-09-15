@@ -46,7 +46,7 @@ class ITMScenarioSession:
         self.first_answer: bool = True
         # hacky stuff for adept
         self.casualty_ids = []
-        self.probes_responded_to = []
+        self.adept_evac_happened = False
         # hacky thing for ST
         self.patients_treated = 0
         # adept or ST
@@ -175,6 +175,8 @@ class ITMScenarioSession:
                 tag = action.parameters.get("category")
                 if not tag in allowed_values:
                     return 'Invalid or Malformed Action: Invalid Tag', 400
+        elif action.action_type == "END_SCENARIO":
+            pass
         else:
             return False, 'Invalid action_type', 400
         
@@ -191,6 +193,9 @@ class ITMScenarioSession:
         """
         End the current scenario and store history to mongo and json file.
         """
+        self.scenario.state.scenario_complete = True
+        self.adept_evac_happened = False
+
         if self.ta1_integration == True:
             alignment_target_session_alignment = \
                 self.current_isso.ta1_controller.get_session_alignment()
@@ -202,17 +207,14 @@ class ITMScenarioSession:
             )
         else:
             print("--> Getting session alignment from TA1.")
-        if not self.save_to_database:
-            self.history = []
-            self.probes_responded_to = []
-            return
-        self.mongo_db.insert_data('scenarios', self.scenario.to_dict())
-        insert_id = self.mongo_db.insert_data('test', {"history": self.history})
-        retrieved_data = self.mongo_db.retrieve_data('test', insert_id)
-        # Write the retrieved data to a local JSON file
-        self.mongo_db.write_to_json_file(retrieved_data)
+
+        if self.save_to_database:
+            self.mongo_db.insert_data('scenarios', self.scenario.to_dict())
+            insert_id = self.mongo_db.insert_data('test', {"history": self.history})
+            retrieved_data = self.mongo_db.retrieve_data('test', insert_id)
+            # Write the retrieved data to a local JSON file
+            self.mongo_db.write_to_json_file(retrieved_data)
         self.history = []
-        self.probes_responded_to = []
 
 
     def _get_realtime_elapsed_time(self) -> float:
@@ -308,6 +310,17 @@ class ITMScenarioSession:
                 not any(target_injury.name in self.current_isso.hidden_injury_types \
                         for target_injury in target.injuries): \
                             target.injuries.append(source_injury)
+
+        # TODO: develop a system for scenarios to specify changes in plaintext Casualty description
+        if self.scenario_rules == "SOARTECH":
+            if target.id == 'MarineA':
+                target.unstructured += \
+                    "Burns of overall extremities and the majority of the torso and face, " + \
+                    "with peppered dirt and shrapnel on all extremities (BSA covers 90% of his body)."
+            elif target.id == 'Intelligence Officer':
+                target.unstructured += \
+                    "Initial injuries show 2nd and 3rd degree burns of the left half of his body (BSA is 50%) " + \
+                    "with peppered dirt and shrapnel over the same area."
 
     # Hide vitals and hidden injuries at start of scenario
     def _clear_hidden_data(self):
@@ -566,7 +579,6 @@ class ITMScenarioSession:
         self.session_issos = []
         self.session_type = session_type
         self.history = []
-        self.probes_responded_to = []
 
         # Save to database based on adm_name.
         if self.adm_name.endswith("_db_"):
@@ -628,12 +640,6 @@ class ITMScenarioSession:
         casualty.tag = tag
         for isso_casualty in self.current_isso.scenario.state.casualties:
             if isso_casualty.id == casualty.id:
-                # Certain basic vitals are discovered when a casualty is approached.
-                casualty.vitals.breathing = isso_casualty.vitals.breathing
-                casualty.vitals.conscious = isso_casualty.vitals.conscious
-                casualty.vitals.mental_status = isso_casualty.vitals.mental_status
-                self._reveal_injuries(isso_casualty, casualty)
-                casualty.visited = True
                 self._add_history(
                     "Tag Casualty",
                     {"Session ID": self.session_id, "Casualty ID": casualty.id, "Tag": tag},
@@ -682,7 +688,6 @@ class ITMScenarioSession:
         Args:
             body: The probe response body as a dict.
         """
-        self.probes_responded_to.append(body.probe_id)
         body.justification = '' if body.justification == None else body.justification
         self.current_isso.probe_system.respond_to_probe(
             probe_id=body.probe_id,
@@ -824,6 +829,11 @@ class ITMScenarioSession:
             self.scenario.state.to_dict())
         print(f"--> ADM chose action {body.action_type} with casualty {body.casualty_id} and parameters {body.parameters}.")
 
+        # Only the ADM can end the scenario
+        if body.action_type == 'END_SCENARIO':
+            self._end_scenario()
+            return self.scenario.state
+
         # Map action to probe response
         response = self.lookup_probe_response(action=body)
 
@@ -863,14 +873,12 @@ class ITMScenarioSession:
             # Update scenario state
             self.update_state(action=body)
             if body.action_type == "MOVE_TO_EVAC":
-                self.end_probe()
-                self._end_scenario()
+                self.adept_evac_happened = True
             # if no unanswered casualties left, (or no options left)
             elif not unanswered_casualty_id or not self.current_isso.probe_system.probe_yamls[self.current_isso.probe_system.current_probe_index]:
                 self.end_probe()
         else:
-            #PROBE HANDLING FOR ST
-            if body.action_type == "APPLY_TREATMENT": self.patients_treated += 1
+            # PROBE HANDLING FOR SOARTECH
             self.update_state(action=body)
             if self.patients_treated >= 3:
                 self.end_probe()
@@ -888,6 +896,15 @@ class ITMScenarioSession:
         # reset casualty_id list when going to next probe
         self.casualty_ids = []
         self.first_answer = True
+        # Copy certain state from probe to scenario
+        if not self.scenario.state.scenario_complete:
+            newState :dict = self.current_isso.probe_system.probe_yamls[self.current_isso.probe_system.current_probe_index].state
+            if newState.get("unstructured"):
+                self.scenario.state.environment = newState.get("unstructured")
+            if newState.get("environment"):
+                self.scenario.state.environment = newState.get("environment")
+            if newState.get("threat_state"):
+                self.scenario.state.environment = newState.get("threat_state")
 
 
     def get_available_actions(self, session_id: str, scenario_id: str) -> List[Action]:
@@ -912,12 +929,15 @@ class ITMScenarioSession:
             return 'Scenario Complete', 400
 
         actions: List[Action] = []
-        
-        if self.current_isso.probe_system.probe_yamls:
-            for option in self.current_isso.probe_system.probe_yamls[self.current_isso.probe_system.current_probe_index].options:
-                if (not self.kdma_training):
-                    option.assoc_action.pop('kdma_association', None)
-                actions.append(option.assoc_action)
+        if self.current_isso.probe_system.probe_yamls and not self.scenario.state.scenario_complete:
+            if not self.adept_evac_happened:
+                for option in self.current_isso.probe_system.probe_yamls[self.current_isso.probe_system.current_probe_index].options:
+                    if (not self.kdma_training):
+                        option.assoc_action.pop('kdma_association', None)
+                    actions.append(option.assoc_action)
+            if self.scenario_rules == 'SOARTECH' or self.adept_evac_happened:
+                # Allow ADMs to end the scenario, usually
+                actions.append(Action(action_id="end_scenario_action", scenario_id=scenario_id, action_type='END_SCENARIO', unstructured="End the scenario"))
             # Always allow tagging a casualty
             actions.append(Action(action_id="tag_action", scenario_id=scenario_id, action_type='TAG_CASUALTY', unstructured="Tag a casualty"))
         else:

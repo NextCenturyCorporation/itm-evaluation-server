@@ -1,5 +1,5 @@
 id: adept-september-demo-probe-2
-scenario: adept-september-demo-scenario-1
+scenario_id: adept-september-demo-scenario-1
 type: MultipleChoice
 prompt: EVAC is 5 minutes out but can only take one patient. Whom should we move to the road for transport?
 state:
