@@ -464,6 +464,15 @@ class ITMScenarioSession:
                                 time_passed += self.times_dict["treatmentTimes"][supply_used]
                             break
 
+        # Injuries and certain basic vitals are discovered when a casualty is approached.
+        for isso_casualty in self.current_isso.scenario.state.casualties:
+            if isso_casualty.id == casualty.id:
+                casualty.vitals.breathing = isso_casualty.vitals.breathing
+                casualty.vitals.conscious = isso_casualty.vitals.conscious
+                casualty.vitals.mental_status = isso_casualty.vitals.mental_status
+                self._reveal_injuries(isso_casualty, casualty)
+                casualty.visited = True
+
         # Finally, log the action and return
         self._add_history(
             "Apply Treatment", {"Session ID": self.session_id, "Casualty ID": casualty.id, "Parameters": action.parameters},
@@ -871,6 +880,10 @@ class ITMScenarioSession:
         else:
             # PROBE HANDLING FOR SOARTECH
             self.update_state(action=body)
+            if self.patients_treated >= 3:
+                self.end_probe()
+                # Only one probe, scenario ends when all three patients treated
+                self._end_scenario()
 
         return self.scenario.state
 
