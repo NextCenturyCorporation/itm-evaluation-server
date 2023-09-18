@@ -10,7 +10,7 @@ state:
 options:
   - id: choice1
     value: Your friend, Mike
-    ta1_id: choice1
+    ta1_id: s1-p2-choice1
     assoc_action:
       action_id: action7
       scenario_id: adept-september-demo-scenario-1
@@ -21,7 +21,7 @@ options:
         Friendship: 8
   - id: choice2
     value: The civilian
-    ta1_id: choice2
+    ta1_id: s1-p2-choice1
     assoc_action:
       action_id: action8
       scenario_id: adept-september-demo-scenario-1

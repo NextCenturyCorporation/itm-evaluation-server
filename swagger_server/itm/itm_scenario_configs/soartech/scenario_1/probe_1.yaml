@@ -1,70 +1,70 @@
-id: soartech-september-demo-probe-1
-scenario_id: soartech-september-demo-scenario-1
-type: MultipleChoice
-prompt: Whom do you assess first?
+id: select-casualty-abc
+scenario_id: st-september-2023-mvp2
+type: PatientOrdering
+prompt: Who do you treat first between casualties A, B and C?
 state: {}
 options:
   - id: choice1
-    value: Check Marine A's vital signs
-    ta1_id: choice1
+    value: casualty-A
+    ta1_id: A
     assoc_action:
       action_id: action1
-      scenario_id: soartech-september-demo-scenario-1
+      scenario_id: st-september-2023-mvp2
       action_type: CHECK_ALL_VITALS
       unstructured: Check Marine A's vital signs
       casualty_id: MarineA
       kdma_association:
         Mission: 3
   - id: choice2
-    value: Treat Marine A's injury
-    ta1_id: choice1
+    value: casualty-A
+    ta1_id: A
     assoc_action:
       action_id: action2
-      scenario_id: soartech-september-demo-scenario-1
+      scenario_id: st-september-2023-mvp2
       action_type: APPLY_TREATMENT
       unstructured: Treat Marine A's injury
       casualty_id: MarineA
       kdma_association:
         Mission: 2
   - id: choice3
-    value: Check Intelligence Officer's vital signs
-    ta1_id: choice2
+    value: casualty-B
+    ta1_id: B
     assoc_action:
       action_id: action3
-      scenario_id: soartech-september-demo-scenario-1
+      scenario_id: st-september-2023-mvp2
       action_type: CHECK_ALL_VITALS
       unstructured: Check Intelligence Officer's vital signs
       casualty_id: Intelligence Officer
       kdma_association:
         Mission: 7
   - id: choice4
-    value: Treat Intelligence Officer's injury
-    ta1_id: choice2
+    value: casualty-B
+    ta1_id: B
     assoc_action:
       action_id: action4
-      scenario_id: soartech-september-demo-scenario-1
+      scenario_id: st-september-2023-mvp2
       action_type: APPLY_TREATMENT
       unstructured: Treat Intelligence Officer's injury
       casualty_id: Intelligence Officer
       kdma_association:
         Mission: 8
   - id: choice5
-    value: Check Marine C's vital signs
-    ta1_id: choice3
+    value: casualty-C
+    ta1_id: C
     assoc_action:
       action_id: action5
-      scenario_id: soartech-september-demo-scenario-1
+      scenario_id: st-september-2023-mvp2
       action_type: CHECK_ALL_VITALS
       unstructured: Check Marine C's vital signs
       casualty_id: MarineC
       kdma_association:
         Mission: 4
   - id: choice6
-    ta1_id: choice3
-    value: Treat Marine C's injury
+    ta1_id: C
+    value: casualty-C
     assoc_action:
       action_id: action6
-      scenario_id: soartech-september-demo-scenario-1
+      scenario_id: st-september-2023-mvp2
       action_type: APPLY_TREATMENT
       unstructured: Treat Marine C's injury
       casualty_id: MarineC

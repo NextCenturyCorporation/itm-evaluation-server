@@ -1,3 +1,4 @@
-id: soartech-alignment-target-1
+id: kdma-alignment-target-1
 kdma_values:
-  - {kdma: Mission, value: 7}
+  - {kdma: mission, value: 7}
+  - {kdma: denial, value: 3}

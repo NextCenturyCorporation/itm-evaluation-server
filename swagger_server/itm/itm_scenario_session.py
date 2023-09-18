@@ -197,8 +197,10 @@ class ITMScenarioSession:
         self.adept_evac_happened = False
 
         if self.ta1_integration == True:
+            print("--> Getting session alignment from TA1.")
             alignment_target_session_alignment = \
                 self.current_isso.ta1_controller.get_session_alignment()
+            print(f"--> Got session alignment {alignment_target_session_alignment}.")
             self._add_history(
                 "TA1 Session Alignment",
                 {"Session ID": self.current_isso.ta1_controller.session_id,
