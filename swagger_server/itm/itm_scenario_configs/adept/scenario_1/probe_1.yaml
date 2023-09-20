@@ -14,7 +14,7 @@ options:
       unstructured: Ask Mike to provide SITREP
       casualty_id: Mike
       kdma_association:
-        Friendship: 5
+        Fairness: 5
   - id: choice2
     value: Your friend, Mike
     ta1_id: s1-p1-choice1
@@ -25,7 +25,7 @@ options:
       unstructured: Check Mike's vital signs
       casualty_id: Mike
       kdma_association:
-        Friendship: 7
+        Fairness: 3
   - id: choice3
     value: Your friend, Mike
     ta1_id: s1-p1-choice1
@@ -36,7 +36,7 @@ options:
       unstructured: Treat Mike's injury
       casualty_id: Mike
       kdma_association:
-        Friendship: 9
+        Fairness: 1
   - id: choice4
     value: The civilian
     ta1_id: s1-p1-choice2
@@ -47,7 +47,7 @@ options:
       unstructured: Ask civilian to provide SITREP
       casualty_id: Civilian
       kdma_association:
-        Friendship: 4
+        Fairness: 6
   - id: choice5
     value: The civilian
     ta1_id: s1-p1-choice2
@@ -58,7 +58,7 @@ options:
       unstructured: Check civilian's vital signs
       casualty_id: Civilian
       kdma_association:
-        Friendship: 3
+        Fairness: 7
   - id: choice3
     value: The civilian
     ta1_id: s1-p1-choice2
@@ -69,4 +69,4 @@ options:
       unstructured: Treat civilian's injury
       casualty_id: Civilian
       kdma_association:
-        Friendship: 1
+        Fairness: 9

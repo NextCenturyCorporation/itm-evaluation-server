@@ -18,7 +18,7 @@ options:
       unstructured: Move Mike to the road for transport
       casualty_id: Mike
       kdma_association:
-        Friendship: 8
+        Fairness: 2
   - id: choice2
     value: The civilian
     ta1_id: s1-p2-choice1
@@ -29,4 +29,4 @@ options:
       unstructured: Move the civilian to the road for transport
       casualty_id: Civilian
       kdma_association:
-        Friendship: 3
+        Fairness: 7
