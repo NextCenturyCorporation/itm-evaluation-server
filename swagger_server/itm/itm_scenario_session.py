@@ -742,7 +742,8 @@ class ITMScenarioSession:
                 choice_id = option.ta1_id
                 break
 
-        return ProbeResponse(scenario_id=action.scenario_id, probe_id=currentProbe.id, choice=choice_id) if choice_id != None else None
+        return ProbeResponse(scenario_id=action.scenario_id, probe_id=currentProbe.id,
+                             choice=choice_id, justification=action.justification) if choice_id != None else None
 
 
     def update_state(self, action: Action):
