@@ -444,7 +444,7 @@ class ITMScenarioSession:
                 self._add_history(
                     "Check All Vitals",
                     {"Session ID": self.session_id, "Casualty ID": casualty.id},
-                    casualty.vitals)
+                    casualty.vitals.to_dict())
                 return
 
     def apply_treatment(self, action: Action, casualty: Casualty):
@@ -828,7 +828,7 @@ class ITMScenarioSession:
 
         self._add_history(
             "Take Action",
-            {"Session ID": self.session_id, "Scenario ID": self.scenario.id, "Action": body},
+            {"Session ID": self.session_id, "Scenario ID": self.scenario.id, "Action": body.to_dict()},
             self.scenario.state.to_dict())
         print(f"--> ADM chose action {body.action_type} with casualty {body.casualty_id} and parameters {body.parameters}.")
 
