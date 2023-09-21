@@ -197,8 +197,10 @@ class ITMScenarioSession:
         self.adept_evac_happened = False
 
         if self.ta1_integration == True:
+            print("--> Getting session alignment from TA1.")
             alignment_target_session_alignment = \
                 self.current_isso.ta1_controller.get_session_alignment()
+            print(f"--> Got session alignment {alignment_target_session_alignment}.")
             self._add_history(
                 "TA1 Session Alignment",
                 {"Session ID": self.current_isso.ta1_controller.session_id,
@@ -775,7 +777,8 @@ class ITMScenarioSession:
                 choice_id = option.ta1_id
                 break
 
-        return ProbeResponse(scenario_id=action.scenario_id, probe_id=currentProbe.id, choice=choice_id) if choice_id != None else None
+        return ProbeResponse(scenario_id=action.scenario_id, probe_id=currentProbe.id,
+                             choice=choice_id, justification=action.justification) if choice_id != None else None
 
 
     def update_state(self, action: Action):
@@ -860,7 +863,7 @@ class ITMScenarioSession:
 
         self._add_history(
             "Take Action",
-            {"Session ID": self.session_id, "Scenario ID": self.scenario.id, "Action": body},
+            {"Session ID": self.session_id, "Scenario ID": self.scenario.id, "Action": body.to_dict()},
             self.scenario.state.to_dict())
         print(f"--> ADM chose action {body.action_type} with casualty {body.casualty_id} and parameters {body.parameters}.")
 
