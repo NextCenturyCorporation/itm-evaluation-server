@@ -572,7 +572,7 @@ class ITMScenarioSession:
             self.__init__() # Re-use session for same ADM
             self.session_id = str(uuid.uuid4()) # but assign new session_id for clarity in logs/history
         else:
-            return 'System Overload', 503 # TODO ITM-73
+            return 'System Overload', 503 # itm_ta2_eval_controller should prevent this
 
         self.kdma_training = kdma_training
         self.adm_name = adm_name

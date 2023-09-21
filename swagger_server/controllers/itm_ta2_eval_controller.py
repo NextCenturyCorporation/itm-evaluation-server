@@ -9,11 +9,12 @@ from swagger_server import util
 
 from ..itm import ITMScenarioSession
 
-ITM_SESSION = ITMScenarioSession()
+MAX_SESSIONS = 10     # Hard limit on simultaneous sessions
+itm_sessions = {}     # one for each active adm_name
+session_mapping = {}  # maps session_id to adm_name
 """
 The internal controller for ITM Server.
-`TODO ITM-73: support multiple sessions`
-Bonus: add timeouts to inactive clients/sessions
+TODO: add timeouts to inactive clients/sessions
 """
 
 
@@ -29,7 +30,10 @@ def get_alignment_target(session_id, scenario_id):  # noqa: E501
 
     :rtype: AlignmentTarget
     """
-    return ITM_SESSION.get_alignment_target(session_id=session_id, scenario_id=scenario_id)
+    adm_name = session_mapping.get(session_id)
+    if not adm_name:
+        return 'Invalid Session ID', 400
+    return itm_sessions[adm_name].get_alignment_target(session_id=session_id, scenario_id=scenario_id)
 
 
 def get_available_actions(session_id, scenario_id):  # noqa: E501
@@ -44,7 +48,10 @@ def get_available_actions(session_id, scenario_id):  # noqa: E501
 
     :rtype: List[Action]
     """
-    return ITM_SESSION.get_available_actions(session_id=session_id, scenario_id=scenario_id)
+    adm_name = session_mapping.get(session_id)
+    if not adm_name:
+        return 'Invalid Session ID', 400
+    return itm_sessions[adm_name].get_available_actions(session_id=session_id, scenario_id=scenario_id)
 
 
 def get_scenario_state(session_id, scenario_id):  # noqa: E501
@@ -59,7 +66,10 @@ def get_scenario_state(session_id, scenario_id):  # noqa: E501
 
     :rtype: State
     """
-    return ITM_SESSION.get_scenario_state(session_id=session_id, scenario_id=scenario_id)
+    adm_name = session_mapping.get(session_id)
+    if not adm_name:
+        return 'Invalid Session ID', 400
+    return itm_sessions[adm_name].get_scenario_state(session_id=session_id, scenario_id=scenario_id)
 
 
 def start_scenario(session_id, scenario_id=None):  # noqa: E501
@@ -74,7 +84,10 @@ def start_scenario(session_id, scenario_id=None):  # noqa: E501
 
     :rtype: Scenario
     """
-    return ITM_SESSION.start_scenario(session_id=session_id, scenario_id=scenario_id)
+    adm_name = session_mapping.get(session_id)
+    if not adm_name:
+        return 'Invalid Session ID', 400
+    return itm_sessions[adm_name].start_scenario(session_id=session_id, scenario_id=scenario_id)
 
 
 def start_session(adm_name, session_type, kdma_training=None, max_scenarios=None):  # noqa: E501
@@ -93,12 +106,22 @@ def start_session(adm_name, session_type, kdma_training=None, max_scenarios=None
 
     :rtype: str
     """
-    return ITM_SESSION.start_session(
+
+    session = itm_sessions.get(adm_name)
+    if not session:
+        if len(itm_sessions) >= MAX_SESSIONS:
+            return 'System Overload', 503
+        session = ITMScenarioSession()
+        itm_sessions[adm_name] = session
+
+    session_id = session.start_session(
         adm_name=adm_name,
         session_type=session_type,
         kdma_training=kdma_training,
         max_scenarios=max_scenarios
     )
+    session_mapping[session_id] = adm_name
+    return session_id
 
 
 def take_action(session_id, body=None):  # noqa: E501
@@ -113,6 +136,10 @@ def take_action(session_id, body=None):  # noqa: E501
 
     :rtype: State
     """
+    adm_name = session_mapping.get(session_id)
+    if not adm_name:
+        return 'Invalid Session ID', 400
+
     if connexion.request.is_json:
         body = Action.from_dict(connexion.request.get_json())  # noqa: E501
-    return ITM_SESSION.take_action(session_id=session_id, body=body)
+    return itm_sessions[adm_name].take_action(session_id=session_id, body=body)
