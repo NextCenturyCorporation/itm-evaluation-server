@@ -33,7 +33,7 @@ def get_alignment_target(session_id, scenario_id):  # noqa: E501
     adm_name = session_mapping.get(session_id)
     if not adm_name:
         return 'Invalid Session ID', 400
-    return itm_sessions[adm_name].get_alignment_target(session_id=session_id, scenario_id=scenario_id)
+    return itm_sessions[adm_name].get_alignment_target(scenario_id=scenario_id)
 
 
 def get_available_actions(session_id, scenario_id):  # noqa: E501
@@ -51,7 +51,7 @@ def get_available_actions(session_id, scenario_id):  # noqa: E501
     adm_name = session_mapping.get(session_id)
     if not adm_name:
         return 'Invalid Session ID', 400
-    return itm_sessions[adm_name].get_available_actions(session_id=session_id, scenario_id=scenario_id)
+    return itm_sessions[adm_name].get_available_actions(scenario_id=scenario_id)
 
 
 def get_scenario_state(session_id, scenario_id):  # noqa: E501
@@ -69,7 +69,7 @@ def get_scenario_state(session_id, scenario_id):  # noqa: E501
     adm_name = session_mapping.get(session_id)
     if not adm_name:
         return 'Invalid Session ID', 400
-    return itm_sessions[adm_name].get_scenario_state(session_id=session_id, scenario_id=scenario_id)
+    return itm_sessions[adm_name].get_scenario_state(scenario_id=scenario_id)
 
 
 def start_scenario(session_id, scenario_id=None):  # noqa: E501
@@ -87,7 +87,7 @@ def start_scenario(session_id, scenario_id=None):  # noqa: E501
     adm_name = session_mapping.get(session_id)
     if not adm_name:
         return 'Invalid Session ID', 400
-    return itm_sessions[adm_name].start_scenario(session_id=session_id, scenario_id=scenario_id)
+    return itm_sessions[adm_name].start_scenario(scenario_id=scenario_id)
 
 
 def start_session(adm_name, session_type, kdma_training=None, max_scenarios=None):  # noqa: E501
@@ -142,4 +142,4 @@ def take_action(session_id, body=None):  # noqa: E501
 
     if connexion.request.is_json:
         body = Action.from_dict(connexion.request.get_json())  # noqa: E501
-    return itm_sessions[adm_name].take_action(session_id=session_id, body=body)
+    return itm_sessions[adm_name].take_action(body=body)
