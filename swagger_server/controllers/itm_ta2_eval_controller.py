@@ -8,9 +8,10 @@ from swagger_server.models.state import State  # noqa: E501
 
 from ..itm import ITMScenarioSession
 
-MAX_SESSIONS = 3     # Hard limit on simultaneous sessions
-#SESSION_TIMEOUT = 60 * 60 * 24  # 24 hour timeout in seconds
-SESSION_TIMEOUT = 25  # 10 second timeout in seconds
+MAX_SESSIONS = 5     # Hard limit on simultaneously active sessions
+SESSION_TIMEOUT = 60 * 60 * 24  # 24 hour timeout in seconds
+#MAX_SESSIONS = 3     # Hard limit on simultaneously active sessions
+#SESSION_TIMEOUT = 25  # 10 second timeout in seconds
 itm_sessions = {}     # one for each active adm_name
 session_mapping = {}  # maps session_id to adm_name and last active time
 """
@@ -106,8 +107,8 @@ def _reclaim_old_session():
         session_dict = session_mapping[session_id]
         if time.time() - session_dict["last_accessed"] > SESSION_TIMEOUT:
             print(f'--> Reclaiming OLD session with id {session_id} and adm {session_dict["adm_name"]}')
-            session_mapping.pop(session_id)             # Clear out old unused session
-            itm_sessions.pop(session_dict["adm_name"])  # From both places
+            itm_sessions.pop(session_dict["adm_name"])  # Clear out old unused session
+            session_mapping.pop(session_id)             # From both places
             return ITMScenarioSession()
         else:
             print(f'--> Sorry, session_id {session_id} with adm {session_dict["adm_name"]} is only {time.time() - session_dict["last_accessed"]} milliseconds old.')
@@ -139,6 +140,17 @@ def start_session(adm_name, session_type, kdma_training=None, max_scenarios=None
         else:
             session = ITMScenarioSession()
         itm_sessions[adm_name] = session
+    else:
+        # Iterate through session_mappings, looking for the one whose dict contains the specified adm_name.
+        # Then remove that session mapping.
+        old_session_id = None
+        for session_id in session_mapping.keys():
+            session_dict = session_mapping[session_id]
+            if session_dict["adm_name"] == adm_name:
+                old_session_id = session_id
+        if old_session_id:
+            print(f"--> Cleaning up OLD {adm_name} session from session mapping with id {old_session_id}")
+            session_mapping.pop(old_session_id) # Remove old session_id from mapping since session is about to get new id
 
     session_id = session.start_session(
         adm_name=adm_name,

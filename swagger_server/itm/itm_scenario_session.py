@@ -538,14 +538,14 @@ class ITMScenarioSession:
                 400
             )
 
-        # For now, re-use current session for same ADM, otherwise send System Overload
+        # Re-use current session for same ADM after a client crash
         if self.session_id == None:
             self.session_id = str(uuid.uuid4())
         elif self.adm_name == adm_name:
             print(f"--> Re-using session {self.session_id} for ADM {self.adm_name}")
             self._add_history(
                 "Abort Session", {"Session ID": self.session_id, "ADM Name": self.adm_name}, None)
-            self.__init__() # Re-use session for same ADM
+            self.__init__()
             self.session_id = str(uuid.uuid4()) # but assign new session_id for clarity in logs/history
         else:
             return 'System Overload', 503 # itm_ta2_eval_controller should prevent this
@@ -561,8 +561,8 @@ class ITMScenarioSession:
             self.adm_name = self.adm_name.removesuffix("_db_")
             self.save_to_database = True
         if self.session_type == 'eval':
-            #self.save_to_database = True
-            #self.ta1_integration = True
+            self.save_to_database = True
+            self.ta1_integration = True
             max_scenarios = None
 
         self._add_history(
