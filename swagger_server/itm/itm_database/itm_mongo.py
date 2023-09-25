@@ -73,7 +73,7 @@ class MongoDB:
                 if isinstance(v, ObjectId):
                     data[k] = str(v)
 
-        filepath = 'itm_mvp_local_output/'
+        filepath = 'itm_db_local_output/'
 
         # Make directory if it doesn't exist
         os.makedirs(filepath, exist_ok=True)
@@ -83,7 +83,7 @@ class MongoDB:
 
         # Calculate file_number based on the number of files
         file_number = len(file_list) + 1
-        file_name = f'itm_mvp_output_{file_number}.json'
+        file_name = f'itm_db_output_{file_number}.json'
         full_filepath = filepath + file_name
 
         with open(full_filepath, 'w') as f:
