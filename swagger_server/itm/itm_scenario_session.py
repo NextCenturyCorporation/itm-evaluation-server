@@ -186,10 +186,9 @@ class ITMScenarioSession:
         self.adept_evac_happened = False
 
         if self.ta1_integration == True:
-            print("--> Getting session alignment from TA1.")
             alignment_target_session_alignment = \
                 self.current_isso.ta1_controller.get_session_alignment()
-            print(f"--> Got session alignment {alignment_target_session_alignment}.")
+            print(f"--> Got session alignment {alignment_target_session_alignment} from TA1.")
             self._add_history(
                 "TA1 Session Alignment",
                 {"Session ID": self.current_isso.ta1_controller.session_id,
@@ -197,7 +196,7 @@ class ITMScenarioSession:
                 alignment_target_session_alignment
             )
         else:
-            print("--> Getting session alignment from TA1.")
+            print("--> Got session alignment from TA1.")
 
         if self.save_to_database:
             self.mongo_db.insert_data('scenarios', self.scenario.to_dict())
@@ -505,6 +504,7 @@ class ITMScenarioSession:
                     "TA1 Alignment Target Session ID", {}, ta1_session_id
                 )
                 scenario_alignment = self.current_isso.ta1_controller.get_alignment_target()
+                print(f"--> Got alignment target {scenario_alignment} from TA1.")
                 self._add_history(
                     "TA1 Alignment Target Data",
                     {"Session ID": self.current_isso.ta1_controller.session_id,
@@ -512,7 +512,7 @@ class ITMScenarioSession:
                     scenario_alignment
                 )
             else:
-                print("--> Getting alignment target from TA1.")
+                print("--> Got alignment target from TA1.")
 
             return self.scenario
         except:
