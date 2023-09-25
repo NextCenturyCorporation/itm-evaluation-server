@@ -101,17 +101,6 @@ class ITMScenarioSession:
         return True, '', 0
 
 
-    def _check_session_id(self, session_id: str) -> None:
-        """
-        Check if the provided session ID matches the session's session ID.
-
-        Args:
-            session_id: The session ID to compare.
-        """
-        if not session_id == self.session_id:
-            return False, 'Invalid Session ID', 400
-        return True, '', 0
-
     def _validate_action(self, action: Action) -> None:
         """
         Validate that action is a valid, well-formed action.
@@ -197,10 +186,9 @@ class ITMScenarioSession:
         self.adept_evac_happened = False
 
         if self.ta1_integration == True:
-            print("--> Getting session alignment from TA1.")
             alignment_target_session_alignment = \
                 self.current_isso.ta1_controller.get_session_alignment()
-            print(f"--> Got session alignment {alignment_target_session_alignment}.")
+            print(f"--> Got session alignment {alignment_target_session_alignment} from TA1.")
             self._add_history(
                 "TA1 Session Alignment",
                 {"Session ID": self.current_isso.ta1_controller.session_id,
@@ -208,7 +196,7 @@ class ITMScenarioSession:
                 alignment_target_session_alignment
             )
         else:
-            print("--> Getting session alignment from TA1.")
+            print("--> Got session alignment from TA1.")
 
         if self.save_to_database:
             self.mongo_db.insert_data('scenarios', self.scenario.to_dict())
@@ -332,22 +320,18 @@ class ITMScenarioSession:
             casualty.vitals = Vitals()
 
 
-    def get_alignment_target(self, session_id: str, scenario_id: str) -> AlignmentTarget:
+    def get_alignment_target(self, scenario_id: str) -> AlignmentTarget:
         """
         Get the alignment target for a specific scenario.
 
         Args:
-            session_id: The ID of the session.
             scenario_id: The ID of the scenario.
 
         Returns:
             The alignment target for the specified scenario as an AlignmentTarget object.
         """
 
-        # Check for a valid session_id and scenario_id
-        (successful, message, code) = self._check_session_id(session_id)
-        if not successful:
-            return message, code
+        # Check for a valid scenario_id
         (successful, message, code) = self._check_scenario_id(scenario_id)
         if not successful:
             return message, code
@@ -400,22 +384,18 @@ class ITMScenarioSession:
                 return
 
 
-    def get_scenario_state(self, session_id: str, scenario_id: str) -> State:
+    def get_scenario_state(self, scenario_id: str) -> State:
         """
         Get the current state of the scenario.
 
         Args:
-            session_id: The ID of the session.
             scenario_id: The ID of the scenario.
 
         Returns:
             The current state of the scenario as a State object.
         """
 
-        # Check for a valid session_id and scenario_id
-        (successful, message, code) = self._check_session_id(session_id)
-        if not successful:
-            return message, code
+        # Check for a valid scenario_id
         (successful, message, code) = self._check_scenario_id(scenario_id)
         if not successful:
             return message, code
@@ -483,22 +463,16 @@ class ITMScenarioSession:
         return time_passed
 
 
-    def start_scenario(self, session_id: str, scenario_id: str=None) -> Scenario:
+    def start_scenario(self, scenario_id: str=None) -> Scenario:
         """
         Start a new scenario.
 
         Args:
-            session_id: The ID of the session.
             scenario_id: a scenario ID to start, used internally by TA3
 
         Returns:
             The started scenario as a Scenario object.
         """
-
-        # Check for a valid session_id
-        (successful, message, code) = self._check_session_id(session_id)
-        if not successful:
-            return message, code
 
         # TODO this needs to get a specific scenario by id
         if scenario_id:
@@ -530,6 +504,7 @@ class ITMScenarioSession:
                     "TA1 Alignment Target Session ID", {}, ta1_session_id
                 )
                 scenario_alignment = self.current_isso.ta1_controller.get_alignment_target()
+                print(f"--> Got alignment target {scenario_alignment} from TA1.")
                 self._add_history(
                     "TA1 Alignment Target Data",
                     {"Session ID": self.current_isso.ta1_controller.session_id,
@@ -537,7 +512,7 @@ class ITMScenarioSession:
                     scenario_alignment
                 )
             else:
-                print("--> Getting alignment target from TA1.")
+                print("--> Got alignment target from TA1.")
 
             return self.scenario
         except:
@@ -565,16 +540,17 @@ class ITMScenarioSession:
                 400
             )
 
-        # For now, re-use current session for same ADM, otherwise send System Overload
+        # Re-use current session for same ADM after a client crash
         if self.session_id == None:
             self.session_id = str(uuid.uuid4())
         elif self.adm_name == adm_name:
+            print(f"--> Re-using session {self.session_id} for ADM {self.adm_name}")
             self._add_history(
                 "Abort Session", {"Session ID": self.session_id, "ADM Name": self.adm_name}, None)
-            self.__init__() # Re-use session for same ADM
+            self.__init__()
             self.session_id = str(uuid.uuid4()) # but assign new session_id for clarity in logs/history
         else:
-            return 'System Overload', 503 # TODO ITM-73
+            return 'System Overload', 503 # itm_ta2_eval_controller should prevent this
 
         self.kdma_training = kdma_training
         self.adm_name = adm_name
@@ -839,22 +815,16 @@ class ITMScenarioSession:
         """
         self.scenario.state.elapsed_time += time_passed
 
-    def take_action(self, session_id: str, body: Action) -> State:
+    def take_action(self, body: Action) -> State:
         """
         Take an action within a scenario
 
         Args:
-            session_id: The ID of the session.
             body: Encapsulation of an action taken by a DM in the context of the scenario
 
         Returns:
             The current state of the scenario as a State object.
         """
-
-        # Check for a valid session_id
-        (successful, message, code) = self._check_session_id(session_id)
-        if not successful:
-            return message, code
 
         # Validate that action is a valid, well-formed action
         (successful, message, code) = self._validate_action(body)
@@ -949,21 +919,17 @@ class ITMScenarioSession:
                 self.scenario.state.environment = newState.get("threat_state")
 
 
-    def get_available_actions(self, session_id: str, scenario_id: str) -> List[Action]:
+    def get_available_actions(self, scenario_id: str) -> List[Action]:
         """
         Take an action within a scenario
 
         Args:
-            session_id: The ID of the session.
             body: Encapsulation of an action taken by a DM in the context of the scenario
 
         Returns:
             The current state of the scenario as a State object.
         """
-        # Check for a valid session_id and scenario_id
-        (successful, message, code) = self._check_session_id(session_id)
-        if not successful:
-            return message, code
+        # Check for a valid scenario_id
         (successful, message, code) = self._check_scenario_id(scenario_id)
         if not successful:
             return message, code
