@@ -35,7 +35,7 @@ class ProbeYamlOptions:
 @dataclass
 class ProbeYaml:
     id: str = None
-    scenario: str = None
+    scenario_id: str = None
     type: str = None
     prompt: str = None
     state: Dict = None
@@ -47,7 +47,7 @@ class ProbeYaml:
     def from_dict(obj: Dict):
         return ProbeYaml(
             id=obj.get("id"),
-            scenario=obj.get("scenario"),
+            scenario_id=obj.get("scenario_id"),
             type=obj.get("type"),
             prompt=obj.get("prompt"),
             state=obj.get("state"),
@@ -58,7 +58,7 @@ class ProbeYaml:
         options = [option.to_probe_option() for option in self.options]
         return Probe(
             id=self.id,
-            scenario_id=self.scenario,
+            scenario_id=self.scenario_id,
             type=self.type,
             prompt=self.prompt,
             state=state,

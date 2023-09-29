@@ -987,6 +987,7 @@ components:
           - CHECK_PULSE
           - CHECK_RESPIRATION
           - DIRECT_MOBILE_CASUALTIES
+          - END_SCENARIO
           - MOVE_TO_EVAC
           - SITREP
           - TAG_CASUALTY

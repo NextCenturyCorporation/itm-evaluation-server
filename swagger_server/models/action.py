@@ -145,7 +145,7 @@ class Action(Model):
         :param action_type: The action_type of this Action.
         :type action_type: str
         """
-        allowed_values = ["APPLY_TREATMENT", "CHECK_ALL_VITALS", "CHECK_PULSE", "CHECK_RESPIRATION", "DIRECT_MOBILE_CASUALTIES", "MOVE_TO_EVAC", "SITREP", "TAG_CASUALTY"]  # noqa: E501
+        allowed_values = ["APPLY_TREATMENT", "CHECK_ALL_VITALS", "CHECK_PULSE", "CHECK_RESPIRATION", "DIRECT_MOBILE_CASUALTIES", "END_SCENARIO", "MOVE_TO_EVAC", "SITREP", "TAG_CASUALTY"]  # noqa: E501
         if action_type not in allowed_values:
             raise ValueError(
                 "Invalid value for `action_type` ({0}), must be one of {1}"

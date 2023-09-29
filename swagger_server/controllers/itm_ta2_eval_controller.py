@@ -1,21 +1,30 @@
 import connexion
-import six
+import time
 
 from swagger_server.models.action import Action  # noqa: E501
 from swagger_server.models.alignment_target import AlignmentTarget  # noqa: E501
 from swagger_server.models.scenario import Scenario  # noqa: E501
 from swagger_server.models.state import State  # noqa: E501
-from swagger_server import util
 
 from ..itm import ITMScenarioSession
 
-ITM_SESSION = ITMScenarioSession()
+MAX_SESSIONS = 5     # Hard limit on simultaneously active sessions
+SESSION_TIMEOUT = 60 * 60 * 24  # 24 hour timeout in seconds
+itm_sessions = {}     # one for each active adm_name
+session_mapping = {}  # maps session_id to adm_name and last active time
 """
 The internal controller for ITM Server.
-`TODO ITM-73: support multiple sessions`
-Bonus: add timeouts to inactive clients/sessions
 """
 
+def _get_session(session_id: str) -> ITMScenarioSession:
+    session_dict = session_mapping.get(session_id)
+    adm_name = session_dict.get("adm_name") if session_dict else None
+    if not adm_name:
+        return None
+
+    # Update access time and return session
+    session_mapping[session_id] = {"adm_name": adm_name, "last_accessed": time.time()}
+    return itm_sessions[adm_name]
 
 def get_alignment_target(session_id, scenario_id):  # noqa: E501
     """Retrieve alignment target for the scenario
@@ -29,7 +38,8 @@ def get_alignment_target(session_id, scenario_id):  # noqa: E501
 
     :rtype: AlignmentTarget
     """
-    return ITM_SESSION.get_alignment_target(session_id=session_id, scenario_id=scenario_id)
+    session = _get_session(session_id)
+    return session.get_alignment_target(scenario_id=scenario_id) if session else ('Invalid Session ID', 400)
 
 
 def get_available_actions(session_id, scenario_id):  # noqa: E501
@@ -44,7 +54,8 @@ def get_available_actions(session_id, scenario_id):  # noqa: E501
 
     :rtype: List[Action]
     """
-    return ITM_SESSION.get_available_actions(session_id=session_id, scenario_id=scenario_id)
+    session = _get_session(session_id)
+    return session.get_available_actions(scenario_id=scenario_id) if session else ('Invalid Session ID', 400)
 
 
 def get_scenario_state(session_id, scenario_id):  # noqa: E501
@@ -59,7 +70,8 @@ def get_scenario_state(session_id, scenario_id):  # noqa: E501
 
     :rtype: State
     """
-    return ITM_SESSION.get_scenario_state(session_id=session_id, scenario_id=scenario_id)
+    session = _get_session(session_id)
+    return session.get_scenario_state(scenario_id=scenario_id) if session else ('Invalid Session ID', 400)
 
 
 def start_scenario(session_id, scenario_id=None):  # noqa: E501
@@ -74,8 +86,16 @@ def start_scenario(session_id, scenario_id=None):  # noqa: E501
 
     :rtype: Scenario
     """
-    return ITM_SESSION.start_scenario(session_id=session_id, scenario_id=scenario_id)
+    session = _get_session(session_id)
+    return session.start_scenario(scenario_id=scenario_id) if session else ('Invalid Session ID', 400)
 
+def _reclaim_old_session():
+    for session_id in session_mapping.keys():
+        session_dict = session_mapping[session_id]
+        if time.time() - session_dict["last_accessed"] > SESSION_TIMEOUT:
+            itm_sessions.pop(session_dict["adm_name"])  # Clear out old unused session
+            session_mapping.pop(session_id)             # From both places
+            return ITMScenarioSession()
 
 def start_session(adm_name, session_type, kdma_training=None, max_scenarios=None):  # noqa: E501
     """Start a new session
@@ -93,12 +113,35 @@ def start_session(adm_name, session_type, kdma_training=None, max_scenarios=None
 
     :rtype: str
     """
-    return ITM_SESSION.start_session(
+
+    session = itm_sessions.get(adm_name)
+    if not session:
+        if len(itm_sessions) >= MAX_SESSIONS:
+            session = _reclaim_old_session()
+            if not session: # couldn't clear out an old session
+                return 'System Overload', 503
+        else:
+            session = ITMScenarioSession()
+        itm_sessions[adm_name] = session
+    else:
+        # Iterate through session_mappings, looking for the one whose dict contains the specified adm_name.
+        # Then remove that session mapping.
+        old_session_id = None
+        for session_id in session_mapping.keys():
+            session_dict = session_mapping[session_id]
+            if session_dict["adm_name"] == adm_name:
+                old_session_id = session_id
+        if old_session_id:
+            session_mapping.pop(old_session_id) # Remove old session_id from mapping since session is about to get new id
+
+    session_id = session.start_session(
         adm_name=adm_name,
         session_type=session_type,
         kdma_training=kdma_training,
         max_scenarios=max_scenarios
     )
+    session_mapping[session_id] = {"adm_name": adm_name, "last_accessed": time.time()}
+    return session_id
 
 
 def take_action(session_id, body=None):  # noqa: E501
@@ -115,4 +158,6 @@ def take_action(session_id, body=None):  # noqa: E501
     """
     if connexion.request.is_json:
         body = Action.from_dict(connexion.request.get_json())  # noqa: E501
-    return ITM_SESSION.take_action(session_id=session_id, body=body)
+
+    session = _get_session(session_id)
+    return session.take_action(body=body) if session else ('Invalid Session ID', 400)

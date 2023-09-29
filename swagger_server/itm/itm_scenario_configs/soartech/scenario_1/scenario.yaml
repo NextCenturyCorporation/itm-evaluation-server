@@ -38,8 +38,7 @@ state:
     - id: MarineA
       unstructured: >
         22 YO male Marine hit by an IED.
-        Burns of overall extremities and the majority of the torso and face, with peppered dirt and shrapnel on all extremities
-        (BSA covers 90% of his body) and puncture wound left neck.
+        Puncture wound on the left side of the neck.
       demographics:
         age: 22
         sex: M
@@ -58,8 +57,6 @@ state:
     - id: Intelligence Officer
       unstructured: >
         A 40 YO Intelligence officer hit by an IED.
-        Initial injuries show 2nd and 3rd degree burns of the left half of his body (BSA is 50%),
-        with peppered dirt and shrapnel over the same area.
       demographics:
         age: 40
         sex: M

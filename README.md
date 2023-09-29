@@ -79,6 +79,7 @@ If running the command instead of docker set the environment variables for:
 - ADEPT_PORT (default:8081)
 - SOARTECH_PORT (default:8084)
 - TA3_PORT (default:8080)
+
 - DB_HOST (default: localhost)
 
 ## Updating models
