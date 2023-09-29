@@ -61,21 +61,16 @@ ext.generateInitFile = { directory, component ->
 
     initFile.withWriter { it.println "from __future__ import absolute_import \n# import ${component} into ${component} package" }
 
-    fileTree("${directory}/${component}/").matching{ include "**/*.py" exclude "__init__.py" }.visit{ FileVisitDetails details ->
-        def basename = details.file.name.take(details.file.name.lastIndexOf('.'))
-        try {
-            def classLine = new File("${details.file}").text.tokenize('\n').find {
-                it.contains 'class'
-            }
-            def matcher = classLine =~ /^class (.*)\(.*/
-            matcher.find()
-            initFile.withWriterAppend { it.println "from ${directory}.${component}.${basename} import ${matcher.group(1)}" }
-        } catch (Exception e) {
-            println "failed on ${component}.${basename}"
-            println e
+    fileTree("${directory}/${component}/").matching{ include "**/*.py" exclude "__init__.py" }.sort().forEach { fileName ->
+        def file = new File("${fileName}")
+        def basename = file.name.take(file.name.lastIndexOf('.'))
+        def classLine = file.text.tokenize('\n').find {
+            it.contains 'class'
         }
+        def matcher = classLine =~ /^class (.*)\(.*/
+        matcher.find()
+        initFile.withWriterAppend { it.println "from ${directory}.${component}.${basename} import ${matcher.group(1)}" }
     }
-    
     println "generated __init__.py for ${component}"
 
 }
