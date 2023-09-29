@@ -59,92 +59,6 @@ components:
           items:
             $ref: '#/components/schemas/ProbeOption'
       description: a question for the DM regarding course of action within the scenario.
-      example:
-        options:
-        - kdma_association:
-            denial: "+"
-            mission: "-"
-          id: id
-          value: Choice 5
-        - kdma_association:
-            denial: "+"
-            mission: "-"
-          id: id
-          value: Choice 5
-        id: id
-        state:
-          mission:
-            unstructured: Protect the high value intelligence officer.
-            mission_type: ProtectVIP
-          environment:
-            noise_ambient: 0.5
-            visibility: 0.5
-            aidDelay: 40
-            unstructured: unstructured
-            weather: sunny
-            location: dry desert region
-            noise_peak: 0.8
-          supplies:
-          - quantity: 4
-            type: Combat Gauze
-          - quantity: 4
-            type: Combat Gauze
-          unstructured: unstructured
-          threat_state:
-            unstructured: No additional threats are detected.
-            threats:
-            - key: threats
-            - key: threats
-          scenario_complete: false
-          casualties:
-          - assessed: false
-            injuries:
-            - severity: 0.8
-              name: bicep puncture
-              location: right arm
-            - severity: 0.8
-              name: bicep puncture
-              location: right arm
-            unstructured: unstructured
-            name: Mary
-            id: id
-            tag: delayed
-            vitals:
-              RR: 40
-              SpO2%: 95
-              pain: 8
-              mmHg: 180
-              hrpmin: 150
-            demographics:
-              sex: F
-              rank: Military
-              age: 32
-          - assessed: false
-            injuries:
-            - severity: 0.8
-              name: bicep puncture
-              location: right arm
-            - severity: 0.8
-              name: bicep puncture
-              location: right arm
-            unstructured: unstructured
-            name: Mary
-            id: id
-            tag: delayed
-            vitals:
-              RR: 40
-              SpO2%: 95
-              pain: 8
-              mmHg: 180
-              hrpmin: 150
-            demographics:
-              sex: F
-              rank: Military
-              age: 32
-          elapsedTime: 5.2
-        type: MultipleChoice
-        prompt: Which casualty do you treat first?
-        scenario_id: scenario_id
     ProbeOption:
       required:
       - id
@@ -164,12 +78,6 @@ components:
             type: string
           description: KDMA association of this option; always omitted in TA2 API.
       description: an option associated with a probe.
-      example:
-        kdma_association:
-          denial: "+"
-          mission: "-"
-        id: id
-        value: Choice 5
     ProbeResponse:
       required:
       - choice
