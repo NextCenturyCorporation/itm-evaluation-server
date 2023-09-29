@@ -15,7 +15,7 @@ dependencies {
     swaggerCodegen 'io.swagger.codegen.v3:swagger-codegen-cli:3.0.46'
 }
 
-defaultTasks 'clean', 'generateSwaggerCode', 'postGeneration'
+defaultTasks 'clean', 'generateSwaggerCodeTa1', 'generateSwaggerCodeServer', 'postGeneration'
 
 def generatedApiDirectory = "generated"
 def apiDirectory = "swagger"
