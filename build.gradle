@@ -15,8 +15,8 @@ dependencies {
     swaggerCodegen 'io.swagger.codegen.v3:swagger-codegen-cli:3.0.46'
 }
 
-defaultTasks 'clean', 'generateSwaggerCodeTa1', 'generateSwaggerCodeServer', 'postGeneration'
-
+defaultTasks 'clean', 'generateSwaggerCode', 'postGeneration'
+generateSwaggerCode.outputs.upToDateWhen {false}
 def generatedApiDirectory = "generated"
 def apiDirectory = "swagger"
 def outputDirectory = "swagger_server"
@@ -104,3 +104,11 @@ task postGeneration() {
     }
 }
 postGeneration.mustRunAfter('generateSwaggerCode')
+
+// Ensures tasks are re-run always, needed for swaggerCodeGen
+gradle.taskGraph.whenReady { taskGraph ->
+  taskGraph.getAllTasks().each {
+      it.setOnlyIf { true }
+      it.outputs.upToDateWhen { false }
+  }
+}
