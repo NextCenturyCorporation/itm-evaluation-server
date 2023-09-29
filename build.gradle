@@ -29,7 +29,7 @@ task swaggerClean(type: Delete) {
 swaggerClean.mustRunAfter(clean)
 
 swaggerSources {
-    mvp {
+    ta1 {
         inputFile = file(apiDirectory+'/ta1.yaml')
         code {
             language = 'python-flask'
@@ -89,7 +89,7 @@ task postGeneration() {
 
         // Generate models init file
         project.generateInitFile(outputDirectory, 'models')
-        
+
         delete ".gradle"
     }
 }
