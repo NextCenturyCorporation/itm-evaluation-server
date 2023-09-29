@@ -1,23 +1,21 @@
 openapi: 3.0.3
 info:
-  title: ITM MVP TA3 API
+  title: TA1 Object Supplements
   description: |-
-    This is the specification of a proposed TA3 API for the In The Moment (ITM) Minimum Viable Product (MVP).  Currently, there is an Evaluation API for TA2 and a preliminary scenario/probe submission API for TA1 that won't be used in the MVP, and currently lacks an API regarding sending probe responses and receiving alignment scores from TA1.
+    This contains certain objects required for sending probe responses and receiving alignment scores from TA1, but are not required for TA3 clients.
 
     The API is based on the OpenAPI 3.0 specification.
-
-    Some aspects of this API are not necessarily planned to be implemented for MVP, but show the direction we are heading.
   version: 0.2.2
 servers:
 - url: /
 paths:
  /no/path:
     get:
-      description: Do not use this, this is here because paths cant be blank
+      description: Do not use this; this is here because paths can't be blank
       operationId: noPath
       responses:
         "200":
-          description: "Successful operation, api key returned"
+          description: "Successful operation"
           content:
             text/plain:
               schema:
@@ -41,8 +39,7 @@ components:
           description: scenario ID this probe is for
         type:
           type: string
-          description: TAs will need to agree on the types of questions being asked;
-            only MultipleChoice is supported for MVP
+          description: TAs will need to agree on the types of questions being asked
           enum:
           - MultipleChoice
           - FreeResponse
@@ -76,7 +73,7 @@ components:
           type: object
           additionalProperties:
             type: string
-          description: KDMA association of this option; always omitted in TA2 API.
+          description: positive or negative association with specific KDMA values
       description: an option associated with a probe.
     ProbeResponse:
       required:
