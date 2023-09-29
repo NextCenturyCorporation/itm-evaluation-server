@@ -18,8 +18,8 @@ dependencies {
 defaultTasks 'clean', 'generateSwaggerCode', 'postGeneration'
 
 def generatedApiDirectory = "generated"
+def apiDirectory = "swagger"
 def outputDirectory = "swagger_server"
-def apiDirectory = "swagger_server/swagger"
 
 task swaggerClean(type: Delete) {
     doFirst {

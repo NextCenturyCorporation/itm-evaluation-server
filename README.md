@@ -83,6 +83,8 @@ If running the command instead of docker set the environment variables for:
 - DB_HOST (default: localhost)
 
 ## Updating models
+This requires JDK 8 or higher to run the gradle tool.
+
 The models in swagger_server/models are generated from the following files
     swagger_server/swagger/swagger.yaml
     swagger_server/swagger/ta1.yaml
