@@ -56,21 +56,25 @@ generateSwaggerCode.mustRunAfter(swaggerClean)
 ext.generateInitFile = { directory, component ->
     // Generate init file
     def initFilePath = "${directory}/${component}/__init__.py"
-    File initFile = new File(initFilePath)
-    
-    initFile.withWriter { it.println "from __future__ import absolute_import \n# import ${component} into ${component} package" }
+    try {
+        File initFile = new File(initFilePath)
 
-    fileTree("${directory}/${component}/").matching{ include "**/*.py" exclude "__init__.py" }.visit{ FileVisitDetails details ->
-        def basename = details.file.name.take(details.file.name.lastIndexOf('.'))
-        def classLine = new File("${details.file}").text.tokenize('\n').find {
-            it.contains 'class'
+        initFile.withWriter { it.println "from __future__ import absolute_import \n# import ${component} into ${component} package" }
+
+        fileTree("${directory}/${component}/").matching{ include "**/*.py" exclude "__init__.py" }.visit{ FileVisitDetails details ->
+            def basename = details.file.name.take(details.file.name.lastIndexOf('.'))
+            def classLine = new File("${details.file}").text.tokenize('\n').find {
+                it.contains 'class'
+            }
+            def matcher = classLine =~ /^class (.*)\(.*/
+            matcher.find()
+            initFile.withWriterAppend { it.println "from ${directory}.${component}.${basename} import ${matcher.group(1)}" }
         }
-        def matcher = classLine =~ /^class (.*)\(.*/
-        matcher.find()
-        initFile.withWriterAppend { it.println "from ${directory}.${component}.${basename} import ${matcher.group(1)}" }
+        
+        println "generated __init__.py for ${component}"
+    } catch (Exception e) {
+        println "failed to generate __init__.py for ${component}"
     }
-    
-    println "generated __init__.py for ${component}"
 }
 
 task postGeneration() {
