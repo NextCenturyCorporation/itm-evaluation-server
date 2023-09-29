@@ -4,7 +4,7 @@ plugins {
 }
 
 apply plugin: 'org.hidetake.swagger.generator'
-
+import org.apache.tools.ant.taskdefs.condition.Os
 repositories {
     mavenCentral()
     maven { url 'https://repo.spring.io/release' }
@@ -56,13 +56,20 @@ generateSwaggerCode.mustRunAfter(swaggerClean)
 ext.generateInitFile = { directory, component ->
     // Generate init file
     def initFile = "${directory}/${component}/__init__.py"
+    
+    delete $initFile
     exec {
         commandLine "bash", "-c", "echo -e \"from __future__ import absolute_import \n# import ${component} into ${component} package\" > ${initFile}"
     }
-    fileTree("${directory}/${component}/").matching{ include "**/*.py" exclude "__init__.py" }.visit{ FileVisitDetails details ->
-        def basename = details.file.name.take(details.file.name.lastIndexOf('.'))
-        exec {
-            commandLine "bash", "-c", "cat ${details.file} | grep '^class' | sed 's/class //g' | sed 's/(.*//g' | xargs echo from ${directory}.${component}.${basename} import >> ${initFile}"
+
+    if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+        println "*** WINDOWS"
+    } else {
+        fileTree("${directory}/${component}/").matching{ include "**/*.py" exclude "__init__.py" }.visit{ FileVisitDetails details ->
+            def basename = details.file.name.take(details.file.name.lastIndexOf('.'))
+            exec {
+                commandLine "bash", "-c", "cat ${details.file} | grep '^class' | sed 's/class //g' | sed 's/(.*//g' | xargs echo from ${directory}.${component}.${basename} import >> ${initFile}"
+            }
         }
     }
     println "generated __init__.py for ${component}"
