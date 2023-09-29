@@ -56,8 +56,8 @@ generateSwaggerCode.mustRunAfter(swaggerClean)
 ext.generateInitFile = { directory, component ->
     // Generate init file
     def initFile = "${directory}/${component}/__init__.py"
-    
-    delete $initFile
+
+    delete "${initFile}"
     exec {
         commandLine "bash", "-c", "echo -e \"from __future__ import absolute_import \n# import ${component} into ${component} package\" > ${initFile}"
     }
