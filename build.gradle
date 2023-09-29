@@ -98,8 +98,6 @@ task postGeneration() {
 
         // Generate models init file
         project.generateInitFile(outputDirectory, 'models')
-
-        delete ".gradle"
     }
 }
 postGeneration.mustRunAfter('generateSwaggerCode')
