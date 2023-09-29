@@ -16,7 +16,7 @@ dependencies {
 }
 
 defaultTasks 'clean', 'generateSwaggerCode', 'postGeneration'
-generateSwaggerCode.outputs.upToDateWhen {false}
+
 def generatedApiDirectory = "generated"
 def apiDirectory = "swagger"
 def outputDirectory = "swagger_server"
