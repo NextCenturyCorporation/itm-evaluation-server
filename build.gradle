@@ -57,12 +57,14 @@ ext.generateInitFile = { directory, component ->
     // Generate init file
     def initFile = "${directory}/${component}/__init__.py"
 
-    delete "${initFile}"
-    exec {
-        commandLine "bash", "-c", "echo -e \"from __future__ import absolute_import \n# import ${component} into ${component} package\" > ${initFile}"
+    File modelInit = new File(initFile)
+    modelInit.withWriter { out ->
+        out.println "from __future__ import absolute_import \n# import ${component} into ${component} package"
     }
-
     if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+        // modelInit.withWriterAppend { out ->
+            
+        // }
         println "*** WINDOWS"
     } else {
         fileTree("${directory}/${component}/").matching{ include "**/*.py" exclude "__init__.py" }.visit{ FileVisitDetails details ->
