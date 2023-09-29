@@ -55,25 +55,21 @@ generateSwaggerCode.mustRunAfter(swaggerClean)
 
 ext.generateInitFile = { directory, component ->
     // Generate init file
-    def initFile = "${directory}/${component}/__init__.py"
+    def initFilePath = "${directory}/${component}/__init__.py"
+    File initFile = new File(initFilePath)
+    
+    initFile.withWriter { it.println "from __future__ import absolute_import \n# import ${component} into ${component} package" }
 
-    File modelInit = new File(initFile)
-    modelInit.withWriter { out ->
-        out.println "from __future__ import absolute_import \n# import ${component} into ${component} package"
-    }
-    if (Os.isFamily(Os.FAMILY_WINDOWS)) {
-        // modelInit.withWriterAppend { out ->
-            
-        // }
-        println "*** WINDOWS"
-    } else {
-        fileTree("${directory}/${component}/").matching{ include "**/*.py" exclude "__init__.py" }.visit{ FileVisitDetails details ->
-            def basename = details.file.name.take(details.file.name.lastIndexOf('.'))
-            exec {
-                commandLine "bash", "-c", "cat ${details.file} | grep '^class' | sed 's/class //g' | sed 's/(.*//g' | xargs echo from ${directory}.${component}.${basename} import >> ${initFile}"
-            }
+    fileTree("${directory}/${component}/").matching{ include "**/*.py" exclude "__init__.py" }.visit{ FileVisitDetails details ->
+        def basename = details.file.name.take(details.file.name.lastIndexOf('.'))
+        def classLine = new File("${details.file}").text.tokenize('\n').find {
+            it.contains 'class'
         }
+        def matcher = classLine =~ /^class (.*)\(.*/
+        matcher.find()
+        initFile.withWriterAppend { it.println "from ${directory}.${component}.${basename} import ${matcher.group(1)}" }
     }
+    
     println "generated __init__.py for ${component}"
 }
 
