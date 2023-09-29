@@ -756,6 +756,7 @@ class ITMScenarioSession:
         return ProbeResponse(scenario_id=action.scenario_id, probe_id=currentProbe.id,
                              choice=choice_id, justification=action.justification) if choice_id != None else None
 
+
     def update_state(self, action: Action):
         # Update scenario state based on action
         # Note that by this time, the action has been fully validated
@@ -936,7 +937,6 @@ class ITMScenarioSession:
             return 'Scenario Complete', 400
 
         actions: List[Action] = []
-
         if self.current_isso.probe_system.probe_yamls and not self.scenario.state.scenario_complete:
             if not self.adept_evac_happened:
                 for option in self.current_isso.probe_system.probe_yamls[self.current_isso.probe_system.current_probe_index].options:
