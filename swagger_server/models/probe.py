@@ -121,7 +121,7 @@ class Probe(Model):
     def type(self) -> str:
         """Gets the type of this Probe.
 
-        TAs will need to agree on the types of questions being asked; only MultipleChoice is supported for MVP  # noqa: E501
+        TAs will need to agree on the types of questions being asked  # noqa: E501
 
         :return: The type of this Probe.
         :rtype: str
@@ -132,7 +132,7 @@ class Probe(Model):
     def type(self, type: str):
         """Sets the type of this Probe.
 
-        TAs will need to agree on the types of questions being asked; only MultipleChoice is supported for MVP  # noqa: E501
+        TAs will need to agree on the types of questions being asked  # noqa: E501
 
         :param type: The type of this Probe.
         :type type: str

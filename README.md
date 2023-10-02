@@ -79,4 +79,14 @@ If running the command instead of docker set the environment variables for:
 - ADEPT_PORT (default:8081)
 - SOARTECH_PORT (default:8084)
 - TA3_PORT (default:8080)
+
 - DB_HOST (default: localhost)
+
+## Updating models
+This requires JDK 8 or higher to run the gradle tool.
+
+The models in swagger_server/models are generated from the following files
+    swagger_server/swagger/swagger.yaml
+    swagger_server/swagger/ta1.yaml
+If these files are updated they will need to be re-generated and checked in.
+Run `./gradlew` to do this.

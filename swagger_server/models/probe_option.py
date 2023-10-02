@@ -104,7 +104,7 @@ class ProbeOption(Model):
     def kdma_association(self) -> Dict[str, str]:
         """Gets the kdma_association of this ProbeOption.
 
-        KDMA association of this option; always omitted in TA2 API.  # noqa: E501
+        positive or negative association with specific KDMA values  # noqa: E501
 
         :return: The kdma_association of this ProbeOption.
         :rtype: Dict[str, str]
@@ -115,7 +115,7 @@ class ProbeOption(Model):
     def kdma_association(self, kdma_association: Dict[str, str]):
         """Sets the kdma_association of this ProbeOption.
 
-        KDMA association of this option; always omitted in TA2 API.  # noqa: E501
+        positive or negative association with specific KDMA values  # noqa: E501
 
         :param kdma_association: The kdma_association of this ProbeOption.
         :type kdma_association: Dict[str, str]

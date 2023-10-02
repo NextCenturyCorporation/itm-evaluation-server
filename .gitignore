@@ -60,9 +60,15 @@ docs/_build/
 # PyBuilder
 target/
 
-#Ipython Notebook
+# Ipython Notebook
 .ipynb_checkpoints
+
+# gradle
+.gradle
+
+# generated files
+generated
+swagger_server/api
 
 # local db output
 itm_db_local_output
-
