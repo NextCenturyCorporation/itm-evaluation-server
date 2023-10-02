@@ -11,7 +11,34 @@ servers:
 tags:
 - name: itm-ta2-eval
   description: Endpoints for TA2 Evaluation
+- name: itm-file-service
 paths:
+  /ui/fileAssets:
+    get:
+      tags:
+      - itm-file-service
+      summary: Gets a file from S3.
+      description: Gets a file from S3 bucket for itm-evaluation-dashboard use.
+      operationId: get_ui_file_asset
+      parameters:
+      - name: file_name
+        in: query
+        description: Name for file to be retrieved.
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            '*/*':
+              schema:
+                type: string
+                format: binary
+        "404":
+          description: Invalid session type or max_scenarios
   /ta2/startSession:
     get:
       tags:
