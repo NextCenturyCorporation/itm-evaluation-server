@@ -39,6 +39,7 @@ paths:
                 format: binary
         "404":
           description: Invalid session type or max_scenarios
+      x-openapi-router-controller: swagger_server.controllers.itm_file_service_controller
   /ta2/startSession:
     get:
       tags:

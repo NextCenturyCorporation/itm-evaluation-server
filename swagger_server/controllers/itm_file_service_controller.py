@@ -1,7 +1,4 @@
 import connexion
-import six
-
-from swagger_server import util
 from ..itm import ITMFileService
 
 def get_ui_file_asset(file_name):  # noqa: E501
