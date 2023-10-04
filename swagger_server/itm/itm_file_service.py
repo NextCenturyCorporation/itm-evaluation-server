@@ -14,13 +14,14 @@ class ITMFileService:
         returns list of file names stored in s3 bucket
         """
 
-    def retrieve_file(self, file_name: str) -> any:
+    def retrieve_file(file_name: str) -> any:
         """
        returns file
 
         Args:
             file_name: name of file to retrieve
         """
+        print("inside service proper")
         session = boto3.Session()
         s3 = session.resource('s3')
         bucket = s3.Bucket('itm-safe')

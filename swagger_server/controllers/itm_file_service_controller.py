@@ -1,7 +1,7 @@
 import connexion
 from ..itm import ITMFileService
 
-def get_ui_file_asset(file_name):  # noqa: E501
+def get_ui_file_asset(file_name: str):  # noqa: E501
     """Gets a file from S3.
 
     Gets a file from S3 bucket for itm-evaluation-dashboard use. # noqa: E501
@@ -11,4 +11,4 @@ def get_ui_file_asset(file_name):  # noqa: E501
 
     :rtype: str
     """
-    return ITMFileService.retrieve_file(file_name)
+    return ITMFileService().retrieve_file(file_name)
