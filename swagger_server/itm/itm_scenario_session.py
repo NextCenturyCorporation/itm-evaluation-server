@@ -37,7 +37,7 @@ class ITMScenarioSession:
         self.time_elapsed_scenario_time = 0
 
         # isso is short for ITM Session Scenario Object
-        self.session_type = 'test'
+        self.session_type = ''
         self.current_isso: ITMSessionScenarioObject = None
         self.current_isso_index = 0
         self.session_issos = []
@@ -47,13 +47,11 @@ class ITMScenarioSession:
         # hacky stuff for adept
         self.casualty_ids = []
         self.adept_evac_happened = False
-        # hacky thing for ST
-        self.patients_treated = 0
         # adept or ST
         self.scenario_rules = ""
 
         # This determines whether the server makes calls to TA1
-        self.ta1_integration = False
+        self.ta1_integration = True
     
         # This calls the dashboard's MongoDB
         self.save_to_database = False
@@ -113,8 +111,8 @@ class ITMScenarioSession:
         if action is None:
             return False, 'Invalid or Malformed Action', 400
 
-        if not action.scenario_id or not action.action_type or action.scenario_id == "" or action.action_type == "":
-            return False, 'Invalid or Malformed Action: Missing scenario_id or action_type', 400
+        if not action.action_type or action.action_type == "":
+            return False, 'Invalid or Malformed Action: Missing action_type', 400
 
         if action.parameters and not isinstance(action.parameters, dict):
             return False, 'Invalid or Malformed Action: Invalid Parameter Structure', 400
@@ -184,6 +182,7 @@ class ITMScenarioSession:
         """
         self.scenario.state.scenario_complete = True
         self.adept_evac_happened = False
+        self.first_answer = True
 
         if self.ta1_integration == True:
             alignment_target_session_alignment = \
@@ -474,15 +473,27 @@ class ITMScenarioSession:
             The started scenario as a Scenario object.
         """
 
-        # TODO this needs to get a specific scenario by id
         if scenario_id:
-            raise connexion.ProblemException(status=403, title="Forbidden", detail="Specifying a scenario ID is unauthorized")
-        
-        if scenario_id and not scenario_id not in ['scenario_id_list']:
-            return 'Scenario ID does not exist', 404
-        
+            if self.adm_name != 'TA3':
+                raise connexion.ProblemException(status=403, title="Forbidden", detail="Specifying a scenario ID is unauthorized")
+            index = 0
+            self.current_isso = None
+            for isso in self.session_issos:
+                if scenario_id == isso.scenario.id:
+                    self.current_isso = isso
+                    self.current_isso_index = index
+                    break
+                index += 1
+            if self.current_isso is None:
+                return 'Scenario ID does not exist', 404
+        else:
+            print(f'len={len(self.session_issos)}; current_isso_index = {self.current_isso_index}')
+            if self.current_isso_index < len(self.session_issos):
+                self.current_isso: ITMSessionScenarioObject = self.session_issos[self.current_isso_index]
+            else:
+                return self._end_session() # No more scenarios means we can end the session
+
         try:
-            self.current_isso: ITMSessionScenarioObject = self.session_issos[self.current_isso_index]
             self.scenario = deepcopy(self.current_isso.scenario)
             self._clear_hidden_data()
             self.current_isso_index += 1
@@ -495,14 +506,15 @@ class ITMScenarioSession:
 
             self._add_history(
                 "Start Scenario",
-                {"Session ID": self.session_id},
+                {"Session ID": self.session_id, "ADM Name": self.adm_name},
                 self.scenario.to_dict())
 
             if self.ta1_integration == True:
                 ta1_session_id = self.current_isso.ta1_controller.new_session()
                 self._add_history(
-                    "TA1 Alignment Target Session ID", {}, ta1_session_id
+                    "TA1 Session ID", {}, ta1_session_id
                 )
+                print(f"--> Got new session_id {ta1_session_id} from TA1.")
                 scenario_alignment = self.current_isso.ta1_controller.get_alignment_target()
                 print(f"--> Got alignment target {scenario_alignment} from TA1.")
                 self._add_history(
@@ -516,11 +528,13 @@ class ITMScenarioSession:
 
             return self.scenario
         except:
-            # Empty Scenario means we can end the session
-            self.__init__()
-            return Scenario(session_complete=True, id='', name='',
-                            start_time=None, state=None, triage_categories=None)
+            print("--> Exception getting next scenario; ending session.")
+            return self._end_session() # Exception here ends the session
 
+    def _end_session(self) -> Scenario:
+        self.__init__()
+        return Scenario(session_complete=True, id='', name='',
+                        start_time=None, state=None, triage_categories=None)
 
     def start_session(self, adm_name: str, session_type: str, kdma_training: bool, max_scenarios=None) -> str:
         """
@@ -528,15 +542,15 @@ class ITMScenarioSession:
 
         Args:
             adm_name: The adm name associated with the scenario.
-            session_type: The type of scenarios either soartech, adept, test, or eval
+            session_type: The type of scenarios either soartech, adept, or eval
             max_scenarios: The max number of scenarios presented during the session
 
         Returns:
             A new session Id to use in subsequent calls
         """
-        if session_type not in ['test', 'adept', 'soartech', 'eval']:
+        if session_type not in ['adept', 'soartech', 'eval']:
             return (
-                'Invalid session type. Must be "test, adept, soartech, or eval"',
+                'Invalid session type. Must be "adept, soartech, or eval"',
                 400
             )
 
@@ -576,9 +590,9 @@ class ITMScenarioSession:
 
         yaml_paths = []
         yaml_path = "swagger_server/itm/itm_scenario_configs/"
-        if session_type == 'soartech' or session_type == 'test' or session_type == 'eval':
+        if session_type == 'soartech' or session_type == 'eval':
             yaml_paths.append(yaml_path + 'soartech/')
-        if session_type == 'adept' or session_type == 'test' or session_type == 'eval':
+        if session_type == 'adept' or session_type == 'eval':
             yaml_paths.append(yaml_path + 'adept/')
         self.number_of_scenarios = max_scenarios
 
@@ -652,7 +666,7 @@ class ITMScenarioSession:
                     choice_id = 's1-p4-choice4'
 
         if probe_id and choice_id:
-            response = ProbeResponse(scenario_id=action.scenario_id, probe_id=probe_id, choice=choice_id, justification=action.justification)
+            response = ProbeResponse(scenario_id=self.scenario.id, probe_id=probe_id, choice=choice_id, justification=action.justification)
             print(f"--> ADM chose action {action.action_type} with casualty {action.casualty_id} resulting in TA1 response with choice {response.choice}.")
             self.respond_to_probe(body=response)
 
@@ -753,7 +767,7 @@ class ITMScenarioSession:
                 choice_id = option.ta1_id
                 break
 
-        return ProbeResponse(scenario_id=action.scenario_id, probe_id=currentProbe.id,
+        return ProbeResponse(scenario_id=self.scenario.id, probe_id=currentProbe.id,
                              choice=choice_id, justification=action.justification) if choice_id != None else None
 
 
@@ -872,6 +886,8 @@ class ITMScenarioSession:
             print(f"--> ADM chose action {body.action_type} with casualty {body.casualty_id} resulting in TA1 response with choice {response.choice}.")
             self.respond_to_probe(body=response)
             self.first_answer = False
+        else:
+            print(f"Not first answer; ignoring {body.action_type}")
 
         # PROBE HANDLING FOR ADEPT
         if self.scenario_rules == "ADEPT":
@@ -892,10 +908,6 @@ class ITMScenarioSession:
         else:
             # PROBE HANDLING FOR SOARTECH
             self.update_state(action=body)
-            if self.patients_treated >= 3:
-                self.end_probe()
-                # Only one probe, scenario ends when all three patients treated
-                self._end_scenario()
 
         return self.scenario.state
 
@@ -945,9 +957,9 @@ class ITMScenarioSession:
                     actions.append(option.assoc_action)
             if self.scenario_rules == 'SOARTECH' or self.adept_evac_happened:
                 # Allow ADMs to end the scenario, usually
-                actions.append(Action(action_id="end_scenario_action", scenario_id=scenario_id, action_type='END_SCENARIO', unstructured="End the scenario"))
+                actions.append(Action(action_id="end_scenario_action", action_type='END_SCENARIO', unstructured="End the scenario"))
             # Always allow tagging a casualty
-            actions.append(Action(action_id="tag_action", scenario_id=scenario_id, action_type='TAG_CASUALTY', unstructured="Tag a casualty"))
+            actions.append(Action(action_id="tag_action", action_type='TAG_CASUALTY', unstructured="Tag a casualty"))
         else:
              return 'Scenario Complete', 400
 
