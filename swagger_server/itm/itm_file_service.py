@@ -9,10 +9,18 @@ class ITMFileService:
         # bucket for ui assets
         self.ui_asset_bucket = ""
 
-    def list_files(self):
+    def list_files():
         """
         returns list of file names stored in s3 bucket
         """
+        fileList = []
+        session = boto3.Session()
+        s3 = session.resource('s3')
+        bucket = s3.Bucket('itm-safe')
+        for obj in bucket.objects.all():
+            fileList.append(obj.key)
+            print(obj.key)
+        return fileList
 
     def retrieve_file(file_name: str) -> any:
         """

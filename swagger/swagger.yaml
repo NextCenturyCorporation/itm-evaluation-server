@@ -13,6 +13,23 @@ tags:
   description: Endpoints for TA2 Evaluation
 - name: itm-file-service
 paths:
+  /ui/getFiles:
+    get:
+      tags:
+      - itm-file-service
+      summary: Gets a list of files from S3.
+      description: Returns all files located in the dashboard-asset bucket
+      operationId: get_ui_files
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: 'string'
+      x-openapi-router-controller: swagger_server.controllers.itm_file_service_controller
   /ui/fileAssets:
     get:
       tags:
