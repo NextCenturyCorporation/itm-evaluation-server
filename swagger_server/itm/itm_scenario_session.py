@@ -111,7 +111,7 @@ class ITMScenarioSession:
         if action is None:
             return False, 'Invalid or Malformed Action', 400
 
-        if not action.action_type or action.action_type == "":
+        if not action.action_type:
             return False, 'Invalid or Malformed Action: Missing action_type', 400
 
         if action.parameters and not isinstance(action.parameters, dict):
@@ -121,16 +121,25 @@ class ITMScenarioSession:
         if action.casualty_id:
             casualty = next((casualty for casualty in self.scenario.state.casualties if casualty.id == action.casualty_id), None)
 
-        if action.action_type == "APPLY_TREATMENT":
-            # Apply treatment requires a casualty id and parameters, casualty and location 
+        # Validate casualty when necessary
+        if (action.action_type in ['APPLY_TREATMENT', 'CHECK_ALL_VITALS', 'CHECK_PULSE', 'CHECK_RESPIRATION', 'MOVE_TO_EVAC', 'TAG_CASUALTY']):
             if not action.casualty_id:
-                return False, 'Invalid or Malformed Action: Missing casualty_id for APPLY_TREATMENT', 400
+                return False, f'Invalid or Malformed Action: Missing casualty_id for {action.action_type}', 400
+            elif not casualty:
+                return False, f'Casualty `{action.casualty_id}` not found in state', 400
+
+        if action.action_type == 'APPLY_TREATMENT':
+            # Apply treatment requires a casualty id and parameters (treatment and location)
             # treatment and location
-            if not action.parameters or not "treatment" in action.parameters or not "location" in action.parameters:
-                return False, 'Invalid or Malformed Action: Missing parameters for APPLY_TREATMENT', 400
-            if not casualty:
-                return False, 'Casualty not found in state', 400
-            # Ensure there are sufficient Supplies for the treatment
+            valid_locations = ['right forearm', 'left forearm', 'right calf', 'left calf', 'right thigh', 'left thigh', 'right stomach', \
+                               'left stomach', 'right bicep', 'left bicep', 'right shoulder', 'left shoulder', 'right side', 'left side', \
+                               'right chest', 'left chest', 'right wrist', 'left wrist', 'left face', 'right face', 'left neck', \
+                               'right neck', 'unspecified']
+            if not action.parameters or not 'treatment' in action.parameters or not 'location' in action.parameters:
+                return False, f'Invalid or Malformed Action: Missing parameters for {action.action_type}', 400
+            elif 'location' in action.parameters and action.parameters['location'] not in valid_locations:
+                return False, f"Invalid or Malformed Action: Invalid location `{action.parameters['location']}` for {action.action_type}", 400
+            # Ensure there are sufficient Supplies for the treatment. This check also catches invalid treatments.
             supply_used = action.parameters.get('treatment', None)
             sufficient_supplies = False
             for supply in self.scenario.state.supplies:
@@ -138,32 +147,25 @@ class ITMScenarioSession:
                     sufficient_supplies = supply.quantity >= 1
                     break
             if not sufficient_supplies:
-                return False, 'Insufficient supplies', 400
-        elif action.action_type == "DIRECT_MOBILE_CASUALTIES" or action.action_type == "SITREP":
-            # sitrep optionally takes a casualty id and direct_mobile_casualties doesn't need one
-            pass 
-        elif action.action_type == "CHECK_ALL_VITALS" or action.action_type == "CHECK_PULSE" \
-            or action.action_type == "CHECK_RESPIRATION" or action.action_type == "MOVE_TO_EVAC":
-            # All require casualty_id
-            if not action.casualty_id:
-                return False, 'Invalid or Malformed Action: Missing casualty_id for CHECK_ALL_VITALS', 400
-            if not casualty:
-                return False, 'Casualty not found in state', 400
-        elif action.action_type == "TAG_CASUALTY":
-            # Requires casualty_id and category parameter
-            if not action.casualty_id:
-                return False, 'Invalid or Malformed Action: Missing casualty_id for TAG_CASUALTY', 400
-            if not casualty:
-                return False, 'Casualty not found in state', 400
-            if not action.parameters or not "category" in action.parameters:
+                return False, f'Invalid or insufficient `{supply_used}` supplies', 400
+        elif action.action_type == 'SITREP':
+            # sitrep optionally takes a casualty id
+            if action.casualty_id and not casualty:
+                return False, f'Casualty `{action.casualty_id}` not found in state', 400
+        elif action.action_type == 'TAG_CASUALTY':
+            # Requires category parameter
+            if not action.parameters or not 'category' in action.parameters:
                 return False, 'Invalid or Malformed Action: Missing parameters for TAG_CASUALTY', 400
             else:
-                allowed_values = ["MINIMAL", "DELAYED", "IMMEDIATE", "EXPECTANT"]
-                tag = action.parameters.get("category")
+                allowed_values = ['MINIMAL', 'DELAYED', 'IMMEDIATE', 'EXPECTANT']
+                tag = action.parameters.get('category')
                 if not tag in allowed_values:
                     return 'Invalid or Malformed Action: Invalid Tag', 400
-        elif action.action_type == "END_SCENARIO":
-            pass
+        elif action.action_type == 'CHECK_ALL_VITALS' or action.action_type == 'CHECK_PULSE' \
+            or action.action_type == 'CHECK_RESPIRATION' or action.action_type == 'MOVE_TO_EVAC':
+            pass # Casualty was already checked
+        elif action.action_type == 'DIRECT_MOBILE_CASUALTIES' or action.action_type == 'END_SCENARIO':
+            pass # Requires nothing
         else:
             return False, 'Invalid action_type', 400
         
@@ -278,7 +280,7 @@ class ITMScenarioSession:
                 if 'thigh' in location:
                     return treatment == 'Tourniquet'
                 else:
-                    return treatment == 'Hemostatic gauze'
+                    return treatment == 'Pressure bandage'
             case 'Puncture':
                 if 'bicep' in location or 'thigh' in location:
                     return treatment == 'Tourniquet'
@@ -487,7 +489,6 @@ class ITMScenarioSession:
             if self.current_isso is None:
                 return 'Scenario ID does not exist', 404
         else:
-            print(f'len={len(self.session_issos)}; current_isso_index = {self.current_isso_index}')
             if self.current_isso_index < len(self.session_issos):
                 self.current_isso: ITMSessionScenarioObject = self.session_issos[self.current_isso_index]
             else:
@@ -667,7 +668,7 @@ class ITMScenarioSession:
 
         if probe_id and choice_id:
             response = ProbeResponse(scenario_id=self.scenario.id, probe_id=probe_id, choice=choice_id, justification=action.justification)
-            print(f"--> ADM chose action {action.action_type} with casualty {action.casualty_id} resulting in TA1 response with choice {response.choice}.")
+            print(f"--> ADM action resulted in TA1 response with choice {response.choice}.")
             self.respond_to_probe(body=response)
 
     def process_sitrep(self, casualty: Casualty) -> int:
@@ -883,11 +884,9 @@ class ITMScenarioSession:
         # NOTE: Not all actions will necessarily result in a probe response
         # In the September scenarios, only the first action taken results in a response to a probe.
         if self.first_answer:
-            print(f"--> ADM chose action {body.action_type} with casualty {body.casualty_id} resulting in TA1 response with choice {response.choice}.")
+            print(f"--> ADM action resulted in TA1 response with choice {response.choice}.")
             self.respond_to_probe(body=response)
             self.first_answer = False
-        else:
-            print(f"Not first answer; ignoring {body.action_type}")
 
         # PROBE HANDLING FOR ADEPT
         if self.scenario_rules == "ADEPT":
