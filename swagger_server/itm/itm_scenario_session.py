@@ -52,7 +52,7 @@ class ITMScenarioSession:
         self.scenario_rules = ""
 
         # This determines whether the server makes calls to TA1
-        self.ta1_integration = True
+        self.ta1_integration = False
     
         # This calls the dashboard's MongoDB
         self.save_to_database = False
