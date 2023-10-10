@@ -14,13 +14,11 @@ class Action(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, action_id: str=None, scenario_id: str=None, action_type: str=None, casualty_id: str=None, unstructured: str=None, justification: str=None, kdma_association: Dict[str, str]=None, parameters: Dict[str, str]=None):  # noqa: E501
+    def __init__(self, action_id: str=None, action_type: str=None, casualty_id: str=None, unstructured: str=None, justification: str=None, kdma_association: Dict[str, str]=None, parameters: Dict[str, str]=None):  # noqa: E501
         """Action - a model defined in Swagger
 
         :param action_id: The action_id of this Action.  # noqa: E501
         :type action_id: str
-        :param scenario_id: The scenario_id of this Action.  # noqa: E501
-        :type scenario_id: str
         :param action_type: The action_type of this Action.  # noqa: E501
         :type action_type: str
         :param casualty_id: The casualty_id of this Action.  # noqa: E501
@@ -36,7 +34,6 @@ class Action(Model):
         """
         self.swagger_types = {
             'action_id': str,
-            'scenario_id': str,
             'action_type': str,
             'casualty_id': str,
             'unstructured': str,
@@ -47,7 +44,6 @@ class Action(Model):
 
         self.attribute_map = {
             'action_id': 'action_id',
-            'scenario_id': 'scenario_id',
             'action_type': 'action_type',
             'casualty_id': 'casualty_id',
             'unstructured': 'unstructured',
@@ -56,7 +52,6 @@ class Action(Model):
             'parameters': 'parameters'
         }
         self._action_id = action_id
-        self._scenario_id = scenario_id
         self._action_type = action_type
         self._casualty_id = casualty_id
         self._unstructured = unstructured
@@ -99,31 +94,6 @@ class Action(Model):
             raise ValueError("Invalid value for `action_id`, must not be `None`")  # noqa: E501
 
         self._action_id = action_id
-
-    @property
-    def scenario_id(self) -> str:
-        """Gets the scenario_id of this Action.
-
-        scenario ID this probe is for  # noqa: E501
-
-        :return: The scenario_id of this Action.
-        :rtype: str
-        """
-        return self._scenario_id
-
-    @scenario_id.setter
-    def scenario_id(self, scenario_id: str):
-        """Sets the scenario_id of this Action.
-
-        scenario ID this probe is for  # noqa: E501
-
-        :param scenario_id: The scenario_id of this Action.
-        :type scenario_id: str
-        """
-        if scenario_id is None:
-            raise ValueError("Invalid value for `scenario_id`, must not be `None`")  # noqa: E501
-
-        self._scenario_id = scenario_id
 
     @property
     def action_type(self) -> str:

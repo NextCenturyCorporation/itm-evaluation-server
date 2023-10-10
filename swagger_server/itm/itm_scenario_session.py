@@ -37,18 +37,17 @@ class ITMScenarioSession:
         self.time_elapsed_scenario_time = 0
 
         # isso is short for ITM Session Scenario Object
-        self.session_type = 'test'
+        self.session_type = ''
         self.current_isso: ITMSessionScenarioObject = None
         self.current_isso_index = 0
         self.session_issos = []
         self.number_of_scenarios = None
+        self.custom_scenario_count = 0 # when scenario_id is specified in start_scenario
         self.scenario: Scenario = None
         self.first_answer: bool = True
         # hacky stuff for adept
         self.casualty_ids = []
         self.adept_evac_happened = False
-        # hacky thing for ST
-        self.patients_treated = 0
         # adept or ST
         self.scenario_rules = ""
 
@@ -97,7 +96,7 @@ class ITMScenarioSession:
             scenario_id: The scenario ID to compare.
         """
         if not scenario_id == self.scenario.id:
-            return False, 'Scenario ID not found', 404
+            return False, f'Scenario ID {scenario_id} not found', 404
         return True, '', 0
 
 
@@ -113,26 +112,35 @@ class ITMScenarioSession:
         if action is None:
             return False, 'Invalid or Malformed Action', 400
 
-        if not action.scenario_id or not action.action_type or action.scenario_id == "" or action.action_type == "":
-            return False, 'Invalid or Malformed Action: Missing scenario_id or action_type', 400
+        if not action.action_type:
+            return False, 'Invalid or Malformed Action: Missing action_type', 400
 
         if action.parameters and not isinstance(action.parameters, dict):
-            return False, 'Invalid or Malformed Action: Invalid Parameter Structure', 400
+            return False, 'Malformed Action: Invalid Parameter Structure', 400
         # lookup casualty id in state
         casualty = None
         if action.casualty_id:
             casualty = next((casualty for casualty in self.scenario.state.casualties if casualty.id == action.casualty_id), None)
 
-        if action.action_type == "APPLY_TREATMENT":
-            # Apply treatment requires a casualty id and parameters, casualty and location 
+        # Validate casualty when necessary
+        if (action.action_type in ['APPLY_TREATMENT', 'CHECK_ALL_VITALS', 'CHECK_PULSE', 'CHECK_RESPIRATION', 'MOVE_TO_EVAC', 'TAG_CASUALTY']):
             if not action.casualty_id:
-                return False, 'Invalid or Malformed Action: Missing casualty_id for APPLY_TREATMENT', 400
+                return False, f'Malformed Action: Missing casualty_id for {action.action_type}', 400
+            elif not casualty:
+                return False, f'Casualty `{action.casualty_id}` not found in state', 400
+
+        if action.action_type == 'APPLY_TREATMENT':
+            # Apply treatment requires a casualty id and parameters (treatment and location)
             # treatment and location
-            if not action.parameters or not "treatment" in action.parameters or not "location" in action.parameters:
-                return False, 'Invalid or Malformed Action: Missing parameters for APPLY_TREATMENT', 400
-            if not casualty:
-                return False, 'Casualty not found in state', 400
-            # Ensure there are sufficient Supplies for the treatment
+            valid_locations = ['right forearm', 'left forearm', 'right calf', 'left calf', 'right thigh', 'left thigh', 'right stomach', \
+                               'left stomach', 'right bicep', 'left bicep', 'right shoulder', 'left shoulder', 'right side', 'left side', \
+                               'right chest', 'left chest', 'right wrist', 'left wrist', 'left face', 'right face', 'left neck', \
+                               'right neck', 'unspecified']
+            if not action.parameters or not 'treatment' in action.parameters or not 'location' in action.parameters:
+                return False, f'Malformed Action: Missing parameters for {action.action_type}', 400
+            elif 'location' in action.parameters and action.parameters['location'] not in valid_locations:
+                return False, f"Malformed Action: Invalid location `{action.parameters['location']}` for {action.action_type}", 400
+            # Ensure there are sufficient Supplies for the treatment. This check also catches invalid treatments.
             supply_used = action.parameters.get('treatment', None)
             sufficient_supplies = False
             for supply in self.scenario.state.supplies:
@@ -140,41 +148,34 @@ class ITMScenarioSession:
                     sufficient_supplies = supply.quantity >= 1
                     break
             if not sufficient_supplies:
-                return False, 'Insufficient supplies', 400
-        elif action.action_type == "DIRECT_MOBILE_CASUALTIES" or action.action_type == "SITREP":
-            # sitrep optionally takes a casualty id and direct_mobile_casualties doesn't need one
-            pass 
-        elif action.action_type == "CHECK_ALL_VITALS" or action.action_type == "CHECK_PULSE" \
-            or action.action_type == "CHECK_RESPIRATION" or action.action_type == "MOVE_TO_EVAC":
-            # All require casualty_id
-            if not action.casualty_id:
-                return False, 'Invalid or Malformed Action: Missing casualty_id for CHECK_ALL_VITALS', 400
-            if not casualty:
-                return False, 'Casualty not found in state', 400
-        elif action.action_type == "TAG_CASUALTY":
-            # Requires casualty_id and category parameter
-            if not action.casualty_id:
-                return False, 'Invalid or Malformed Action: Missing casualty_id for TAG_CASUALTY', 400
-            if not casualty:
-                return False, 'Casualty not found in state', 400
-            if not action.parameters or not "category" in action.parameters:
-                return False, 'Invalid or Malformed Action: Missing parameters for TAG_CASUALTY', 400
+                return False, f'Invalid or insufficient `{supply_used}` supplies', 400
+        elif action.action_type == 'SITREP':
+            # sitrep optionally takes a casualty id
+            if action.casualty_id and not casualty:
+                return False, f'Casualty `{action.casualty_id}` not found in state', 400
+        elif action.action_type == 'TAG_CASUALTY':
+            # Requires category parameter
+            if not action.parameters or not 'category' in action.parameters:
+                return False, f'Malformed {action.action_type} Action: Missing `category` parameter', 400
             else:
-                allowed_values = ["MINIMAL", "DELAYED", "IMMEDIATE", "EXPECTANT"]
-                tag = action.parameters.get("category")
+                allowed_values = ['MINIMAL', 'DELAYED', 'IMMEDIATE', 'EXPECTANT']
+                tag = action.parameters.get('category')
                 if not tag in allowed_values:
-                    return 'Invalid or Malformed Action: Invalid Tag', 400
-        elif action.action_type == "END_SCENARIO":
-            pass
+                    return f'Malformed {action.action_type} Action: Invalid Tag `{tag}`', 400
+        elif action.action_type == 'CHECK_ALL_VITALS' or action.action_type == 'CHECK_PULSE' \
+            or action.action_type == 'CHECK_RESPIRATION' or action.action_type == 'MOVE_TO_EVAC':
+            pass # Casualty was already checked
+        elif action.action_type == 'DIRECT_MOBILE_CASUALTIES' or action.action_type == 'END_SCENARIO':
+            pass # Requires nothing
         else:
-            return False, 'Invalid action_type', 400
+            return False, f'Invalid action_type `{action.action_type}`', 400
         
         # type checks for possible fields
         if action.unstructured and not isinstance(action.unstructured, str):
-            return False, 'Invalid or Malformed Action: Invalid unstructured description', 400
+            return False, 'Malformed Action: Invalid unstructured description', 400
         
         if action.justification and not isinstance(action.justification, str):
-            return False, 'Invalid or Malformed Action: Invalid justification', 400
+            return False, 'Malformed Action: Invalid justification', 400
         
         return True, '', 0
 
@@ -184,6 +185,7 @@ class ITMScenarioSession:
         """
         self.scenario.state.scenario_complete = True
         self.adept_evac_happened = False
+        self.first_answer = True
 
         if self.ta1_integration == True:
             alignment_target_session_alignment = \
@@ -279,7 +281,7 @@ class ITMScenarioSession:
                 if 'thigh' in location:
                     return treatment == 'Tourniquet'
                 else:
-                    return treatment == 'Hemostatic gauze'
+                    return treatment == 'Pressure bandage'
             case 'Puncture':
                 if 'bicep' in location or 'thigh' in location:
                     return treatment == 'Tourniquet'
@@ -474,15 +476,29 @@ class ITMScenarioSession:
             The started scenario as a Scenario object.
         """
 
-        # TODO this needs to get a specific scenario by id
         if scenario_id:
-            raise connexion.ProblemException(status=403, title="Forbidden", detail="Specifying a scenario ID is unauthorized")
-        
-        if scenario_id and not scenario_id not in ['scenario_id_list']:
-            return 'Scenario ID does not exist', 404
-        
+            if self.adm_name != 'TA3':
+                raise connexion.ProblemException(status=403, title="Forbidden", detail="Specifying a scenario ID is unauthorized")
+            if self.custom_scenario_count >= self.number_of_scenarios:
+                return self._end_session() # We've executed the specified number of custom scenarios
+            index = 0
+            self.current_isso = None
+            for isso in self.session_issos:
+                if scenario_id == isso.scenario.id:
+                    self.current_isso = isso
+                    self.current_isso_index = index
+                    self.custom_scenario_count += 1
+                    break
+                index += 1
+            if self.current_isso is None:
+                return f'Scenario ID `{scenario_id}` does not exist for `{self.session_type}`', 404
+        else:
+            if self.current_isso_index < len(self.session_issos):
+                self.current_isso: ITMSessionScenarioObject = self.session_issos[self.current_isso_index]
+            else:
+                return self._end_session() # No more scenarios means we can end the session
+
         try:
-            self.current_isso: ITMSessionScenarioObject = self.session_issos[self.current_isso_index]
             self.scenario = deepcopy(self.current_isso.scenario)
             self._clear_hidden_data()
             self.current_isso_index += 1
@@ -495,14 +511,15 @@ class ITMScenarioSession:
 
             self._add_history(
                 "Start Scenario",
-                {"Session ID": self.session_id},
+                {"Session ID": self.session_id, "ADM Name": self.adm_name},
                 self.scenario.to_dict())
 
             if self.ta1_integration == True:
                 ta1_session_id = self.current_isso.ta1_controller.new_session()
                 self._add_history(
-                    "TA1 Alignment Target Session ID", {}, ta1_session_id
+                    "TA1 Session ID", {}, ta1_session_id
                 )
+                print(f"--> Got new session_id {ta1_session_id} from TA1.")
                 scenario_alignment = self.current_isso.ta1_controller.get_alignment_target()
                 print(f"--> Got alignment target {scenario_alignment} from TA1.")
                 self._add_history(
@@ -516,11 +533,13 @@ class ITMScenarioSession:
 
             return self.scenario
         except:
-            # Empty Scenario means we can end the session
-            self.__init__()
-            return Scenario(session_complete=True, id='', name='',
-                            start_time=None, state=None, triage_categories=None)
+            print("--> Exception getting next scenario; ending session.")
+            return self._end_session() # Exception here ends the session
 
+    def _end_session(self) -> Scenario:
+        self.__init__()
+        return Scenario(session_complete=True, id='', name='',
+                        start_time=None, state=None, triage_categories=None)
 
     def start_session(self, adm_name: str, session_type: str, kdma_training: bool, max_scenarios=None) -> str:
         """
@@ -528,15 +547,15 @@ class ITMScenarioSession:
 
         Args:
             adm_name: The adm name associated with the scenario.
-            session_type: The type of scenarios either soartech, adept, test, or eval
+            session_type: The type of scenarios either soartech, adept, or eval
             max_scenarios: The max number of scenarios presented during the session
 
         Returns:
             A new session Id to use in subsequent calls
         """
-        if session_type not in ['test', 'adept', 'soartech', 'eval']:
+        if session_type not in ['adept', 'soartech', 'eval']:
             return (
-                'Invalid session type. Must be "test, adept, soartech, or eval"',
+                f'Invalid session type `{session_type}`. Must be "adept, soartech, or eval"',
                 400
             )
 
@@ -576,11 +595,11 @@ class ITMScenarioSession:
 
         yaml_paths = []
         yaml_path = "swagger_server/itm/itm_scenario_configs/"
-        if session_type == 'soartech' or session_type == 'test' or session_type == 'eval':
+        if session_type == 'soartech' or session_type == 'eval':
             yaml_paths.append(yaml_path + 'soartech/')
-        if session_type == 'adept' or session_type == 'test' or session_type == 'eval':
+        if session_type == 'adept' or session_type == 'eval':
             yaml_paths.append(yaml_path + 'adept/')
-        self.number_of_scenarios = max_scenarios
+        self.number_of_scenarios = max_scenarios if max_scenarios else 1
 
         selected_yaml_directories = [
             f"{path}{folder}/"
@@ -652,8 +671,8 @@ class ITMScenarioSession:
                     choice_id = 's1-p4-choice4'
 
         if probe_id and choice_id:
-            response = ProbeResponse(scenario_id=action.scenario_id, probe_id=probe_id, choice=choice_id, justification=action.justification)
-            print(f"--> ADM chose action {action.action_type} with casualty {action.casualty_id} resulting in TA1 response with choice {response.choice}.")
+            response = ProbeResponse(scenario_id=self.scenario.id, probe_id=probe_id, choice=choice_id, justification=action.justification)
+            print(f"--> ADM action resulted in TA1 response with choice {response.choice}.")
             self.respond_to_probe(body=response)
 
     def process_sitrep(self, casualty: Casualty) -> int:
@@ -753,7 +772,7 @@ class ITMScenarioSession:
                 choice_id = option.ta1_id
                 break
 
-        return ProbeResponse(scenario_id=action.scenario_id, probe_id=currentProbe.id,
+        return ProbeResponse(scenario_id=self.scenario.id, probe_id=currentProbe.id,
                              choice=choice_id, justification=action.justification) if choice_id != None else None
 
 
@@ -869,7 +888,7 @@ class ITMScenarioSession:
         # NOTE: Not all actions will necessarily result in a probe response
         # In the September scenarios, only the first action taken results in a response to a probe.
         if self.first_answer:
-            print(f"--> ADM chose action {body.action_type} with casualty {body.casualty_id} resulting in TA1 response with choice {response.choice}.")
+            print(f"--> ADM action resulted in TA1 response with choice {response.choice}.")
             self.respond_to_probe(body=response)
             self.first_answer = False
 
@@ -892,10 +911,6 @@ class ITMScenarioSession:
         else:
             # PROBE HANDLING FOR SOARTECH
             self.update_state(action=body)
-            if self.patients_treated >= 3:
-                self.end_probe()
-                # Only one probe, scenario ends when all three patients treated
-                self._end_scenario()
 
         return self.scenario.state
 
@@ -945,9 +960,9 @@ class ITMScenarioSession:
                     actions.append(option.assoc_action)
             if self.scenario_rules == 'SOARTECH' or self.adept_evac_happened:
                 # Allow ADMs to end the scenario, usually
-                actions.append(Action(action_id="end_scenario_action", scenario_id=scenario_id, action_type='END_SCENARIO', unstructured="End the scenario"))
+                actions.append(Action(action_id="end_scenario_action", action_type='END_SCENARIO', unstructured="End the scenario"))
             # Always allow tagging a casualty
-            actions.append(Action(action_id="tag_action", scenario_id=scenario_id, action_type='TAG_CASUALTY', unstructured="Tag a casualty"))
+            actions.append(Action(action_id="tag_action", action_type='TAG_CASUALTY', unstructured="Tag a casualty"))
         else:
              return 'Scenario Complete', 400
 

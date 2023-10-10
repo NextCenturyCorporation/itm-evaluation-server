@@ -18,7 +18,7 @@ paths:
       - itm-ta2-eval
       summary: Start a new session
       description: Get unique session id for grouping answers from a collection of
-        scenarios/probes together
+        scenarios together
       operationId: start_session
       parameters:
       - name: adm_name
@@ -31,13 +31,13 @@ paths:
           type: string
       - name: session_type
         in: query
-        description: "the type of session to start (`test`, `eval`, or a TA1 name)"
+        description: "the type of session to start (`eval` or a TA1 name)"
         required: true
         style: form
         explode: true
         schema:
           type: string
-          example: test
+          example: eval
       - name: kdma_training
         in: query
         description: whether or not this is a training session with TA2
@@ -49,8 +49,8 @@ paths:
           default: false
       - name: max_scenarios
         in: query
-        description: "the maximum number of scenarios requested, supported only in\
-          \ `test` sessions"
+        description: "the maximum number of scenarios requested, not supported in\
+          \ `eval` sessions"
         required: false
         style: form
         explode: true
@@ -111,10 +111,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Scenario'
+        "400":
+          description: Invalid Session ID
         "403":
           description: Specifying a scenario ID is unauthorized
         "404":
-          description: Session or Scenario ID not found
+          description: Scenario ID not found
         "500":
           description: An exception occurred on the server; see returned error string.
           content:
@@ -155,9 +157,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/AlignmentTarget'
         "400":
-          description: Scenario Complete
+          description: Scenario Complete or Invalid Session ID
         "404":
-          description: Session or Scenario ID not found
+          description: Scenario ID not found
         "500":
           description: An exception occurred on the server; see returned error string.
           content:
@@ -197,8 +199,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/State'
+        "400":
+          description: Invalid Session ID
         "404":
-          description: Invalid scenario ID supplied
+          description: Scenario ID not found
         "500":
           description: An exception occurred on the server; see returned error string.
           content:
@@ -226,7 +230,7 @@ paths:
           type: string
       - name: scenario_id
         in: path
-        description: The ID of the scenario for which to retrieve avaialble actions
+        description: The ID of the scenario for which to retrieve available actions
         required: true
         style: simple
         explode: false
@@ -243,9 +247,9 @@ paths:
                   $ref: '#/components/schemas/Action'
                 x-content-type: application/json
         "400":
-          description: Scenario Complete
+          description: Scenario Complete or Invalid Session ID
         "404":
-          description: Invalid scenario ID supplied
+          description: Scenario ID not found
         "500":
           description: An exception occurred on the server; see returned error string.
           content:
@@ -285,7 +289,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/State'
         "400":
-          description: Invalid action or session_id
+          description: Invalid action or Session ID
         "500":
           description: An exception occurred on the server; see returned error string.
           content:
@@ -473,8 +477,8 @@ components:
           example: 5.2
         scenario_complete:
           type: boolean
-          description: set to true if the scenario is complete; subsequent calls to
-            /scenario/probe will return an error code
+          description: set to true if the scenario is complete; subsequent calls involving
+            that scenario will return an error code
           example: false
         mission:
           $ref: '#/components/schemas/Mission'
@@ -770,7 +774,6 @@ components:
           - ALLY
           - FRIEND
           - HOSTILE
-          - EXPECTANT
         demographics:
           $ref: '#/components/schemas/Demographics'
         injuries:
@@ -968,15 +971,11 @@ components:
       required:
       - action_id
       - action_type
-      - scenario_id
       type: object
       properties:
         action_id:
           type: string
           description: action ID
-        scenario_id:
-          type: string
-          description: scenario ID this probe is for
         action_type:
           type: string
           description: The action type taken from a controlled vocabulary
@@ -1029,7 +1028,6 @@ components:
         parameters:
         - treatment: Tourniquet
         - location: right forearm
-        scenario_id: scenario_id
   responses:
     server_error:
       description: An exception occurred on the server; see returned error string.
