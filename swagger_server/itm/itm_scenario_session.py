@@ -4,7 +4,7 @@ import random
 import os
 import connexion
 import json
-from typing import List, Union
+from typing import List
 from copy import deepcopy
 from swagger_server.models import (
     Action,
@@ -20,6 +20,13 @@ from .itm_session_scenario_object import (
     ITMSessionScenarioObjectHandler,
     ITMSessionScenarioObject
 )
+from .itm_action_handler import (
+    ITMActionHandler
+)
+#import swagger_server.itm.itm_utils as utils
+#import itm_utils as utils
+import itm_utils
+#from . import itm_utils as utils
 
 class ITMScenarioSession:
     """
@@ -51,6 +58,8 @@ class ITMScenarioSession:
         # adept or ST
         self.scenario_rules = ""
 
+        # Action Handler
+        self.action_handler: ITMActionHandler = ITMActionHandler(self)
         # This determines whether the server makes calls to TA1
         self.ta1_integration = False
     
@@ -65,27 +74,7 @@ class ITMScenarioSession:
         with open("swagger_server/itm/treatment_times_config/actionTimes.json", 'r') as json_file:
                 self.times_dict = json.load(json_file)
 
-        self.history = []
-
-
-    def _add_history(self,
-                    command: str,
-                    parameters: dict,
-                    response: Union[dict, str]) -> None:
-        """
-        Add a command to the history of the scenario session.
-
-        Args:
-            command: The command executed.
-            parameters: The parameters passed to the command.
-            response: The response from the command.
-        """
-        history = {
-            "command": command,
-            "parameters": parameters,
-            "response": response
-        }
-        self.history.append(history)
+        itm_utils.clear_history()
 
 
     def _check_scenario_id(self, scenario_id: str) -> None:
@@ -191,7 +180,7 @@ class ITMScenarioSession:
             alignment_target_session_alignment = \
                 self.current_isso.ta1_controller.get_session_alignment()
             print(f"--> Got session alignment {alignment_target_session_alignment} from TA1.")
-            self._add_history(
+            itm_utils.add_history(
                 "TA1 Session Alignment",
                 {"Session ID": self.current_isso.ta1_controller.session_id,
                 "Target ID": self.current_isso.ta1_controller.alignment_target_id},
@@ -202,11 +191,15 @@ class ITMScenarioSession:
 
         if self.save_to_database:
             self.mongo_db.insert_data('scenarios', self.scenario.to_dict())
-            insert_id = self.mongo_db.insert_data('test', {"history": self.history})
+            insert_id = self.mongo_db.insert_data('test', {"history": itm_utils.get_history()})
             retrieved_data = self.mongo_db.retrieve_data('test', insert_id)
             # Write the retrieved data to a local JSON file
             self.mongo_db.write_to_json_file(retrieved_data)
-        self.history = []
+        else:
+            #self.mongo_db.write_to_json_file(itm_utils.get_history())
+            pass
+
+        itm_utils.clear_history()
 
 
     def _get_realtime_elapsed_time(self) -> float:
@@ -358,7 +351,7 @@ class ITMScenarioSession:
                 casualty.vitals.hrpmin = isso_casualty.vitals.hrpmin
                 self._reveal_injuries(isso_casualty, casualty)
                 casualty.visited = True
-                self._add_history(
+                itm_utils.add_history(
                     "Check Pulse",
                     {"Session ID": self.session_id, "Casualty ID": casualty.id},
                     casualty.vitals.hrpmin)
@@ -379,7 +372,7 @@ class ITMScenarioSession:
                 casualty.vitals.mental_status = isso_casualty.vitals.mental_status
                 self._reveal_injuries(isso_casualty, casualty)
                 casualty.visited = True
-                self._add_history(
+                itm_utils.add_history(
                     "Check Respiration",
                     {"Session ID": self.session_id, "Casualty ID": casualty.id},
                     casualty.vitals.breathing)
@@ -402,7 +395,7 @@ class ITMScenarioSession:
         if not successful:
             return message, code
 
-        self._add_history(
+        itm_utils.add_history(
             "Get Scenario State",
             {"Session ID": self.session_id, "Scenario ID": scenario_id},
             self.scenario.state.to_dict())
@@ -423,7 +416,7 @@ class ITMScenarioSession:
                 casualty.vitals = isso_casualty.vitals
                 self._reveal_injuries(isso_casualty, casualty)
                 casualty.visited = True
-                self._add_history(
+                itm_utils.add_history(
                     "Check All Vitals",
                     {"Session ID": self.session_id, "Casualty ID": casualty.id},
                     casualty.vitals.to_dict())
@@ -458,7 +451,7 @@ class ITMScenarioSession:
                 casualty.visited = True
 
         # Finally, log the action and return
-        self._add_history(
+        itm_utils.add_history(
             "Apply Treatment", {"Session ID": self.session_id, "Casualty ID": casualty.id, "Parameters": action.parameters},
             self.scenario.state.to_dict())
 
@@ -486,6 +479,7 @@ class ITMScenarioSession:
             for isso in self.session_issos:
                 if scenario_id == isso.scenario.id:
                     self.current_isso = isso
+                    self.action_handler.set_isso(isso)
                     self.current_isso_index = index
                     self.custom_scenario_count += 1
                     break
@@ -509,20 +503,20 @@ class ITMScenarioSession:
             else:
                 self.scenario_rules = "SOARTECH"
 
-            self._add_history(
+            itm_utils.add_history(
                 "Start Scenario",
                 {"Session ID": self.session_id, "ADM Name": self.adm_name},
                 self.scenario.to_dict())
 
             if self.ta1_integration == True:
                 ta1_session_id = self.current_isso.ta1_controller.new_session()
-                self._add_history(
+                itm_utils.add_history(
                     "TA1 Session ID", {}, ta1_session_id
                 )
                 print(f"--> Got new session_id {ta1_session_id} from TA1.")
                 scenario_alignment = self.current_isso.ta1_controller.get_alignment_target()
                 print(f"--> Got alignment target {scenario_alignment} from TA1.")
-                self._add_history(
+                itm_utils.add_history(
                     "TA1 Alignment Target Data",
                     {"Session ID": self.current_isso.ta1_controller.session_id,
                     "Scenario ID": self.current_isso.scenario.id},
@@ -564,7 +558,7 @@ class ITMScenarioSession:
             self.session_id = str(uuid.uuid4())
         elif self.adm_name == adm_name:
             print(f"--> Re-using session {self.session_id} for ADM {self.adm_name}")
-            self._add_history(
+            itm_utils.add_history(
                 "Abort Session", {"Session ID": self.session_id, "ADM Name": self.adm_name}, None)
             self.__init__()
             self.session_id = str(uuid.uuid4()) # but assign new session_id for clarity in logs/history
@@ -575,7 +569,7 @@ class ITMScenarioSession:
         self.adm_name = adm_name
         self.session_issos = []
         self.session_type = session_type
-        self.history = []
+        itm_utils.clear_history()
 
         # Save to database based on adm_name.
         if self.adm_name.endswith("_db_"):
@@ -586,7 +580,7 @@ class ITMScenarioSession:
             self.ta1_integration = True
             max_scenarios = None
 
-        self._add_history(
+        itm_utils.add_history(
                 "Start Session",
                 {"Session ID": self.session_id,
                 "ADM Name": self.adm_name,
@@ -637,7 +631,7 @@ class ITMScenarioSession:
         casualty.tag = tag
         for isso_casualty in self.current_isso.scenario.state.casualties:
             if isso_casualty.id == casualty.id:
-                self._add_history(
+                itm_utils.add_history(
                     "Tag Casualty",
                     {"Session ID": self.session_id, "Casualty ID": casualty.id, "Tag": tag},
                     self.scenario.state.to_dict())
@@ -702,7 +696,7 @@ class ITMScenarioSession:
                             curr_casualty.visited = True
                         time_passed += self.times_dict["SITREP"]
 
-        self._add_history(
+        itm_utils.add_history(
             "Request SITREP", {"Session ID": self.session_id,
              "Casualty ID": casualty.id if casualty else "All casualties"},
             self.scenario.state.to_dict())
@@ -724,11 +718,11 @@ class ITMScenarioSession:
             justification=body.justification
         )
 
-        self._add_history(
+        itm_utils.add_history(
             "Respond to TA1 Probe",
             {"Session ID": self.session_id, "Scenario ID": body.scenario_id, "Probe ID": body.probe_id,
              "Choice": body.choice, "Justification": body.justification},
-            self.scenario.state.to_dict())
+            )
 
         if self.ta1_integration == True:
             self.current_isso.ta1_controller.post_probe(body)
@@ -737,7 +731,7 @@ class ITMScenarioSession:
                 body.scenario_id,
                 body.probe_id
             )
-            self._add_history(
+            itm_utils.add_history(
                 "TA1 Probe Response Alignment",
                 {"Session ID": self.current_isso.ta1_controller.session_id,
                 "Scenario ID": body.scenario_id,
@@ -786,39 +780,39 @@ class ITMScenarioSession:
         casualty = next((casualty for casualty in self.scenario.state.casualties if casualty.id == action.casualty_id), None)
 
         if action.action_type == "APPLY_TREATMENT":
-            time_passed += self.apply_treatment(action, casualty)
+            time_passed += self.action_handler.apply_treatment(action, casualty)
 
         # if tagging a casualty then update the tag to the category parameter
         if action.action_type == "TAG_CASUALTY":
-            self.tag_casualty(casualty, action.parameters.get('category'))
+            self.action_handler.tag_casualty(casualty, action.parameters.get('category'))
             time_passed += self.times_dict["TAG_CASUALTY"]
         
         if action.action_type == "CHECK_ALL_VITALS":
-            self.check_all_vitals(casualty)
+            self.action_handler.check_all_vitals(casualty)
             time_passed += self.times_dict["CHECK_ALL_VITALS"]
 
         if action.action_type == "CHECK_PULSE":
-            self.check_pulse(casualty)
+            self.action_handler.check_pulse(casualty)
             time_passed += self.times_dict["CHECK_PULSE"]
 
         if action.action_type == "CHECK_RESPIRATION":
-            self.check_respiration(casualty)
+            self.action_handler.check_respiration(casualty)
             time_passed += self.times_dict["CHECK_RESPIRATION"]
 
         if action.action_type == "DIRECT_MOBILE_CASUALTIES":
-            self._add_history(
+            itm_utils.add_history(
                 "Direct Mobile Casualties", {"Session ID": self.session_id},
                 self.scenario.state.to_dict())
             time_passed += self.times_dict["DIRECT_MOBILE_CASUALTIES"]
 
         if action.action_type == "MOVE_TO_EVAC":
-            self._add_history(
+            itm_utils.add_history(
                 "Move to EVAC", {"Session ID": self.session_id, "Casualty ID": casualty.id},
                 self.scenario.state.to_dict())
             time_passed += self.times_dict["MOVE_TO_EVAC"]
 
         if action.action_type == "SITREP":
-            time_passed += self.process_sitrep(casualty)
+            time_passed += self.action_handler.process_sitrep(casualty)
 
         # TODO ITM-72: Enhance casualty deterioration/amelioration
         # Ultimately, this should update values based DIRECTLY on how the sim does it
@@ -850,7 +844,7 @@ class ITMScenarioSession:
         if not successful:
             return message, code
 
-        self._add_history(
+        itm_utils.add_history(
             "Take Action",
             {"Session ID": self.session_id, "Scenario ID": self.scenario.id, "Action": body.to_dict()},
             self.scenario.state.to_dict())
