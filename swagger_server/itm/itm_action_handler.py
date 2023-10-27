@@ -163,7 +163,7 @@ class ITMActionHandler:
                 allowed_values = ['MINIMAL', 'DELAYED', 'IMMEDIATE', 'EXPECTANT']
                 tag = action.parameters.get('category')
                 if not tag in allowed_values:
-                    return False, f'Malformed {action.action_type} Action: Invalid Tag `{tag}`', 400
+                    return f'Malformed {action.action_type} Action: Invalid Tag `{tag}`', 400
         elif action.action_type == 'CHECK_ALL_VITALS' or action.action_type == 'CHECK_PULSE' \
             or action.action_type == 'CHECK_RESPIRATION' or action.action_type == 'MOVE_TO_EVAC':
             pass # Casualty was already checked

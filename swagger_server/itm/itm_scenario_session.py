@@ -73,18 +73,13 @@ class ITMScenarioSession:
             return False, f'Scenario ID {scenario_id} not found', 404
         return True, '', 0
 
-    def _end_scenario(self, aborted=False):
+    def _end_scenario(self):
         """
         End the current scenario and store history to mongo and json file.
         """
         self.scenario.state.scenario_complete = True
         self.adept_evac_happened = False
         self.first_answer = True
-
-        if aborted:
-            print(f"--> Aborting scenario {self.scenario.id}.")
-            self.history.clear_history()
-            return
 
         if self.ta1_integration == True:
             alignment_target_session_alignment = \
@@ -225,9 +220,6 @@ class ITMScenarioSession:
             if self.current_isso is None:
                 return f'Scenario ID `{scenario_id}` does not exist for `{self.session_type}`', 404
         else:
-            # If ADM didn't end the scenario explicitly, abort the previous scenario
-            if self.scenario and self.scenario.state and not self.scenario.state.scenario_complete:
-                self._end_scenario(aborted=True)
             if self.current_isso_index < len(self.session_issos):
                 self.current_isso: ITMSessionScenarioObject = self.session_issos[self.current_isso_index]
             else:
