@@ -12,7 +12,7 @@ class ITMHistory:
         Initialize an instance of ITMSupplies.
         """
         self.history = []
-        self.filepath = 'itm_db_local_output/'
+        self.filepath = 'itm_db_local_output' + os.sep
 
     def clear_history(self):
         self.history.clear()

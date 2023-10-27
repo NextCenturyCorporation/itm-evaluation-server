@@ -23,16 +23,16 @@ class ITMActionHandler:
     def set_isso(self, isso):
         self.current_isso = isso
 
+    def _should_reveal_injury(self, source_injury, target):
+        return source_injury.name in self.current_isso.hidden_injury_types and \
+               not any(target_injury.name in self.current_isso.hidden_injury_types for target_injury in target.injuries)
 
     def _reveal_injuries(self, source: Casualty, target: Casualty):
         if target.visited: # Don't reveal injuries in visited casualties
             return
 
-        for source_injury in source.injuries:
-            if source_injury.name in self.current_isso.hidden_injury_types and \
-                not any(target_injury.name in self.current_isso.hidden_injury_types \
-                        for target_injury in target.injuries): \
-                            target.injuries.append(source_injury)
+        revealed_injuries = [source_injury for source_injury in source.injuries if self._should_reveal_injury(source_injury, target)]
+        target.injuries.extend(revealed_injuries)
 
         # TODO: develop a system for scenarios to specify changes in plaintext Casualty description
         if self.session.scenario_rules == "SOARTECH":
