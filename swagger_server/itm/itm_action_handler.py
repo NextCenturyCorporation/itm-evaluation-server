@@ -52,7 +52,7 @@ class ITMActionHandler:
         """
             Head Injuries
             Forehead Scrape: None
-            Face Shrapnel: Airway
+            Face Shrapnel: Nasopharyngeal airway
             Ear Bleed: None
 
             Neck Injuries
@@ -72,6 +72,7 @@ class ITMActionHandler:
             Chest Collapse: Decompression Needle
 
             Stomach Injuries
+            Stomach Laceration: Pressure bandage
             Stomach Puncture: Hemostatic gauze
             Side Puncture: Hemostatic gauze
 
@@ -80,6 +81,7 @@ class ITMActionHandler:
             Thigh Laceration: Tourniquet
             Shin Amputation: Tourniquet
             Calf Laceration: Pressure bandage
+            Calf Shrapnel: Hemostatic gauze
         """
         match injury_name:
             case 'Amputation':
@@ -97,7 +99,10 @@ class ITMActionHandler:
                 else:
                     return treatment == 'Hemostatic gauze'
             case 'Shrapnel':
-                return treatment == 'Nasopharyngeal airway'
+                if 'face' in location:
+                    return treatment == 'Nasopharyngeal airway'
+                else:
+                    return treatment == 'Hemostatic gauze'
             case _:
                 return False
 
@@ -163,7 +168,7 @@ class ITMActionHandler:
                 allowed_values = ['MINIMAL', 'DELAYED', 'IMMEDIATE', 'EXPECTANT']
                 tag = action.parameters.get('category')
                 if not tag in allowed_values:
-                    return f'Malformed {action.action_type} Action: Invalid Tag `{tag}`', 400
+                    return False, f'Malformed {action.action_type} Action: Invalid Tag `{tag}`', 400
         elif action.action_type == 'CHECK_ALL_VITALS' or action.action_type == 'CHECK_PULSE' \
             or action.action_type == 'CHECK_RESPIRATION' or action.action_type == 'MOVE_TO_EVAC':
             pass # Casualty was already checked
@@ -217,11 +222,7 @@ class ITMActionHandler:
                 self._reveal_injuries(isso_casualty, casualty)
                 casualty.visited = True
 
-        # Finally, log the action and return the elapsed time
-        self.session.history.add_history(
-            "Apply Treatment", {"Session ID": self.session.session_id,
-                                "Casualty ID": casualty.id, "Parameters": action.parameters},
-            self.session.scenario.state.to_dict())
+        # Finally, return the elapsed time
         return time_passed
 
 
@@ -237,10 +238,6 @@ class ITMActionHandler:
                 casualty.vitals = isso_casualty.vitals
                 self._reveal_injuries(isso_casualty, casualty)
                 casualty.visited = True
-                self.session.history.add_history(
-                    "Check All Vitals",
-                    {"Session ID": self.session.session_id, "Casualty ID": casualty.id},
-                    casualty.vitals.to_dict())
                 return self.times_dict['CHECK_ALL_VITALS']
 
 
@@ -259,10 +256,6 @@ class ITMActionHandler:
                 casualty.vitals.hrpmin = isso_casualty.vitals.hrpmin
                 self._reveal_injuries(isso_casualty, casualty)
                 casualty.visited = True
-                self.session.history.add_history(
-                    "Check Pulse",
-                    {"Session ID": self.session.session_id, "Casualty ID": casualty.id},
-                    casualty.vitals.hrpmin)
                 return self.times_dict['CHECK_PULSE']
 
 
@@ -280,10 +273,6 @@ class ITMActionHandler:
                 casualty.vitals.mental_status = isso_casualty.vitals.mental_status
                 self._reveal_injuries(isso_casualty, casualty)
                 casualty.visited = True
-                self.session.history.add_history(
-                    "Check Respiration",
-                    {"Session ID": self.session.session_id, "Casualty ID": casualty.id},
-                    casualty.vitals.breathing)
                 return self.times_dict['CHECK_RESPIRATION']
 
 
@@ -291,9 +280,6 @@ class ITMActionHandler:
         """
         Direct mobile casualties to a safe zone (or equivalent).
         """
-        self.session.history.add_history(
-            "Direct Mobile Casualties", {"Session ID": self.session.session_id},
-            self.session.scenario.state.to_dict())
         return self.times_dict["DIRECT_MOBILE_CASUALTIES"]
 
 
@@ -304,9 +290,6 @@ class ITMActionHandler:
         Args:
             casualty: The casualty to move to evac
         """
-        self.session.history.add_history(
-            "Move to EVAC", {"Session ID": self.session.session_id, "Casualty ID": casualty.id},
-            self.session.scenario.state.to_dict())
         return self.times_dict["MOVE_TO_EVAC"]
 
 
@@ -321,10 +304,6 @@ class ITMActionHandler:
         casualty.tag = tag
         for isso_casualty in self.current_isso.scenario.state.casualties:
             if isso_casualty.id == casualty.id:
-                self.session.history.add_history(
-                    "Tag Casualty",
-                    {"Session ID": self.session.session_id, "Casualty ID": casualty.id, "Tag": tag},
-                    self.session.scenario.state.to_dict())
                 return self.times_dict['TAG_CASUALTY']
 
 
@@ -356,14 +335,9 @@ class ITMActionHandler:
                         if curr_casualty.vitals.mental_status != "UNRESPONSIVE":
                             curr_casualty.vitals.conscious = isso_casualty.vitals.conscious
                             curr_casualty.vitals.breathing = isso_casualty.vitals.breathing
-                            self._reveal_injuries(isso_casualty, casualty)
+                            self._reveal_injuries(isso_casualty, curr_casualty)
                             curr_casualty.visited = True
                         time_passed += self.times_dict["SITREP"]
-
-        self.session.history.add_history(
-            "Request SITREP", {"Session ID": self.session.session_id,
-             "Casualty ID": casualty.id if casualty else "All casualties"},
-            self.session.scenario.state.to_dict())
 
         return time_passed
 
@@ -413,4 +387,11 @@ class ITMActionHandler:
         self.current_isso.casualty_simulator.update_vitals(time_elapsed_during_treatment)
         self.scenario.state.elapsed_time = self.time_elapsed_scenario_time
         """
+
         self.session.scenario.state.elapsed_time += time_passed
+        # Log the action
+        self.session.history.add_history(
+            f"Take Action: {action.action_type}",
+            {"Session ID": self.session.session_id, "Casualty ID": casualty.id, "Parameters": action.parameters},
+            self.session.scenario.state.to_dict()
+            )

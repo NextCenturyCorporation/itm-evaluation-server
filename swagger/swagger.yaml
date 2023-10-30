@@ -112,7 +112,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Scenario'
         "400":
-          description: Invalid Session ID
+          description: Invalid Session ID or there is already an active scenario
         "403":
           description: Specifying a scenario ID is unauthorized
         "404":
@@ -898,6 +898,7 @@ components:
           - right face
           - left neck
           - right neck
+          - internal
           - unspecified
         severity:
           type: number

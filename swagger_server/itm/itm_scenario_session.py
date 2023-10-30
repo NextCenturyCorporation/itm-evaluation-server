@@ -220,6 +220,9 @@ class ITMScenarioSession:
             if self.current_isso is None:
                 return f'Scenario ID `{scenario_id}` does not exist for `{self.session_type}`', 404
         else:
+            # Require ADM to end the scenario explicitly
+            if self.scenario and self.scenario.state and not self.scenario.state.scenario_complete:
+                return f'Must end `{self.scenario.id}` before starting a new scenario', 400
             if self.current_isso_index < len(self.session_issos):
                 self.current_isso: ITMSessionScenarioObject = self.session_issos[self.current_isso_index]
             else:
@@ -469,14 +472,12 @@ class ITMScenarioSession:
         if not successful:
             return message, code
 
-        self.history.add_history(
-            "Take Action",
-            {"Session ID": self.session_id, "Scenario ID": self.scenario.id, "Action": body.to_dict()},
-            None)
         print(f"--> ADM chose action {body.action_type} with casualty {body.casualty_id} and parameters {body.parameters}.")
 
         # Only the ADM can end the scenario
         if body.action_type == 'END_SCENARIO':
+            self.history.add_history(
+                f"Take Action: {body.action_type}", {"Session ID": self.session_id}, None)
             self._end_scenario()
             return self.scenario.state
 
