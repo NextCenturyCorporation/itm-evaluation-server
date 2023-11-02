@@ -6,6 +6,7 @@ from datetime import date, datetime  # noqa: F401
 from typing import List, Dict  # noqa: F401
 
 from swagger_server.models.base_model_ import Model
+from swagger_server.models.mission_type import MissionType  # noqa: F401,E501
 from swagger_server import util
 
 
@@ -14,17 +15,17 @@ class Mission(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, unstructured: str=None, mission_type: str=None):  # noqa: E501
+    def __init__(self, unstructured: str=None, mission_type: MissionType=None):  # noqa: E501
         """Mission - a model defined in Swagger
 
         :param unstructured: The unstructured of this Mission.  # noqa: E501
         :type unstructured: str
         :param mission_type: The mission_type of this Mission.  # noqa: E501
-        :type mission_type: str
+        :type mission_type: MissionType
         """
         self.swagger_types = {
             'unstructured': str,
-            'mission_type': str
+            'mission_type': MissionType
         }
 
         self.attribute_map = {
@@ -71,30 +72,24 @@ class Mission(Model):
         self._unstructured = unstructured
 
     @property
-    def mission_type(self) -> str:
+    def mission_type(self) -> MissionType:
         """Gets the mission_type of this Mission.
 
-        enumeration of possible mission types  # noqa: E501
 
         :return: The mission_type of this Mission.
-        :rtype: str
+        :rtype: MissionType
         """
         return self._mission_type
 
     @mission_type.setter
-    def mission_type(self, mission_type: str):
+    def mission_type(self, mission_type: MissionType):
         """Sets the mission_type of this Mission.
 
-        enumeration of possible mission types  # noqa: E501
 
         :param mission_type: The mission_type of this Mission.
-        :type mission_type: str
+        :type mission_type: MissionType
         """
-        allowed_values = ["Listening/Observation", "Direct Action", "Hostage rescue", "Asset transport", "Sensor emplacement", "Intelligence gathering", "Civil affairs", "Training", "Sabotage", "Security patrol", "Fire support", "Nuclear deterrence", "Extraction", "Unknown"]  # noqa: E501
-        if mission_type not in allowed_values:
-            raise ValueError(
-                "Invalid value for `mission_type` ({0}), must be one of {1}"
-                .format(mission_type, allowed_values)
-            )
+        if mission_type is None:
+            raise ValueError("Invalid value for `mission_type`, must not be `None`")  # noqa: E501
 
         self._mission_type = mission_type
