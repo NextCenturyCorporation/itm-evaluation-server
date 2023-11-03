@@ -8,6 +8,8 @@ from swagger_server.models.casualty import Casualty
 from swagger_server.models.casualty_relationship import CasualtyRelationship
 from swagger_server.models.casualty_tag import CasualtyTag
 from swagger_server.models.demographics import Demographics
+from swagger_server.models.demographics_rank import DemographicsRank
+from swagger_server.models.demographics_sex import DemographicsSex
 from swagger_server.models.environment import Environment
 from swagger_server.models.injury import Injury
 from swagger_server.models.injury_location import InjuryLocation
@@ -27,3 +29,5 @@ from swagger_server.models.threat import Threat
 from swagger_server.models.threat_state import ThreatState
 from swagger_server.models.triage_category import TriageCategory
 from swagger_server.models.vitals import Vitals
+from swagger_server.models.vitals_breathing import VitalsBreathing
+from swagger_server.models.vitals_mental_status import VitalsMentalStatus

@@ -326,10 +326,6 @@ components:
           example: 14:02
         state:
           $ref: '#/components/schemas/State'
-        triage_categories:
-          type: array
-          items:
-            $ref: '#/components/schemas/TriageCategory'
       description: a tactical scenario
       example:
         start_time: 14:02
@@ -838,27 +834,31 @@ components:
           format: int16
           example: 32
         sex:
-          type: string
-          description: "the sex of the casualty, omit if unknown/indeterminate"
-          example: F
-          enum:
-          - M
-          - F
+          $ref: '#/components/schemas/DemographicsSex'
         rank:
-          type: string
-          description: "The military status of the casualty, omit if unknown"
-          enum:
-          - Marine
-          - FMF Corpsman
-          - Sailor
-          - Civilian
-          - SEAL
-          - Intel Officer
+          $ref: '#/components/schemas/DemographicsRank'
       description: demographic profile of a casualty
       example:
         sex: F
         rank: Marine
         age: 32
+    DemographicsSex:
+      type: string
+      description: "the sex of the casualty, omit if unknown/indeterminate"
+      example: F
+      enum:
+      - M
+      - F
+    DemographicsRank:
+      type: string
+      description: "The military status of the casualty, omit if unknown"
+      enum:
+      - Marine
+      - FMF Corpsman
+      - Sailor
+      - Civilian
+      - SEAL
+      - Intel Officer
     Injury:
       required:
       - location
@@ -897,30 +897,30 @@ components:
       description: the injury location on the casualty's body
       example: right forearm
       enum:
-          - right forearm
-          - left forearm
-          - right calf
-          - left calf
-          - right thigh
-          - left thigh
-          - right stomach
-          - left stomach
-          - right bicep
-          - left bicep
-          - right shoulder
-          - left shoulder
-          - right side
-          - left side
-          - right chest
-          - left chest
-          - right wrist
-          - left wrist
-          - left face
-          - right face
-          - left neck
-          - right neck
-          - internal
-          - unspecified
+        - right forearm
+        - left forearm
+        - right calf
+        - left calf
+        - right thigh
+        - left thigh
+        - right stomach
+        - left stomach
+        - right bicep
+        - left bicep
+        - right shoulder
+        - left shoulder
+        - right side
+        - left side
+        - right chest
+        - left chest
+        - right wrist
+        - left wrist
+        - left face
+        - right face
+        - left neck
+        - right neck
+        - internal
+        - unspecified
     Vitals:
       type: object
       properties:
@@ -929,24 +929,9 @@ components:
           description: whether or not the casualty is conscious
           example: true
         mental_status:
-          type: string
-          description: description of the casualty's overall demeanor
-          example: CALM
-          enum:
-          - AGONY
-          - CALM
-          - CONFUSED
-          - UPSET
-          - UNRESPONSIVE
+          $ref: '#/components/schemas/VitalsMentalStatus'
         breathing:
-          type: string
-          description: a descriptor for the casualty's breathing
-          example: NORMAL
-          enum:
-          - NORMAL
-          - FAST
-          - RESTRICTED
-          - NONE
+          $ref: '#/components/schemas/VitalsBreathing'
         hrpmin:
           type: integer
           description: heart rate in beats per minute
@@ -958,30 +943,25 @@ components:
         conscious: true
         mental_status: CALM
         hrpmin: 150
-    TriageCategory:
-      type: object
-      properties:
-        tagLabel:
-          $ref: '#/components/schemas/TagLabel'
-        description:
-          type: string
-          description: a one-line description of the tagLabel category
-        criteria:
-          type: string
-          description: detailed criteria for the tagLabel category
-      description: The type of supported triage categories for this scenario
-      example:
-        criteria: criteria
-        description: description
-        tagLabel: MINIMAL
-    TagLabel:
+    VitalsBreathing:
       type: string
-      example: MINIMAL
+      description: a descriptor for the casualty's breathing
+      example: NORMAL
       enum:
-      - MINIMAL
-      - DELAYED
-      - IMMEDIATE
-      - EXPECTANT
+      - NORMAL
+      - FAST
+      - RESTRICTED
+      - NONE
+    VitalsMentalStatus:
+      type: string
+      description: description of the casualty's overall demeanor
+      example: CALM
+      enum:
+      - AGONY
+      - CALM
+      - CONFUSED
+      - UPSET
+      - UNRESPONSIVE
     Action:
       required:
       - action_id

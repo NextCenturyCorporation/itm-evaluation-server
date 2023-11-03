@@ -6,6 +6,8 @@ from datetime import date, datetime  # noqa: F401
 from typing import List, Dict  # noqa: F401
 
 from swagger_server.models.base_model_ import Model
+from swagger_server.models.vitals_breathing import VitalsBreathing  # noqa: F401,E501
+from swagger_server.models.vitals_mental_status import VitalsMentalStatus  # noqa: F401,E501
 from swagger_server import util
 
 
@@ -14,22 +16,22 @@ class Vitals(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, conscious: bool=None, mental_status: str=None, breathing: str=None, hrpmin: int=None):  # noqa: E501
+    def __init__(self, conscious: bool=None, mental_status: VitalsMentalStatus=None, breathing: VitalsBreathing=None, hrpmin: int=None):  # noqa: E501
         """Vitals - a model defined in Swagger
 
         :param conscious: The conscious of this Vitals.  # noqa: E501
         :type conscious: bool
         :param mental_status: The mental_status of this Vitals.  # noqa: E501
-        :type mental_status: str
+        :type mental_status: VitalsMentalStatus
         :param breathing: The breathing of this Vitals.  # noqa: E501
-        :type breathing: str
+        :type breathing: VitalsBreathing
         :param hrpmin: The hrpmin of this Vitals.  # noqa: E501
         :type hrpmin: int
         """
         self.swagger_types = {
             'conscious': bool,
-            'mental_status': str,
-            'breathing': str,
+            'mental_status': VitalsMentalStatus,
+            'breathing': VitalsBreathing,
             'hrpmin': int
         }
 
@@ -79,60 +81,44 @@ class Vitals(Model):
         self._conscious = conscious
 
     @property
-    def mental_status(self) -> str:
+    def mental_status(self) -> VitalsMentalStatus:
         """Gets the mental_status of this Vitals.
 
-        description of the casualty's overall demeanor  # noqa: E501
 
         :return: The mental_status of this Vitals.
-        :rtype: str
+        :rtype: VitalsMentalStatus
         """
         return self._mental_status
 
     @mental_status.setter
-    def mental_status(self, mental_status: str):
+    def mental_status(self, mental_status: VitalsMentalStatus):
         """Sets the mental_status of this Vitals.
 
-        description of the casualty's overall demeanor  # noqa: E501
 
         :param mental_status: The mental_status of this Vitals.
-        :type mental_status: str
+        :type mental_status: VitalsMentalStatus
         """
-        allowed_values = ["AGONY", "CALM", "CONFUSED", "UPSET", "UNRESPONSIVE"]  # noqa: E501
-        if mental_status not in allowed_values:
-            raise ValueError(
-                "Invalid value for `mental_status` ({0}), must be one of {1}"
-                .format(mental_status, allowed_values)
-            )
 
         self._mental_status = mental_status
 
     @property
-    def breathing(self) -> str:
+    def breathing(self) -> VitalsBreathing:
         """Gets the breathing of this Vitals.
 
-        a descriptor for the casualty's breathing  # noqa: E501
 
         :return: The breathing of this Vitals.
-        :rtype: str
+        :rtype: VitalsBreathing
         """
         return self._breathing
 
     @breathing.setter
-    def breathing(self, breathing: str):
+    def breathing(self, breathing: VitalsBreathing):
         """Sets the breathing of this Vitals.
 
-        a descriptor for the casualty's breathing  # noqa: E501
 
         :param breathing: The breathing of this Vitals.
-        :type breathing: str
+        :type breathing: VitalsBreathing
         """
-        allowed_values = ["NORMAL", "FAST", "RESTRICTED", "NONE"]  # noqa: E501
-        if breathing not in allowed_values:
-            raise ValueError(
-                "Invalid value for `breathing` ({0}), must be one of {1}"
-                .format(breathing, allowed_values)
-            )
 
         self._breathing = breathing
 
