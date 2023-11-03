@@ -14,7 +14,6 @@ from swagger_server.models.scenario import Scenario
 from swagger_server.models.state import State
 from swagger_server.models.supplies import Supplies
 from swagger_server.models.threat_state import ThreatState
-from swagger_server.models.triage_category import TriageCategory
 from swagger_server.models.vitals import Vitals
 
 
@@ -40,7 +39,6 @@ class ITMScenarioReader:
             A tuple containing the generated Scenario, a list of CasualtySimulation objects, and SupplysDetails objects.
         """
         state, casualty_simulations, supplies_details = self._generate_state()
-        triage_categories = self._generate_triage_categories()
 
         id_actual = self.yaml_data['id']
 
@@ -49,7 +47,6 @@ class ITMScenarioReader:
             name=self.yaml_data['name'],
             start_time=str(0),
             state=state,
-            triage_categories=triage_categories,
             session_complete=False
         )
         return (scenario, casualty_simulations, supplies_details)
@@ -225,9 +222,3 @@ class ITMScenarioReader:
             # deceased_after_minutes=hidden_attributes.get('deceased_after_minutes')
         )
         return casualty_simulation
-
-
-    def _generate_triage_categories(self) -> List[TriageCategory]:
-        return [
-            TriageCategory("MINIMAL", "", "")
-        ]

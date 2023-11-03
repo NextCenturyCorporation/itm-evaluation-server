@@ -411,13 +411,6 @@ components:
               sex: F
               rank: Marine
               age: 32
-        triage_categories:
-        - criteria: criteria
-          description: description
-          tagLabel: MINIMAL
-        - criteria: criteria
-          description: description
-          tagLabel: MINIMAL
     AlignmentTarget:
       required:
       - id
