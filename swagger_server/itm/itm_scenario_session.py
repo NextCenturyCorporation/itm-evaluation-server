@@ -270,7 +270,7 @@ class ITMScenarioSession:
     def _end_session(self) -> Scenario:
         self.__init__()
         return Scenario(session_complete=True, id='', name='',
-                        start_time=None, state=None, triage_categories=None)
+                        start_time=None, state=None)
 
     def start_session(self, adm_name: str, session_type: str, kdma_training: bool, max_scenarios=None) -> str:
         """

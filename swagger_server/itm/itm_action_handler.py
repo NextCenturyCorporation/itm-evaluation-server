@@ -3,6 +3,10 @@ from swagger_server.models import (
     Action,
     Casualty
 )
+from swagger_server.models.action_type import ActionType
+from swagger_server.models.casualty_tag import CasualtyTag
+from swagger_server.models.injury_location import InjuryLocation
+from swagger_server.util import get_swagger_class_enum_values
 from .itm_session_scenario_object import ITMSessionScenarioObject
 
 class ITMActionHandler:
@@ -130,19 +134,16 @@ class ITMActionHandler:
             casualty = next((casualty for casualty in self.session.scenario.state.casualties if casualty.id == action.casualty_id), None)
 
         # Validate casualty when necessary
-        if (action.action_type in ['APPLY_TREATMENT', 'CHECK_ALL_VITALS', 'CHECK_PULSE', 'CHECK_RESPIRATION', 'MOVE_TO_EVAC', 'TAG_CASUALTY']):
+        if (action.action_type in [ActionType.APPLY_TREATMENT, ActionType.CHECK_ALL_VITALS, ActionType.CHECK_PULSE, ActionType.CHECK_RESPIRATION, ActionType.MOVE_TO_EVAC, ActionType.TAG_CASUALTY]):
             if not action.casualty_id:
                 return False, f'Malformed Action: Missing casualty_id for {action.action_type}', 400
             elif not casualty:
                 return False, f'Casualty `{action.casualty_id}` not found in state', 400
 
-        if action.action_type == 'APPLY_TREATMENT':
+        if action.action_type == ActionType.APPLY_TREATMENT:
             # Apply treatment requires a casualty id and parameters (treatment and location)
             # treatment and location
-            valid_locations = ['right forearm', 'left forearm', 'right calf', 'left calf', 'right thigh', 'left thigh', 'right stomach', \
-                               'left stomach', 'right bicep', 'left bicep', 'right shoulder', 'left shoulder', 'right side', 'left side', \
-                               'right chest', 'left chest', 'right wrist', 'left wrist', 'left face', 'right face', 'left neck', \
-                               'right neck', 'unspecified']
+            valid_locations = get_swagger_class_enum_values(InjuryLocation)
             if not action.parameters or not 'treatment' in action.parameters or not 'location' in action.parameters:
                 return False, f'Malformed Action: Missing parameters for {action.action_type}', 400
             elif 'location' in action.parameters and action.parameters['location'] not in valid_locations:
@@ -156,23 +157,23 @@ class ITMActionHandler:
                     break
             if not sufficient_supplies:
                 return False, f'Invalid or insufficient `{supply_used}` supplies', 400
-        elif action.action_type == 'SITREP':
+        elif action.action_type == ActionType.SITREP:
             # sitrep optionally takes a casualty id
             if action.casualty_id and not casualty:
                 return False, f'Casualty `{action.casualty_id}` not found in state', 400
-        elif action.action_type == 'TAG_CASUALTY':
+        elif action.action_type == ActionType.TAG_CASUALTY:
             # Requires category parameter
             if not action.parameters or not 'category' in action.parameters:
                 return False, f'Malformed {action.action_type} Action: Missing `category` parameter', 400
             else:
-                allowed_values = ['MINIMAL', 'DELAYED', 'IMMEDIATE', 'EXPECTANT']
+                allowed_values = get_swagger_class_enum_values(CasualtyTag)
                 tag = action.parameters.get('category')
                 if not tag in allowed_values:
                     return False, f'Malformed {action.action_type} Action: Invalid Tag `{tag}`', 400
-        elif action.action_type == 'CHECK_ALL_VITALS' or action.action_type == 'CHECK_PULSE' \
-            or action.action_type == 'CHECK_RESPIRATION' or action.action_type == 'MOVE_TO_EVAC':
+        elif action.action_type == ActionType.CHECK_ALL_VITALS or action.action_type == ActionType.CHECK_PULSE \
+            or action.action_type == ActionType.CHECK_RESPIRATION or action.action_type == ActionType.MOVE_TO_EVAC:
             pass # Casualty was already checked
-        elif action.action_type == 'DIRECT_MOBILE_CASUALTIES' or action.action_type == 'END_SCENARIO':
+        elif action.action_type == ActionType.DIRECT_MOBILE_CASUALTIES or action.action_type == ActionType.END_SCENARIO:
             pass # Requires nothing
         else:
             return False, f'Invalid action_type `{action.action_type}`', 400
@@ -357,21 +358,21 @@ class ITMActionHandler:
                          if casualty.id == action.casualty_id), None)
 
         match action.action_type:
-            case 'APPLY_TREATMENT':
+            case ActionType.APPLY_TREATMENT:
                 time_passed = self.apply_treatment(action, casualty)
-            case 'CHECK_ALL_VITALS':
+            case ActionType.CHECK_ALL_VITALS:
                 time_passed = self.check_all_vitals(casualty)
-            case 'CHECK_PULSE':
+            case ActionType.CHECK_PULSE:
                 time_passed = self.check_pulse(casualty)
-            case 'CHECK_RESPIRATION':
+            case ActionType.CHECK_RESPIRATION:
                 time_passed = self.check_respiration(casualty)
-            case 'DIRECT_MOBILE_CASUALTIES':
+            case ActionType.DIRECT_MOBILE_CASUALTIES:
                 time_passed = self.direct_mobile_casualties()
-            case 'MOVE_TO_EVAC':
+            case ActionType.MOVE_TO_EVAC:
                 time_passed = self.move_to_evac(casualty)
-            case 'SITREP':
+            case ActionType.SITREP:
                 time_passed = self.sitrep(casualty)
-            case 'TAG_CASUALTY':
+            case ActionType.TAG_CASUALTY:
                 # The tag is specified in the category parameter
                 time_passed = self.tag_casualty(casualty, action.parameters.get('category'))
 

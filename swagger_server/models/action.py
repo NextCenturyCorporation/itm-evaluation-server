@@ -6,6 +6,7 @@ from datetime import date, datetime  # noqa: F401
 from typing import List, Dict  # noqa: F401
 
 from swagger_server.models.base_model_ import Model
+from swagger_server.models.action_type import ActionType  # noqa: F401,E501
 from swagger_server import util
 
 
@@ -14,13 +15,13 @@ class Action(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, action_id: str=None, action_type: str=None, casualty_id: str=None, unstructured: str=None, justification: str=None, kdma_association: Dict[str, str]=None, parameters: Dict[str, str]=None):  # noqa: E501
+    def __init__(self, action_id: str=None, action_type: ActionType=None, casualty_id: str=None, unstructured: str=None, justification: str=None, kdma_association: Dict[str, str]=None, parameters: Dict[str, str]=None):  # noqa: E501
         """Action - a model defined in Swagger
 
         :param action_id: The action_id of this Action.  # noqa: E501
         :type action_id: str
         :param action_type: The action_type of this Action.  # noqa: E501
-        :type action_type: str
+        :type action_type: ActionType
         :param casualty_id: The casualty_id of this Action.  # noqa: E501
         :type casualty_id: str
         :param unstructured: The unstructured of this Action.  # noqa: E501
@@ -34,7 +35,7 @@ class Action(Model):
         """
         self.swagger_types = {
             'action_id': str,
-            'action_type': str,
+            'action_type': ActionType,
             'casualty_id': str,
             'unstructured': str,
             'justification': str,
@@ -96,31 +97,25 @@ class Action(Model):
         self._action_id = action_id
 
     @property
-    def action_type(self) -> str:
+    def action_type(self) -> ActionType:
         """Gets the action_type of this Action.
 
-        The action type taken from a controlled vocabulary  # noqa: E501
 
         :return: The action_type of this Action.
-        :rtype: str
+        :rtype: ActionType
         """
         return self._action_type
 
     @action_type.setter
-    def action_type(self, action_type: str):
+    def action_type(self, action_type: ActionType):
         """Sets the action_type of this Action.
 
-        The action type taken from a controlled vocabulary  # noqa: E501
 
         :param action_type: The action_type of this Action.
-        :type action_type: str
+        :type action_type: ActionType
         """
-        allowed_values = ["APPLY_TREATMENT", "CHECK_ALL_VITALS", "CHECK_PULSE", "CHECK_RESPIRATION", "DIRECT_MOBILE_CASUALTIES", "END_SCENARIO", "MOVE_TO_EVAC", "SITREP", "TAG_CASUALTY"]  # noqa: E501
-        if action_type not in allowed_values:
-            raise ValueError(
-                "Invalid value for `action_type` ({0}), must be one of {1}"
-                .format(action_type, allowed_values)
-            )
+        if action_type is None:
+            raise ValueError("Invalid value for `action_type`, must not be `None`")  # noqa: E501
 
         self._action_type = action_type
 

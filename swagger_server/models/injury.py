@@ -6,6 +6,8 @@ from datetime import date, datetime  # noqa: F401
 from typing import List, Dict  # noqa: F401
 
 from swagger_server.models.base_model_ import Model
+from swagger_server.models.injury_location import InjuryLocation  # noqa: F401,E501
+from swagger_server.models.injury_type import InjuryType  # noqa: F401,E501
 from swagger_server import util
 
 
@@ -14,19 +16,19 @@ class Injury(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, name: str=None, location: str=None, severity: float=None):  # noqa: E501
+    def __init__(self, name: InjuryType=None, location: InjuryLocation=None, severity: float=None):  # noqa: E501
         """Injury - a model defined in Swagger
 
         :param name: The name of this Injury.  # noqa: E501
-        :type name: str
+        :type name: InjuryType
         :param location: The location of this Injury.  # noqa: E501
-        :type location: str
+        :type location: InjuryLocation
         :param severity: The severity of this Injury.  # noqa: E501
         :type severity: float
         """
         self.swagger_types = {
-            'name': str,
-            'location': str,
+            'name': InjuryType,
+            'location': InjuryLocation,
             'severity': float
         }
 
@@ -51,60 +53,48 @@ class Injury(Model):
         return util.deserialize_model(dikt, cls)
 
     @property
-    def name(self) -> str:
+    def name(self) -> InjuryType:
         """Gets the name of this Injury.
 
-        a brief label for the type of injury  # noqa: E501
 
         :return: The name of this Injury.
-        :rtype: str
+        :rtype: InjuryType
         """
         return self._name
 
     @name.setter
-    def name(self, name: str):
+    def name(self, name: InjuryType):
         """Sets the name of this Injury.
 
-        a brief label for the type of injury  # noqa: E501
 
         :param name: The name of this Injury.
-        :type name: str
+        :type name: InjuryType
         """
-        allowed_values = ["Forehead Scrape", "Ear Bleed", "Asthmatic", "Laceration", "Puncture", "Shrapnel", "Chest Collapse", "Amputation", "Burn"]  # noqa: E501
-        if name not in allowed_values:
-            raise ValueError(
-                "Invalid value for `name` ({0}), must be one of {1}"
-                .format(name, allowed_values)
-            )
+        if name is None:
+            raise ValueError("Invalid value for `name`, must not be `None`")  # noqa: E501
 
         self._name = name
 
     @property
-    def location(self) -> str:
+    def location(self) -> InjuryLocation:
         """Gets the location of this Injury.
 
-        the injury location on the casualty's body  # noqa: E501
 
         :return: The location of this Injury.
-        :rtype: str
+        :rtype: InjuryLocation
         """
         return self._location
 
     @location.setter
-    def location(self, location: str):
+    def location(self, location: InjuryLocation):
         """Sets the location of this Injury.
 
-        the injury location on the casualty's body  # noqa: E501
 
         :param location: The location of this Injury.
-        :type location: str
+        :type location: InjuryLocation
         """
-        allowed_values = ["right forearm", "left forearm", "right calf", "left calf", "right thigh", "left thigh", "right stomach", "left stomach", "right bicep", "left bicep", "right shoulder", "left shoulder", "right side", "left side", "right chest", "left chest", "right wrist", "left wrist", "left face", "right face", "left neck", "right neck", "unspecified"]  # noqa: E501
-        if location not in allowed_values:
-            raise ValueError(
-                "Invalid value for `location` ({0}), must be one of {1}"
-                .format(location, allowed_values)
-            )
+        if location is None:
+            raise ValueError("Invalid value for `location`, must not be `None`")  # noqa: E501
 
         self._location = location
 

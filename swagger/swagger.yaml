@@ -326,10 +326,6 @@ components:
           example: 14:02
         state:
           $ref: '#/components/schemas/State'
-        triage_categories:
-          type: array
-          items:
-            $ref: '#/components/schemas/TriageCategory'
       description: a tactical scenario
       example:
         start_time: 14:02
@@ -415,13 +411,6 @@ components:
               sex: F
               rank: Marine
               age: 32
-        triage_categories:
-        - criteria: criteria
-          description: description
-          tagLabel: MINIMAL
-        - criteria: criteria
-          description: description
-          tagLabel: MINIMAL
     AlignmentTarget:
       required:
       - id
@@ -588,27 +577,29 @@ components:
           description: natural language description of current mission
           example: Place sensors in and around the jungle base
         mission_type:
-          type: string
-          description: enumeration of possible mission types
-          enum:
-          - Listening/Observation
-          - Direct Action
-          - Hostage rescue
-          - Asset transport
-          - Sensor emplacement
-          - Intelligence gathering
-          - Civil affairs
-          - Training
-          - Sabotage
-          - Security patrol
-          - Fire support
-          - Nuclear deterrence
-          - Extraction
-          - Unknown
+          $ref: '#/components/schemas/MissionType'
       description: encapsulates the scenario's strategic mission
       example:
         unstructured: Place sensors in and around the jungle base
         mission_type: Listening/Observation
+    MissionType:
+      type: string
+      description: enumeration of possible mission types
+      enum:
+      - Listening/Observation
+      - Direct Action
+      - Hostage rescue
+      - Asset transport
+      - Sensor emplacement
+      - Intelligence gathering
+      - Civil affairs
+      - Training
+      - Sabotage
+      - Security patrol
+      - Fire support
+      - Nuclear deterrence
+      - Extraction
+      - Unknown
     Environment:
       required:
       - unstructured
@@ -730,15 +721,7 @@ components:
       type: object
       properties:
         type:
-          type: string
-          description: an enumeration of available supply types
-          example: Tourniquet
-          enum:
-          - Tourniquet
-          - Pressure bandage
-          - Hemostatic gauze
-          - Decompression Needle
-          - Nasopharyngeal airway
+          $ref: '#/components/schemas/SupplyType'
         quantity:
           type: integer
           description: the number (count) of this item available to the medic at the
@@ -749,6 +732,16 @@ components:
       example:
         quantity: 4
         type: Tourniquet
+    SupplyType:
+      type: string
+      description: an enumeration of available supply types
+      example: Tourniquet
+      enum:
+      - Tourniquet
+      - Pressure bandage
+      - Hemostatic gauze
+      - Decompression Needle
+      - Nasopharyngeal airway
     Casualty:
       required:
       - id
@@ -766,14 +759,7 @@ components:
           description: "the name of the casualty, omit if unknown"
           example: Mary
         relationship:
-          type: string
-          description: the relationship between the medic and the casualty
-          example: NONE
-          enum:
-          - NONE
-          - ALLY
-          - FRIEND
-          - HOSTILE
+          $ref: '#/components/schemas/CasualtyRelationship'
         demographics:
           $ref: '#/components/schemas/Demographics'
         injuries:
@@ -789,14 +775,7 @@ components:
             scenario
           default: false
         tag:
-          type: string
-          description: "the tag assigned to this casualty, omit if untagged"
-          example: DELAYED
-          enum:
-          - MINIMAL
-          - DELAYED
-          - IMMEDIATE
-          - EXPECTANT
+          $ref: '#/components/schemas/CasualtyTag'
       description: encapulation of a single casualty in the scenario
       example:
         injuries:
@@ -821,6 +800,24 @@ components:
           sex: F
           rank: Marine
           age: 32
+    CasualtyRelationship:
+      type: string
+      description: the relationship between the medic and the casualty
+      example: NONE
+      enum:
+      - NONE
+      - ALLY
+      - FRIEND
+      - HOSTILE
+    CasualtyTag:
+      type: string
+      description: "the tag assigned to this casualty, omit if untagged"
+      example: DELAYED
+      enum:
+      - MINIMAL
+      - DELAYED
+      - IMMEDIATE
+      - EXPECTANT
     Demographics:
       type: object
       properties:
@@ -830,27 +827,31 @@ components:
           format: int16
           example: 32
         sex:
-          type: string
-          description: "the sex of the casualty, omit if unknown/indeterminate"
-          example: F
-          enum:
-          - M
-          - F
+          $ref: '#/components/schemas/DemographicsSex'
         rank:
-          type: string
-          description: "The military status of the casualty, omit if unknown"
-          enum:
-          - Marine
-          - FMF Corpsman
-          - Sailor
-          - Civilian
-          - SEAL
-          - Intel Officer
+          $ref: '#/components/schemas/DemographicsRank'
       description: demographic profile of a casualty
       example:
         sex: F
         rank: Marine
         age: 32
+    DemographicsSex:
+      type: string
+      description: "the sex of the casualty, omit if unknown/indeterminate"
+      example: F
+      enum:
+      - M
+      - F
+    DemographicsRank:
+      type: string
+      description: "The military status of the casualty, omit if unknown"
+      enum:
+      - Marine
+      - FMF Corpsman
+      - Sailor
+      - Civilian
+      - SEAL
+      - Intel Officer
     Injury:
       required:
       - location
@@ -858,48 +859,9 @@ components:
       type: object
       properties:
         name:
-          type: string
-          description: a brief label for the type of injury
-          example: Laceration
-          enum:
-          - Forehead Scrape
-          - Ear Bleed
-          - Asthmatic
-          - Laceration
-          - Puncture
-          - Shrapnel
-          - Chest Collapse
-          - Amputation
-          - Burn
+          $ref: '#/components/schemas/InjuryType'
         location:
-          type: string
-          description: the injury location on the casualty's body
-          example: right forearm
-          enum:
-          - right forearm
-          - left forearm
-          - right calf
-          - left calf
-          - right thigh
-          - left thigh
-          - right stomach
-          - left stomach
-          - right bicep
-          - left bicep
-          - right shoulder
-          - left shoulder
-          - right side
-          - left side
-          - right chest
-          - left chest
-          - right wrist
-          - left wrist
-          - left face
-          - right face
-          - left neck
-          - right neck
-          - internal
-          - unspecified
+          $ref: '#/components/schemas/InjuryLocation'
         severity:
           type: number
           description: the apparent severity of the injury from 0 (low) to 1.0 (high)
@@ -909,6 +871,49 @@ components:
         severity: 0.8
         name: Laceration
         location: right forearm
+    InjuryType:
+      type: string
+      description: a brief label for the type of injury
+      example: Laceration
+      enum:
+      - Forehead Scrape
+      - Ear Bleed
+      - Asthmatic
+      - Laceration
+      - Puncture
+      - Shrapnel
+      - Chest Collapse
+      - Amputation
+      - Burn
+    InjuryLocation:
+      type: string
+      description: the injury location on the casualty's body
+      example: right forearm
+      enum:
+        - right forearm
+        - left forearm
+        - right calf
+        - left calf
+        - right thigh
+        - left thigh
+        - right stomach
+        - left stomach
+        - right bicep
+        - left bicep
+        - right shoulder
+        - left shoulder
+        - right side
+        - left side
+        - right chest
+        - left chest
+        - right wrist
+        - left wrist
+        - left face
+        - right face
+        - left neck
+        - right neck
+        - internal
+        - unspecified
     Vitals:
       type: object
       properties:
@@ -917,24 +922,9 @@ components:
           description: whether or not the casualty is conscious
           example: true
         mental_status:
-          type: string
-          description: description of the casualty's overall demeanor
-          example: CALM
-          enum:
-          - AGONY
-          - CALM
-          - CONFUSED
-          - UPSET
-          - UNRESPONSIVE
+          $ref: '#/components/schemas/VitalsMentalStatus'
         breathing:
-          type: string
-          description: a descriptor for the casualty's breathing
-          example: NORMAL
-          enum:
-          - NORMAL
-          - FAST
-          - RESTRICTED
-          - NONE
+          $ref: '#/components/schemas/VitalsBreathing'
         hrpmin:
           type: integer
           description: heart rate in beats per minute
@@ -946,28 +936,25 @@ components:
         conscious: true
         mental_status: CALM
         hrpmin: 150
-    TriageCategory:
-      type: object
-      properties:
-        tagLabel:
-          type: string
-          example: MINIMAL
-          enum:
-          - MINIMAL
-          - DELAYED
-          - IMMEDIATE
-          - EXPECTANT
-        description:
-          type: string
-          description: a one-line description of the tagLabel category
-        criteria:
-          type: string
-          description: detailed criteria for the tagLabel category
-      description: The type of supported triage categories for this scenario
-      example:
-        criteria: criteria
-        description: description
-        tagLabel: MINIMAL
+    VitalsBreathing:
+      type: string
+      description: a descriptor for the casualty's breathing
+      example: NORMAL
+      enum:
+      - NORMAL
+      - FAST
+      - RESTRICTED
+      - NONE
+    VitalsMentalStatus:
+      type: string
+      description: description of the casualty's overall demeanor
+      example: CALM
+      enum:
+      - AGONY
+      - CALM
+      - CONFUSED
+      - UPSET
+      - UNRESPONSIVE
     Action:
       required:
       - action_id
@@ -978,19 +965,7 @@ components:
           type: string
           description: action ID
         action_type:
-          type: string
-          description: The action type taken from a controlled vocabulary
-          example: APPLY_TREATMENT
-          enum:
-          - APPLY_TREATMENT
-          - CHECK_ALL_VITALS
-          - CHECK_PULSE
-          - CHECK_RESPIRATION
-          - DIRECT_MOBILE_CASUALTIES
-          - END_SCENARIO
-          - MOVE_TO_EVAC
-          - SITREP
-          - TAG_CASUALTY
+          $ref: '#/components/schemas/ActionType'
         casualty_id:
           type: string
           description: The ID of the casualty being acted upon
@@ -1029,6 +1004,20 @@ components:
         parameters:
         - treatment: Tourniquet
         - location: right forearm
+    ActionType:
+      type: string
+      description: The action type taken from a controlled vocabulary
+      example: APPLY_TREATMENT
+      enum:
+      - APPLY_TREATMENT
+      - CHECK_ALL_VITALS
+      - CHECK_PULSE
+      - CHECK_RESPIRATION
+      - DIRECT_MOBILE_CASUALTIES
+      - END_SCENARIO
+      - MOVE_TO_EVAC
+      - SITREP
+      - TAG_CASUALTY
   responses:
     server_error:
       description: An exception occurred on the server; see returned error string.

@@ -6,6 +6,8 @@ from datetime import date, datetime  # noqa: F401
 from typing import List, Dict  # noqa: F401
 
 from swagger_server.models.base_model_ import Model
+from swagger_server.models.casualty_relationship import CasualtyRelationship  # noqa: F401,E501
+from swagger_server.models.casualty_tag import CasualtyTag  # noqa: F401,E501
 from swagger_server.models.demographics import Demographics  # noqa: F401,E501
 from swagger_server.models.injury import Injury  # noqa: F401,E501
 from swagger_server.models.vitals import Vitals  # noqa: F401,E501
@@ -17,7 +19,7 @@ class Casualty(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, id: str=None, unstructured: str=None, name: str=None, relationship: str=None, demographics: Demographics=None, injuries: List[Injury]=None, vitals: Vitals=None, visited: bool=False, tag: str=None):  # noqa: E501
+    def __init__(self, id: str=None, unstructured: str=None, name: str=None, relationship: CasualtyRelationship=None, demographics: Demographics=None, injuries: List[Injury]=None, vitals: Vitals=None, visited: bool=False, tag: CasualtyTag=None):  # noqa: E501
         """Casualty - a model defined in Swagger
 
         :param id: The id of this Casualty.  # noqa: E501
@@ -27,7 +29,7 @@ class Casualty(Model):
         :param name: The name of this Casualty.  # noqa: E501
         :type name: str
         :param relationship: The relationship of this Casualty.  # noqa: E501
-        :type relationship: str
+        :type relationship: CasualtyRelationship
         :param demographics: The demographics of this Casualty.  # noqa: E501
         :type demographics: Demographics
         :param injuries: The injuries of this Casualty.  # noqa: E501
@@ -37,18 +39,18 @@ class Casualty(Model):
         :param visited: The visited of this Casualty.  # noqa: E501
         :type visited: bool
         :param tag: The tag of this Casualty.  # noqa: E501
-        :type tag: str
+        :type tag: CasualtyTag
         """
         self.swagger_types = {
             'id': str,
             'unstructured': str,
             'name': str,
-            'relationship': str,
+            'relationship': CasualtyRelationship,
             'demographics': Demographics,
             'injuries': List[Injury],
             'vitals': Vitals,
             'visited': bool,
-            'tag': str
+            'tag': CasualtyTag
         }
 
         self.attribute_map = {
@@ -157,31 +159,23 @@ class Casualty(Model):
         self._name = name
 
     @property
-    def relationship(self) -> str:
+    def relationship(self) -> CasualtyRelationship:
         """Gets the relationship of this Casualty.
 
-        the relationship between the medic and the casualty  # noqa: E501
 
         :return: The relationship of this Casualty.
-        :rtype: str
+        :rtype: CasualtyRelationship
         """
         return self._relationship
 
     @relationship.setter
-    def relationship(self, relationship: str):
+    def relationship(self, relationship: CasualtyRelationship):
         """Sets the relationship of this Casualty.
 
-        the relationship between the medic and the casualty  # noqa: E501
 
         :param relationship: The relationship of this Casualty.
-        :type relationship: str
+        :type relationship: CasualtyRelationship
         """
-        allowed_values = ["NONE", "ALLY", "FRIEND", "HOSTILE"]  # noqa: E501
-        if relationship not in allowed_values:
-            raise ValueError(
-                "Invalid value for `relationship` ({0}), must be one of {1}"
-                .format(relationship, allowed_values)
-            )
 
         self._relationship = relationship
 
@@ -274,30 +268,22 @@ class Casualty(Model):
         self._visited = visited
 
     @property
-    def tag(self) -> str:
+    def tag(self) -> CasualtyTag:
         """Gets the tag of this Casualty.
 
-        the tag assigned to this casualty, omit if untagged  # noqa: E501
 
         :return: The tag of this Casualty.
-        :rtype: str
+        :rtype: CasualtyTag
         """
         return self._tag
 
     @tag.setter
-    def tag(self, tag: str):
+    def tag(self, tag: CasualtyTag):
         """Sets the tag of this Casualty.
 
-        the tag assigned to this casualty, omit if untagged  # noqa: E501
 
         :param tag: The tag of this Casualty.
-        :type tag: str
+        :type tag: CasualtyTag
         """
-        allowed_values = ["MINIMAL", "DELAYED", "IMMEDIATE", "EXPECTANT"]  # noqa: E501
-        if tag not in allowed_values:
-            raise ValueError(
-                "Invalid value for `tag` ({0}), must be one of {1}"
-                .format(tag, allowed_values)
-            )
 
         self._tag = tag
