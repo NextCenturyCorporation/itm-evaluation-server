@@ -2,6 +2,8 @@ from __future__ import absolute_import
 # import models into models package
 from swagger_server.models.action import Action
 from swagger_server.models.action_type import ActionType
+from swagger_server.models.alignment_results import AlignmentResults
+from swagger_server.models.alignment_source import AlignmentSource
 from swagger_server.models.alignment_target import AlignmentTarget
 from swagger_server.models.base_model_ import Model
 from swagger_server.models.casualty import Casualty
