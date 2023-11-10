@@ -397,5 +397,5 @@ class ITMActionHandler:
 
         self.session.scenario.state.elapsed_time += time_passed
         # Log the action
-        self.session.history.add_history(
-            f"Take Action", parameters, self.session.scenario.state.to_dict())
+        self.session.history.add_history("Take Action", parameters,
+                                         self.session.scenario.state.to_dict())
