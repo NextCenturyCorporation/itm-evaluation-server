@@ -2,10 +2,6 @@ import connexion
 import time
 
 from swagger_server.models.action import Action  # noqa: E501
-from swagger_server.models.alignment_target import AlignmentTarget  # noqa: E501
-from swagger_server.models.scenario import Scenario  # noqa: E501
-from swagger_server.models.state import State  # noqa: E501
-
 from ..itm import ITMScenarioSession
 
 MAX_SESSIONS = 5     # Hard limit on simultaneously active sessions
@@ -40,6 +36,19 @@ def get_alignment_target(session_id, scenario_id):  # noqa: E501
     """
     session = _get_session(session_id)
     return session.get_alignment_target(scenario_id=scenario_id) if session else ('Invalid Session ID', 400)
+
+def get_session_alignment(session_id, target_id):  # noqa: E501
+    """Retrieve current session alignment
+
+    Retrieve current session alignment for the session with the specified id # noqa: E501
+
+    :param session_id: a unique session_id, as returned by /ta2/startSession
+    :type session_id: str
+
+    :rtype: AlignmentResults
+    """
+    session = _get_session(session_id)
+    return session.get_session_alignment(target_id=target_id) if session else ('Invalid Session ID', 400)
 
 
 def get_available_actions(session_id, scenario_id):  # noqa: E501

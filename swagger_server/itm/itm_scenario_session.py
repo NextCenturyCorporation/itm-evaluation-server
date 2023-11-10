@@ -8,6 +8,7 @@ from copy import deepcopy
 from swagger_server.models import (
     Action,
     AlignmentTarget,
+    AlignmentResults,
     Scenario,
     State,
     Vitals
@@ -76,23 +77,26 @@ class ITMScenarioSession:
     def _end_scenario(self):
         """
         End the current scenario and store history to mongo and json file.
+
+        Returns:
+            The session alignment from TA1.
         """
         self.scenario.state.scenario_complete = True
         self.adept_evac_happened = False
         self.first_answer = True
+        session_alignment_score = 0.0
 
         if self.ta1_integration == True:
-            alignment_target_session_alignment = \
+            session_alignment :AlignmentResults = \
                 self.current_isso.ta1_controller.get_session_alignment()
-            print(f"--> Got session alignment {alignment_target_session_alignment} from TA1.")
+            session_alignment_score = session_alignment.score
             self.history.add_history(
                 "TA1 Session Alignment",
                 {"Session ID": self.current_isso.ta1_controller.session_id,
                 "Target ID": self.current_isso.ta1_controller.alignment_target_id},
-                alignment_target_session_alignment
+                session_alignment.to_dict()
             )
-        else:
-            print("--> Got session alignment from TA1.")
+        print(f"--> Got session alignment score {session_alignment_score} from TA1.")
 
         if self.save_to_database:
             if not self.mongo_db: # one-time initialization
@@ -111,6 +115,7 @@ class ITMScenarioSession:
             pass
 
         self.history.clear_history()
+        return session_alignment_score
 
 
     def _get_realtime_elapsed_time(self) -> float:
@@ -248,7 +253,7 @@ class ITMScenarioSession:
             if self.ta1_integration == True:
                 ta1_session_id = self.current_isso.ta1_controller.new_session()
                 self.history.add_history(
-                    "TA1 Session ID", {}, ta1_session_id, None
+                    "TA1 Session ID", {}, ta1_session_id
                 )
                 print(f"--> Got new session_id {ta1_session_id} from TA1.")
                 scenario_alignment = self.current_isso.ta1_controller.get_alignment_target()
@@ -265,6 +270,8 @@ class ITMScenarioSession:
             return self.scenario
         except:
             print("--> Exception getting next scenario; ending session.")
+            import traceback
+            traceback.print_exc()
             return self._end_session() # Exception here ends the session
 
     def _end_session(self) -> Scenario:
@@ -478,7 +485,11 @@ class ITMScenarioSession:
         if body.action_type == 'END_SCENARIO':
             self.history.add_history(
                 f"Take Action: {body.action_type}", {"Session ID": self.session_id}, None)
-            self._end_scenario()
+            session_alignment_score = self._end_scenario()
+            if self.kdma_training:
+                self.scenario.state.unstructured = f'Scenario {self.scenario.id} complete. Session alignment score = {session_alignment_score}'
+            else:
+                self.scenario.state.unstructured = 'Scenario complete.'
             return self.scenario.state
 
         # Special handling for ADEPT tagging
@@ -555,6 +566,19 @@ class ITMScenarioSession:
                 self.scenario.state.environment = newState.get("environment")
             if newState.get("threat_state"):
                 self.scenario.state.environment = newState.get("threat_state")
+
+
+    def get_session_alignment(self, target_id: str) -> AlignmentResults:
+        if not self.kdma_training:
+            return 'Session alignment can only be requested during a training session', 403
+
+        session_alignment_score = 0.0
+        if self.ta1_integration == True:
+            session_alignment :AlignmentResults = \
+                self.current_isso.ta1_controller.get_session_alignment(target_id=target_id)
+            session_alignment_score = session_alignment.score
+        print(f"--> Got session alignment score {session_alignment_score} from TA1 for alignment target id {target_id}.")
+        return session_alignment
 
 
     def get_available_actions(self, scenario_id: str) -> List[Action]:
