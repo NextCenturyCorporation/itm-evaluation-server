@@ -92,8 +92,8 @@ class ITMScenarioSession:
             session_alignment_score = session_alignment.score
             self.history.add_history(
                 "TA1 Session Alignment",
-                {"Session ID": self.current_isso.ta1_controller.session_id,
-                "Target ID": self.current_isso.ta1_controller.alignment_target_id},
+                {"session_id": self.current_isso.ta1_controller.session_id,
+                "target_id": self.current_isso.ta1_controller.alignment_target_id},
                 session_alignment.to_dict()
             )
         print(f"--> Got session alignment score {session_alignment_score} from TA1.")
@@ -191,7 +191,7 @@ class ITMScenarioSession:
 
         self.history.add_history(
             "Get Scenario State",
-            {"Session ID": self.session_id, "Scenario ID": scenario_id},
+            {"session_id": self.session_id, "scenario_id": scenario_id},
             self.scenario.state.to_dict())
 
         return self.scenario.state
@@ -247,7 +247,7 @@ class ITMScenarioSession:
 
             self.history.add_history(
                 "Start Scenario",
-                {"Session ID": self.session_id, "ADM Name": self.adm_name},
+                {"session_id": self.session_id, "adm_name": self.adm_name},
                 self.scenario.to_dict())
 
             if self.ta1_integration == True:
@@ -260,8 +260,8 @@ class ITMScenarioSession:
                 print(f"--> Got alignment target {scenario_alignment} from TA1.")
                 self.history.add_history(
                     "TA1 Alignment Target Data",
-                    {"Session ID": self.current_isso.ta1_controller.session_id,
-                    "Scenario ID": self.current_isso.scenario.id},
+                    {"session_id": self.current_isso.ta1_controller.session_id,
+                    "scenario_id": self.current_isso.scenario.id},
                     scenario_alignment
                 )
             else:
@@ -303,7 +303,7 @@ class ITMScenarioSession:
         elif self.adm_name == adm_name:
             print(f"--> Re-using session {self.session_id} for ADM {self.adm_name}")
             self.history.add_history(
-                "Abort Session", {"Session ID": self.session_id, "ADM Name": self.adm_name}, None)
+                "Abort Session", {"session_id": self.session_id, "adm_name": self.adm_name}, None)
             self.__init__()
             self.session_id = str(uuid.uuid4()) # but assign new session_id for clarity in logs/history
         else:
@@ -326,9 +326,9 @@ class ITMScenarioSession:
 
         self.history.add_history(
                 "Start Session",
-                {"Session ID": self.session_id,
-                "ADM Name": self.adm_name,
-                "Session Type": session_type},
+                {"session_id": self.session_id,
+                "adm_name": self.adm_name,
+                "session_type": session_type},
                 self.session_id)
 
         yaml_paths = []
@@ -412,8 +412,8 @@ class ITMScenarioSession:
 
         self.history.add_history(
             "Respond to TA1 Probe",
-            {"Session ID": self.session_id, "Scenario ID": body.scenario_id, "Probe ID": body.probe_id,
-             "Choice": body.choice, "Justification": body.justification},
+            {"session_id": self.session_id, "scenario_id": body.scenario_id, "probe_id": body.probe_id,
+             "choice": body.choice, "justification": body.justification},
              None
             )
 
@@ -426,10 +426,10 @@ class ITMScenarioSession:
             )
             self.history.add_history(
                 "TA1 Probe Response Alignment",
-                {"Session ID": self.current_isso.ta1_controller.session_id,
-                "Scenario ID": body.scenario_id,
-                "Target ID": self.current_isso.ta1_controller.alignment_target_id,
-                "Probe ID": body.probe_id},
+                {"session_id": self.current_isso.ta1_controller.session_id,
+                "scenario_id": body.scenario_id,
+                "target_id": self.current_isso.ta1_controller.alignment_target_id,
+                "probe_id": body.probe_id},
                 probe_response_alignment
             )
         else:
@@ -484,7 +484,8 @@ class ITMScenarioSession:
         # Only the ADM can end the scenario
         if body.action_type == 'END_SCENARIO':
             self.history.add_history(
-                f"Take Action: {body.action_type}", {"Session ID": self.session_id}, None)
+                "Take Action", {"action_type": body.action_type, "session_id": self.session_id,
+                                "elapsed_time": self.scenario.state.elapsed_time}, None)
             session_alignment_score = self._end_scenario()
             if self.kdma_training:
                 self.scenario.state.unstructured = f'Scenario {self.scenario.id} complete. Session alignment score = {session_alignment_score}'
