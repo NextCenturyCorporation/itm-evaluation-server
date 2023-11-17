@@ -357,9 +357,14 @@ class ITMActionHandler:
         casualty = next((casualty for casualty in self.session.scenario.state.casualties \
                          if casualty.id == action.casualty_id), None)
 
+        parameters = {"action_type": action.action_type, "session_id": self.session.session_id}
+        if casualty:
+            parameters['casualty'] = action.casualty_id
         match action.action_type:
             case ActionType.APPLY_TREATMENT:
                 time_passed = self.apply_treatment(action, casualty)
+                parameters['treatment'] = action.parameters['treatment']
+                parameters['location'] = action.parameters['location']
             case ActionType.CHECK_ALL_VITALS:
                 time_passed = self.check_all_vitals(casualty)
             case ActionType.CHECK_PULSE:
@@ -375,6 +380,7 @@ class ITMActionHandler:
             case ActionType.TAG_CASUALTY:
                 # The tag is specified in the category parameter
                 time_passed = self.tag_casualty(casualty, action.parameters.get('category'))
+                parameters['category'] = action.parameters['category']
 
         # TODO ITM-72: Enhance casualty deterioration/amelioration
         # Ultimately, this should update values based DIRECTLY on how the sim does it
@@ -391,8 +397,5 @@ class ITMActionHandler:
 
         self.session.scenario.state.elapsed_time += time_passed
         # Log the action
-        self.session.history.add_history(
-            f"Take Action: {action.action_type}",
-            {"Session ID": self.session.session_id, "Casualty ID": casualty.id, "Parameters": action.parameters},
-            self.session.scenario.state.to_dict()
-            )
+        self.session.history.add_history("Take Action", parameters,
+                                         self.session.scenario.state.to_dict())
