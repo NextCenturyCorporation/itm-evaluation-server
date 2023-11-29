@@ -6,11 +6,11 @@
         "Decompression Needle": 60,
         "Nasopharyngeal airway": 30
     },
-    "TAG_CASUALTY": 10,
+    "TAG_CHARACTER": 10,
     "CHECK_ALL_VITALS": 20,
     "CHECK_PULSE": 10,
     "CHECK_RESPIRATION": 10,
-    "DIRECT_MOBILE_CASUALTIES": 10,
+    "DIRECT_MOBILE_CHARACTERS": 10,
     "MOVE_TO_EVAC": 0,
     "SITREP": 10
 }

@@ -6,9 +6,9 @@ from swagger_server.models.alignment_results import AlignmentResults
 from swagger_server.models.alignment_source import AlignmentSource
 from swagger_server.models.alignment_target import AlignmentTarget
 from swagger_server.models.base_model_ import Model
-from swagger_server.models.casualty import Casualty
-from swagger_server.models.casualty_relationship import CasualtyRelationship
-from swagger_server.models.casualty_tag import CasualtyTag
+from swagger_server.models.character import Character
+from swagger_server.models.character_relationship import CharacterRelationship
+from swagger_server.models.character_tag import CharacterTag
 from swagger_server.models.demographics import Demographics
 from swagger_server.models.demographics_rank import DemographicsRank
 from swagger_server.models.demographics_sex import DemographicsSex

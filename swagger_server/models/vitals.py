@@ -61,7 +61,7 @@ class Vitals(Model):
     def conscious(self) -> bool:
         """Gets the conscious of this Vitals.
 
-        whether or not the casualty is conscious  # noqa: E501
+        whether or not the character is conscious  # noqa: E501
 
         :return: The conscious of this Vitals.
         :rtype: bool
@@ -72,7 +72,7 @@ class Vitals(Model):
     def conscious(self, conscious: bool):
         """Sets the conscious of this Vitals.
 
-        whether or not the casualty is conscious  # noqa: E501
+        whether or not the character is conscious  # noqa: E501
 
         :param conscious: The conscious of this Vitals.
         :type conscious: bool
