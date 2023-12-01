@@ -56,8 +56,7 @@ class ITMScenarioSession:
         self.history: ITMHistory = ITMHistory()
         # This determines whether the server makes calls to TA1
         self.ta1_integration = False
-    
-        # This saves the history to JSON
+        # This determines whether the server saves history to JSON
         self.save_history = False
 
 
@@ -300,10 +299,6 @@ class ITMScenarioSession:
         self.session_type = session_type
         self.history.clear_history()
 
-        # Save history to JSON based on adm_name.
-        if self.adm_name.endswith("_save_"):
-            self.adm_name = self.adm_name.removesuffix("_save_")
-            self.save_history = True
         if self.session_type == 'eval':
             self.save_history = True
             self.ta1_integration = True
