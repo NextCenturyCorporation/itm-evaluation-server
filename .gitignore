@@ -71,4 +71,4 @@ generated
 swagger_server/api
 
 # local db output
-itm_db_local_output
+itm_history_output

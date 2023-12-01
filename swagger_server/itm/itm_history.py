@@ -9,10 +9,10 @@ class ITMHistory:
 
     def __init__(self):
         """
-        Initialize an instance of ITMSupplies.
+        Initialize an instance of ITMHistory.
         """
         self.history = []
-        self.filepath = 'itm_db_local_output' + os.sep
+        self.filepath = 'itm_history_output' + os.sep
 
     def clear_history(self):
         self.history.clear()
@@ -59,7 +59,7 @@ class ITMHistory:
 
         # Calculate file_number based on the number of files
         file_number = len(file_list) + 1
-        file_name = f'itm_db_output_{file_number}.json'
+        file_name = f'itm_history_{file_number}.json'
         full_filepath = self.filepath + file_name
 
         with open(full_filepath, 'w') as file:
