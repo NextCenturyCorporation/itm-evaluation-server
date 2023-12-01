@@ -6,7 +6,7 @@ from datetime import date, datetime  # noqa: F401
 from typing import List, Dict  # noqa: F401
 
 from swagger_server.models.base_model_ import Model
-from swagger_server.models.casualty import Casualty  # noqa: F401,E501
+from swagger_server.models.character import Character  # noqa: F401,E501
 from swagger_server.models.environment import Environment  # noqa: F401,E501
 from swagger_server.models.mission import Mission  # noqa: F401,E501
 from swagger_server.models.supplies import Supplies  # noqa: F401,E501
@@ -19,7 +19,7 @@ class State(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, unstructured: str=None, elapsed_time: float=None, scenario_complete: bool=None, mission: Mission=None, environment: Environment=None, threat_state: ThreatState=None, supplies: List[Supplies]=None, casualties: List[Casualty]=None):  # noqa: E501
+    def __init__(self, unstructured: str=None, elapsed_time: float=None, scenario_complete: bool=None, mission: Mission=None, environment: Environment=None, threat_state: ThreatState=None, supplies: List[Supplies]=None, characters: List[Character]=None):  # noqa: E501
         """State - a model defined in Swagger
 
         :param unstructured: The unstructured of this State.  # noqa: E501
@@ -36,8 +36,8 @@ class State(Model):
         :type threat_state: ThreatState
         :param supplies: The supplies of this State.  # noqa: E501
         :type supplies: List[Supplies]
-        :param casualties: The casualties of this State.  # noqa: E501
-        :type casualties: List[Casualty]
+        :param characters: The characters of this State.  # noqa: E501
+        :type characters: List[Character]
         """
         self.swagger_types = {
             'unstructured': str,
@@ -47,7 +47,7 @@ class State(Model):
             'environment': Environment,
             'threat_state': ThreatState,
             'supplies': List[Supplies],
-            'casualties': List[Casualty]
+            'characters': List[Character]
         }
 
         self.attribute_map = {
@@ -58,7 +58,7 @@ class State(Model):
             'environment': 'environment',
             'threat_state': 'threat_state',
             'supplies': 'supplies',
-            'casualties': 'casualties'
+            'characters': 'characters'
         }
         self._unstructured = unstructured
         self._elapsed_time = elapsed_time
@@ -67,7 +67,7 @@ class State(Model):
         self._environment = environment
         self._threat_state = threat_state
         self._supplies = supplies
-        self._casualties = casualties
+        self._characters = characters
 
     @classmethod
     def from_dict(cls, dikt) -> 'State':
@@ -238,24 +238,24 @@ class State(Model):
         self._supplies = supplies
 
     @property
-    def casualties(self) -> List[Casualty]:
-        """Gets the casualties of this State.
+    def characters(self) -> List[Character]:
+        """Gets the characters of this State.
 
-        the list of casualties in the scenario  # noqa: E501
+        the list of characters in the scenario  # noqa: E501
 
-        :return: The casualties of this State.
-        :rtype: List[Casualty]
+        :return: The characters of this State.
+        :rtype: List[Character]
         """
-        return self._casualties
+        return self._characters
 
-    @casualties.setter
-    def casualties(self, casualties: List[Casualty]):
-        """Sets the casualties of this State.
+    @characters.setter
+    def characters(self, characters: List[Character]):
+        """Sets the characters of this State.
 
-        the list of casualties in the scenario  # noqa: E501
+        the list of characters in the scenario  # noqa: E501
 
-        :param casualties: The casualties of this State.
-        :type casualties: List[Casualty]
+        :param characters: The characters of this State.
+        :type characters: List[Character]
         """
 
-        self._casualties = casualties
+        self._characters = characters

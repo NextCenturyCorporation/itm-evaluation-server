@@ -1,10 +1,10 @@
 import json
 from swagger_server.models import (
     Action,
-    Casualty
+    Character
 )
 from swagger_server.models.action_type import ActionType
-from swagger_server.models.casualty_tag import CasualtyTag
+from swagger_server.models.character_tag import CharacterTag
 from swagger_server.models.injury_location import InjuryLocation
 from swagger_server.util import get_swagger_class_enum_values
 from .itm_session_scenario_object import ITMSessionScenarioObject
@@ -31,14 +31,14 @@ class ITMActionHandler:
         return source_injury.name in self.current_isso.hidden_injury_types and \
                not any(target_injury.name in self.current_isso.hidden_injury_types for target_injury in target.injuries)
 
-    def _reveal_injuries(self, source: Casualty, target: Casualty):
-        if target.visited: # Don't reveal injuries in visited casualties
+    def _reveal_injuries(self, source: Character, target: Character):
+        if target.visited: # Don't reveal injuries in visited characters
             return
 
         revealed_injuries = [source_injury for source_injury in source.injuries if self._should_reveal_injury(source_injury, target)]
         target.injuries.extend(revealed_injuries)
 
-        # TODO: develop a system for scenarios to specify changes in plaintext Casualty description
+        # TODO: develop a system for scenarios to specify changes in plaintext Character description
         if self.session.scenario_rules == "SOARTECH":
             if target.id == 'MarineA':
                 target.unstructured += \
@@ -128,20 +128,20 @@ class ITMActionHandler:
 
         if action.parameters and not isinstance(action.parameters, dict):
             return False, 'Malformed Action: Invalid Parameter Structure', 400
-        # lookup casualty id in state
-        casualty = None
-        if action.casualty_id:
-            casualty = next((casualty for casualty in self.session.scenario.state.casualties if casualty.id == action.casualty_id), None)
+        # lookup character id in state
+        character = None
+        if action.character_id:
+            character = next((character for character in self.session.scenario.state.characters if character.id == action.character_id), None)
 
-        # Validate casualty when necessary
-        if (action.action_type in [ActionType.APPLY_TREATMENT, ActionType.CHECK_ALL_VITALS, ActionType.CHECK_PULSE, ActionType.CHECK_RESPIRATION, ActionType.MOVE_TO_EVAC, ActionType.TAG_CASUALTY]):
-            if not action.casualty_id:
-                return False, f'Malformed Action: Missing casualty_id for {action.action_type}', 400
-            elif not casualty:
-                return False, f'Casualty `{action.casualty_id}` not found in state', 400
+        # Validate character when necessary
+        if (action.action_type in [ActionType.APPLY_TREATMENT, ActionType.CHECK_ALL_VITALS, ActionType.CHECK_PULSE, ActionType.CHECK_RESPIRATION, ActionType.MOVE_TO_EVAC, ActionType.TAG_CHARACTER]):
+            if not action.character_id:
+                return False, f'Malformed Action: Missing character_id for {action.action_type}', 400
+            elif not character:
+                return False, f'Character `{action.character_id}` not found in state', 400
 
         if action.action_type == ActionType.APPLY_TREATMENT:
-            # Apply treatment requires a casualty id and parameters (treatment and location)
+            # Apply treatment requires a character id and parameters (treatment and location)
             # treatment and location
             valid_locations = get_swagger_class_enum_values(InjuryLocation)
             if not action.parameters or not 'treatment' in action.parameters or not 'location' in action.parameters:
@@ -158,22 +158,22 @@ class ITMActionHandler:
             if not sufficient_supplies:
                 return False, f'Invalid or insufficient `{supply_used}` supplies', 400
         elif action.action_type == ActionType.SITREP:
-            # sitrep optionally takes a casualty id
-            if action.casualty_id and not casualty:
-                return False, f'Casualty `{action.casualty_id}` not found in state', 400
-        elif action.action_type == ActionType.TAG_CASUALTY:
+            # sitrep optionally takes a character id
+            if action.character_id and not character:
+                return False, f'Character `{action.character_id}` not found in state', 400
+        elif action.action_type == ActionType.TAG_CHARACTER:
             # Requires category parameter
             if not action.parameters or not 'category' in action.parameters:
                 return False, f'Malformed {action.action_type} Action: Missing `category` parameter', 400
             else:
-                allowed_values = get_swagger_class_enum_values(CasualtyTag)
+                allowed_values = get_swagger_class_enum_values(CharacterTag)
                 tag = action.parameters.get('category')
                 if not tag in allowed_values:
                     return False, f'Malformed {action.action_type} Action: Invalid Tag `{tag}`', 400
         elif action.action_type == ActionType.CHECK_ALL_VITALS or action.action_type == ActionType.CHECK_PULSE \
             or action.action_type == ActionType.CHECK_RESPIRATION or action.action_type == ActionType.MOVE_TO_EVAC:
-            pass # Casualty was already checked
-        elif action.action_type == ActionType.DIRECT_MOBILE_CASUALTIES or action.action_type == ActionType.END_SCENARIO:
+            pass # Character was already checked
+        elif action.action_type == ActionType.DIRECT_MOBILE_CHARACTERS or action.action_type == ActionType.END_SCENARIO:
             pass # Requires nothing
         else:
             return False, f'Invalid action_type `{action.action_type}`', 400
@@ -188,22 +188,22 @@ class ITMActionHandler:
         return True, '', 0
 
 
-    def apply_treatment(self, action: Action, casualty: Casualty):
+    def apply_treatment(self, action: Action, character: Character):
         """
-        Apply a treatment to the specified casualty.
+        Apply a treatment to the specified character.
 
         Args:
-            casualty: The casualty to treat
+            character: The character to treat
             action: The action which specifies parameters such as the treatment to apply and
             the location to treat.
         """
-        # Remove injury from casualty if the treatment treats the injury at the specified location
+        # Remove injury from character if the treatment treats the injury at the specified location
         # NOTE: this assumes there is only one injury per location.
         supply_used = action.parameters.get('treatment', None)
-        for injury in casualty.injuries:
+        for injury in character.injuries:
             if injury.location == action.parameters.get('location', None):
                 if self._proper_treatment(supply_used, injury.name, injury.location):
-                    casualty.injuries.remove(injury)
+                    character.injuries.remove(injury)
 
         # Decrement supplies and increment time passed during treatment, even if the injury is untreated
         time_passed = 0
@@ -214,130 +214,130 @@ class ITMActionHandler:
                     time_passed = self.times_dict["treatmentTimes"][supply_used]
                 break
 
-        # Injuries and certain basic vitals are discovered when a casualty is treated.
-        for isso_casualty in self.current_isso.scenario.state.casualties:
-            if isso_casualty.id == casualty.id:
-                casualty.vitals.breathing = isso_casualty.vitals.breathing
-                casualty.vitals.conscious = isso_casualty.vitals.conscious
-                casualty.vitals.mental_status = isso_casualty.vitals.mental_status
-                self._reveal_injuries(isso_casualty, casualty)
-                casualty.visited = True
+        # Injuries and certain basic vitals are discovered when a character is treated.
+        for isso_character in self.current_isso.scenario.state.characters:
+            if isso_character.id == character.id:
+                character.vitals.breathing = isso_character.vitals.breathing
+                character.vitals.conscious = isso_character.vitals.conscious
+                character.vitals.mental_status = isso_character.vitals.mental_status
+                self._reveal_injuries(isso_character, character)
+                character.visited = True
 
         # Finally, return the elapsed time
         return time_passed
 
 
-    def check_all_vitals(self, casualty: Casualty):
+    def check_all_vitals(self, character: Character):
         """
-        Check all vitals of the specified casualty in the scenario.
+        Check all vitals of the specified character in the scenario.
 
         Args:
-            casualty: The casualty to check.
+            character: The character to check.
         """
-        for isso_casualty in self.current_isso.scenario.state.casualties:
-            if isso_casualty.id == casualty.id:
-                casualty.vitals = isso_casualty.vitals
-                self._reveal_injuries(isso_casualty, casualty)
-                casualty.visited = True
+        for isso_character in self.current_isso.scenario.state.characters:
+            if isso_character.id == character.id:
+                character.vitals = isso_character.vitals
+                self._reveal_injuries(isso_character, character)
+                character.visited = True
                 return self.times_dict['CHECK_ALL_VITALS']
 
 
-    def check_pulse(self, casualty: Casualty):
+    def check_pulse(self, character: Character):
         """
-        Process checking the pulse (heart rate) of the specified casualty.
+        Process checking the pulse (heart rate) of the specified character.
 
         Args:
-            casualty: The casualty to check.
+            character: The character to check.
         """
-        for isso_casualty in self.current_isso.scenario.state.casualties:
-            if isso_casualty.id == casualty.id:
-                casualty.vitals.breathing = isso_casualty.vitals.breathing
-                casualty.vitals.conscious = isso_casualty.vitals.conscious
-                casualty.vitals.mental_status = isso_casualty.vitals.mental_status
-                casualty.vitals.hrpmin = isso_casualty.vitals.hrpmin
-                self._reveal_injuries(isso_casualty, casualty)
-                casualty.visited = True
+        for isso_character in self.current_isso.scenario.state.characters:
+            if isso_character.id == character.id:
+                character.vitals.breathing = isso_character.vitals.breathing
+                character.vitals.conscious = isso_character.vitals.conscious
+                character.vitals.mental_status = isso_character.vitals.mental_status
+                character.vitals.hrpmin = isso_character.vitals.hrpmin
+                self._reveal_injuries(isso_character, character)
+                character.visited = True
                 return self.times_dict['CHECK_PULSE']
 
 
-    def check_respiration(self, casualty: Casualty):
+    def check_respiration(self, character: Character):
         """
-        Check the respiration of the specified casualty in the scenario.
+        Check the respiration of the specified character in the scenario.
 
         Args:
-            casualty: The casualty to check.
+            character: The character to check.
         """
-        for isso_casualty in self.current_isso.scenario.state.casualties:
-            if isso_casualty.id == casualty.id:
-                casualty.vitals.breathing = isso_casualty.vitals.breathing
-                casualty.vitals.conscious = isso_casualty.vitals.conscious
-                casualty.vitals.mental_status = isso_casualty.vitals.mental_status
-                self._reveal_injuries(isso_casualty, casualty)
-                casualty.visited = True
+        for isso_character in self.current_isso.scenario.state.characters:
+            if isso_character.id == character.id:
+                character.vitals.breathing = isso_character.vitals.breathing
+                character.vitals.conscious = isso_character.vitals.conscious
+                character.vitals.mental_status = isso_character.vitals.mental_status
+                self._reveal_injuries(isso_character, character)
+                character.visited = True
                 return self.times_dict['CHECK_RESPIRATION']
 
 
-    def direct_mobile_casualties(self):
+    def direct_mobile_characters(self):
         """
-        Direct mobile casualties to a safe zone (or equivalent).
+        Direct mobile characters to a safe zone (or equivalent).
         """
-        return self.times_dict["DIRECT_MOBILE_CASUALTIES"]
+        return self.times_dict["DIRECT_MOBILE_CHARACTERS"]
 
 
-    def move_to_evac(self, casualty: Casualty):
+    def move_to_evac(self, character: Character):
         """
-        Move the specified casualty to the evacuation zone (or equivalent).
+        Move the specified character to the evacuation zone (or equivalent).
 
         Args:
-            casualty: The casualty to move to evac
+            character: The character to move to evac
         """
         return self.times_dict["MOVE_TO_EVAC"]
 
 
-    def tag_casualty(self, casualty: Casualty, tag: str):
+    def tag_character(self, character: Character, tag: str):
         """
-        Tag the specified casualty with a triage category
+        Tag the specified character with a triage category
 
         Args:
-            casualty: The casualty to tag
-            tag: The tag to assign to the casualty.
+            character: The character to tag
+            tag: The tag to assign to the character.
         """
-        casualty.tag = tag
-        for isso_casualty in self.current_isso.scenario.state.casualties:
-            if isso_casualty.id == casualty.id:
-                return self.times_dict['TAG_CASUALTY']
+        character.tag = tag
+        for isso_character in self.current_isso.scenario.state.characters:
+            if isso_character.id == character.id:
+                return self.times_dict['TAG_CHARACTER']
 
 
-    def sitrep(self, casualty: Casualty):
+    def sitrep(self, character: Character):
         """
         ADM asks for a situation report (SITREP).
-        If a casualty is specified then only sitrep that casualty, otherwise sitrep all responsive casualties
+        If a character is specified then only sitrep that character, otherwise sitrep all responsive characters
 
         Args:
-            casualty: The casualty from which to request SITREP, or empty if requesting from all
+            character: The character from which to request SITREP, or empty if requesting from all
         """
         time_passed = 0
-        if casualty:
-            for isso_casualty in self.current_isso.scenario.state.casualties:
-                if isso_casualty.id == casualty.id:
-                    casualty.vitals.mental_status = isso_casualty.vitals.mental_status
-                    if casualty.vitals.mental_status != "UNRESPONSIVE":
-                        casualty.vitals.breathing = isso_casualty.vitals.breathing
-                        casualty.vitals.conscious = isso_casualty.vitals.conscious
-                        self._reveal_injuries(isso_casualty, casualty)
-                        casualty.visited = True
+        if character:
+            for isso_character in self.current_isso.scenario.state.characters:
+                if isso_character.id == character.id:
+                    character.vitals.mental_status = isso_character.vitals.mental_status
+                    if character.vitals.mental_status != "UNRESPONSIVE":
+                        character.vitals.breathing = isso_character.vitals.breathing
+                        character.vitals.conscious = isso_character.vitals.conscious
+                        self._reveal_injuries(isso_character, character)
+                        character.visited = True
                     time_passed = self.times_dict["SITREP"]
         else:
-            # takes time for each responsive casualty during sitrep
-            for curr_casualty in self.session.scenario.state.casualties:
-                for isso_casualty in self.current_isso.scenario.state.casualties:
-                    if isso_casualty.id == curr_casualty.id:
-                        curr_casualty.vitals.mental_status = isso_casualty.vitals.mental_status
-                        if curr_casualty.vitals.mental_status != "UNRESPONSIVE":
-                            curr_casualty.vitals.conscious = isso_casualty.vitals.conscious
-                            curr_casualty.vitals.breathing = isso_casualty.vitals.breathing
-                            self._reveal_injuries(isso_casualty, curr_casualty)
-                            curr_casualty.visited = True
+            # takes time for each responsive character during sitrep
+            for curr_character in self.session.scenario.state.characters:
+                for isso_character in self.current_isso.scenario.state.characters:
+                    if isso_character.id == curr_character.id:
+                        curr_character.vitals.mental_status = isso_character.vitals.mental_status
+                        if curr_character.vitals.mental_status != "UNRESPONSIVE":
+                            curr_character.vitals.conscious = isso_character.vitals.conscious
+                            curr_character.vitals.breathing = isso_character.vitals.breathing
+                            self._reveal_injuries(isso_character, curr_character)
+                            curr_character.visited = True
                         time_passed += self.times_dict["SITREP"]
 
         return time_passed
@@ -353,45 +353,45 @@ class ITMActionHandler:
         """
         # keeps track of time passed based on action taken (in seconds)
         time_passed = 0
-        # Look up casualty action is applied to
-        casualty = next((casualty for casualty in self.session.scenario.state.casualties \
-                         if casualty.id == action.casualty_id), None)
+        # Look up character action is applied to
+        character = next((character for character in self.session.scenario.state.characters \
+                         if character.id == action.character_id), None)
 
         parameters = {"action_type": action.action_type, "session_id": self.session.session_id}
-        if casualty:
-            parameters['casualty'] = action.casualty_id
+        if character:
+            parameters['character'] = action.character_id
         match action.action_type:
             case ActionType.APPLY_TREATMENT:
-                time_passed = self.apply_treatment(action, casualty)
+                time_passed = self.apply_treatment(action, character)
                 parameters['treatment'] = action.parameters['treatment']
                 parameters['location'] = action.parameters['location']
             case ActionType.CHECK_ALL_VITALS:
-                time_passed = self.check_all_vitals(casualty)
+                time_passed = self.check_all_vitals(character)
             case ActionType.CHECK_PULSE:
-                time_passed = self.check_pulse(casualty)
+                time_passed = self.check_pulse(character)
             case ActionType.CHECK_RESPIRATION:
-                time_passed = self.check_respiration(casualty)
-            case ActionType.DIRECT_MOBILE_CASUALTIES:
-                time_passed = self.direct_mobile_casualties()
+                time_passed = self.check_respiration(character)
+            case ActionType.DIRECT_MOBILE_CHARACTERS:
+                time_passed = self.direct_mobile_characters()
             case ActionType.MOVE_TO_EVAC:
-                time_passed = self.move_to_evac(casualty)
+                time_passed = self.move_to_evac(character)
             case ActionType.SITREP:
-                time_passed = self.sitrep(casualty)
-            case ActionType.TAG_CASUALTY:
+                time_passed = self.sitrep(character)
+            case ActionType.TAG_CHARACTER:
                 # The tag is specified in the category parameter
-                time_passed = self.tag_casualty(casualty, action.parameters.get('category'))
+                time_passed = self.tag_character(character, action.parameters.get('category'))
                 parameters['category'] = action.parameters['category']
 
-        # TODO ITM-72: Enhance casualty deterioration/amelioration
+        # TODO ITM-72: Enhance character deterioration/amelioration
         # Ultimately, this should update values based DIRECTLY on how the sim does it
         """
-        time_elapsed_during_treatment = self.current_isso.casualty_simulator.treat_casualty(
-            casualty_id=action.casualty_id,
+        time_elapsed_during_treatment = self.current_isso.character_simulator.treat_character(
+            character_id=action.character_id,
             supply=action.justification
         )
 
         self.time_elapsed_scenario_time += time_elapsed_during_treatment + time_passed
-        self.current_isso.casualty_simulator.update_vitals(time_elapsed_during_treatment)
+        self.current_isso.character_simulator.update_vitals(time_elapsed_during_treatment)
         self.scenario.state.elapsed_time = self.time_elapsed_scenario_time
         """
 

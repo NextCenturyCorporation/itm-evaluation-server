@@ -46,7 +46,7 @@ class ITMScenarioSession:
         self.scenario: Scenario = None
         self.first_answer: bool = True
         # hacky stuff for adept
-        self.casualty_ids = []
+        self.character_ids = []
         self.adept_evac_happened = False
         # adept or ST
         self.scenario_rules = ""
@@ -148,10 +148,10 @@ class ITMScenarioSession:
 
     # Hide vitals and hidden injuries at start of scenario
     def _clear_hidden_data(self):
-        for casualty in self.scenario.state.casualties:
-            casualty.injuries[:] = \
-                [injury for injury in casualty.injuries if injury.name not in self.current_isso.hidden_injury_types]
-            casualty.vitals = Vitals()
+        for character in self.scenario.state.characters:
+            character.injuries[:] = \
+                [injury for injury in character.injuries if injury.name not in self.current_isso.hidden_injury_types]
+            character.vitals = Vitals()
 
 
     def get_alignment_target(self, scenario_id: str) -> AlignmentTarget:
@@ -367,7 +367,7 @@ class ITMScenarioSession:
         probe_id = None
         choice_id = None
         tag = action.parameters.get('category')
-        if action.casualty_id == 'Mike':
+        if action.character_id == 'Mike':
             probe_id = 'adept-september-demo-probe-3'
             match tag:
                 case 'MINIMAL':
@@ -378,7 +378,7 @@ class ITMScenarioSession:
                     choice_id = 's1-p3-choice3'
                 case 'EXPECTANT':
                     choice_id = 's1-p3-choice4'
-        elif action.casualty_id == 'Civilian':
+        elif action.character_id == 'Civilian':
             probe_id = 'adept-september-demo-probe-4'
             match tag:
                 case 'MINIMAL':
@@ -448,7 +448,7 @@ class ITMScenarioSession:
         if not action.action_id:
             return None
 
-        if action.action_type == 'TAG_CASUALTY':
+        if action.action_type == 'TAG_CHARACTER':
             return None # These are handled separately
 
         currentProbe = self.current_isso.probe_system.probe_yamls[self.current_isso.probe_system.current_probe_index]
@@ -479,7 +479,7 @@ class ITMScenarioSession:
         if not successful:
             return message, code
 
-        print(f"--> ADM chose action {body.action_type} with casualty {body.casualty_id} and parameters {body.parameters}.")
+        print(f"--> ADM chose action {body.action_type} with character {body.character_id} and parameters {body.parameters}.")
 
         # Only the ADM can end the scenario
         if body.action_type == 'END_SCENARIO':
@@ -494,7 +494,7 @@ class ITMScenarioSession:
             return self.scenario.state
 
         # Special handling for ADEPT tagging
-        if self.scenario_rules == "ADEPT" and body.action_type == 'TAG_CASUALTY':
+        if self.scenario_rules == "ADEPT" and body.action_type == 'TAG_CHARACTER':
             self.respond_to_tag_probe(action=body)
 
         # Map action to probe response
@@ -505,15 +505,15 @@ class ITMScenarioSession:
             self.action_handler.process_action(action=body)
             return self.scenario.state
 
-        # Keep track of which casualty_id's have been addressed in this probe
-        if not body.casualty_id in self.casualty_ids:
-            self.casualty_ids.append(body.casualty_id)
+        # Keep track of which character_id's have been addressed in this probe
+        if not body.character_id in self.character_ids:
+            self.character_ids.append(body.character_id)
 
         # Remove option taken from being returned in get_available_actions
-        # NOTE: this code currently keys off of the action having a casualty_id to determine if we remove the action
+        # NOTE: this code currently keys off of the action having a character_id to determine if we remove the action
         # from the list of available actions.  This behavior is specific to the September milestone and will have to
         # be revisited/revised.
-        if body.casualty_id:
+        if body.character_id:
             self.current_isso.probe_system.probe_yamls[self.current_isso.probe_system.current_probe_index].options = [
                 option for option in self.current_isso.probe_system.probe_yamls[self.current_isso.probe_system.current_probe_index].options
                 if option.assoc_action["action_id"] != body.action_id
@@ -529,19 +529,19 @@ class ITMScenarioSession:
 
         # PROBE HANDLING FOR ADEPT
         if self.scenario_rules == "ADEPT":
-            # Move on to next probe when all casualty id's have at least one action towards them
-            unanswered_casualty_id = False
+            # Move on to next probe when all character id's have at least one action towards them
+            unanswered_character_id = False
             for option in self.current_isso.probe_system.probe_yamls[self.current_isso.probe_system.current_probe_index].options:
-                if option.assoc_action.get("casualty_id") not in self.casualty_ids:
-                    unanswered_casualty_id = True
+                if option.assoc_action.get("character_id") not in self.character_ids:
+                    unanswered_character_id = True
                     break  # No need to continue checking once we find one unmatched id
             
             # Update scenario state
             self.action_handler.process_action(action=body)
             if body.action_type == "MOVE_TO_EVAC":
                 self.adept_evac_happened = True
-            # if no unanswered casualties left, (or no options left)
-            elif not unanswered_casualty_id or not self.current_isso.probe_system.probe_yamls[self.current_isso.probe_system.current_probe_index]:
+            # if no unanswered characters left, (or no options left)
+            elif not unanswered_character_id or not self.current_isso.probe_system.probe_yamls[self.current_isso.probe_system.current_probe_index]:
                 self.end_probe()
         else:
             # PROBE HANDLING FOR SOARTECH
@@ -555,8 +555,8 @@ class ITMScenarioSession:
         self.current_isso.probe_system.current_probe_index += 1
         self.scenario.state.scenario_complete = \
         self.current_isso.probe_system.probe_count <= 0
-        # reset casualty_id list when going to next probe
-        self.casualty_ids = []
+        # reset character_id list when going to next probe
+        self.character_ids = []
         self.first_answer = True
         # Copy certain state from probe to scenario
         if not self.scenario.state.scenario_complete:
@@ -609,8 +609,8 @@ class ITMScenarioSession:
             if self.scenario_rules == 'SOARTECH' or self.adept_evac_happened:
                 # Allow ADMs to end the scenario, usually
                 actions.append(Action(action_id="end_scenario_action", action_type='END_SCENARIO', unstructured="End the scenario"))
-            # Always allow tagging a casualty
-            actions.append(Action(action_id="tag_action", action_type='TAG_CASUALTY', unstructured="Tag a casualty"))
+            # Always allow tagging a character
+            actions.append(Action(action_id="tag_action", action_type='TAG_CHARACTER', unstructured="Tag a character"))
         else:
              return 'Scenario Complete', 400
 

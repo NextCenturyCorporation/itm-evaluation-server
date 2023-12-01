@@ -192,7 +192,6 @@ paths:
         explode: true
         schema:
           type: string
-        name: target_id
       responses:
         "200":
           description: Successful Response
@@ -410,7 +409,7 @@ components:
             - type: Gunfire
               severity: 0.5
           scenario_complete: false
-          casualties:
+          characters:
           - injuries:
             - severity: 0.8
               name: Laceration
@@ -576,13 +575,13 @@ components:
           description: a list of medical supplies available to the DM
           items:
             $ref: '#/components/schemas/Supplies'
-        casualties:
+        characters:
           type: array
-          description: the list of casualties in the scenario
+          description: the list of characters in the scenario
           items:
-            $ref: '#/components/schemas/Casualty'
+            $ref: '#/components/schemas/Character'
       description: the current tactical & environmental state of the scenario and
-        of its casualties.
+        of its characters.
       example:
         mission:
           unstructured: Place sensors in and around the jungle base
@@ -617,7 +616,7 @@ components:
           - type: Gunfire
             severity: 0.5
         scenario_complete: false
-        casualties:
+        characters:
         - injuries:
           - severity: 0.8
             name: Laceration
@@ -838,7 +837,7 @@ components:
       - Hemostatic gauze
       - Decompression Needle
       - Nasopharyngeal airway
-    Casualty:
+    Character:
       required:
       - id
       - unstructured
@@ -846,33 +845,33 @@ components:
       properties:
         id:
           type: string
-          description: "string, globally unique casualty identifier"
+          description: "string, globally unique character identifier"
         unstructured:
           type: string
-          description: natural language text description of the casualty
+          description: natural language text description of the character
         name:
           type: string
-          description: "the name of the casualty, omit if unknown"
+          description: "the name of the character, omit if unknown"
           example: Mary
         relationship:
-          $ref: '#/components/schemas/CasualtyRelationship'
+          $ref: '#/components/schemas/CharacterRelationship'
         demographics:
           $ref: '#/components/schemas/Demographics'
         injuries:
           type: array
-          description: an array of casualty injuries
+          description: an array of character injuries
           items:
             $ref: '#/components/schemas/Injury'
         vitals:
           $ref: '#/components/schemas/Vitals'
         visited:
           type: boolean
-          description: whether or not this casualty has been visited in the current
+          description: whether or not this character has been visited in the current
             scenario
           default: false
         tag:
-          $ref: '#/components/schemas/CasualtyTag'
-      description: encapulation of a single casualty in the scenario
+          $ref: '#/components/schemas/CharacterTag'
+      description: encapulation of a single character in the scenario
       example:
         injuries:
         - severity: 0.8
@@ -896,18 +895,18 @@ components:
           sex: F
           rank: Marine
           age: 32
-    CasualtyRelationship:
+    CharacterRelationship:
       type: string
-      description: the relationship between the medic and the casualty
+      description: the relationship between the medic and the character
       example: NONE
       enum:
       - NONE
       - ALLY
       - FRIEND
       - HOSTILE
-    CasualtyTag:
+    CharacterTag:
       type: string
-      description: "the tag assigned to this casualty, omit if untagged"
+      description: "the tag assigned to this character, omit if untagged"
       example: DELAYED
       enum:
       - MINIMAL
@@ -919,28 +918,28 @@ components:
       properties:
         age:
           type: integer
-          description: "the age of the casualty, omit if unknown"
+          description: "the age of the character, omit if unknown"
           format: int16
           example: 32
         sex:
           $ref: '#/components/schemas/DemographicsSex'
         rank:
           $ref: '#/components/schemas/DemographicsRank'
-      description: demographic profile of a casualty
+      description: demographic profile of a character
       example:
         sex: F
         rank: Marine
         age: 32
     DemographicsSex:
       type: string
-      description: "the sex of the casualty, omit if unknown/indeterminate"
+      description: "the sex of the character, omit if unknown/indeterminate"
       example: F
       enum:
       - M
       - F
     DemographicsRank:
       type: string
-      description: "The military status of the casualty, omit if unknown"
+      description: "The military status of the character, omit if unknown"
       enum:
       - Marine
       - FMF Corpsman
@@ -962,7 +961,7 @@ components:
           type: number
           description: the apparent severity of the injury from 0 (low) to 1.0 (high)
           example: 0.8
-      description: An injury on a casualty. The name field defines a controlled vocabulary.
+      description: An injury on a character. The name field defines a controlled vocabulary.
       example:
         severity: 0.8
         name: Laceration
@@ -983,7 +982,7 @@ components:
       - Burn
     InjuryLocation:
       type: string
-      description: the injury location on the casualty's body
+      description: the injury location on the character's body
       example: right forearm
       enum:
         - right forearm
@@ -1015,7 +1014,7 @@ components:
       properties:
         conscious:
           type: boolean
-          description: whether or not the casualty is conscious
+          description: whether or not the character is conscious
           example: true
         mental_status:
           $ref: '#/components/schemas/VitalsMentalStatus'
@@ -1026,7 +1025,7 @@ components:
           description: heart rate in beats per minute
           format: int16
           example: 150
-      description: "vital levels for a casualty, omit properties if unknown"
+      description: "vital levels for a character, omit properties if unknown"
       example:
         breathing: NORMAL
         conscious: true
@@ -1034,7 +1033,7 @@ components:
         hrpmin: 150
     VitalsBreathing:
       type: string
-      description: a descriptor for the casualty's breathing
+      description: a descriptor for the character's breathing
       example: NORMAL
       enum:
       - NORMAL
@@ -1043,7 +1042,7 @@ components:
       - NONE
     VitalsMentalStatus:
       type: string
-      description: description of the casualty's overall demeanor
+      description: description of the character's overall demeanor
       example: CALM
       enum:
       - AGONY
@@ -1062,22 +1061,22 @@ components:
           description: action ID
         action_type:
           $ref: '#/components/schemas/ActionType'
-        casualty_id:
+        character_id:
           type: string
-          description: The ID of the casualty being acted upon
+          description: The ID of the character being acted upon
         unstructured:
           type: string
           description: a plain text unstructured description of the action
-          example: "Check pulse of casualty [1234]."
+          example: "Check pulse of character [1234]."
         justification:
           type: string
           description: A justification of the action taken
-          example: Casualty is the VIP of the scenario
+          example: Character is the VIP of the scenario
         kdma_association:
           type: object
           additionalProperties:
             type: string
-          description: KDML associations with this action used in training
+          description: KDMA associations with this action used in training
           example:
           - Mission: 0.8
         parameters:
@@ -1092,11 +1091,11 @@ components:
       example:
         action_id: action_id
         action_type: APPLY_TREATMENT
-        casualty_id: casualty_id
-        unstructured: "Check pulse of casualty [1234]."
+        character_id: character_id
+        unstructured: "Check pulse of character [1234]."
         kdma_association:
         - Mission: 0.8
-        justification: Casualty is the VIP of the scenario
+        justification: Character is the VIP of the scenario
         parameters:
         - treatment: Tourniquet
         - location: right forearm
@@ -1109,11 +1108,11 @@ components:
       - CHECK_ALL_VITALS
       - CHECK_PULSE
       - CHECK_RESPIRATION
-      - DIRECT_MOBILE_CASUALTIES
+      - DIRECT_MOBILE_CHARACTERS
       - END_SCENARIO
       - MOVE_TO_EVAC
       - SITREP
-      - TAG_CASUALTY
+      - TAG_CHARACTER
   responses:
     server_error:
       description: An exception occurred on the server; see returned error string.

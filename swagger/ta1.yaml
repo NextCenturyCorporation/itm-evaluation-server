@@ -47,7 +47,7 @@ components:
         prompt:
           type: string
           description: a plain text natural language question for the DM
-          example: Which casualty do you treat first?
+          example: Which character do you treat first?
         state:
           $ref: 'swagger.yaml#/components/schemas/State'
         options:

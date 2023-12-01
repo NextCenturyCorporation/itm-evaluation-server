@@ -56,7 +56,7 @@ class Demographics(Model):
     def age(self) -> int:
         """Gets the age of this Demographics.
 
-        the age of the casualty, omit if unknown  # noqa: E501
+        the age of the character, omit if unknown  # noqa: E501
 
         :return: The age of this Demographics.
         :rtype: int
@@ -67,7 +67,7 @@ class Demographics(Model):
     def age(self, age: int):
         """Sets the age of this Demographics.
 
-        the age of the casualty, omit if unknown  # noqa: E501
+        the age of the character, omit if unknown  # noqa: E501
 
         :param age: The age of this Demographics.
         :type age: int

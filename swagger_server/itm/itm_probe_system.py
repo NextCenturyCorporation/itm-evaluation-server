@@ -3,11 +3,11 @@ from dataclasses import dataclass
 from typing import List
 from abc import ABC, abstractmethod
 from swagger_server.models import (
-    Casualty,
+    Character,
     Scenario
 )
 from swagger_server.models.probe import Probe  # noqa: F401,E501
-from .itm_casualty_simulator import CasualtySimulation
+from .itm_character_simulator import CharacterSimulation
 
 
 @dataclass
@@ -41,7 +41,7 @@ class ITMProbeSystem(ABC):
 
         Args:
             probe_id: The ID of the probe.
-            casualty_id: The ID of the casualty chosen to respond to the probe.
+            character_id: The ID of the character chosen to respond to the probe.
             explanation: An explanation for the response (optional).
 
         Returns:
@@ -51,7 +51,7 @@ class ITMProbeSystem(ABC):
         probe.choice = choice
         probe.justification = justification
         # Possibly add assessed checks from probe answers
-        # for p in self.scenario.state.casualties:
+        # for p in self.scenario.state.characters:
         #     if p.id == choice:
         #         p.assessed = True
         #         break
@@ -63,21 +63,21 @@ class ITMProbeSystem(ABC):
     def _get_probe_option_id(self):
         return "probe_option_" + str(uuid.uuid4())
         
-    def _find_this_casualty_simulation(self, casualty: Casualty, casualty_simulations: List[CasualtySimulation],):
+    def _find_this_character_simulation(self, character: Character, character_simulations: List[CharacterSimulation],):
         """
-        Find the casualty simulation object for a specific casualty.
+        Find the character simulation object for a specific character.
 
         Args:
-            casualty (casualty): The casualty object to find its matching simulation.
-            casualty_simulations (list): List of casualty simulation objects.
+            character (character): The character object to find its matching simulation.
+            character_simulations (list): List of character simulation objects.
 
         Returns:
-            CasualtySimulation or None: The simulation object for the specified casualty, or None if no simulation is found.
+            CharacterSimulation or None: The simulation object for the specified character, or None if no simulation is found.
         """
 
-        this_casualties_simulation = None
-        for casualty_simulation in casualty_simulations:
-            if casualty_simulation.casualty.id == casualty.id:
-                this_casualties_simulation = casualty_simulation
+        this_characters_simulation = None
+        for character_simulation in character_simulations:
+            if character_simulation.character.id == character.id:
+                this_characters_simulation = character_simulation
                 break
-        return this_casualties_simulation
+        return this_characters_simulation

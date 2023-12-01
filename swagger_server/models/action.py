@@ -15,15 +15,15 @@ class Action(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, action_id: str=None, action_type: ActionType=None, casualty_id: str=None, unstructured: str=None, justification: str=None, kdma_association: Dict[str, str]=None, parameters: Dict[str, str]=None):  # noqa: E501
+    def __init__(self, action_id: str=None, action_type: ActionType=None, character_id: str=None, unstructured: str=None, justification: str=None, kdma_association: Dict[str, str]=None, parameters: Dict[str, str]=None):  # noqa: E501
         """Action - a model defined in Swagger
 
         :param action_id: The action_id of this Action.  # noqa: E501
         :type action_id: str
         :param action_type: The action_type of this Action.  # noqa: E501
         :type action_type: ActionType
-        :param casualty_id: The casualty_id of this Action.  # noqa: E501
-        :type casualty_id: str
+        :param character_id: The character_id of this Action.  # noqa: E501
+        :type character_id: str
         :param unstructured: The unstructured of this Action.  # noqa: E501
         :type unstructured: str
         :param justification: The justification of this Action.  # noqa: E501
@@ -36,7 +36,7 @@ class Action(Model):
         self.swagger_types = {
             'action_id': str,
             'action_type': ActionType,
-            'casualty_id': str,
+            'character_id': str,
             'unstructured': str,
             'justification': str,
             'kdma_association': Dict[str, str],
@@ -46,7 +46,7 @@ class Action(Model):
         self.attribute_map = {
             'action_id': 'action_id',
             'action_type': 'action_type',
-            'casualty_id': 'casualty_id',
+            'character_id': 'character_id',
             'unstructured': 'unstructured',
             'justification': 'justification',
             'kdma_association': 'kdma_association',
@@ -54,7 +54,7 @@ class Action(Model):
         }
         self._action_id = action_id
         self._action_type = action_type
-        self._casualty_id = casualty_id
+        self._character_id = character_id
         self._unstructured = unstructured
         self._justification = justification
         self._kdma_association = kdma_association
@@ -120,27 +120,27 @@ class Action(Model):
         self._action_type = action_type
 
     @property
-    def casualty_id(self) -> str:
-        """Gets the casualty_id of this Action.
+    def character_id(self) -> str:
+        """Gets the character_id of this Action.
 
-        The ID of the casualty being acted upon  # noqa: E501
+        The ID of the character being acted upon  # noqa: E501
 
-        :return: The casualty_id of this Action.
+        :return: The character_id of this Action.
         :rtype: str
         """
-        return self._casualty_id
+        return self._character_id
 
-    @casualty_id.setter
-    def casualty_id(self, casualty_id: str):
-        """Sets the casualty_id of this Action.
+    @character_id.setter
+    def character_id(self, character_id: str):
+        """Sets the character_id of this Action.
 
-        The ID of the casualty being acted upon  # noqa: E501
+        The ID of the character being acted upon  # noqa: E501
 
-        :param casualty_id: The casualty_id of this Action.
-        :type casualty_id: str
+        :param character_id: The character_id of this Action.
+        :type character_id: str
         """
 
-        self._casualty_id = casualty_id
+        self._character_id = character_id
 
     @property
     def unstructured(self) -> str:
@@ -192,7 +192,7 @@ class Action(Model):
     def kdma_association(self) -> Dict[str, str]:
         """Gets the kdma_association of this Action.
 
-        KDML associations with this action used in training  # noqa: E501
+        KDMA associations with this action used in training  # noqa: E501
 
         :return: The kdma_association of this Action.
         :rtype: Dict[str, str]
@@ -203,7 +203,7 @@ class Action(Model):
     def kdma_association(self, kdma_association: Dict[str, str]):
         """Sets the kdma_association of this Action.
 
-        KDML associations with this action used in training  # noqa: E501
+        KDMA associations with this action used in training  # noqa: E501
 
         :param kdma_association: The kdma_association of this Action.
         :type kdma_association: Dict[str, str]

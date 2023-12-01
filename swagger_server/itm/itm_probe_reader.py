@@ -123,7 +123,7 @@ class ITMProbeReader(ITMProbeSystem):
             probe.choice = choice
             probe.justification = justification
         # Possibly add assessed checks from probe answers
-        # for p in self.scenario.state.casualties:
+        # for p in self.scenario.state.characters:
         #     if p.id == choice:
         #         p.assessed = True
         #         break
