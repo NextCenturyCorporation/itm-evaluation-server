@@ -70,5 +70,5 @@ target/
 generated
 swagger_server/api
 
-# local db output
+# local history output
 itm_history_output

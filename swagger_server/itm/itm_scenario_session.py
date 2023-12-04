@@ -73,7 +73,7 @@ class ITMScenarioSession:
 
     def _end_scenario(self):
         """
-        End the current scenario and store history to mongo and json file.
+        End the current scenario and store history to json file.
 
         Returns:
             The session alignment from TA1.
