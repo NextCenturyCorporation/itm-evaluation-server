@@ -14,7 +14,6 @@ from swagger_server.models import (
     Vitals
 )
 from swagger_server.models.probe_response import ProbeResponse
-from .itm_database.itm_mongo import MongoDB
 from .itm_session_scenario_object import (
     ITMSessionScenarioObjectHandler,
     ITMSessionScenarioObject
@@ -57,10 +56,8 @@ class ITMScenarioSession:
         self.history: ITMHistory = ITMHistory()
         # This determines whether the server makes calls to TA1
         self.ta1_integration = False
-    
-        # This saves the history to MongoDB
-        self.save_to_database = False
-        self.mongo_db = None
+        # This determines whether the server saves history to JSON
+        self.save_history = False
 
 
     def _check_scenario_id(self, scenario_id: str) -> None:
@@ -76,7 +73,7 @@ class ITMScenarioSession:
 
     def _end_scenario(self):
         """
-        End the current scenario and store history to mongo and json file.
+        End the current scenario and store history to json file.
 
         Returns:
             The session alignment from TA1.
@@ -98,21 +95,8 @@ class ITMScenarioSession:
             )
         print(f"--> Got session alignment score {session_alignment_score} from TA1.")
 
-        if self.save_to_database:
-            if not self.mongo_db: # one-time initialization
-                HOST = os.getenv("DB_HOST")
-                if HOST is None or HOST == "":
-                    HOST = "localhost"
-                self.mongo_db = MongoDB('dashroot', 'dashr00tp@ssw0rd', HOST, '27017', 'dashboard')
-            self.mongo_db.insert_data('scenarios', self.scenario.to_dict())
-            insert_id = self.mongo_db.insert_data('test', {"history": self.history.get_history()})
-            retrieved_data = self.mongo_db.retrieve_data('test', insert_id)
-            # Write the retrieved data to a local JSON file
-            self.mongo_db.write_to_json_file(retrieved_data)
-        else:
-            # This can be uncommented during development/debugging.  Eventually it will be used instead of DB.
-            #self.history.write_to_json_file()
-            pass
+        if self.save_history:
+            self.history.write_to_json_file()
 
         self.history.clear_history()
         return session_alignment_score
@@ -315,12 +299,8 @@ class ITMScenarioSession:
         self.session_type = session_type
         self.history.clear_history()
 
-        # Save to database based on adm_name.
-        if self.adm_name.endswith("_db_"):
-            self.adm_name = self.adm_name.removesuffix("_db_")
-            self.save_to_database = True
         if self.session_type == 'eval':
-            self.save_to_database = True
+            self.save_history = True
             self.ta1_integration = True
             max_scenarios = None
 
@@ -573,12 +553,13 @@ class ITMScenarioSession:
         if not self.kdma_training:
             return 'Session alignment can only be requested during a training session', 403
 
-        session_alignment_score = 0.0
+        session_alignment :AlignmentResults = None
         if self.ta1_integration == True:
-            session_alignment :AlignmentResults = \
+            session_alignment = \
                 self.current_isso.ta1_controller.get_session_alignment(target_id=target_id)
-            session_alignment_score = session_alignment.score
-        print(f"--> Got session alignment score {session_alignment_score} from TA1 for alignment target id {target_id}.")
+        else:
+            session_alignment = AlignmentResults(None, target_id, 0.0, None)
+        print(f"--> Got session alignment score {session_alignment.score} from TA1 for alignment target id {target_id}.")
         return session_alignment
 
 
