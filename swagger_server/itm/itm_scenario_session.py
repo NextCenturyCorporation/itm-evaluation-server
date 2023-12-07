@@ -20,6 +20,7 @@ from .itm_session_scenario_object import (
 )
 from .itm_action_handler import ITMActionHandler
 from .itm_history import ITMHistory
+from .itm_ta1_controller import ITMTa1Controller
 
 class ITMScenarioSession:
     """
@@ -44,6 +45,9 @@ class ITMScenarioSession:
         self.custom_scenario_count = 0 # when scenario_id is specified in start_scenario
         self.scenario: Scenario = None
         self.first_answer: bool = True
+        self.ta1_controllers = {}
+        self.ta1_controller: ITMTa1Controller = None
+
         # hacky stuff for adept
         self.character_ids = []
         self.adept_evac_happened = False
@@ -85,12 +89,12 @@ class ITMScenarioSession:
 
         if self.ta1_integration == True:
             session_alignment :AlignmentResults = \
-                self.current_isso.ta1_controller.get_session_alignment()
+                self.ta1_controller.get_session_alignment()
             session_alignment_score = session_alignment.score
             self.history.add_history(
                 "TA1 Session Alignment",
-                {"session_id": self.current_isso.ta1_controller.session_id,
-                "target_id": self.current_isso.ta1_controller.alignment_target_id},
+                {"session_id": self.ta1_controller.session_id,
+                "target_id": self.ta1_controller.alignment_target_id},
                 session_alignment.to_dict()
             )
         print(f"--> Got session alignment score {session_alignment_score} from TA1.")
@@ -234,17 +238,20 @@ class ITMScenarioSession:
                 {"session_id": self.session_id, "adm_name": self.adm_name},
                 self.scenario.to_dict())
 
-            if self.ta1_integration == True:
-                ta1_session_id = self.current_isso.ta1_controller.new_session()
-                self.history.add_history(
-                    "TA1 Session ID", {}, ta1_session_id
-                )
-                print(f"--> Got new session_id {ta1_session_id} from TA1.")
-                scenario_alignment = self.current_isso.ta1_controller.get_alignment_target()
+            if self.ta1_integration:
+                self.ta1_controller = self.ta1_controllers[self.scenario_rules.lower()]
+                if not self.ta1_controller.session_id \
+                        or not self.kdma_training: # When training, allow TA1 sessions to span scenarios
+                    ta1_session_id = self.ta1_controller.new_session()
+                    self.history.add_history(
+                        "TA1 Session ID", {}, ta1_session_id
+                    )
+                    print(f"--> Got new session_id {ta1_session_id} from TA1.")
+                scenario_alignment = self.ta1_controller.get_alignment_target()
                 print(f"--> Got alignment target {scenario_alignment} from TA1.")
                 self.history.add_history(
                     "TA1 Alignment Target Data",
-                    {"session_id": self.current_isso.ta1_controller.session_id,
+                    {"session_id": self.ta1_controller.session_id,
                     "scenario_id": self.current_isso.scenario.id},
                     scenario_alignment
                 )
@@ -338,6 +345,7 @@ class ITMScenarioSession:
             itm_scenario_object = \
                 scenario_object_handler.generate_session_scenario_object()
             self.session_issos.append(itm_scenario_object)
+            self.ta1_controllers[scenario_object_handler.scene_type] = itm_scenario_object.ta1_controller
         self.current_isso_index = 0
 
         return self.session_id
@@ -398,17 +406,17 @@ class ITMScenarioSession:
             )
 
         if self.ta1_integration == True:
-            self.current_isso.ta1_controller.post_probe(body)
+            self.ta1_controller.post_probe(body)
             probe_response_alignment = \
-                self.current_isso.ta1_controller.get_probe_response_alignment(
+                self.ta1_controller.get_probe_response_alignment(
                 body.scenario_id,
                 body.probe_id
             )
             self.history.add_history(
                 "TA1 Probe Response Alignment",
-                {"session_id": self.current_isso.ta1_controller.session_id,
+                {"session_id": self.ta1_controller.session_id,
                 "scenario_id": body.scenario_id,
-                "target_id": self.current_isso.ta1_controller.alignment_target_id,
+                "target_id": self.ta1_controller.alignment_target_id,
                 "probe_id": body.probe_id},
                 probe_response_alignment
             )
@@ -556,7 +564,7 @@ class ITMScenarioSession:
         session_alignment :AlignmentResults = None
         if self.ta1_integration == True:
             session_alignment = \
-                self.current_isso.ta1_controller.get_session_alignment(target_id=target_id)
+                self.ta1_controller.get_session_alignment(target_id=target_id)
         else:
             session_alignment = AlignmentResults(None, target_id, 0.0, None)
         print(f"--> Got session alignment score {session_alignment.score} from TA1 for alignment target id {target_id}.")
