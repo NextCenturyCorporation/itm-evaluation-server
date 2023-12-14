@@ -26,6 +26,7 @@ class ITMSessionScenarioObjectHandler:
 
     def __init__(self, yaml_path) -> None:
         self.yaml_path = yaml_path
+        self.scene_type = 'adept' if 'adept' in self.yaml_path else 'soartech'
 
     def generate_session_scenario_object(self):
         # isso is short for ITM Session Scenario Object
@@ -43,10 +44,9 @@ class ITMSessionScenarioObjectHandler:
 
         isso.scenario.start_time = datetime.fromtimestamp(time()).strftime("%Y-%m-%d %H:%M:%S.%f")
 
-        scene_type = 'adept' if 'adept' in self.yaml_path else 'soartech'
         isso.ta1_controller = ITMTa1Controller(
             isso.alignment_target_reader.alignment_target.id,
-            scene_type
+            self.scene_type
         )
 
         return isso

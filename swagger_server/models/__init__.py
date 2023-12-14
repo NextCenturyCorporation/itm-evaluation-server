@@ -26,7 +26,6 @@ from swagger_server.models.scenario import Scenario
 from swagger_server.models.state import State
 from swagger_server.models.supplies import Supplies
 from swagger_server.models.supply_type import SupplyType
-from swagger_server.models.tag_label import TagLabel
 from swagger_server.models.threat import Threat
 from swagger_server.models.threat_state import ThreatState
 from swagger_server.models.vitals import Vitals
