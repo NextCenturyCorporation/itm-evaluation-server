@@ -2,10 +2,10 @@ import copy
 import yaml
 from typing import List, Tuple
 
-from .itm_casualty_simulator import CasualtySimulation
+from .itm_character_simulator import CharacterSimulation
 from .itm_supplies import ITMSupplies, SupplyDetails
 
-from swagger_server.models.casualty import Casualty
+from swagger_server.models.character import Character
 from swagger_server.models.demographics import Demographics
 from swagger_server.models.environment import Environment
 from swagger_server.models.injury import Injury
@@ -14,7 +14,6 @@ from swagger_server.models.scenario import Scenario
 from swagger_server.models.state import State
 from swagger_server.models.supplies import Supplies
 from swagger_server.models.threat_state import ThreatState
-from swagger_server.models.triage_category import TriageCategory
 from swagger_server.models.vitals import Vitals
 
 
@@ -32,15 +31,14 @@ class ITMScenarioReader:
             self.yaml_data = yaml.safe_load(file)
 
     def read_scenario_from_yaml(self) -> \
-            Tuple[Scenario, List[CasualtySimulation], List[ITMSupplies], SupplyDetails]:
+            Tuple[Scenario, List[CharacterSimulation], List[ITMSupplies], SupplyDetails]:
         """
-        Generate a Scenario and casualty simulations from the YAML data.
+        Generate a Scenario and character simulations from the YAML data.
 
         Returns:
-            A tuple containing the generated Scenario, a list of CasualtySimulation objects, and SupplysDetails objects.
+            A tuple containing the generated Scenario, a list of CharacterSimulation objects, and SupplysDetails objects.
         """
-        state, casualty_simulations, supplies_details = self._generate_state()
-        triage_categories = self._generate_triage_categories()
+        state, character_simulations, supplies_details = self._generate_state()
 
         id_actual = self.yaml_data['id']
 
@@ -49,10 +47,9 @@ class ITMScenarioReader:
             name=self.yaml_data['name'],
             start_time=str(0),
             state=state,
-            triage_categories=triage_categories,
             session_complete=False
         )
-        return (scenario, casualty_simulations, supplies_details)
+        return (scenario, character_simulations, supplies_details)
     
     def _generate_state(self):
         state = self.yaml_data['state']
@@ -65,9 +62,9 @@ class ITMScenarioReader:
             self._generate_supplies(supply_data, supplies_details)
             for supply_data in state.get('supplies', [])
         ]
-        casualty_simulations = [
-            self._generate_casualty_simulations(casualty_data)
-            for casualty_data in state.get('casualties', [])
+        character_simulations = [
+            self._generate_character_simulations(character_data)
+            for character_data in state.get('characters', [])
         ]
         state = State(
             unstructured=unstructured,
@@ -77,9 +74,9 @@ class ITMScenarioReader:
             environment=environment,
             threat_state=threat_state,
             supplies=supplies,
-            casualties=[casualty.casualty for casualty in casualty_simulations]
+            characters=[character.character for character in character_simulations]
         )
-        return state, casualty_simulations, supplies_details
+        return state, character_simulations, supplies_details
 
     def _generate_mission(self, state):
         mission = state['mission']
@@ -149,17 +146,17 @@ class ITMScenarioReader:
         
         return supplies
 
-    def _generate_casualty(self, casualty_data) -> Casualty:
+    def _generate_character(self, character_data) -> Character:
         """
-        Generate a casualty instance from the YAML data.
+        Generate a character instance from the YAML data.
 
         Args:
-            casualty_data: The YAML data representing a casualty.
+            character_data: The YAML data representing a character.
 
         Returns:
-            A casualty object representing the generated casualty.
+            A character object representing the generated character.
         """
-        demograpics_data = casualty_data.get('demographics', {})
+        demograpics_data = character_data.get('demographics', {})
         demograpics = Demographics(
             age=demograpics_data.get('age'),
             sex=demograpics_data.get('sex'),
@@ -171,9 +168,9 @@ class ITMScenarioReader:
                 location=injury.get('location'),
                 severity=injury.get('severity')
             )
-            for injury in casualty_data.get('injuries', [])
+            for injury in character_data.get('injuries', [])
         ]
-        vital_data = casualty_data.get('vitals', {})
+        vital_data = character_data.get('vitals', {})
         vitals = Vitals(
             conscious=vital_data['conscious'],
             mental_status=vital_data['mental_status'],
@@ -183,37 +180,37 @@ class ITMScenarioReader:
             #rr=vital_data['RR'],
             #sp_o2=vital_data['SpO2%'],
         )
-        casualty = Casualty(
-            id=casualty_data['id'],
-            unstructured=casualty_data['unstructured'],
-            name=casualty_data.get('name', 'Unknown'),
-            relationship=casualty_data.get('relationship', 'NONE'),
+        character = Character(
+            id=character_data['id'],
+            unstructured=character_data['unstructured'],
+            name=character_data.get('name', 'Unknown'),
+            relationship=character_data.get('relationship', 'NONE'),
             demographics=demograpics,
             injuries=injuries,
             vitals=vitals,
             visited=False,
             tag=None
         )
-        return casualty
+        return character
 
-    def _generate_casualty_simulations(self, casualty_data) -> CasualtySimulation:
+    def _generate_character_simulations(self, character_data) -> CharacterSimulation:
         """
-        Generate a CasualtySimulation instance from the YAML data.
+        Generate a CharacterSimulation instance from the YAML data.
 
         Args:
-            casualty_data: The YAML data representing a casualty simulation.
+            character_data: The YAML data representing a character simulation.
 
         Returns:
-            A CasualtySimulation object representing the generated casualty simulation.
+            A CharacterSimulation object representing the generated character simulation.
         """
-        casualty = self._generate_casualty(casualty_data=casualty_data)
-        #hidden_attributes = casualty_data.get('hidden_attributes', {})
+        character = self._generate_character(character_data=character_data)
+        #hidden_attributes = character_data.get('hidden_attributes', {})
         #vitals_changes = hidden_attributes.get('vitals_changes_over_time', {})
-        casualty_simulation = CasualtySimulation(
-            casualty=casualty
+        character_simulation = CharacterSimulation(
+            character=character
             # correct_tag=hidden_attributes.get('correct_tag'),
-            # start_vitals=copy.deepcopy(casualty.vitals),
-            # current_vitals=copy.deepcopy(casualty.vitals),
+            # start_vitals=copy.deepcopy(character.vitals),
+            # current_vitals=copy.deepcopy(character.vitals),
             # treatments_applied=[],
             # treatments_needed=hidden_attributes.get('treatements_needed'),
             # hrpmin_change=vitals_changes.get('hrpmin'),
@@ -224,10 +221,4 @@ class ITMScenarioReader:
             # deceased=hidden_attributes.get('deceased'),
             # deceased_after_minutes=hidden_attributes.get('deceased_after_minutes')
         )
-        return casualty_simulation
-
-
-    def _generate_triage_categories(self) -> List[TriageCategory]:
-        return [
-            TriageCategory("MINIMAL", "", "")
-        ]
+        return character_simulation

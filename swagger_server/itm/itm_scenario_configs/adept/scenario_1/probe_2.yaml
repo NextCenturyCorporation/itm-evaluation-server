@@ -13,10 +13,9 @@ options:
     ta1_id: s1-p2-choice1
     assoc_action:
       action_id: action7
-      scenario_id: adept-september-demo-scenario-1
       action_type: MOVE_TO_EVAC
       unstructured: Move Mike to the road for transport
-      casualty_id: Mike
+      character_id: Mike
       kdma_association:
         Fairness: 2
   - id: choice2
@@ -24,9 +23,8 @@ options:
     ta1_id: s1-p2-choice1
     assoc_action:
       action_id: action8
-      scenario_id: adept-september-demo-scenario-1
       action_type: MOVE_TO_EVAC
       unstructured: Move the civilian to the road for transport
-      casualty_id: Civilian
+      character_id: Civilian
       kdma_association:
         Fairness: 7

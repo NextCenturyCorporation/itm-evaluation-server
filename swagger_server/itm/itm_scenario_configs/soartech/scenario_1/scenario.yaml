@@ -1,4 +1,4 @@
-id: soartech-september-demo-scenario-1
+id: st-september-2023-mvp2
 name: Intelligence officer Extraction with EVAC timing
 state:
   unstructured: >
@@ -34,7 +34,7 @@ state:
     - {type: Decompression Needle, quantity: 3}
     - {type: Nasopharyngeal airway, quantity: 3}
   
-  casualties:
+  characters:
     - id: MarineA
       unstructured: >
         22 YO male Marine hit by an IED.

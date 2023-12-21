@@ -66,7 +66,7 @@ docker run -p 8080:8080 swagger_server
 ## Running with docker on separate instances
 To run with TA1 on multiple systems set docker env vars for ADM host, Soartech Host, and ADEPT Host.
 ```bash
-docker run -d -p 8080:8080 -e "DB_HOST=$CHANGE_ME_TO_DBHOST" -e "TA3_HOSTNAME=$CHANGE_ME_TO_CURRENTIP" -e "SOARTECH_HOSTNAME=$CHANGE_ME_TO_SOARTECHIP" -e "ADEPT_HOSTNAME=$CHANGE_ME_TO_ADEPTIP" -e "SOARTECH_PORT=$CHANGE_ME_TO_SOARTECH_PORT" -e "ADEPT_PORT=$CHANGE_ME_TO_ADEPT_PORT" --name itm-server itm-server
+docker run -d -p 8080:8080 -e "TA3_HOSTNAME=$CHANGE_ME_TO_CURRENTIP" -e "SOARTECH_HOSTNAME=$CHANGE_ME_TO_SOARTECHIP" -e "ADEPT_HOSTNAME=$CHANGE_ME_TO_ADEPTIP" -e "SOARTECH_PORT=$CHANGE_ME_TO_SOARTECH_PORT" -e "ADEPT_PORT=$CHANGE_ME_TO_ADEPT_PORT" --name itm-server itm-server
 ```
 ** Note, If setting TA3_PORT to anything other then the default requires the docker run command to expose those ports. 
 Can write the above command as $TA3_PORT:$TA3_PORT however, this will not work if it is not set and won't default
@@ -79,4 +79,12 @@ If running the command instead of docker set the environment variables for:
 - ADEPT_PORT (default:8081)
 - SOARTECH_PORT (default:8084)
 - TA3_PORT (default:8080)
-- DB_HOST (default: localhost)
+
+## Updating models
+This requires JDK 8 or higher to run the gradle tool.
+
+The models in swagger_server/models are generated from the following files
+    swagger_server/swagger/swagger.yaml
+    swagger_server/swagger/ta1.yaml
+If these files are updated they will need to be re-generated and checked in.
+Run `./gradlew` to do this.

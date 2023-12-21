@@ -18,7 +18,7 @@ paths:
       - itm-ta2-eval
       summary: Start a new session
       description: Get unique session id for grouping answers from a collection of
-        scenarios/probes together
+        scenarios together
       operationId: start_session
       parameters:
       - name: adm_name
@@ -31,13 +31,13 @@ paths:
           type: string
       - name: session_type
         in: query
-        description: "the type of session to start (`test`, `eval`, or a TA1 name)"
+        description: "the type of session to start (`eval` or a TA1 name)"
         required: true
         style: form
         explode: true
         schema:
           type: string
-          example: test
+          example: eval
       - name: kdma_training
         in: query
         description: whether or not this is a training session with TA2
@@ -49,8 +49,8 @@ paths:
           default: false
       - name: max_scenarios
         in: query
-        description: "the maximum number of scenarios requested, supported only in\
-          \ `test` sessions"
+        description: "the maximum number of scenarios requested, not supported in\
+          \ `eval` sessions"
         required: false
         style: form
         explode: true
@@ -111,10 +111,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Scenario'
+        "400":
+          description: Invalid Session ID or there is already an active scenario
         "403":
           description: Specifying a scenario ID is unauthorized
         "404":
-          description: Session or Scenario ID not found
+          description: Scenario ID not found
         "500":
           description: An exception occurred on the server; see returned error string.
           content:
@@ -155,9 +157,52 @@ paths:
               schema:
                 $ref: '#/components/schemas/AlignmentTarget'
         "400":
-          description: Scenario Complete
+          description: Scenario Complete or Invalid Session ID
         "404":
-          description: Session or Scenario ID not found
+          description: Scenario ID not found
+        "500":
+          description: An exception occurred on the server; see returned error string.
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+      x-openapi-router-controller: swagger_server.controllers.itm_ta2_eval_controller
+  /ta2/getSessionAlignment:
+    get:
+      tags:
+      - itm-ta2-eval
+      summary: Retrieve session alignment from TA1
+      description: Retrieve the current session alignment for the session with the specified id
+      operationId: get_session_alignment
+      parameters:
+      - name: session_id
+        in: query
+        description: "a unique session_id, as returned by /ta2/startSession"
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: target_id
+        in: query
+        description: alignment target id
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/AlignmentResults"
+        "400":
+          description: Session ID not found
+        "403":
+          description: Session alignment can only be requested during a training session
         "500":
           description: An exception occurred on the server; see returned error string.
           content:
@@ -197,8 +242,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/State'
+        "400":
+          description: Invalid Session ID
         "404":
-          description: Invalid scenario ID supplied
+          description: Scenario ID not found
         "500":
           description: An exception occurred on the server; see returned error string.
           content:
@@ -226,7 +273,7 @@ paths:
           type: string
       - name: scenario_id
         in: path
-        description: The ID of the scenario for which to retrieve avaialble actions
+        description: The ID of the scenario for which to retrieve available actions
         required: true
         style: simple
         explode: false
@@ -243,9 +290,9 @@ paths:
                   $ref: '#/components/schemas/Action'
                 x-content-type: application/json
         "400":
-          description: Scenario Complete
+          description: Scenario Complete or Invalid Session ID
         "404":
-          description: Invalid scenario ID supplied
+          description: Scenario ID not found
         "500":
           description: An exception occurred on the server; see returned error string.
           content:
@@ -285,7 +332,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/State'
         "400":
-          description: Invalid action or session_id
+          description: Invalid action or Session ID
         "500":
           description: An exception occurred on the server; see returned error string.
           content:
@@ -322,10 +369,6 @@ components:
           example: 14:02
         state:
           $ref: '#/components/schemas/State'
-        triage_categories:
-          type: array
-          items:
-            $ref: '#/components/schemas/TriageCategory'
       description: a tactical scenario
       example:
         start_time: 14:02
@@ -366,7 +409,7 @@ components:
             - type: Gunfire
               severity: 0.5
           scenario_complete: false
-          casualties:
+          characters:
           - injuries:
             - severity: 0.8
               name: Laceration
@@ -411,13 +454,58 @@ components:
               sex: F
               rank: Marine
               age: 32
-        triage_categories:
-        - criteria: criteria
-          description: description
-          tagLabel: MINIMAL
-        - criteria: criteria
-          description: description
-          tagLabel: MINIMAL
+    AlignmentResults:
+      title: AlignmentResults
+      required:
+      - alignment_source
+      - alignment_target_id
+      - score
+      - kdma_values
+      type: object
+      properties:
+        alignment_source:
+          title: Alignment Source
+          type: array
+          items:
+            "$ref": "#/components/schemas/AlignmentSource"
+        alignment_target_id:
+          title: Alignment Target Id
+          type: string
+          description: ID of desired profile to align responses to.
+        score:
+          title: Score
+          maximum: 1
+          minimum: 0
+          type: number
+          description: Measured alignment, 0 (completely unaligned) - 1 (completely aligned).
+        kdma_values:
+          title: Kdma Values
+          type: array
+          items:
+            "$ref": "#/components/schemas/KDMA_Value"
+          description: Computed KDMA profile from results
+      description: Computed KDMA profile and alignment score for a set of decisions.
+    AlignmentSource:
+      title: AlignmentSource
+      required:
+      - scenario_id
+      - probes
+      type: object
+      properties:
+        scenario_id:
+          title: Scenario Id
+          type: string
+          description: Unique ID for user session.
+        probes:
+          title: Probes
+          type: array
+          items:
+            type: string
+          description: List of ID's of probes used to compute alignment.
+      description: |-
+        Describes which session/probe responses were used to
+        compute an alignment score, allowing for lots
+        of flexibility.
     AlignmentTarget:
       required:
       - id
@@ -473,8 +561,8 @@ components:
           example: 5.2
         scenario_complete:
           type: boolean
-          description: set to true if the scenario is complete; subsequent calls to
-            /scenario/probe will return an error code
+          description: set to true if the scenario is complete; subsequent calls involving
+            that scenario will return an error code
           example: false
         mission:
           $ref: '#/components/schemas/Mission'
@@ -487,13 +575,13 @@ components:
           description: a list of medical supplies available to the DM
           items:
             $ref: '#/components/schemas/Supplies'
-        casualties:
+        characters:
           type: array
-          description: the list of casualties in the scenario
+          description: the list of characters in the scenario
           items:
-            $ref: '#/components/schemas/Casualty'
+            $ref: '#/components/schemas/Character'
       description: the current tactical & environmental state of the scenario and
-        of its casualties.
+        of its characters.
       example:
         mission:
           unstructured: Place sensors in and around the jungle base
@@ -528,7 +616,7 @@ components:
           - type: Gunfire
             severity: 0.5
         scenario_complete: false
-        casualties:
+        characters:
         - injuries:
           - severity: 0.8
             name: Laceration
@@ -584,27 +672,29 @@ components:
           description: natural language description of current mission
           example: Place sensors in and around the jungle base
         mission_type:
-          type: string
-          description: enumeration of possible mission types
-          enum:
-          - Listening/Observation
-          - Direct Action
-          - Hostage rescue
-          - Asset transport
-          - Sensor emplacement
-          - Intelligence gathering
-          - Civil affairs
-          - Training
-          - Sabotage
-          - Security patrol
-          - Fire support
-          - Nuclear deterrence
-          - Extraction
-          - Unknown
+          $ref: '#/components/schemas/MissionType'
       description: encapsulates the scenario's strategic mission
       example:
         unstructured: Place sensors in and around the jungle base
         mission_type: Listening/Observation
+    MissionType:
+      type: string
+      description: enumeration of possible mission types
+      enum:
+      - Listening/Observation
+      - Direct Action
+      - Hostage rescue
+      - Asset transport
+      - Sensor emplacement
+      - Intelligence gathering
+      - Civil affairs
+      - Training
+      - Sabotage
+      - Security patrol
+      - Fire support
+      - Nuclear deterrence
+      - Extraction
+      - Unknown
     Environment:
       required:
       - unstructured
@@ -726,15 +816,7 @@ components:
       type: object
       properties:
         type:
-          type: string
-          description: an enumeration of available supply types
-          example: Tourniquet
-          enum:
-          - Tourniquet
-          - Pressure bandage
-          - Hemostatic gauze
-          - Decompression Needle
-          - Nasopharyngeal airway
+          $ref: '#/components/schemas/SupplyType'
         quantity:
           type: integer
           description: the number (count) of this item available to the medic at the
@@ -745,7 +827,17 @@ components:
       example:
         quantity: 4
         type: Tourniquet
-    Casualty:
+    SupplyType:
+      type: string
+      description: an enumeration of available supply types
+      example: Tourniquet
+      enum:
+      - Tourniquet
+      - Pressure bandage
+      - Hemostatic gauze
+      - Decompression Needle
+      - Nasopharyngeal airway
+    Character:
       required:
       - id
       - unstructured
@@ -753,48 +845,33 @@ components:
       properties:
         id:
           type: string
-          description: "string, globally unique casualty identifier"
+          description: "string, globally unique character identifier"
         unstructured:
           type: string
-          description: natural language text description of the casualty
+          description: natural language text description of the character
         name:
           type: string
-          description: "the name of the casualty, omit if unknown"
+          description: "the name of the character, omit if unknown"
           example: Mary
         relationship:
-          type: string
-          description: the relationship between the medic and the casualty
-          example: NONE
-          enum:
-          - NONE
-          - ALLY
-          - FRIEND
-          - HOSTILE
-          - EXPECTANT
+          $ref: '#/components/schemas/CharacterRelationship'
         demographics:
           $ref: '#/components/schemas/Demographics'
         injuries:
           type: array
-          description: an array of casualty injuries
+          description: an array of character injuries
           items:
             $ref: '#/components/schemas/Injury'
         vitals:
           $ref: '#/components/schemas/Vitals'
         visited:
           type: boolean
-          description: whether or not this casualty has been visited in the current
+          description: whether or not this character has been visited in the current
             scenario
           default: false
         tag:
-          type: string
-          description: "the tag assigned to this casualty, omit if untagged"
-          example: DELAYED
-          enum:
-          - MINIMAL
-          - DELAYED
-          - IMMEDIATE
-          - EXPECTANT
-      description: encapulation of a single casualty in the scenario
+          $ref: '#/components/schemas/CharacterTag'
+      description: encapulation of a single character in the scenario
       example:
         injuries:
         - severity: 0.8
@@ -818,36 +895,58 @@ components:
           sex: F
           rank: Marine
           age: 32
+    CharacterRelationship:
+      type: string
+      description: the relationship between the medic and the character
+      example: NONE
+      enum:
+      - NONE
+      - ALLY
+      - FRIEND
+      - HOSTILE
+    CharacterTag:
+      type: string
+      description: "the tag assigned to this character, omit if untagged"
+      example: DELAYED
+      enum:
+      - MINIMAL
+      - DELAYED
+      - IMMEDIATE
+      - EXPECTANT
     Demographics:
       type: object
       properties:
         age:
           type: integer
-          description: "the age of the casualty, omit if unknown"
+          description: "the age of the character, omit if unknown"
           format: int16
           example: 32
         sex:
-          type: string
-          description: "the sex of the casualty, omit if unknown/indeterminate"
-          example: F
-          enum:
-          - M
-          - F
+          $ref: '#/components/schemas/DemographicsSex'
         rank:
-          type: string
-          description: "The military status of the casualty, omit if unknown"
-          enum:
-          - Marine
-          - FMF Corpsman
-          - Sailor
-          - Civilian
-          - SEAL
-          - Intel Officer
-      description: demographic profile of a casualty
+          $ref: '#/components/schemas/DemographicsRank'
+      description: demographic profile of a character
       example:
         sex: F
         rank: Marine
         age: 32
+    DemographicsSex:
+      type: string
+      description: "the sex of the character, omit if unknown/indeterminate"
+      example: F
+      enum:
+      - M
+      - F
+    DemographicsRank:
+      type: string
+      description: "The military status of the character, omit if unknown"
+      enum:
+      - Marine
+      - FMF Corpsman
+      - Sailor
+      - Civilian
+      - SEAL
+      - Intel Officer
     Injury:
       required:
       - location
@@ -855,158 +954,129 @@ components:
       type: object
       properties:
         name:
-          type: string
-          description: a brief label for the type of injury
-          example: Laceration
-          enum:
-          - Forehead Scrape
-          - Ear Bleed
-          - Asthmatic
-          - Laceration
-          - Puncture
-          - Shrapnel
-          - Chest Collapse
-          - Amputation
-          - Burn
+          $ref: '#/components/schemas/InjuryType'
         location:
-          type: string
-          description: the injury location on the casualty's body
-          example: right forearm
-          enum:
-          - right forearm
-          - left forearm
-          - right calf
-          - left calf
-          - right thigh
-          - left thigh
-          - right stomach
-          - left stomach
-          - right bicep
-          - left bicep
-          - right shoulder
-          - left shoulder
-          - right side
-          - left side
-          - right chest
-          - left chest
-          - right wrist
-          - left wrist
-          - left face
-          - right face
-          - left neck
-          - right neck
-          - unspecified
+          $ref: '#/components/schemas/InjuryLocation'
         severity:
           type: number
           description: the apparent severity of the injury from 0 (low) to 1.0 (high)
           example: 0.8
-      description: An injury on a casualty. The name field defines a controlled vocabulary.
+      description: An injury on a character. The name field defines a controlled vocabulary.
       example:
         severity: 0.8
         name: Laceration
         location: right forearm
+    InjuryType:
+      type: string
+      description: a brief label for the type of injury
+      example: Laceration
+      enum:
+      - Forehead Scrape
+      - Ear Bleed
+      - Asthmatic
+      - Laceration
+      - Puncture
+      - Shrapnel
+      - Chest Collapse
+      - Amputation
+      - Burn
+    InjuryLocation:
+      type: string
+      description: the injury location on the character's body
+      example: right forearm
+      enum:
+        - right forearm
+        - left forearm
+        - right calf
+        - left calf
+        - right thigh
+        - left thigh
+        - right stomach
+        - left stomach
+        - right bicep
+        - left bicep
+        - right shoulder
+        - left shoulder
+        - right side
+        - left side
+        - right chest
+        - left chest
+        - right wrist
+        - left wrist
+        - left face
+        - right face
+        - left neck
+        - right neck
+        - internal
+        - unspecified
     Vitals:
       type: object
       properties:
         conscious:
           type: boolean
-          description: whether or not the casualty is conscious
+          description: whether or not the character is conscious
           example: true
         mental_status:
-          type: string
-          description: description of the casualty's overall demeanor
-          example: CALM
-          enum:
-          - AGONY
-          - CALM
-          - CONFUSED
-          - UPSET
-          - UNRESPONSIVE
+          $ref: '#/components/schemas/VitalsMentalStatus'
         breathing:
-          type: string
-          description: a descriptor for the casualty's breathing
-          example: NORMAL
-          enum:
-          - NORMAL
-          - FAST
-          - RESTRICTED
-          - NONE
+          $ref: '#/components/schemas/VitalsBreathing'
         hrpmin:
           type: integer
           description: heart rate in beats per minute
           format: int16
           example: 150
-      description: "vital levels for a casualty, omit properties if unknown"
+      description: "vital levels for a character, omit properties if unknown"
       example:
         breathing: NORMAL
         conscious: true
         mental_status: CALM
         hrpmin: 150
-    TriageCategory:
-      type: object
-      properties:
-        tagLabel:
-          type: string
-          example: MINIMAL
-          enum:
-          - MINIMAL
-          - DELAYED
-          - IMMEDIATE
-          - EXPECTANT
-        description:
-          type: string
-          description: a one-line description of the tagLabel category
-        criteria:
-          type: string
-          description: detailed criteria for the tagLabel category
-      description: The type of supported triage categories for this scenario
-      example:
-        criteria: criteria
-        description: description
-        tagLabel: MINIMAL
+    VitalsBreathing:
+      type: string
+      description: a descriptor for the character's breathing
+      example: NORMAL
+      enum:
+      - NORMAL
+      - FAST
+      - RESTRICTED
+      - NONE
+    VitalsMentalStatus:
+      type: string
+      description: description of the character's overall demeanor
+      example: CALM
+      enum:
+      - AGONY
+      - CALM
+      - CONFUSED
+      - UPSET
+      - UNRESPONSIVE
     Action:
       required:
       - action_id
       - action_type
-      - scenario_id
       type: object
       properties:
         action_id:
           type: string
           description: action ID
-        scenario_id:
-          type: string
-          description: scenario ID this probe is for
         action_type:
+          $ref: '#/components/schemas/ActionType'
+        character_id:
           type: string
-          description: The action type taken from a controlled vocabulary
-          example: APPLY_TREATMENT
-          enum:
-          - APPLY_TREATMENT
-          - CHECK_ALL_VITALS
-          - CHECK_PULSE
-          - CHECK_RESPIRATION
-          - DIRECT_MOBILE_CASUALTIES
-          - END_SCENARIO
-          - MOVE_TO_EVAC
-          - SITREP
-          - TAG_CASUALTY
-        casualty_id:
-          type: string
-          description: The ID of the casualty being acted upon
+          description: The ID of the character being acted upon
         unstructured:
           type: string
           description: a plain text unstructured description of the action
-          example: "Check pulse of casualty [1234]."
+          example: "Check pulse of character [1234]."
         justification:
           type: string
           description: A justification of the action taken
-          example: Casualty is the VIP of the scenario
+          example: Character is the VIP of the scenario
         kdma_association:
           type: object
           additionalProperties:
             type: string
-          description: KDML associations with this action used in training
+          description: KDMA associations with this action used in training
           example:
           - Mission: 0.8
         parameters:
@@ -1021,15 +1091,28 @@ components:
       example:
         action_id: action_id
         action_type: APPLY_TREATMENT
-        casualty_id: casualty_id
-        unstructured: "Check pulse of casualty [1234]."
+        character_id: character_id
+        unstructured: "Check pulse of character [1234]."
         kdma_association:
         - Mission: 0.8
-        justification: Casualty is the VIP of the scenario
+        justification: Character is the VIP of the scenario
         parameters:
         - treatment: Tourniquet
         - location: right forearm
-        scenario_id: scenario_id
+    ActionType:
+      type: string
+      description: The action type taken from a controlled vocabulary
+      example: APPLY_TREATMENT
+      enum:
+      - APPLY_TREATMENT
+      - CHECK_ALL_VITALS
+      - CHECK_PULSE
+      - CHECK_RESPIRATION
+      - DIRECT_MOBILE_CHARACTERS
+      - END_SCENARIO
+      - MOVE_TO_EVAC
+      - SITREP
+      - TAG_CHARACTER
   responses:
     server_error:
       description: An exception occurred on the server; see returned error string.

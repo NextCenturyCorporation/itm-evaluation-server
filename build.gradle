@@ -1,0 +1,109 @@
+plugins {
+    id 'org.hidetake.swagger.generator' version '2.19.2'
+    id 'groovy-base'
+}
+
+apply plugin: 'org.hidetake.swagger.generator'
+import org.apache.tools.ant.taskdefs.condition.Os
+repositories {
+    mavenCentral()
+    maven { url 'https://repo.spring.io/release' }
+}
+
+dependencies {
+    swaggerCodegen 'org.slf4j:slf4j-simple:1.7.36'
+    swaggerCodegen 'io.swagger.codegen.v3:swagger-codegen-cli:3.0.46'
+}
+
+defaultTasks 'clean', 'generateSwaggerCode', 'postGeneration'
+
+def generatedApiDirectory = "generated"
+def apiDirectory = "swagger"
+def outputDirectory = "swagger_server"
+
+task swaggerClean(type: Delete) {
+    doFirst {
+        delete generatedApiDirectory
+    }
+}
+swaggerClean.mustRunAfter(clean)
+
+swaggerSources {
+    ta1 {
+        inputFile = file(apiDirectory+'/ta1.yaml')
+        code {
+            language = 'python-flask'
+            components = ['models']
+            outputDir = file (generatedApiDirectory)
+            configFile = file (apiDirectory+'/config.json')
+            wipeOutputDir = false
+        }
+    }
+    server {
+        inputFile = file(apiDirectory+'/swagger.yaml')
+        code {
+            language = 'python-flask'
+            components = ['models']
+            outputDir = file (generatedApiDirectory)
+            configFile = file (apiDirectory+'/config.json')
+            wipeOutputDir = false
+        }
+    }
+}
+generateSwaggerCode.dependsOn(swaggerClean)
+generateSwaggerCode.mustRunAfter(swaggerClean)
+
+ext.generateInitFile = { directory, component ->
+    // Generate init file
+    def initFilePath = "${directory}/${component}/__init__.py"
+
+    File initFile = new File(initFilePath)
+
+    initFile.withWriter { it.println "from __future__ import absolute_import \n# import ${component} into ${component} package" }
+
+    fileTree("${directory}/${component}/").matching{ include "**/*.py" exclude "__init__.py" }.sort().forEach { fileName ->
+        def file = new File("${fileName}")
+        def basename = file.name.take(file.name.lastIndexOf('.'))
+        def classLine = file.text.tokenize('\n').find {
+            it.contains 'class'
+        }
+        def matcher = classLine =~ /^class (.*)\(.*/
+        matcher.find()
+        initFile.withWriterAppend { it.println "from ${directory}.${component}.${basename} import ${matcher.group(1)}" }
+    }
+    println "generated __init__.py for ${component}"
+
+}
+
+task postGeneration() {
+    doLast() {
+        // Copy generated files into models folder
+        copy {
+            from "${generatedApiDirectory}/${outputDirectory}/"
+            into outputDirectory
+        }
+
+        // delete generated api directory
+        delete generatedApiDirectory
+        println "removed ${generatedApiDirectory}"
+
+        // Copy basemodel file
+        copy {
+            from apiDirectory+'/base_model_.py'
+            into outputDirectory+'/models/'
+        }
+        println 'copied base_model.py'
+
+        // Generate models init file
+        project.generateInitFile(outputDirectory, 'models')
+    }
+}
+postGeneration.mustRunAfter('generateSwaggerCode')
+
+// Ensures tasks are re-run always, needed for swaggerCodeGen
+gradle.taskGraph.whenReady { taskGraph ->
+  taskGraph.getAllTasks().each {
+      it.setOnlyIf { true }
+      it.outputs.upToDateWhen { false }
+  }
+}

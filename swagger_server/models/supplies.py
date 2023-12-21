@@ -6,6 +6,7 @@ from datetime import date, datetime  # noqa: F401
 from typing import List, Dict  # noqa: F401
 
 from swagger_server.models.base_model_ import Model
+from swagger_server.models.supply_type import SupplyType  # noqa: F401,E501
 from swagger_server import util
 
 
@@ -14,16 +15,16 @@ class Supplies(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, type: str=None, quantity: int=None):  # noqa: E501
+    def __init__(self, type: SupplyType=None, quantity: int=None):  # noqa: E501
         """Supplies - a model defined in Swagger
 
         :param type: The type of this Supplies.  # noqa: E501
-        :type type: str
+        :type type: SupplyType
         :param quantity: The quantity of this Supplies.  # noqa: E501
         :type quantity: int
         """
         self.swagger_types = {
-            'type': str,
+            'type': SupplyType,
             'quantity': int
         }
 
@@ -46,31 +47,25 @@ class Supplies(Model):
         return util.deserialize_model(dikt, cls)
 
     @property
-    def type(self) -> str:
+    def type(self) -> SupplyType:
         """Gets the type of this Supplies.
 
-        an enumeration of available supply types  # noqa: E501
 
         :return: The type of this Supplies.
-        :rtype: str
+        :rtype: SupplyType
         """
         return self._type
 
     @type.setter
-    def type(self, type: str):
+    def type(self, type: SupplyType):
         """Sets the type of this Supplies.
 
-        an enumeration of available supply types  # noqa: E501
 
         :param type: The type of this Supplies.
-        :type type: str
+        :type type: SupplyType
         """
-        allowed_values = ["Tourniquet", "Pressure bandage", "Hemostatic gauze", "Decompression Needle", "Nasopharyngeal airway"]  # noqa: E501
-        if type not in allowed_values:
-            raise ValueError(
-                "Invalid value for `type` ({0}), must be one of {1}"
-                .format(type, allowed_values)
-            )
+        if type is None:
+            raise ValueError("Invalid value for `type`, must not be `None`")  # noqa: E501
 
         self._type = type
 

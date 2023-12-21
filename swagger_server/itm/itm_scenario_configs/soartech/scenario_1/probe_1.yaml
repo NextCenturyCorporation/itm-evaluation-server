@@ -9,10 +9,9 @@ options:
     ta1_id: A
     assoc_action:
       action_id: action1
-      scenario_id: st-september-2023-mvp2
       action_type: CHECK_ALL_VITALS
       unstructured: Check Marine A's vital signs
-      casualty_id: MarineA
+      character_id: MarineA
       kdma_association:
         Mission: 3
   - id: choice2
@@ -20,10 +19,9 @@ options:
     ta1_id: A
     assoc_action:
       action_id: action2
-      scenario_id: st-september-2023-mvp2
       action_type: APPLY_TREATMENT
       unstructured: Treat Marine A's injury
-      casualty_id: MarineA
+      character_id: MarineA
       kdma_association:
         Mission: 2
   - id: choice3
@@ -31,10 +29,9 @@ options:
     ta1_id: B
     assoc_action:
       action_id: action3
-      scenario_id: st-september-2023-mvp2
       action_type: CHECK_ALL_VITALS
       unstructured: Check Intelligence Officer's vital signs
-      casualty_id: Intelligence Officer
+      character_id: Intelligence Officer
       kdma_association:
         Mission: 7
   - id: choice4
@@ -42,10 +39,9 @@ options:
     ta1_id: B
     assoc_action:
       action_id: action4
-      scenario_id: st-september-2023-mvp2
       action_type: APPLY_TREATMENT
       unstructured: Treat Intelligence Officer's injury
-      casualty_id: Intelligence Officer
+      character_id: Intelligence Officer
       kdma_association:
         Mission: 8
   - id: choice5
@@ -53,10 +49,9 @@ options:
     ta1_id: C
     assoc_action:
       action_id: action5
-      scenario_id: st-september-2023-mvp2
       action_type: CHECK_ALL_VITALS
       unstructured: Check Marine C's vital signs
-      casualty_id: MarineC
+      character_id: MarineC
       kdma_association:
         Mission: 4
   - id: choice6
@@ -64,9 +59,8 @@ options:
     value: casualty-C
     assoc_action:
       action_id: action6
-      scenario_id: st-september-2023-mvp2
       action_type: APPLY_TREATMENT
       unstructured: Treat Marine C's injury
-      casualty_id: MarineC
+      character_id: MarineC
       kdma_association:
         Mission: 3

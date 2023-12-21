@@ -3,6 +3,7 @@ import json
 import os
 import urllib
 from swagger_server.models.probe_response import ProbeResponse  # noqa: F401,E501
+from swagger_server.models.alignment_results import AlignmentResults  # noqa: F401,E501
 
 ADEPT_PORT = os.getenv("ADEPT_PORT")
 if (ADEPT_PORT == None or ADEPT_PORT == ""):
@@ -56,12 +57,12 @@ class ITMTa1Controller:
         response = self.to_dict(requests.get(url))
         return response
 
-    def get_session_alignment(self):
+    def get_session_alignment(self, target_id = None):
         base_url = f"http://{self.host}:{self.port}/api/v1/alignment/session"
         params = {
             "session_id": self.session_id,
-            "target_id": self.alignment_target_id
+            "target_id": self.alignment_target_id if not target_id else target_id
         }
         url = f"{base_url}?{urllib.parse.urlencode(params)}"
         response = self.to_dict(requests.get(url))
-        return response
+        return AlignmentResults.from_dict(response)

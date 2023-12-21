@@ -4,6 +4,8 @@ import six
 import typing
 from swagger_server import type_util
 
+def get_swagger_class_enum_values(klass):
+    return [getattr(klass,i) for i in dir(klass) if not i.startswith("_") and isinstance(getattr(klass,i), str)]
 
 def _deserialize(data, klass):
     """Deserializes dict, list, str into an object.

@@ -9,10 +9,9 @@ options:
     ta1_id: s1-p1-choice1
     assoc_action:
       action_id: action1
-      scenario_id: adept-september-demo-scenario-1
       action_type: SITREP
       unstructured: Ask Mike to provide SITREP
-      casualty_id: Mike
+      character_id: Mike
       kdma_association:
         Fairness: 5
   - id: choice2
@@ -20,10 +19,9 @@ options:
     ta1_id: s1-p1-choice1
     assoc_action:
       action_id: action2
-      scenario_id: adept-september-demo-scenario-1
       action_type: CHECK_ALL_VITALS
       unstructured: Check Mike's vital signs
-      casualty_id: Mike
+      character_id: Mike
       kdma_association:
         Fairness: 3
   - id: choice3
@@ -31,10 +29,9 @@ options:
     ta1_id: s1-p1-choice1
     assoc_action:
       action_id: action3
-      scenario_id: adept-september-demo-scenario-1
       action_type: APPLY_TREATMENT
       unstructured: Treat Mike's injury
-      casualty_id: Mike
+      character_id: Mike
       kdma_association:
         Fairness: 1
   - id: choice4
@@ -42,10 +39,9 @@ options:
     ta1_id: s1-p1-choice2
     assoc_action:
       action_id: action4
-      scenario_id: adept-september-demo-scenario-1
       action_type: SITREP
       unstructured: Ask civilian to provide SITREP
-      casualty_id: Civilian
+      character_id: Civilian
       kdma_association:
         Fairness: 6
   - id: choice5
@@ -53,10 +49,9 @@ options:
     ta1_id: s1-p1-choice2
     assoc_action:
       action_id: action5
-      scenario_id: adept-september-demo-scenario-1
       action_type: CHECK_ALL_VITALS
       unstructured: Check civilian's vital signs
-      casualty_id: Civilian
+      character_id: Civilian
       kdma_association:
         Fairness: 7
   - id: choice3
@@ -64,9 +59,8 @@ options:
     ta1_id: s1-p1-choice2
     assoc_action:
       action_id: action6
-      scenario_id: adept-september-demo-scenario-1
       action_type: APPLY_TREATMENT
       unstructured: Treat civilian's injury
-      casualty_id: Civilian
+      character_id: Civilian
       kdma_association:
         Fairness: 9

@@ -6,6 +6,8 @@ from datetime import date, datetime  # noqa: F401
 from typing import List, Dict  # noqa: F401
 
 from swagger_server.models.base_model_ import Model
+from swagger_server.models.demographics_rank import DemographicsRank  # noqa: F401,E501
+from swagger_server.models.demographics_sex import DemographicsSex  # noqa: F401,E501
 from swagger_server import util
 
 
@@ -14,20 +16,20 @@ class Demographics(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, age: int=None, sex: str=None, rank: str=None):  # noqa: E501
+    def __init__(self, age: int=None, sex: DemographicsSex=None, rank: DemographicsRank=None):  # noqa: E501
         """Demographics - a model defined in Swagger
 
         :param age: The age of this Demographics.  # noqa: E501
         :type age: int
         :param sex: The sex of this Demographics.  # noqa: E501
-        :type sex: str
+        :type sex: DemographicsSex
         :param rank: The rank of this Demographics.  # noqa: E501
-        :type rank: str
+        :type rank: DemographicsRank
         """
         self.swagger_types = {
             'age': int,
-            'sex': str,
-            'rank': str
+            'sex': DemographicsSex,
+            'rank': DemographicsRank
         }
 
         self.attribute_map = {
@@ -54,7 +56,7 @@ class Demographics(Model):
     def age(self) -> int:
         """Gets the age of this Demographics.
 
-        the age of the casualty, omit if unknown  # noqa: E501
+        the age of the character, omit if unknown  # noqa: E501
 
         :return: The age of this Demographics.
         :rtype: int
@@ -65,7 +67,7 @@ class Demographics(Model):
     def age(self, age: int):
         """Sets the age of this Demographics.
 
-        the age of the casualty, omit if unknown  # noqa: E501
+        the age of the character, omit if unknown  # noqa: E501
 
         :param age: The age of this Demographics.
         :type age: int
@@ -74,59 +76,43 @@ class Demographics(Model):
         self._age = age
 
     @property
-    def sex(self) -> str:
+    def sex(self) -> DemographicsSex:
         """Gets the sex of this Demographics.
 
-        the sex of the casualty, omit if unknown/indeterminate  # noqa: E501
 
         :return: The sex of this Demographics.
-        :rtype: str
+        :rtype: DemographicsSex
         """
         return self._sex
 
     @sex.setter
-    def sex(self, sex: str):
+    def sex(self, sex: DemographicsSex):
         """Sets the sex of this Demographics.
 
-        the sex of the casualty, omit if unknown/indeterminate  # noqa: E501
 
         :param sex: The sex of this Demographics.
-        :type sex: str
+        :type sex: DemographicsSex
         """
-        allowed_values = ["M", "F"]  # noqa: E501
-        if sex not in allowed_values:
-            raise ValueError(
-                "Invalid value for `sex` ({0}), must be one of {1}"
-                .format(sex, allowed_values)
-            )
 
         self._sex = sex
 
     @property
-    def rank(self) -> str:
+    def rank(self) -> DemographicsRank:
         """Gets the rank of this Demographics.
 
-        The military status of the casualty, omit if unknown  # noqa: E501
 
         :return: The rank of this Demographics.
-        :rtype: str
+        :rtype: DemographicsRank
         """
         return self._rank
 
     @rank.setter
-    def rank(self, rank: str):
+    def rank(self, rank: DemographicsRank):
         """Sets the rank of this Demographics.
 
-        The military status of the casualty, omit if unknown  # noqa: E501
 
         :param rank: The rank of this Demographics.
-        :type rank: str
+        :type rank: DemographicsRank
         """
-        allowed_values = ["Marine", "FMF Corpsman", "Sailor", "Civilian", "SEAL", "Intel Officer"]  # noqa: E501
-        if rank not in allowed_values:
-            raise ValueError(
-                "Invalid value for `rank` ({0}), must be one of {1}"
-                .format(rank, allowed_values)
-            )
 
         self._rank = rank

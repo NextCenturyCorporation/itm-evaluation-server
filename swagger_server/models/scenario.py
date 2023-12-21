@@ -7,7 +7,6 @@ from typing import List, Dict  # noqa: F401
 
 from swagger_server.models.base_model_ import Model
 from swagger_server.models.state import State  # noqa: F401,E501
-from swagger_server.models.triage_category import TriageCategory  # noqa: F401,E501
 from swagger_server import util
 
 
@@ -16,7 +15,7 @@ class Scenario(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, id: str='1234', name: str=None, session_complete: bool=None, start_time: str=None, state: State=None, triage_categories: List[TriageCategory]=None):  # noqa: E501
+    def __init__(self, id: str='1234', name: str=None, session_complete: bool=None, start_time: str=None, state: State=None):  # noqa: E501
         """Scenario - a model defined in Swagger
 
         :param id: The id of this Scenario.  # noqa: E501
@@ -29,16 +28,13 @@ class Scenario(Model):
         :type start_time: str
         :param state: The state of this Scenario.  # noqa: E501
         :type state: State
-        :param triage_categories: The triage_categories of this Scenario.  # noqa: E501
-        :type triage_categories: List[TriageCategory]
         """
         self.swagger_types = {
             'id': str,
             'name': str,
             'session_complete': bool,
             'start_time': str,
-            'state': State,
-            'triage_categories': List[TriageCategory]
+            'state': State
         }
 
         self.attribute_map = {
@@ -46,15 +42,13 @@ class Scenario(Model):
             'name': 'name',
             'session_complete': 'session_complete',
             'start_time': 'start_time',
-            'state': 'state',
-            'triage_categories': 'triage_categories'
+            'state': 'state'
         }
         self._id = id
         self._name = name
         self._session_complete = session_complete
         self._start_time = start_time
         self._state = state
-        self._triage_categories = triage_categories
 
     @classmethod
     def from_dict(cls, dikt) -> 'Scenario':
@@ -183,24 +177,3 @@ class Scenario(Model):
         """
 
         self._state = state
-
-    @property
-    def triage_categories(self) -> List[TriageCategory]:
-        """Gets the triage_categories of this Scenario.
-
-
-        :return: The triage_categories of this Scenario.
-        :rtype: List[TriageCategory]
-        """
-        return self._triage_categories
-
-    @triage_categories.setter
-    def triage_categories(self, triage_categories: List[TriageCategory]):
-        """Sets the triage_categories of this Scenario.
-
-
-        :param triage_categories: The triage_categories of this Scenario.
-        :type triage_categories: List[TriageCategory]
-        """
-
-        self._triage_categories = triage_categories
