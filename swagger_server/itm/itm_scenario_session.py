@@ -159,6 +159,8 @@ class ITMScenarioSession:
             return message, code
         if self.scenario.session_complete:
             return 'Scenario Complete', 400
+        if self.kdma_training:
+            return 'No alignment target in training sessions', 400
         return self.current_isso.alignment_target_reader.alignment_target
 
     def get_scenario_state(self, scenario_id: str) -> State:
@@ -247,15 +249,16 @@ class ITMScenarioSession:
                         "TA1 Session ID", {}, ta1_session_id
                     )
                     print(f"--> Got new session_id {ta1_session_id} from TA1.")
-                scenario_alignment = self.ta1_controller.get_alignment_target()
-                print(f"--> Got alignment target {scenario_alignment} from TA1.")
-                self.history.add_history(
-                    "TA1 Alignment Target Data",
-                    {"session_id": self.ta1_controller.session_id,
-                    "scenario_id": self.current_isso.scenario.id},
-                    scenario_alignment
+                if not self.kdma_training:
+                    scenario_alignment = self.ta1_controller.get_alignment_target()
+                    print(f"--> Got alignment target {scenario_alignment} from TA1.")
+                    self.history.add_history(
+                        "TA1 Alignment Target Data",
+                        {"session_id": self.ta1_controller.session_id,
+                        "scenario_id": self.current_isso.scenario.id},
+                        scenario_alignment
                 )
-            else:
+            elif not self.kdma_training:
                 print("--> Got alignment target from TA1.")
 
             return self.scenario
@@ -319,7 +322,7 @@ class ITMScenarioSession:
                 self.session_id)
 
         yaml_paths = []
-        yaml_path = "swagger_server/itm/itm_scenario_configs/"
+        yaml_path = "swagger_server/itm/itm_" + ("training_scenarios/" if self.kdma_training else "eval_scenarios/")
         if session_type == 'soartech' or session_type == 'eval':
             yaml_paths.append(yaml_path + 'soartech/')
         if session_type == 'adept' or session_type == 'eval':
@@ -341,7 +344,9 @@ class ITMScenarioSession:
         if session_type != 'eval':
             random.shuffle(selected_yaml_directories)
         for i in range(max_scenarios):
-            scenario_object_handler = ITMSessionScenarioObjectHandler(yaml_path=selected_yaml_directories[i])
+            scenario_object_handler = \
+                ITMSessionScenarioObjectHandler(yaml_path=selected_yaml_directories[i],
+                                                training=self.kdma_training)
             itm_scenario_object = \
                 scenario_object_handler.generate_session_scenario_object()
             self.session_issos.append(itm_scenario_object)
