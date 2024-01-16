@@ -1,0 +1,66 @@
+id: select-casualty-abc
+scenario_id: st-september-2023-mvp2
+type: PatientOrdering
+prompt: Who do you treat first between casualties A, B and C?
+state: {}
+options:
+  - id: choice1
+    value: casualty-A
+    ta1_id: A
+    assoc_action:
+      action_id: action1
+      action_type: CHECK_ALL_VITALS
+      unstructured: Check Marine A's vital signs
+      character_id: MarineA
+      kdma_association:
+        Mission: 3
+  - id: choice2
+    value: casualty-A
+    ta1_id: A
+    assoc_action:
+      action_id: action2
+      action_type: APPLY_TREATMENT
+      unstructured: Treat Marine A's injury
+      character_id: MarineA
+      kdma_association:
+        Mission: 2
+  - id: choice3
+    value: casualty-B
+    ta1_id: B
+    assoc_action:
+      action_id: action3
+      action_type: CHECK_ALL_VITALS
+      unstructured: Check Intelligence Officer's vital signs
+      character_id: Intelligence Officer
+      kdma_association:
+        Mission: 7
+  - id: choice4
+    value: casualty-B
+    ta1_id: B
+    assoc_action:
+      action_id: action4
+      action_type: APPLY_TREATMENT
+      unstructured: Treat Intelligence Officer's injury
+      character_id: Intelligence Officer
+      kdma_association:
+        Mission: 8
+  - id: choice5
+    value: casualty-C
+    ta1_id: C
+    assoc_action:
+      action_id: action5
+      action_type: CHECK_ALL_VITALS
+      unstructured: Check Marine C's vital signs
+      character_id: MarineC
+      kdma_association:
+        Mission: 4
+  - id: choice6
+    ta1_id: C
+    value: casualty-C
+    assoc_action:
+      action_id: action6
+      action_type: APPLY_TREATMENT
+      unstructured: Treat Marine C's injury
+      character_id: MarineC
+      kdma_association:
+        Mission: 3
