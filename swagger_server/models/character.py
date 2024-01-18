@@ -6,8 +6,6 @@ from datetime import date, datetime  # noqa: F401
 from typing import List, Dict  # noqa: F401
 
 from swagger_server.models.base_model_ import Model
-from swagger_server.models.character_relationship import CharacterRelationship  # noqa: F401,E501
-from swagger_server.models.character_tag import CharacterTag  # noqa: F401,E501
 from swagger_server.models.demographics import Demographics  # noqa: F401,E501
 from swagger_server.models.injury import Injury  # noqa: F401,E501
 from swagger_server.models.vitals import Vitals  # noqa: F401,E501
@@ -19,17 +17,19 @@ class Character(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, id: str=None, unstructured: str=None, name: str=None, relationship: CharacterRelationship=None, demographics: Demographics=None, injuries: List[Injury]=None, vitals: Vitals=None, visited: bool=False, tag: CharacterTag=None):  # noqa: E501
+    def __init__(self, id: str=None, name: str=None, unstructured: str=None, unstructured_postassess: str=None, rapport: float=None, demographics: Demographics=None, injuries: List[Injury]=None, vitals: Vitals=None, visited: bool=False):  # noqa: E501
         """Character - a model defined in Swagger
 
         :param id: The id of this Character.  # noqa: E501
         :type id: str
-        :param unstructured: The unstructured of this Character.  # noqa: E501
-        :type unstructured: str
         :param name: The name of this Character.  # noqa: E501
         :type name: str
-        :param relationship: The relationship of this Character.  # noqa: E501
-        :type relationship: CharacterRelationship
+        :param unstructured: The unstructured of this Character.  # noqa: E501
+        :type unstructured: str
+        :param unstructured_postassess: The unstructured_postassess of this Character.  # noqa: E501
+        :type unstructured_postassess: str
+        :param rapport: The rapport of this Character.  # noqa: E501
+        :type rapport: float
         :param demographics: The demographics of this Character.  # noqa: E501
         :type demographics: Demographics
         :param injuries: The injuries of this Character.  # noqa: E501
@@ -38,41 +38,39 @@ class Character(Model):
         :type vitals: Vitals
         :param visited: The visited of this Character.  # noqa: E501
         :type visited: bool
-        :param tag: The tag of this Character.  # noqa: E501
-        :type tag: CharacterTag
         """
         self.swagger_types = {
             'id': str,
-            'unstructured': str,
             'name': str,
-            'relationship': CharacterRelationship,
+            'unstructured': str,
+            'unstructured_postassess': str,
+            'rapport': float,
             'demographics': Demographics,
             'injuries': List[Injury],
             'vitals': Vitals,
-            'visited': bool,
-            'tag': CharacterTag
+            'visited': bool
         }
 
         self.attribute_map = {
             'id': 'id',
-            'unstructured': 'unstructured',
             'name': 'name',
-            'relationship': 'relationship',
+            'unstructured': 'unstructured',
+            'unstructured_postassess': 'unstructured_postassess',
+            'rapport': 'rapport',
             'demographics': 'demographics',
             'injuries': 'injuries',
             'vitals': 'vitals',
-            'visited': 'visited',
-            'tag': 'tag'
+            'visited': 'visited'
         }
         self._id = id
-        self._unstructured = unstructured
         self._name = name
-        self._relationship = relationship
+        self._unstructured = unstructured
+        self._unstructured_postassess = unstructured_postassess
+        self._rapport = rapport
         self._demographics = demographics
         self._injuries = injuries
         self._vitals = vitals
         self._visited = visited
-        self._tag = tag
 
     @classmethod
     def from_dict(cls, dikt) -> 'Character':
@@ -89,7 +87,7 @@ class Character(Model):
     def id(self) -> str:
         """Gets the id of this Character.
 
-        string, globally unique character identifier  # noqa: E501
+        A unique character ID throughout the scenario  # noqa: E501
 
         :return: The id of this Character.
         :rtype: str
@@ -100,7 +98,7 @@ class Character(Model):
     def id(self, id: str):
         """Sets the id of this Character.
 
-        string, globally unique character identifier  # noqa: E501
+        A unique character ID throughout the scenario  # noqa: E501
 
         :param id: The id of this Character.
         :type id: str
@@ -111,35 +109,10 @@ class Character(Model):
         self._id = id
 
     @property
-    def unstructured(self) -> str:
-        """Gets the unstructured of this Character.
-
-        natural language text description of the character  # noqa: E501
-
-        :return: The unstructured of this Character.
-        :rtype: str
-        """
-        return self._unstructured
-
-    @unstructured.setter
-    def unstructured(self, unstructured: str):
-        """Sets the unstructured of this Character.
-
-        natural language text description of the character  # noqa: E501
-
-        :param unstructured: The unstructured of this Character.
-        :type unstructured: str
-        """
-        if unstructured is None:
-            raise ValueError("Invalid value for `unstructured`, must not be `None`")  # noqa: E501
-
-        self._unstructured = unstructured
-
-    @property
     def name(self) -> str:
         """Gets the name of this Character.
 
-        the name of the character, omit if unknown  # noqa: E501
+        display name, as in a dashboard  # noqa: E501
 
         :return: The name of this Character.
         :rtype: str
@@ -150,34 +123,86 @@ class Character(Model):
     def name(self, name: str):
         """Sets the name of this Character.
 
-        the name of the character, omit if unknown  # noqa: E501
+        display name, as in a dashboard  # noqa: E501
 
         :param name: The name of this Character.
         :type name: str
         """
+        if name is None:
+            raise ValueError("Invalid value for `name`, must not be `None`")  # noqa: E501
 
         self._name = name
 
     @property
-    def relationship(self) -> CharacterRelationship:
-        """Gets the relationship of this Character.
+    def unstructured(self) -> str:
+        """Gets the unstructured of this Character.
 
+        Natural language, plain text description of the character  # noqa: E501
 
-        :return: The relationship of this Character.
-        :rtype: CharacterRelationship
+        :return: The unstructured of this Character.
+        :rtype: str
         """
-        return self._relationship
+        return self._unstructured
 
-    @relationship.setter
-    def relationship(self, relationship: CharacterRelationship):
-        """Sets the relationship of this Character.
+    @unstructured.setter
+    def unstructured(self, unstructured: str):
+        """Sets the unstructured of this Character.
 
+        Natural language, plain text description of the character  # noqa: E501
 
-        :param relationship: The relationship of this Character.
-        :type relationship: CharacterRelationship
+        :param unstructured: The unstructured of this Character.
+        :type unstructured: str
+        """
+        if unstructured is None:
+            raise ValueError("Invalid value for `unstructured`, must not be `None`")  # noqa: E501
+
+        self._unstructured = unstructured
+
+    @property
+    def unstructured_postassess(self) -> str:
+        """Gets the unstructured_postassess of this Character.
+
+        unstructured description updated after character assessment  # noqa: E501
+
+        :return: The unstructured_postassess of this Character.
+        :rtype: str
+        """
+        return self._unstructured_postassess
+
+    @unstructured_postassess.setter
+    def unstructured_postassess(self, unstructured_postassess: str):
+        """Sets the unstructured_postassess of this Character.
+
+        unstructured description updated after character assessment  # noqa: E501
+
+        :param unstructured_postassess: The unstructured_postassess of this Character.
+        :type unstructured_postassess: str
         """
 
-        self._relationship = relationship
+        self._unstructured_postassess = unstructured_postassess
+
+    @property
+    def rapport(self) -> float:
+        """Gets the rapport of this Character.
+
+        A measure of closeness or affinity towards the player/medic; 0 represents strong dislike, 10 represents very close relationships like family  # noqa: E501
+
+        :return: The rapport of this Character.
+        :rtype: float
+        """
+        return self._rapport
+
+    @rapport.setter
+    def rapport(self, rapport: float):
+        """Sets the rapport of this Character.
+
+        A measure of closeness or affinity towards the player/medic; 0 represents strong dislike, 10 represents very close relationships like family  # noqa: E501
+
+        :param rapport: The rapport of this Character.
+        :type rapport: float
+        """
+
+        self._rapport = rapport
 
     @property
     def demographics(self) -> Demographics:
@@ -197,6 +222,8 @@ class Character(Model):
         :param demographics: The demographics of this Character.
         :type demographics: Demographics
         """
+        if demographics is None:
+            raise ValueError("Invalid value for `demographics`, must not be `None`")  # noqa: E501
 
         self._demographics = demographics
 
@@ -204,7 +231,7 @@ class Character(Model):
     def injuries(self) -> List[Injury]:
         """Gets the injuries of this Character.
 
-        an array of character injuries  # noqa: E501
+        A list of Injuries for the character  # noqa: E501
 
         :return: The injuries of this Character.
         :rtype: List[Injury]
@@ -215,7 +242,7 @@ class Character(Model):
     def injuries(self, injuries: List[Injury]):
         """Sets the injuries of this Character.
 
-        an array of character injuries  # noqa: E501
+        A list of Injuries for the character  # noqa: E501
 
         :param injuries: The injuries of this Character.
         :type injuries: List[Injury]
@@ -248,7 +275,7 @@ class Character(Model):
     def visited(self) -> bool:
         """Gets the visited of this Character.
 
-        whether or not this character has been visited in the current scenario  # noqa: E501
+        whether or not this character has been visited by the ADM in the current scenario  # noqa: E501
 
         :return: The visited of this Character.
         :rtype: bool
@@ -259,31 +286,10 @@ class Character(Model):
     def visited(self, visited: bool):
         """Sets the visited of this Character.
 
-        whether or not this character has been visited in the current scenario  # noqa: E501
+        whether or not this character has been visited by the ADM in the current scenario  # noqa: E501
 
         :param visited: The visited of this Character.
         :type visited: bool
         """
 
         self._visited = visited
-
-    @property
-    def tag(self) -> CharacterTag:
-        """Gets the tag of this Character.
-
-
-        :return: The tag of this Character.
-        :rtype: CharacterTag
-        """
-        return self._tag
-
-    @tag.setter
-    def tag(self, tag: CharacterTag):
-        """Sets the tag of this Character.
-
-
-        :param tag: The tag of this Character.
-        :type tag: CharacterTag
-        """
-
-        self._tag = tag

@@ -6,8 +6,14 @@ from datetime import date, datetime  # noqa: F401
 from typing import List, Dict  # noqa: F401
 
 from swagger_server.models.base_model_ import Model
-from swagger_server.models.demographics_rank import DemographicsRank  # noqa: F401,E501
-from swagger_server.models.demographics_sex import DemographicsSex  # noqa: F401,E501
+from swagger_server.models.character_role_enum import CharacterRoleEnum  # noqa: F401,E501
+from swagger_server.models.demographic_sex_enum import DemographicSexEnum  # noqa: F401,E501
+from swagger_server.models.military_branch_enum import MilitaryBranchEnum  # noqa: F401,E501
+from swagger_server.models.military_disposition_enum import MilitaryDispositionEnum  # noqa: F401,E501
+from swagger_server.models.military_rank_enum import MilitaryRankEnum  # noqa: F401,E501
+from swagger_server.models.military_rank_title_enum import MilitaryRankTitleEnum  # noqa: F401,E501
+from swagger_server.models.mission_importance_enum import MissionImportanceEnum  # noqa: F401,E501
+from swagger_server.models.skills import Skills  # noqa: F401,E501
 from swagger_server import util
 
 
@@ -16,30 +22,65 @@ class Demographics(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, age: int=None, sex: DemographicsSex=None, rank: DemographicsRank=None):  # noqa: E501
+    def __init__(self, age: int=None, sex: DemographicSexEnum=None, race: str=None, military_disposition: MilitaryDispositionEnum=None, military_branch: MilitaryBranchEnum=None, rank: MilitaryRankEnum=None, rank_title: MilitaryRankTitleEnum=None, skills: List[Skills]=None, role: CharacterRoleEnum=None, mission_importance: MissionImportanceEnum=None):  # noqa: E501
         """Demographics - a model defined in Swagger
 
         :param age: The age of this Demographics.  # noqa: E501
         :type age: int
         :param sex: The sex of this Demographics.  # noqa: E501
-        :type sex: DemographicsSex
+        :type sex: DemographicSexEnum
+        :param race: The race of this Demographics.  # noqa: E501
+        :type race: str
+        :param military_disposition: The military_disposition of this Demographics.  # noqa: E501
+        :type military_disposition: MilitaryDispositionEnum
+        :param military_branch: The military_branch of this Demographics.  # noqa: E501
+        :type military_branch: MilitaryBranchEnum
         :param rank: The rank of this Demographics.  # noqa: E501
-        :type rank: DemographicsRank
+        :type rank: MilitaryRankEnum
+        :param rank_title: The rank_title of this Demographics.  # noqa: E501
+        :type rank_title: MilitaryRankTitleEnum
+        :param skills: The skills of this Demographics.  # noqa: E501
+        :type skills: List[Skills]
+        :param role: The role of this Demographics.  # noqa: E501
+        :type role: CharacterRoleEnum
+        :param mission_importance: The mission_importance of this Demographics.  # noqa: E501
+        :type mission_importance: MissionImportanceEnum
         """
         self.swagger_types = {
             'age': int,
-            'sex': DemographicsSex,
-            'rank': DemographicsRank
+            'sex': DemographicSexEnum,
+            'race': str,
+            'military_disposition': MilitaryDispositionEnum,
+            'military_branch': MilitaryBranchEnum,
+            'rank': MilitaryRankEnum,
+            'rank_title': MilitaryRankTitleEnum,
+            'skills': List[Skills],
+            'role': CharacterRoleEnum,
+            'mission_importance': MissionImportanceEnum
         }
 
         self.attribute_map = {
             'age': 'age',
             'sex': 'sex',
-            'rank': 'rank'
+            'race': 'race',
+            'military_disposition': 'military_disposition',
+            'military_branch': 'military_branch',
+            'rank': 'rank',
+            'rank_title': 'rank_title',
+            'skills': 'skills',
+            'role': 'role',
+            'mission_importance': 'mission_importance'
         }
         self._age = age
         self._sex = sex
+        self._race = race
+        self._military_disposition = military_disposition
+        self._military_branch = military_branch
         self._rank = rank
+        self._rank_title = rank_title
+        self._skills = skills
+        self._role = role
+        self._mission_importance = mission_importance
 
     @classmethod
     def from_dict(cls, dikt) -> 'Demographics':
@@ -76,43 +117,198 @@ class Demographics(Model):
         self._age = age
 
     @property
-    def sex(self) -> DemographicsSex:
+    def sex(self) -> DemographicSexEnum:
         """Gets the sex of this Demographics.
 
 
         :return: The sex of this Demographics.
-        :rtype: DemographicsSex
+        :rtype: DemographicSexEnum
         """
         return self._sex
 
     @sex.setter
-    def sex(self, sex: DemographicsSex):
+    def sex(self, sex: DemographicSexEnum):
         """Sets the sex of this Demographics.
 
 
         :param sex: The sex of this Demographics.
-        :type sex: DemographicsSex
+        :type sex: DemographicSexEnum
         """
+        if sex is None:
+            raise ValueError("Invalid value for `sex`, must not be `None`")  # noqa: E501
 
         self._sex = sex
 
     @property
-    def rank(self) -> DemographicsRank:
+    def race(self) -> str:
+        """Gets the race of this Demographics.
+
+        Race or ethnicity  # noqa: E501
+
+        :return: The race of this Demographics.
+        :rtype: str
+        """
+        return self._race
+
+    @race.setter
+    def race(self, race: str):
+        """Sets the race of this Demographics.
+
+        Race or ethnicity  # noqa: E501
+
+        :param race: The race of this Demographics.
+        :type race: str
+        """
+        if race is None:
+            raise ValueError("Invalid value for `race`, must not be `None`")  # noqa: E501
+
+        self._race = race
+
+    @property
+    def military_disposition(self) -> MilitaryDispositionEnum:
+        """Gets the military_disposition of this Demographics.
+
+
+        :return: The military_disposition of this Demographics.
+        :rtype: MilitaryDispositionEnum
+        """
+        return self._military_disposition
+
+    @military_disposition.setter
+    def military_disposition(self, military_disposition: MilitaryDispositionEnum):
+        """Sets the military_disposition of this Demographics.
+
+
+        :param military_disposition: The military_disposition of this Demographics.
+        :type military_disposition: MilitaryDispositionEnum
+        """
+
+        self._military_disposition = military_disposition
+
+    @property
+    def military_branch(self) -> MilitaryBranchEnum:
+        """Gets the military_branch of this Demographics.
+
+
+        :return: The military_branch of this Demographics.
+        :rtype: MilitaryBranchEnum
+        """
+        return self._military_branch
+
+    @military_branch.setter
+    def military_branch(self, military_branch: MilitaryBranchEnum):
+        """Sets the military_branch of this Demographics.
+
+
+        :param military_branch: The military_branch of this Demographics.
+        :type military_branch: MilitaryBranchEnum
+        """
+
+        self._military_branch = military_branch
+
+    @property
+    def rank(self) -> MilitaryRankEnum:
         """Gets the rank of this Demographics.
 
 
         :return: The rank of this Demographics.
-        :rtype: DemographicsRank
+        :rtype: MilitaryRankEnum
         """
         return self._rank
 
     @rank.setter
-    def rank(self, rank: DemographicsRank):
+    def rank(self, rank: MilitaryRankEnum):
         """Sets the rank of this Demographics.
 
 
         :param rank: The rank of this Demographics.
-        :type rank: DemographicsRank
+        :type rank: MilitaryRankEnum
         """
 
         self._rank = rank
+
+    @property
+    def rank_title(self) -> MilitaryRankTitleEnum:
+        """Gets the rank_title of this Demographics.
+
+
+        :return: The rank_title of this Demographics.
+        :rtype: MilitaryRankTitleEnum
+        """
+        return self._rank_title
+
+    @rank_title.setter
+    def rank_title(self, rank_title: MilitaryRankTitleEnum):
+        """Sets the rank_title of this Demographics.
+
+
+        :param rank_title: The rank_title of this Demographics.
+        :type rank_title: MilitaryRankTitleEnum
+        """
+
+        self._rank_title = rank_title
+
+    @property
+    def skills(self) -> List[Skills]:
+        """Gets the skills of this Demographics.
+
+        A list of pairs of skill type and numeric skill level  # noqa: E501
+
+        :return: The skills of this Demographics.
+        :rtype: List[Skills]
+        """
+        return self._skills
+
+    @skills.setter
+    def skills(self, skills: List[Skills]):
+        """Sets the skills of this Demographics.
+
+        A list of pairs of skill type and numeric skill level  # noqa: E501
+
+        :param skills: The skills of this Demographics.
+        :type skills: List[Skills]
+        """
+
+        self._skills = skills
+
+    @property
+    def role(self) -> CharacterRoleEnum:
+        """Gets the role of this Demographics.
+
+
+        :return: The role of this Demographics.
+        :rtype: CharacterRoleEnum
+        """
+        return self._role
+
+    @role.setter
+    def role(self, role: CharacterRoleEnum):
+        """Sets the role of this Demographics.
+
+
+        :param role: The role of this Demographics.
+        :type role: CharacterRoleEnum
+        """
+
+        self._role = role
+
+    @property
+    def mission_importance(self) -> MissionImportanceEnum:
+        """Gets the mission_importance of this Demographics.
+
+
+        :return: The mission_importance of this Demographics.
+        :rtype: MissionImportanceEnum
+        """
+        return self._mission_importance
+
+    @mission_importance.setter
+    def mission_importance(self, mission_importance: MissionImportanceEnum):
+        """Sets the mission_importance of this Demographics.
+
+
+        :param mission_importance: The mission_importance of this Demographics.
+        :type mission_importance: MissionImportanceEnum
+        """
+
+        self._mission_importance = mission_importance

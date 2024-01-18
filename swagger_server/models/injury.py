@@ -6,8 +6,9 @@ from datetime import date, datetime  # noqa: F401
 from typing import List, Dict  # noqa: F401
 
 from swagger_server.models.base_model_ import Model
-from swagger_server.models.injury_location import InjuryLocation  # noqa: F401,E501
-from swagger_server.models.injury_type import InjuryType  # noqa: F401,E501
+from swagger_server.models.injury_location_enum import InjuryLocationEnum  # noqa: F401,E501
+from swagger_server.models.injury_status_enum import InjuryStatusEnum  # noqa: F401,E501
+from swagger_server.models.injury_type_enum import InjuryTypeEnum  # noqa: F401,E501
 from swagger_server import util
 
 
@@ -16,30 +17,35 @@ class Injury(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, name: InjuryType=None, location: InjuryLocation=None, severity: float=None):  # noqa: E501
+    def __init__(self, name: InjuryTypeEnum=None, location: InjuryLocationEnum=None, severity: float=None, status: InjuryStatusEnum=None):  # noqa: E501
         """Injury - a model defined in Swagger
 
         :param name: The name of this Injury.  # noqa: E501
-        :type name: InjuryType
+        :type name: InjuryTypeEnum
         :param location: The location of this Injury.  # noqa: E501
-        :type location: InjuryLocation
+        :type location: InjuryLocationEnum
         :param severity: The severity of this Injury.  # noqa: E501
         :type severity: float
+        :param status: The status of this Injury.  # noqa: E501
+        :type status: InjuryStatusEnum
         """
         self.swagger_types = {
-            'name': InjuryType,
-            'location': InjuryLocation,
-            'severity': float
+            'name': InjuryTypeEnum,
+            'location': InjuryLocationEnum,
+            'severity': float,
+            'status': InjuryStatusEnum
         }
 
         self.attribute_map = {
             'name': 'name',
             'location': 'location',
-            'severity': 'severity'
+            'severity': 'severity',
+            'status': 'status'
         }
         self._name = name
         self._location = location
         self._severity = severity
+        self._status = status
 
     @classmethod
     def from_dict(cls, dikt) -> 'Injury':
@@ -53,22 +59,22 @@ class Injury(Model):
         return util.deserialize_model(dikt, cls)
 
     @property
-    def name(self) -> InjuryType:
+    def name(self) -> InjuryTypeEnum:
         """Gets the name of this Injury.
 
 
         :return: The name of this Injury.
-        :rtype: InjuryType
+        :rtype: InjuryTypeEnum
         """
         return self._name
 
     @name.setter
-    def name(self, name: InjuryType):
+    def name(self, name: InjuryTypeEnum):
         """Sets the name of this Injury.
 
 
         :param name: The name of this Injury.
-        :type name: InjuryType
+        :type name: InjuryTypeEnum
         """
         if name is None:
             raise ValueError("Invalid value for `name`, must not be `None`")  # noqa: E501
@@ -76,22 +82,22 @@ class Injury(Model):
         self._name = name
 
     @property
-    def location(self) -> InjuryLocation:
+    def location(self) -> InjuryLocationEnum:
         """Gets the location of this Injury.
 
 
         :return: The location of this Injury.
-        :rtype: InjuryLocation
+        :rtype: InjuryLocationEnum
         """
         return self._location
 
     @location.setter
-    def location(self, location: InjuryLocation):
+    def location(self, location: InjuryLocationEnum):
         """Sets the location of this Injury.
 
 
         :param location: The location of this Injury.
-        :type location: InjuryLocation
+        :type location: InjuryLocationEnum
         """
         if location is None:
             raise ValueError("Invalid value for `location`, must not be `None`")  # noqa: E501
@@ -102,7 +108,7 @@ class Injury(Model):
     def severity(self) -> float:
         """Gets the severity of this Injury.
 
-        the apparent severity of the injury from 0 (low) to 1.0 (high)  # noqa: E501
+        A numerical indication of the severity of the injury from low (0.0) to high (1.0)  # noqa: E501
 
         :return: The severity of this Injury.
         :rtype: float
@@ -113,10 +119,33 @@ class Injury(Model):
     def severity(self, severity: float):
         """Sets the severity of this Injury.
 
-        the apparent severity of the injury from 0 (low) to 1.0 (high)  # noqa: E501
+        A numerical indication of the severity of the injury from low (0.0) to high (1.0)  # noqa: E501
 
         :param severity: The severity of this Injury.
         :type severity: float
         """
 
         self._severity = severity
+
+    @property
+    def status(self) -> InjuryStatusEnum:
+        """Gets the status of this Injury.
+
+
+        :return: The status of this Injury.
+        :rtype: InjuryStatusEnum
+        """
+        return self._status
+
+    @status.setter
+    def status(self, status: InjuryStatusEnum):
+        """Sets the status of this Injury.
+
+
+        :param status: The status of this Injury.
+        :type status: InjuryStatusEnum
+        """
+        if status is None:
+            raise ValueError("Invalid value for `status`, must not be `None`")  # noqa: E501
+
+        self._status = status

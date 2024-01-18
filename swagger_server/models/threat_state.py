@@ -50,7 +50,7 @@ class ThreatState(Model):
     def unstructured(self) -> str:
         """Gets the unstructured of this ThreatState.
 
-        text description of current threat state  # noqa: E501
+        Natural language, plain text description of environmental threats  # noqa: E501
 
         :return: The unstructured of this ThreatState.
         :rtype: str
@@ -61,7 +61,7 @@ class ThreatState(Model):
     def unstructured(self, unstructured: str):
         """Sets the unstructured of this ThreatState.
 
-        text description of current threat state  # noqa: E501
+        Natural language, plain text description of environmental threats  # noqa: E501
 
         :param unstructured: The unstructured of this ThreatState.
         :type unstructured: str
@@ -75,7 +75,7 @@ class ThreatState(Model):
     def threats(self) -> List[Threat]:
         """Gets the threats of this ThreatState.
 
-        An array of threats  # noqa: E501
+        A list of pairs of threat types with a severity descriptor  # noqa: E501
 
         :return: The threats of this ThreatState.
         :rtype: List[Threat]
@@ -86,10 +86,12 @@ class ThreatState(Model):
     def threats(self, threats: List[Threat]):
         """Sets the threats of this ThreatState.
 
-        An array of threats  # noqa: E501
+        A list of pairs of threat types with a severity descriptor  # noqa: E501
 
         :param threats: The threats of this ThreatState.
         :type threats: List[Threat]
         """
+        if threats is None:
+            raise ValueError("Invalid value for `threats`, must not be `None`")  # noqa: E501
 
         self._threats = threats

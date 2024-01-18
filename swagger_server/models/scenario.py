@@ -6,6 +6,7 @@ from datetime import date, datetime  # noqa: F401
 from typing import List, Dict  # noqa: F401
 
 from swagger_server.models.base_model_ import Model
+from swagger_server.models.scene import Scene  # noqa: F401,E501
 from swagger_server.models.state import State  # noqa: F401,E501
 from swagger_server import util
 
@@ -15,7 +16,7 @@ class Scenario(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, id: str='1234', name: str=None, session_complete: bool=None, start_time: str=None, state: State=None):  # noqa: E501
+    def __init__(self, id: str=None, name: str=None, session_complete: bool=None, state: State=None, scenes: List[Scene]=None):  # noqa: E501
         """Scenario - a model defined in Swagger
 
         :param id: The id of this Scenario.  # noqa: E501
@@ -24,31 +25,31 @@ class Scenario(Model):
         :type name: str
         :param session_complete: The session_complete of this Scenario.  # noqa: E501
         :type session_complete: bool
-        :param start_time: The start_time of this Scenario.  # noqa: E501
-        :type start_time: str
         :param state: The state of this Scenario.  # noqa: E501
         :type state: State
+        :param scenes: The scenes of this Scenario.  # noqa: E501
+        :type scenes: List[Scene]
         """
         self.swagger_types = {
             'id': str,
             'name': str,
             'session_complete': bool,
-            'start_time': str,
-            'state': State
+            'state': State,
+            'scenes': List[Scene]
         }
 
         self.attribute_map = {
             'id': 'id',
             'name': 'name',
             'session_complete': 'session_complete',
-            'start_time': 'start_time',
-            'state': 'state'
+            'state': 'state',
+            'scenes': 'scenes'
         }
         self._id = id
         self._name = name
         self._session_complete = session_complete
-        self._start_time = start_time
         self._state = state
+        self._scenes = scenes
 
     @classmethod
     def from_dict(cls, dikt) -> 'Scenario':
@@ -135,29 +136,6 @@ class Scenario(Model):
         self._session_complete = session_complete
 
     @property
-    def start_time(self) -> str:
-        """Gets the start_time of this Scenario.
-
-        the wall clock local start time of the scenario, expressed as hh:mm  # noqa: E501
-
-        :return: The start_time of this Scenario.
-        :rtype: str
-        """
-        return self._start_time
-
-    @start_time.setter
-    def start_time(self, start_time: str):
-        """Sets the start_time of this Scenario.
-
-        the wall clock local start time of the scenario, expressed as hh:mm  # noqa: E501
-
-        :param start_time: The start_time of this Scenario.
-        :type start_time: str
-        """
-
-        self._start_time = start_time
-
-    @property
     def state(self) -> State:
         """Gets the state of this Scenario.
 
@@ -175,5 +153,30 @@ class Scenario(Model):
         :param state: The state of this Scenario.
         :type state: State
         """
+        if state is None:
+            raise ValueError("Invalid value for `state`, must not be `None`")  # noqa: E501
 
         self._state = state
+
+    @property
+    def scenes(self) -> List[Scene]:
+        """Gets the scenes of this Scenario.
+
+        A list of specification for all scenes in the scenario  # noqa: E501
+
+        :return: The scenes of this Scenario.
+        :rtype: List[Scene]
+        """
+        return self._scenes
+
+    @scenes.setter
+    def scenes(self, scenes: List[Scene]):
+        """Sets the scenes of this Scenario.
+
+        A list of specification for all scenes in the scenario  # noqa: E501
+
+        :param scenes: The scenes of this Scenario.
+        :type scenes: List[Scene]
+        """
+
+        self._scenes = scenes
