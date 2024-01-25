@@ -7,6 +7,7 @@ from typing import List, Dict  # noqa: F401
 
 from swagger_server.models.base_model_ import Model
 from swagger_server.models.injury_location_enum import InjuryLocationEnum  # noqa: F401,E501
+from swagger_server.models.injury_severity_enum import InjurySeverityEnum  # noqa: F401,E501
 from swagger_server.models.injury_status_enum import InjuryStatusEnum  # noqa: F401,E501
 from swagger_server.models.injury_type_enum import InjuryTypeEnum  # noqa: F401,E501
 from swagger_server import util
@@ -17,7 +18,7 @@ class Injury(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, name: InjuryTypeEnum=None, location: InjuryLocationEnum=None, severity: float=None, status: InjuryStatusEnum=None):  # noqa: E501
+    def __init__(self, name: InjuryTypeEnum=None, location: InjuryLocationEnum=None, severity: InjurySeverityEnum=None, status: InjuryStatusEnum=None):  # noqa: E501
         """Injury - a model defined in Swagger
 
         :param name: The name of this Injury.  # noqa: E501
@@ -25,14 +26,14 @@ class Injury(Model):
         :param location: The location of this Injury.  # noqa: E501
         :type location: InjuryLocationEnum
         :param severity: The severity of this Injury.  # noqa: E501
-        :type severity: float
+        :type severity: InjurySeverityEnum
         :param status: The status of this Injury.  # noqa: E501
         :type status: InjuryStatusEnum
         """
         self.swagger_types = {
             'name': InjuryTypeEnum,
             'location': InjuryLocationEnum,
-            'severity': float,
+            'severity': InjurySeverityEnum,
             'status': InjuryStatusEnum
         }
 
@@ -105,24 +106,22 @@ class Injury(Model):
         self._location = location
 
     @property
-    def severity(self) -> float:
+    def severity(self) -> InjurySeverityEnum:
         """Gets the severity of this Injury.
 
-        A numerical indication of the severity of the injury from low (0.0) to high (1.0)  # noqa: E501
 
         :return: The severity of this Injury.
-        :rtype: float
+        :rtype: InjurySeverityEnum
         """
         return self._severity
 
     @severity.setter
-    def severity(self, severity: float):
+    def severity(self, severity: InjurySeverityEnum):
         """Sets the severity of this Injury.
 
-        A numerical indication of the severity of the injury from low (0.0) to high (1.0)  # noqa: E501
 
         :param severity: The severity of this Injury.
-        :type severity: float
+        :type severity: InjurySeverityEnum
         """
 
         self._severity = severity

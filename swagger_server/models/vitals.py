@@ -18,7 +18,7 @@ class Vitals(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, conscious: bool=None, avpu: AvpuLevelEnum=None, ambulatory: bool=None, mental_status: MentalStatusEnum=None, breathing: BreathingLevelEnum=None, heart_rate: HeartRateEnum=None, hrpmin: int=None, spo2: float=None):  # noqa: E501
+    def __init__(self, conscious: bool=None, avpu: AvpuLevelEnum=None, ambulatory: bool=None, mental_status: MentalStatusEnum=None, breathing: BreathingLevelEnum=None, heart_rate: HeartRateEnum=None, spo2: float=None):  # noqa: E501
         """Vitals - a model defined in Swagger
 
         :param conscious: The conscious of this Vitals.  # noqa: E501
@@ -33,8 +33,6 @@ class Vitals(Model):
         :type breathing: BreathingLevelEnum
         :param heart_rate: The heart_rate of this Vitals.  # noqa: E501
         :type heart_rate: HeartRateEnum
-        :param hrpmin: The hrpmin of this Vitals.  # noqa: E501
-        :type hrpmin: int
         :param spo2: The spo2 of this Vitals.  # noqa: E501
         :type spo2: float
         """
@@ -45,7 +43,6 @@ class Vitals(Model):
             'mental_status': MentalStatusEnum,
             'breathing': BreathingLevelEnum,
             'heart_rate': HeartRateEnum,
-            'hrpmin': int,
             'spo2': float
         }
 
@@ -56,7 +53,6 @@ class Vitals(Model):
             'mental_status': 'mental_status',
             'breathing': 'breathing',
             'heart_rate': 'heart_rate',
-            'hrpmin': 'hrpmin',
             'spo2': 'Spo2'
         }
         self._conscious = conscious
@@ -65,7 +61,6 @@ class Vitals(Model):
         self._mental_status = mental_status
         self._breathing = breathing
         self._heart_rate = heart_rate
-        self._hrpmin = hrpmin
         self._spo2 = spo2
 
     @classmethod
@@ -208,29 +203,6 @@ class Vitals(Model):
         """
 
         self._heart_rate = heart_rate
-
-    @property
-    def hrpmin(self) -> int:
-        """Gets the hrpmin of this Vitals.
-
-        heart rate in beats per minute  # noqa: E501
-
-        :return: The hrpmin of this Vitals.
-        :rtype: int
-        """
-        return self._hrpmin
-
-    @hrpmin.setter
-    def hrpmin(self, hrpmin: int):
-        """Sets the hrpmin of this Vitals.
-
-        heart rate in beats per minute  # noqa: E501
-
-        :param hrpmin: The hrpmin of this Vitals.
-        :type hrpmin: int
-        """
-
-        self._hrpmin = hrpmin
 
     @property
     def spo2(self) -> float:

@@ -66,6 +66,8 @@ class ConditionsCharacterVitals(Model):
         :param character_id: The character_id of this ConditionsCharacterVitals.
         :type character_id: str
         """
+        if character_id is None:
+            raise ValueError("Invalid value for `character_id`, must not be `None`")  # noqa: E501
 
         self._character_id = character_id
 
@@ -87,5 +89,7 @@ class ConditionsCharacterVitals(Model):
         :param vitals: The vitals of this ConditionsCharacterVitals.
         :type vitals: Vitals
         """
+        if vitals is None:
+            raise ValueError("Invalid value for `vitals`, must not be `None`")  # noqa: E501
 
         self._vitals = vitals

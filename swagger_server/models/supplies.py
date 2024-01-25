@@ -15,7 +15,7 @@ class Supplies(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, type: SupplyTypeEnum=None, reusable: bool=None, quantity: int=None):  # noqa: E501
+    def __init__(self, type: SupplyTypeEnum=None, reusable: bool=False, quantity: int=None):  # noqa: E501
         """Supplies - a model defined in Swagger
 
         :param type: The type of this Supplies.  # noqa: E501
@@ -94,8 +94,6 @@ class Supplies(Model):
         :param reusable: The reusable of this Supplies.
         :type reusable: bool
         """
-        if reusable is None:
-            raise ValueError("Invalid value for `reusable`, must not be `None`")  # noqa: E501
 
         self._reusable = reusable
 

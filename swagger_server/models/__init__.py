@@ -33,6 +33,7 @@ from swagger_server.models.heart_rate_enum import HeartRateEnum
 from swagger_server.models.injury import Injury
 from swagger_server.models.injury_location import InjuryLocation
 from swagger_server.models.injury_location_enum import InjuryLocationEnum
+from swagger_server.models.injury_severity_enum import InjurySeverityEnum
 from swagger_server.models.injury_status_enum import InjuryStatusEnum
 from swagger_server.models.injury_trigger_enum import InjuryTriggerEnum
 from swagger_server.models.injury_type import InjuryType
@@ -56,11 +57,13 @@ from swagger_server.models.probe_config import ProbeConfig
 from swagger_server.models.probe_option import ProbeOption
 from swagger_server.models.probe_response import ProbeResponse
 from swagger_server.models.probe_responses import ProbeResponses
+from swagger_server.models.rapport_enum import RapportEnum
 from swagger_server.models.scenario import Scenario
 from swagger_server.models.scene import Scene
 from swagger_server.models.semantic_type_enum import SemanticTypeEnum
 from swagger_server.models.sim_environment import SimEnvironment
 from swagger_server.models.sim_environment_type_enum import SimEnvironmentTypeEnum
+from swagger_server.models.skill_level_enum import SkillLevelEnum
 from swagger_server.models.skill_type_enum import SkillTypeEnum
 from swagger_server.models.skills import Skills
 from swagger_server.models.sound_restriction_enum import SoundRestrictionEnum

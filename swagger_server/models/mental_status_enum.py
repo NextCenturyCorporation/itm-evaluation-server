@@ -21,6 +21,7 @@ class MentalStatusEnum(Model):
     AGONY = "AGONY"
     CALM = "CALM"
     CONFUSED = "CONFUSED"
+    SHOCK = "SHOCK"
     UPSET = "UPSET"
     UNRESPONSIVE = "UNRESPONSIVE"
     def __init__(self):  # noqa: E501

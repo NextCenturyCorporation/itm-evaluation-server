@@ -22,6 +22,7 @@ class MilitaryDispositionEnum(Model):
     ALLIED = "Allied"
     CIVILIAN = "Civilian"
     MILITARY_ADVERSARY = "Military Adversary"
+    MILITARY_NEUTRAL = "Military Neutral"
     NON_MILITARY_ADVERSARY = "Non-Military Adversary"
     def __init__(self):  # noqa: E501
         """MilitaryDispositionEnum - a model defined in Swagger

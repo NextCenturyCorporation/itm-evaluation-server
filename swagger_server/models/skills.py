@@ -6,6 +6,7 @@ from datetime import date, datetime  # noqa: F401
 from typing import List, Dict  # noqa: F401
 
 from swagger_server.models.base_model_ import Model
+from swagger_server.models.skill_level_enum import SkillLevelEnum  # noqa: F401,E501
 from swagger_server.models.skill_type_enum import SkillTypeEnum  # noqa: F401,E501
 from swagger_server import util
 
@@ -15,17 +16,17 @@ class Skills(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, skill_type: SkillTypeEnum=None, level: float=None):  # noqa: E501
+    def __init__(self, skill_type: SkillTypeEnum=None, level: SkillLevelEnum=None):  # noqa: E501
         """Skills - a model defined in Swagger
 
         :param skill_type: The skill_type of this Skills.  # noqa: E501
         :type skill_type: SkillTypeEnum
         :param level: The level of this Skills.  # noqa: E501
-        :type level: float
+        :type level: SkillLevelEnum
         """
         self.swagger_types = {
             'skill_type': SkillTypeEnum,
-            'level': float
+            'level': SkillLevelEnum
         }
 
         self.attribute_map = {
@@ -70,24 +71,22 @@ class Skills(Model):
         self._skill_type = skill_type
 
     @property
-    def level(self) -> float:
+    def level(self) -> SkillLevelEnum:
         """Gets the level of this Skills.
 
-        the level of expertise (from 0-10) the character has in the skill  # noqa: E501
 
         :return: The level of this Skills.
-        :rtype: float
+        :rtype: SkillLevelEnum
         """
         return self._level
 
     @level.setter
-    def level(self, level: float):
+    def level(self, level: SkillLevelEnum):
         """Sets the level of this Skills.
 
-        the level of expertise (from 0-10) the character has in the skill  # noqa: E501
 
         :param level: The level of this Skills.
-        :type level: float
+        :type level: SkillLevelEnum
         """
         if level is None:
             raise ValueError("Invalid value for `level`, must not be `None`")  # noqa: E501

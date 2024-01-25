@@ -6,8 +6,10 @@ from datetime import date, datetime  # noqa: F401
 from typing import List, Dict  # noqa: F401
 
 from swagger_server.models.base_model_ import Model
+from swagger_server.models.character_tag_enum import CharacterTagEnum  # noqa: F401,E501
 from swagger_server.models.demographics import Demographics  # noqa: F401,E501
 from swagger_server.models.injury import Injury  # noqa: F401,E501
+from swagger_server.models.rapport_enum import RapportEnum  # noqa: F401,E501
 from swagger_server.models.vitals import Vitals  # noqa: F401,E501
 from swagger_server import util
 
@@ -17,7 +19,7 @@ class Character(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, id: str=None, name: str=None, unstructured: str=None, unstructured_postassess: str=None, rapport: float=None, demographics: Demographics=None, injuries: List[Injury]=None, vitals: Vitals=None, visited: bool=False):  # noqa: E501
+    def __init__(self, id: str=None, name: str=None, unstructured: str=None, unstructured_postassess: str=None, rapport: RapportEnum=None, demographics: Demographics=None, injuries: List[Injury]=None, vitals: Vitals=None, visited: bool=False, tag: CharacterTagEnum=None):  # noqa: E501
         """Character - a model defined in Swagger
 
         :param id: The id of this Character.  # noqa: E501
@@ -29,7 +31,7 @@ class Character(Model):
         :param unstructured_postassess: The unstructured_postassess of this Character.  # noqa: E501
         :type unstructured_postassess: str
         :param rapport: The rapport of this Character.  # noqa: E501
-        :type rapport: float
+        :type rapport: RapportEnum
         :param demographics: The demographics of this Character.  # noqa: E501
         :type demographics: Demographics
         :param injuries: The injuries of this Character.  # noqa: E501
@@ -38,17 +40,20 @@ class Character(Model):
         :type vitals: Vitals
         :param visited: The visited of this Character.  # noqa: E501
         :type visited: bool
+        :param tag: The tag of this Character.  # noqa: E501
+        :type tag: CharacterTagEnum
         """
         self.swagger_types = {
             'id': str,
             'name': str,
             'unstructured': str,
             'unstructured_postassess': str,
-            'rapport': float,
+            'rapport': RapportEnum,
             'demographics': Demographics,
             'injuries': List[Injury],
             'vitals': Vitals,
-            'visited': bool
+            'visited': bool,
+            'tag': CharacterTagEnum
         }
 
         self.attribute_map = {
@@ -60,7 +65,8 @@ class Character(Model):
             'demographics': 'demographics',
             'injuries': 'injuries',
             'vitals': 'vitals',
-            'visited': 'visited'
+            'visited': 'visited',
+            'tag': 'tag'
         }
         self._id = id
         self._name = name
@@ -71,6 +77,7 @@ class Character(Model):
         self._injuries = injuries
         self._vitals = vitals
         self._visited = visited
+        self._tag = tag
 
     @classmethod
     def from_dict(cls, dikt) -> 'Character':
@@ -182,24 +189,22 @@ class Character(Model):
         self._unstructured_postassess = unstructured_postassess
 
     @property
-    def rapport(self) -> float:
+    def rapport(self) -> RapportEnum:
         """Gets the rapport of this Character.
 
-        A measure of closeness or affinity towards the player/medic; 0 represents strong dislike, 10 represents very close relationships like family  # noqa: E501
 
         :return: The rapport of this Character.
-        :rtype: float
+        :rtype: RapportEnum
         """
         return self._rapport
 
     @rapport.setter
-    def rapport(self, rapport: float):
+    def rapport(self, rapport: RapportEnum):
         """Sets the rapport of this Character.
 
-        A measure of closeness or affinity towards the player/medic; 0 represents strong dislike, 10 represents very close relationships like family  # noqa: E501
 
         :param rapport: The rapport of this Character.
-        :type rapport: float
+        :type rapport: RapportEnum
         """
 
         self._rapport = rapport
@@ -293,3 +298,24 @@ class Character(Model):
         """
 
         self._visited = visited
+
+    @property
+    def tag(self) -> CharacterTagEnum:
+        """Gets the tag of this Character.
+
+
+        :return: The tag of this Character.
+        :rtype: CharacterTagEnum
+        """
+        return self._tag
+
+    @tag.setter
+    def tag(self, tag: CharacterTagEnum):
+        """Sets the tag of this Character.
+
+
+        :param tag: The tag of this Character.
+        :type tag: CharacterTagEnum
+        """
+
+        self._tag = tag

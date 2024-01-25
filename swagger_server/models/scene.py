@@ -21,15 +21,15 @@ class Scene(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, index: int=None, state: State=None, end_scenario_allowed: bool=None, probe_config: List[ProbeConfig]=None, tagging: Tagging=None, action_mapping: List[Action]=None, restricted_actions: List[ActionTypeEnum]=None, transition_semantics: SemanticTypeEnum=None, transitions: Conditions=None):  # noqa: E501
+    def __init__(self, index: int=None, state: State=None, end_scene_allowed: bool=None, probe_config: List[ProbeConfig]=None, tagging: Tagging=None, action_mapping: List[Action]=None, restricted_actions: List[ActionTypeEnum]=None, transition_semantics: SemanticTypeEnum=None, transitions: Conditions=None):  # noqa: E501
         """Scene - a model defined in Swagger
 
         :param index: The index of this Scene.  # noqa: E501
         :type index: int
         :param state: The state of this Scene.  # noqa: E501
         :type state: State
-        :param end_scenario_allowed: The end_scenario_allowed of this Scene.  # noqa: E501
-        :type end_scenario_allowed: bool
+        :param end_scene_allowed: The end_scene_allowed of this Scene.  # noqa: E501
+        :type end_scene_allowed: bool
         :param probe_config: The probe_config of this Scene.  # noqa: E501
         :type probe_config: List[ProbeConfig]
         :param tagging: The tagging of this Scene.  # noqa: E501
@@ -46,7 +46,7 @@ class Scene(Model):
         self.swagger_types = {
             'index': int,
             'state': State,
-            'end_scenario_allowed': bool,
+            'end_scene_allowed': bool,
             'probe_config': List[ProbeConfig],
             'tagging': Tagging,
             'action_mapping': List[Action],
@@ -58,7 +58,7 @@ class Scene(Model):
         self.attribute_map = {
             'index': 'index',
             'state': 'state',
-            'end_scenario_allowed': 'end_scenario_allowed',
+            'end_scene_allowed': 'end_scene_allowed',
             'probe_config': 'probe_config',
             'tagging': 'tagging',
             'action_mapping': 'action_mapping',
@@ -68,7 +68,7 @@ class Scene(Model):
         }
         self._index = index
         self._state = state
-        self._end_scenario_allowed = end_scenario_allowed
+        self._end_scene_allowed = end_scene_allowed
         self._probe_config = probe_config
         self._tagging = tagging
         self._action_mapping = action_mapping
@@ -134,29 +134,29 @@ class Scene(Model):
         self._state = state
 
     @property
-    def end_scenario_allowed(self) -> bool:
-        """Gets the end_scenario_allowed of this Scene.
+    def end_scene_allowed(self) -> bool:
+        """Gets the end_scene_allowed of this Scene.
 
-        Whether ADMs can end the scenario during this scene  # noqa: E501
+        Whether ADMs can explicitly end the scene  # noqa: E501
 
-        :return: The end_scenario_allowed of this Scene.
+        :return: The end_scene_allowed of this Scene.
         :rtype: bool
         """
-        return self._end_scenario_allowed
+        return self._end_scene_allowed
 
-    @end_scenario_allowed.setter
-    def end_scenario_allowed(self, end_scenario_allowed: bool):
-        """Sets the end_scenario_allowed of this Scene.
+    @end_scene_allowed.setter
+    def end_scene_allowed(self, end_scene_allowed: bool):
+        """Sets the end_scene_allowed of this Scene.
 
-        Whether ADMs can end the scenario during this scene  # noqa: E501
+        Whether ADMs can explicitly end the scene  # noqa: E501
 
-        :param end_scenario_allowed: The end_scenario_allowed of this Scene.
-        :type end_scenario_allowed: bool
+        :param end_scene_allowed: The end_scene_allowed of this Scene.
+        :type end_scene_allowed: bool
         """
-        if end_scenario_allowed is None:
-            raise ValueError("Invalid value for `end_scenario_allowed`, must not be `None`")  # noqa: E501
+        if end_scene_allowed is None:
+            raise ValueError("Invalid value for `end_scene_allowed`, must not be `None`")  # noqa: E501
 
-        self._end_scenario_allowed = end_scenario_allowed
+        self._end_scene_allowed = end_scene_allowed
 
     @property
     def probe_config(self) -> List[ProbeConfig]:

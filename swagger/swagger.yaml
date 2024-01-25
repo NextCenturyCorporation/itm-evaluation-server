@@ -663,7 +663,7 @@ components:
         unstructured: Gunfire can be heard in the surrounding area
         threats:
           - type: gunfire
-            severity: 0.5
+            severity: severe
     Threat:
       required:
         - threat_type
@@ -679,7 +679,6 @@ components:
       required:
         - quantity
         - type
-        - reusable
       type: object
       description: a single type of medical supply available to the medic
       properties:
@@ -688,6 +687,7 @@ components:
         reusable:
           type: boolean
           description: Whether or not item is consumable/reusable
+          default: false
         quantity:
           type: integer
           description: Number of items available in the medical bag
@@ -724,11 +724,7 @@ components:
           description: unstructured description updated after character assessment
           example: 22 YO male Marine hit by an IED. Puncture wound on the left side of the neck.  Burns cover about 30 of his body.
         rapport:
-          type: number
-          format: float
-          description: A measure of closeness or affinity towards the player/medic; 0 represents strong dislike, 10 represents very close relationships like family
-          minimum: 0.0
-          maximum: 10.0
+          $ref: "#/components/schemas/RapportEnum"
         demographics:
           $ref: "#/components/schemas/Demographics"
         injuries:
@@ -743,6 +739,8 @@ components:
           description: whether or not this character has been visited by the ADM in the current
             scenario
           default: false
+        tag:
+          $ref: "#/components/schemas/CharacterTagEnum"
     Demographics:
       required:
         - sex
@@ -793,11 +791,7 @@ components:
         skill_type:
           $ref: "#/components/schemas/SkillTypeEnum"
         level:
-          type: number
-          format: float
-          description: the level of expertise (from 0-10) the character has in the skill
-          minimum: 0.0
-          maximum: 10.0
+          $ref: "#/components/schemas/SkillLevelEnum"
     Vitals:
       type: object
       description: Vital levels and other indications of health
@@ -816,12 +810,6 @@ components:
           $ref: "#/components/schemas/BreathingLevelEnum"
         heart_rate:
           $ref: "#/components/schemas/HeartRateEnum"
-        hrpmin:
-          type: integer
-          format: int16
-          description: heart rate in beats per minute
-          minimum: 0
-          maximum: 300
         Spo2:
           type: number
           format: float
@@ -841,17 +829,13 @@ components:
         location:
           $ref: "#/components/schemas/InjuryLocationEnum"
         severity:
-          type: number
-          format: float
-          description: A numerical indication of the severity of the injury from low (0.0) to high (1.0)
-          minimum: 0.0
-          maximum: 1.0
+          $ref: "#/components/schemas/InjurySeverityEnum"
         status:
           $ref: "#/components/schemas/InjuryStatusEnum"
     Scene:
       required:
         - index
-        - end_scenario_allowed
+        - end_scene_allowed
         - action_mapping
       type: object
       description: the specification for a scene in the scenario
@@ -862,9 +846,9 @@ components:
           minimum: 0
         state:
           $ref: "#/components/schemas/State"
-        end_scenario_allowed:
+        end_scene_allowed:
           type: boolean
-          description: Whether ADMs can end the scenario during this scene
+          description: Whether ADMs can explicitly end the scene
         probe_config:
           description: TA1-provided probe configuration, ignored by TA3
           type: array
@@ -927,6 +911,10 @@ components:
         choice:
           type: string
           description: A valid choice for the specified probe_id
+        next_scene:
+          type: integer
+          description: The next scene in the scenario, by index
+          minimum: 0
         justification:
           type: string
           description: A justification of the action taken
@@ -982,6 +970,9 @@ components:
           type: array
           description: True if the specified list of vitals values have been met for the specified character_id
           items:
+            required:
+              - character_id
+              - vitals
             type: object
             description: The minimum vitals of the specified character
             properties:
@@ -1299,6 +1290,7 @@ components:
         - Allied
         - Civilian
         - Military Adversary
+        - Military Neutral
         - Non-Military Adversary
     MilitaryBranchEnum:
       type: string
@@ -1431,6 +1423,15 @@ components:
         - Medical
         - Specialist
         - Communications
+    RapportEnum:
+      type: string
+      description: A measure of closeness or affinity towards the player/medic
+      enum:
+        - loathing
+        - dislike
+        - neutral
+        - close
+        - familial
     CharacterTagEnum:
       type: string
       description: "the tag assigned to a character"
@@ -1459,6 +1460,15 @@ components:
         - Specialist
         - Communications
         - Command
+    SkillLevelEnum:
+      type: string
+      description: the level of expertise the character has in the skill
+      enum:
+        - novice
+        - qualified
+        - competent
+        - skilled
+        - expert
     InjuryTypeEnum:
       type: string
       description: A brief but descriptive label for the injury type
@@ -1502,6 +1512,15 @@ components:
         - right neck
         - internal
         - unspecified
+    InjurySeverityEnum:
+      type: string
+      description: The severity of the injury; for revelant injuries, impacts blood pool sizes
+      enum:
+        - minor
+        - moderate
+        - substantial
+        - major
+        - extreme
     InjuryStatusEnum:
       type: string
       description: "Whether the injury is known prior- and post-assessment, and whether it's been treated"
@@ -1526,6 +1545,7 @@ components:
         - AGONY
         - CALM
         - CONFUSED
+        - SHOCK
         - UPSET
         - UNRESPONSIVE
     HeartRateEnum:
@@ -1562,8 +1582,9 @@ components:
         - CHECK_PULSE
         - CHECK_RESPIRATION
         - DIRECT_MOBILE_CHARACTERS
-        - END_SCENARIO
+        - END_SCENE
         - MOVE_TO_EVAC
+        - SEARCH
         - SITREP
         - TAG_CHARACTER
   responses:

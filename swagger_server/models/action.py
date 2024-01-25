@@ -17,7 +17,7 @@ class Action(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, action_id: str=None, action_type: ActionTypeEnum=None, unstructured: str=None, repeatable: bool=False, character_id: str=None, parameters: Dict[str, str]=None, probe_id: str=None, choice: str=None, justification: str=None, kdma_association: Dict[str, float]=None, condition_semantics: SemanticTypeEnum=None, conditions: Conditions=None):  # noqa: E501
+    def __init__(self, action_id: str=None, action_type: ActionTypeEnum=None, unstructured: str=None, repeatable: bool=False, character_id: str=None, parameters: Dict[str, str]=None, probe_id: str=None, choice: str=None, next_scene: int=None, justification: str=None, kdma_association: Dict[str, float]=None, condition_semantics: SemanticTypeEnum=None, conditions: Conditions=None):  # noqa: E501
         """Action - a model defined in Swagger
 
         :param action_id: The action_id of this Action.  # noqa: E501
@@ -36,6 +36,8 @@ class Action(Model):
         :type probe_id: str
         :param choice: The choice of this Action.  # noqa: E501
         :type choice: str
+        :param next_scene: The next_scene of this Action.  # noqa: E501
+        :type next_scene: int
         :param justification: The justification of this Action.  # noqa: E501
         :type justification: str
         :param kdma_association: The kdma_association of this Action.  # noqa: E501
@@ -54,6 +56,7 @@ class Action(Model):
             'parameters': Dict[str, str],
             'probe_id': str,
             'choice': str,
+            'next_scene': int,
             'justification': str,
             'kdma_association': Dict[str, float],
             'condition_semantics': SemanticTypeEnum,
@@ -69,6 +72,7 @@ class Action(Model):
             'parameters': 'parameters',
             'probe_id': 'probe_id',
             'choice': 'choice',
+            'next_scene': 'next_scene',
             'justification': 'justification',
             'kdma_association': 'kdma_association',
             'condition_semantics': 'condition_semantics',
@@ -82,6 +86,7 @@ class Action(Model):
         self._parameters = parameters
         self._probe_id = probe_id
         self._choice = choice
+        self._next_scene = next_scene
         self._justification = justification
         self._kdma_association = kdma_association
         self._condition_semantics = condition_semantics
@@ -285,6 +290,29 @@ class Action(Model):
         """
 
         self._choice = choice
+
+    @property
+    def next_scene(self) -> int:
+        """Gets the next_scene of this Action.
+
+        The next scene in the scenario, by index  # noqa: E501
+
+        :return: The next_scene of this Action.
+        :rtype: int
+        """
+        return self._next_scene
+
+    @next_scene.setter
+    def next_scene(self, next_scene: int):
+        """Sets the next_scene of this Action.
+
+        The next scene in the scenario, by index  # noqa: E501
+
+        :param next_scene: The next_scene of this Action.
+        :type next_scene: int
+        """
+
+        self._next_scene = next_scene
 
     @property
     def justification(self) -> str:
