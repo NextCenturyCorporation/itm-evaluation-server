@@ -312,8 +312,8 @@ scenes:
       elapsed_time_lt: 120
       elapsed_time_gt: 30
       actions: # multiple lists have "or" semantics
-        - ["action1", action2", "action3"] # actions within a list have "and" semantics
-        - ["action4", action5", "action6"]
+        - [action1, action2, action3] # actions within a list have "and" semantics
+        - [action4, action5, action6]
       probes:
         - adept-september-demo-probe-1 # Specifying this would mean that the scene would end when the specified probe_id(s) are answered
       probe_responses:

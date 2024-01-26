@@ -1,3 +1,4 @@
+import copy
 from dataclasses import dataclass
 from typing import List, Dict
 from swagger_server.models.scene import Scene
@@ -6,6 +7,7 @@ from swagger_server.models.action_type_enum import ActionTypeEnum
 from swagger_server.models.conditions import Conditions
 from swagger_server.models.semantic_type_enum import SemanticTypeEnum
 from swagger_server.models.state import State
+import json
 
 @dataclass
 class ActionMapping:
@@ -29,7 +31,24 @@ class ActionMapping:
         self.choice = action.choice
         self.kdma_association = action.kdma_association
         self.conditions = action.conditions
-        self.next_scene = scene_index+1 if action.next_scene == None else action.next_scene
+        self.next_scene = scene_index+1 if action.next_scene is None else action.next_scene
+
+    def to_obj(self):
+        '''
+        Override method to pretty-print action mapping
+        '''
+        to_obj = {
+            "action_id": self.action_id,
+            "action_type": self.action_type,
+            "unstructured": self.unstructured,
+            "character_id": self.character_id,
+            "probe_id": self.probe_id,
+            "choice": self.choice,
+            "kdma_association": self.kdma_association,
+            "conditions": json.loads(str(self.conditions).replace("'", '"').replace("None", '"None"')),
+            "next_scene": self.next_scene
+        }
+        return to_obj
 
 class ITMScene:
     """
@@ -40,9 +59,9 @@ class ITMScene:
         """
         Initialize an instance of ITMScene.
         """
-        self.index = scene.index
+        self.index :int = scene.index
         self.state :State = scene.state
-        self.end_scene_allowed = scene.end_scene_allowed
+        self.end_scene_allowed :bool = scene.end_scene_allowed
         self.action_mappings :List[ActionMapping] = [
             ActionMapping(action_mapping, self.index)
             for action_mapping in scene.action_mapping
@@ -50,3 +69,27 @@ class ITMScene:
         self.restricted_actions :List[ActionTypeEnum] = scene.restricted_actions
         self.transition_semantics :SemanticTypeEnum = scene.transition_semantics
         self.transitions :Conditions = scene.transitions
+
+    def __str__(self):
+        '''
+        Override method to pretty-print itm scene
+        '''
+        action_mappings = []
+        for x in self.action_mappings:
+            action_mappings.append(x.to_obj())
+        state_copy = {}
+        if self.state:
+            state_copy = copy.deepcopy(vars(self.state[0]))
+            del state_copy['swagger_types']
+            del state_copy['attribute_map']
+            state_copy = str(state_copy).encode('utf-8').decode('unicode-escape').replace('"', "'")
+        to_obj = {
+            "index": self.index,
+            "state": state_copy,
+            "end_scene_allowed": self.end_scene_allowed,
+            "action_mappings": action_mappings,
+            "restricted_actions": self.restricted_actions,
+            "transition_semantics": self.transition_semantics,
+            "transitions": json.loads(str(self.transitions).replace('"', '').replace("'", '"').replace("None", '"None"').replace("False", "false").replace("True", "true"))
+        }
+        return json.dumps(to_obj, indent=4)
