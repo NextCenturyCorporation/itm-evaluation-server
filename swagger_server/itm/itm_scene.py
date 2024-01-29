@@ -1,13 +1,10 @@
 import copy
+import json
 from dataclasses import dataclass
 from typing import List, Dict
-from swagger_server.models.scene import Scene
-from swagger_server.models.action import Action
-from swagger_server.models.action_type_enum import ActionTypeEnum
-from swagger_server.models.conditions import Conditions
-from swagger_server.models.semantic_type_enum import SemanticTypeEnum
-from swagger_server.models.state import State
-import json
+from swagger_server.models import (
+    Scene, Action, ActionTypeEnum, Conditions, SemanticTypeEnum, State, ProbeResponse
+)
 
 @dataclass
 class ActionMapping:
@@ -93,3 +90,15 @@ class ITMScene:
             "transitions": json.loads(str(self.transitions).replace('"', '').replace("'", '"').replace("None", '"None"').replace("False", "false").replace("True", "true"))
         }
         return json.dumps(to_obj, indent=4)
+
+    # TODO: Return action_mapping actions + unmapped actions - restricted actions
+    def get_available_actions(self) -> List[Action]:
+        actions: List[Action] = []
+        if self.end_scene_allowed:
+            actions.append(Action(action_id="end_scene_action", action_type='END_SCENE', unstructured="End the scene"))
+
+        return actions
+
+    def lookup_probe_response(self, action_id) -> ProbeResponse:
+        return ProbeResponse(scenario_id=self.scenario.id, probe_id=currentProbe.id,
+                             choice=choice_id, justification=action.justification) if choice_id != None else None

@@ -1,7 +1,6 @@
 from __future__ import absolute_import 
 # import models into models package
 from swagger_server.models.action import Action
-from swagger_server.models.action_type import ActionType
 from swagger_server.models.action_type_enum import ActionTypeEnum
 from swagger_server.models.aid_delay import AidDelay
 from swagger_server.models.aid_type_enum import AidTypeEnum

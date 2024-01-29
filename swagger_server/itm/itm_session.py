@@ -14,9 +14,9 @@ from swagger_server.models import (
     Vitals
 )
 from swagger_server.models.probe_response import ProbeResponse
-from .itm_session_scenario_object import (
-    ITMSessionScenarioObjectHandler,
-    ITMSessionScenarioObject
+from .itm_scenario import (
+    ITMScenario,
+    ITMScenarioData
 )
 from .itm_action_handler import ITMActionHandler
 from .itm_history import ITMHistory
@@ -36,23 +36,16 @@ class ITMScenarioSession:
         self.time_started = 0
         self.time_elapsed_realtime = 0
 
-        # isso is short for ITM Session Scenario Object
+        # isd is short for ITM Scenario Data
         self.session_type = ''
-        self.current_isso: ITMSessionScenarioObject = None
-        self.current_isso_index = 0
-        self.session_issos = []
+        self.current_isd: ITMScenarioData = None
+        self.current_isd_index = 0
+        self.session_isds = []
         self.number_of_scenarios = None
         self.custom_scenario_count = 0 # when scenario_id is specified in start_scenario
         self.scenario: Scenario = None
-        self.first_answer: bool = True
         self.ta1_controllers = {}
         self.ta1_controller: ITMTa1Controller = None
-
-        # hacky stuff for adept
-        self.character_ids = []
-        self.adept_evac_happened = False
-        # adept or ST
-        self.scenario_rules = ""
 
         # Action Handler
         self.action_handler: ITMActionHandler = ITMActionHandler(self)
@@ -83,8 +76,6 @@ class ITMScenarioSession:
             The session alignment from TA1.
         """
         self.scenario.state.scenario_complete = True
-        self.adept_evac_happened = False
-        self.first_answer = True
         session_alignment_score = 0.0
 
         if self.ta1_integration == True:
@@ -138,7 +129,7 @@ class ITMScenarioSession:
     def _clear_hidden_data(self):
         for character in self.scenario.state.characters:
             character.injuries[:] = \
-                [injury for injury in character.injuries if injury.name not in self.current_isso.hidden_injury_types]
+                [injury for injury in character.injuries if injury.name not in self.current_isd.hidden_injury_types]
             character.vitals = Vitals()
 
 
@@ -161,7 +152,7 @@ class ITMScenarioSession:
             return 'Scenario Complete', 400
         if self.kdma_training:
             return 'No alignment target in training sessions', 400
-        return self.current_isso.alignment_target_reader.alignment_target
+        return self.current_isd.alignment_target_reader.alignment_target
 
     def get_scenario_state(self, scenario_id: str) -> State:
         """
@@ -204,36 +195,36 @@ class ITMScenarioSession:
             if self.custom_scenario_count >= self.number_of_scenarios:
                 return self._end_session() # We've executed the specified number of custom scenarios
             index = 0
-            self.current_isso = None
-            for isso in self.session_issos:
-                if scenario_id == isso.scenario.id:
-                    self.current_isso = isso
-                    self.current_isso_index = index
+            self.current_isd = None
+            for isd in self.session_isds:
+                if scenario_id == isd.scenario.id:
+                    self.current_isd = isd
+                    self.current_isd_index = index
                     self.custom_scenario_count += 1
                     break
                 index += 1
-            if self.current_isso is None:
+            if self.current_isd is None:
                 return f'Scenario ID `{scenario_id}` does not exist for `{self.session_type}`', 404
         else:
             # Require ADM to end the scenario explicitly
             if self.scenario and self.scenario.state and not self.scenario.state.scenario_complete:
                 return f'Must end `{self.scenario.id}` before starting a new scenario', 400
-            if self.current_isso_index < len(self.session_issos):
-                self.current_isso: ITMSessionScenarioObject = self.session_issos[self.current_isso_index]
+            if self.current_isd_index < len(self.session_isds):
+                self.current_isd: ITMScenarioData = self.session_isds[self.current_isd_index]
             else:
                 return self._end_session() # No more scenarios means we can end the session
 
         try:
-            self.scenario = deepcopy(self.current_isso.scenario)
+            self.scenario = deepcopy(self.current_isd.scenario)
             self._clear_hidden_data()
-            self.action_handler.set_isso(self.current_isso)
-            self.current_isso_index += 1
+            self.action_handler.set_isd(self.current_isd)
+            self.current_isd_index += 1
 
             # the rules are different... so we need to know which group the scenario is from
             if self.scenario.id.__contains__("adept"):
-                self.scenario_rules = "ADEPT"
+                scenario_rules = "ADEPT"
             else:
-                self.scenario_rules = "SOARTECH"
+                scenario_rules = "SOARTECH"
 
             self.history.add_history(
                 "Start Scenario",
@@ -241,7 +232,7 @@ class ITMScenarioSession:
                 self.scenario.to_dict())
 
             if self.ta1_integration:
-                self.ta1_controller = self.ta1_controllers[self.scenario_rules.lower()]
+                self.ta1_controller = self.ta1_controllers[scenario_rules.lower()]
                 if not self.ta1_controller.session_id \
                         or not self.kdma_training: # When training, allow TA1 sessions to span scenarios
                     ta1_session_id = self.ta1_controller.new_session()
@@ -255,7 +246,7 @@ class ITMScenarioSession:
                     self.history.add_history(
                         "TA1 Alignment Target Data",
                         {"session_id": self.ta1_controller.session_id,
-                        "scenario_id": self.current_isso.scenario.id},
+                        "scenario_id": self.current_isd.scenario.id},
                         scenario_alignment
                 )
             elif not self.kdma_training:
@@ -305,7 +296,7 @@ class ITMScenarioSession:
 
         self.kdma_training = kdma_training
         self.adm_name = adm_name
-        self.session_issos = []
+        self.session_isds = []
         self.session_type = session_type
         self.history.clear_history()
 
@@ -344,51 +335,19 @@ class ITMScenarioSession:
         if session_type != 'eval':
             random.shuffle(selected_yaml_directories)
         for i in range(max_scenarios):
-            scenario_object_handler = \
-                ITMSessionScenarioObjectHandler(yaml_path=selected_yaml_directories[i],
+            itm_scenario = \
+                ITMScenario(yaml_path=selected_yaml_directories[i],
                                                 training=self.kdma_training)
-            itm_scenario_object = \
-                scenario_object_handler.generate_session_scenario_object()
-            self.session_issos.append(itm_scenario_object)
-            self.ta1_controllers[scenario_object_handler.scene_type] = itm_scenario_object.ta1_controller
-        self.current_isso_index = 0
+            itm_scenario_data = \
+                itm_scenario.generate_scenario_data()
+            self.session_isds.append(itm_scenario_data)
+            self.ta1_controllers[itm_scenario.scene_type] = itm_scenario_data.ta1_controller
+        self.current_isd_index = 0
 
         return self.session_id
 
 
-    def respond_to_tag_probe(self, action: Action):
-        probe_id = None
-        choice_id = None
-        tag = action.parameters.get('category')
-        if action.character_id == 'Mike':
-            probe_id = 'adept-september-demo-probe-3'
-            match tag:
-                case 'MINIMAL':
-                    choice_id = 's1-p3-choice1'
-                case 'DELAYED':
-                    choice_id = 's1-p3-choice2'
-                case 'IMMEDIATE':
-                    choice_id = 's1-p3-choice3'
-                case 'EXPECTANT':
-                    choice_id = 's1-p3-choice4'
-        elif action.character_id == 'Civilian':
-            probe_id = 'adept-september-demo-probe-4'
-            match tag:
-                case 'MINIMAL':
-                    choice_id = 's1-p4-choice1'
-                case 'DELAYED':
-                    choice_id = 's1-p4-choice2'
-                case 'IMMEDIATE':
-                    choice_id = 's1-p4-choice3'
-                case 'EXPECTANT':
-                    choice_id = 's1-p4-choice4'
-
-        if probe_id and choice_id:
-            response = ProbeResponse(scenario_id=self.scenario.id, probe_id=probe_id, choice=choice_id, justification=action.justification)
-            print(f"--> ADM action resulted in TA1 response with choice {response.choice}.")
-            self.respond_to_probe(body=response)
-
-
+    # TODO: Move to ITMScenario or ITMScene
     def respond_to_probe(self, body: ProbeResponse):
         """
         Respond to a probe from the probe system.
@@ -397,11 +356,6 @@ class ITMScenarioSession:
             body: The probe response body as a dict.
         """
         body.justification = '' if body.justification == None else body.justification
-        self.current_isso.probe_system.respond_to_probe(
-            probe_id=body.probe_id,
-            choice=body.choice,
-            justification=body.justification
-        )
 
         self.history.add_history(
             "Respond to TA1 Probe",
@@ -428,33 +382,6 @@ class ITMScenarioSession:
         else:
             print(f"--> Responding to probe {body.probe_id} from scenario {body.scenario_id} with choice {body.choice}.")
 
-    def lookup_probe_response(self, action: Action) -> ProbeResponse:
-        """
-        Look up a probe response from the probe system based on the specified action
-
-        Args:
-            body: The probe response body as a dict.
-        Returns:
-            The probe corresponding to the action, or None if there is no corresponding probe.
-        """
-
-        if not action.action_id:
-            return None
-
-        if action.action_type == 'TAG_CHARACTER':
-            return None # These are handled separately
-
-        currentProbe = self.current_isso.probe_system.probe_yamls[self.current_isso.probe_system.current_probe_index]
-        choice_id = None
-        # need to go back through to find the choice from probeYamlOption (not stored in action)
-        for option in currentProbe.options:
-            if option.assoc_action["action_id"] == action.action_id:
-                choice_id = option.ta1_id
-                break
-
-        return ProbeResponse(scenario_id=self.scenario.id, probe_id=currentProbe.id,
-                             choice=choice_id, justification=action.justification) if choice_id != None else None
-
 
     def take_action(self, body: Action) -> State:
         """
@@ -474,8 +401,8 @@ class ITMScenarioSession:
 
         print(f"--> ADM chose action {body.action_type} with character {body.character_id} and parameters {body.parameters}.")
 
-        # Only the ADM can end the scenario
-        if body.action_type == 'END_SCENARIO':
+        # Only the ADM can end the scene
+        if body.action_type == 'END_SCENE':
             self.history.add_history(
                 "Take Action", {"action_type": body.action_type, "session_id": self.session_id,
                                 "elapsed_time": self.scenario.state.elapsed_time}, None)
@@ -486,80 +413,8 @@ class ITMScenarioSession:
                 self.scenario.state.unstructured = 'Scenario complete.'
             return self.scenario.state
 
-        # Special handling for ADEPT tagging
-        if self.scenario_rules == "ADEPT" and body.action_type == 'TAG_CHARACTER':
-            self.respond_to_tag_probe(action=body)
-
-        # Map action to probe response
-        response = self.lookup_probe_response(action=body)
-
-        # Actions with no corresponding probe could be constructed by ADM or pre-configured repeatable actions
-        if response is None:
-            self.action_handler.process_action(action=body)
-            return self.scenario.state
-
-        # Keep track of which character_id's have been addressed in this probe
-        if not body.character_id in self.character_ids:
-            self.character_ids.append(body.character_id)
-
-        # Remove option taken from being returned in get_available_actions
-        # NOTE: this code currently keys off of the action having a character_id to determine if we remove the action
-        # from the list of available actions.  This behavior is specific to the September milestone and will have to
-        # be revisited/revised.
-        if body.character_id:
-            self.current_isso.probe_system.probe_yamls[self.current_isso.probe_system.current_probe_index].options = [
-                option for option in self.current_isso.probe_system.probe_yamls[self.current_isso.probe_system.current_probe_index].options
-                if option.assoc_action["action_id"] != body.action_id
-            ]
-
-        # Respond to probe with TA1
-        # NOTE: Not all actions will necessarily result in a probe response
-        # In the September scenarios, only the first action taken results in a response to a probe.
-        if self.first_answer:
-            print(f"--> ADM action resulted in TA1 response with choice {response.choice}.")
-            self.respond_to_probe(body=response)
-            self.first_answer = False
-
-        # PROBE HANDLING FOR ADEPT
-        if self.scenario_rules == "ADEPT":
-            # Move on to next probe when all character id's have at least one action towards them
-            unanswered_character_id = False
-            for option in self.current_isso.probe_system.probe_yamls[self.current_isso.probe_system.current_probe_index].options:
-                if option.assoc_action.get("character_id") not in self.character_ids:
-                    unanswered_character_id = True
-                    break  # No need to continue checking once we find one unmatched id
-            
-            # Update scenario state
-            self.action_handler.process_action(action=body)
-            if body.action_type == "MOVE_TO_EVAC":
-                self.adept_evac_happened = True
-            # if no unanswered characters left, (or no options left)
-            elif not unanswered_character_id or not self.current_isso.probe_system.probe_yamls[self.current_isso.probe_system.current_probe_index]:
-                self.end_probe()
-        else:
-            # PROBE HANDLING FOR SOARTECH
-            self.action_handler.process_action(action=body)
-
+        self.action_handler.process_action(action=body)
         return self.scenario.state
-
-
-    def end_probe(self):
-        self.current_isso.probe_system.probe_count -= 1
-        self.current_isso.probe_system.current_probe_index += 1
-        self.scenario.state.scenario_complete = \
-        self.current_isso.probe_system.probe_count <= 0
-        # reset character_id list when going to next probe
-        self.character_ids = []
-        self.first_answer = True
-        # Copy certain state from probe to scenario
-        if not self.scenario.state.scenario_complete:
-            newState :dict = self.current_isso.probe_system.probe_yamls[self.current_isso.probe_system.current_probe_index].state
-            if newState.get("unstructured"):
-                self.scenario.state.environment = newState.get("unstructured")
-            if newState.get("environment"):
-                self.scenario.state.environment = newState.get("environment")
-            if newState.get("threat_state"):
-                self.scenario.state.environment = newState.get("threat_state")
 
 
     def get_session_alignment(self, target_id: str) -> AlignmentResults:
@@ -581,10 +436,10 @@ class ITMScenarioSession:
         Take an action within a scenario
 
         Args:
-            body: Encapsulation of an action taken by a DM in the context of the scenario
+            scenario_id: The ID of the scenario.
 
         Returns:
-            The current state of the scenario as a State object.
+            A list of Actions that the DM can take.
         """
         # Check for a valid scenario_id
         (successful, message, code) = self._check_scenario_id(scenario_id)
@@ -593,19 +448,7 @@ class ITMScenarioSession:
         if self.scenario.session_complete:
             return 'Scenario Complete', 400
 
-        actions: List[Action] = []
-        if self.current_isso.probe_system.probe_yamls and not self.scenario.state.scenario_complete:
-            if not self.adept_evac_happened:
-                for option in self.current_isso.probe_system.probe_yamls[self.current_isso.probe_system.current_probe_index].options:
-                    if (not self.kdma_training):
-                        option.assoc_action.pop('kdma_association', None)
-                    actions.append(option.assoc_action)
-            if self.scenario_rules == 'SOARTECH' or self.adept_evac_happened:
-                # Allow ADMs to end the scenario, usually
-                actions.append(Action(action_id="end_scenario_action", action_type='END_SCENARIO', unstructured="End the scenario"))
-            # Always allow tagging a character
-            actions.append(Action(action_id="tag_action", action_type='TAG_CHARACTER', unstructured="Tag a character"))
+        if self.current_isd.scenario and not self.scenario.state.scenario_complete:
+            return self.current_isd.get_available_actions()
         else:
-             return 'Scenario Complete', 400
-
-        return actions
+            return 'Scenario Complete', 400
