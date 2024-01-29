@@ -84,7 +84,7 @@ class State(Model):
     def unstructured(self) -> str:
         """Gets the unstructured of this State.
 
-        text description of current state  # noqa: E501
+        Natural language, plain text description of a scene's state  # noqa: E501
 
         :return: The unstructured of this State.
         :rtype: str
@@ -95,7 +95,7 @@ class State(Model):
     def unstructured(self, unstructured: str):
         """Sets the unstructured of this State.
 
-        text description of current state  # noqa: E501
+        Natural language, plain text description of a scene's state  # noqa: E501
 
         :param unstructured: The unstructured of this State.
         :type unstructured: str
@@ -190,6 +190,8 @@ class State(Model):
         :param environment: The environment of this State.
         :type environment: Environment
         """
+        if environment is None:
+            raise ValueError("Invalid value for `environment`, must not be `None`")  # noqa: E501
 
         self._environment = environment
 
@@ -218,7 +220,7 @@ class State(Model):
     def supplies(self) -> List[Supplies]:
         """Gets the supplies of this State.
 
-        a list of medical supplies available to the DM  # noqa: E501
+        A list of supplies available to the medic  # noqa: E501
 
         :return: The supplies of this State.
         :rtype: List[Supplies]
@@ -229,11 +231,13 @@ class State(Model):
     def supplies(self, supplies: List[Supplies]):
         """Sets the supplies of this State.
 
-        a list of medical supplies available to the DM  # noqa: E501
+        A list of supplies available to the medic  # noqa: E501
 
         :param supplies: The supplies of this State.
         :type supplies: List[Supplies]
         """
+        if supplies is None:
+            raise ValueError("Invalid value for `supplies`, must not be `None`")  # noqa: E501
 
         self._supplies = supplies
 
@@ -241,7 +245,7 @@ class State(Model):
     def characters(self) -> List[Character]:
         """Gets the characters of this State.
 
-        the list of characters in the scenario  # noqa: E501
+        A list of characters in the scene, including injured patients, civilians, medics, etc.  # noqa: E501
 
         :return: The characters of this State.
         :rtype: List[Character]
@@ -252,10 +256,12 @@ class State(Model):
     def characters(self, characters: List[Character]):
         """Sets the characters of this State.
 
-        the list of characters in the scenario  # noqa: E501
+        A list of characters in the scene, including injured patients, civilians, medics, etc.  # noqa: E501
 
         :param characters: The characters of this State.
         :type characters: List[Character]
         """
+        if characters is None:
+            raise ValueError("Invalid value for `characters`, must not be `None`")  # noqa: E501
 
         self._characters = characters

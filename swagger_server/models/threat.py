@@ -6,6 +6,8 @@ from datetime import date, datetime  # noqa: F401
 from typing import List, Dict  # noqa: F401
 
 from swagger_server.models.base_model_ import Model
+from swagger_server.models.threat_severity_enum import ThreatSeverityEnum  # noqa: F401,E501
+from swagger_server.models.threat_type_enum import ThreatTypeEnum  # noqa: F401,E501
 from swagger_server import util
 
 
@@ -14,15 +16,25 @@ class Threat(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self):  # noqa: E501
+    def __init__(self, threat_type: ThreatTypeEnum=None, severity: ThreatSeverityEnum=None):  # noqa: E501
         """Threat - a model defined in Swagger
 
+        :param threat_type: The threat_type of this Threat.  # noqa: E501
+        :type threat_type: ThreatTypeEnum
+        :param severity: The severity of this Threat.  # noqa: E501
+        :type severity: ThreatSeverityEnum
         """
         self.swagger_types = {
+            'threat_type': ThreatTypeEnum,
+            'severity': ThreatSeverityEnum
         }
 
         self.attribute_map = {
+            'threat_type': 'threat_type',
+            'severity': 'severity'
         }
+        self._threat_type = threat_type
+        self._severity = severity
 
     @classmethod
     def from_dict(cls, dikt) -> 'Threat':
@@ -34,3 +46,49 @@ class Threat(Model):
         :rtype: Threat
         """
         return util.deserialize_model(dikt, cls)
+
+    @property
+    def threat_type(self) -> ThreatTypeEnum:
+        """Gets the threat_type of this Threat.
+
+
+        :return: The threat_type of this Threat.
+        :rtype: ThreatTypeEnum
+        """
+        return self._threat_type
+
+    @threat_type.setter
+    def threat_type(self, threat_type: ThreatTypeEnum):
+        """Sets the threat_type of this Threat.
+
+
+        :param threat_type: The threat_type of this Threat.
+        :type threat_type: ThreatTypeEnum
+        """
+        if threat_type is None:
+            raise ValueError("Invalid value for `threat_type`, must not be `None`")  # noqa: E501
+
+        self._threat_type = threat_type
+
+    @property
+    def severity(self) -> ThreatSeverityEnum:
+        """Gets the severity of this Threat.
+
+
+        :return: The severity of this Threat.
+        :rtype: ThreatSeverityEnum
+        """
+        return self._severity
+
+    @severity.setter
+    def severity(self, severity: ThreatSeverityEnum):
+        """Sets the severity of this Threat.
+
+
+        :param severity: The severity of this Threat.
+        :type severity: ThreatSeverityEnum
+        """
+        if severity is None:
+            raise ValueError("Invalid value for `severity`, must not be `None`")  # noqa: E501
+
+        self._severity = severity
