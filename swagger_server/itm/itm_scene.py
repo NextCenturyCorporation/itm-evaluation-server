@@ -15,6 +15,7 @@ class ActionMapping:
     character_id: str
     probe_id: str
     choice: str
+    parameters: Dict[str, str]
     kdma_association :Dict[str, float]
     conditions :Conditions
     next_scene :int
@@ -26,6 +27,7 @@ class ActionMapping:
         self.character_id = action.character_id
         self.probe_id = action.probe_id
         self.choice = action.choice
+        self.parameters = action.parameters
         self.kdma_association = action.kdma_association
         self.conditions = action.conditions
         self.next_scene = scene_index+1 if action.next_scene is None else action.next_scene
@@ -41,6 +43,7 @@ class ActionMapping:
             "character_id": self.character_id,
             "probe_id": self.probe_id,
             "choice": self.choice,
+            "parameters": self.parameters,
             "kdma_association": self.kdma_association,
             "conditions": json.loads(str(self.conditions).replace("'", '"').replace("None", '"None"')),
             "next_scene": self.next_scene
@@ -66,6 +69,7 @@ class ITMScene:
         self.restricted_actions :List[ActionTypeEnum] = scene.restricted_actions
         self.transition_semantics :SemanticTypeEnum = scene.transition_semantics
         self.transitions :Conditions = scene.transitions
+        self.training = False
 
     def __str__(self):
         '''
@@ -91,11 +95,21 @@ class ITMScene:
         }
         return json.dumps(to_obj, indent=4)
 
-    # TODO: Return action_mapping actions + unmapped actions - restricted actions
     def get_available_actions(self) -> List[Action]:
-        actions: List[Action] = []
+        actions :List[Action] = [
+            Action(
+                action_id=mapping.action_id,
+                action_type=mapping.action_type,
+                unstructured=mapping.unstructured,
+                character_id=mapping.character_id,
+                parameters=mapping.parameters,
+                kdma_association=mapping.kdma_association if self.training else None
+            )
+            for mapping in self.action_mappings
+        ]
         if self.end_scene_allowed:
             actions.append(Action(action_id="end_scene_action", action_type='END_SCENE', unstructured="End the scene"))
+        # TODO: Add unmapped actions that aren't restricted
 
         return actions
 

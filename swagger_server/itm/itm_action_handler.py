@@ -7,7 +7,7 @@ from swagger_server.models import (
     InjuryLocation
 )
 from swagger_server.util import get_swagger_class_enum_values
-from .itm_scenario import ITMScenarioData
+from .itm_scenario import ITMScenarioData, ITMScenario
 
 class ITMActionHandler:
     """
@@ -18,14 +18,16 @@ class ITMActionHandler:
         """
         Initialize an ITMActionHandler.
         """
-        from.itm_scenario_session import ITMScenarioSession
-        self.session: ITMScenarioSession = session
+        from.itm_session import ITMSession
+        self.session: ITMSession = session
         self.current_isd: ITMScenarioData = None
+        self.current_scenario: ITMScenario = None
         with open("swagger_server/itm/treatment_times_config/actionTimes.json", 'r') as json_file:
                 self.times_dict = json.load(json_file)
 
-    def set_isd(self, isd):
-        self.current_isd = isd
+    def set_scenario(self, scenario):
+        self.current_scenario = scenario
+        self.current_isd = scenario.isd
 
     def _should_reveal_injury(self, source_injury, target):
         return source_injury.name in self.current_isd.hidden_injury_types and \
@@ -35,20 +37,11 @@ class ITMActionHandler:
         if target.visited: # Don't reveal injuries in visited characters
             return
 
+        # TODO: change discoverable injuries to discovered and add to target
         revealed_injuries = [source_injury for source_injury in source.injuries if self._should_reveal_injury(source_injury, target)]
         target.injuries.extend(revealed_injuries)
-
-        # TODO: develop a system for scenarios to specify changes in plaintext Character description
-        if self.session.scenario_rules == "SOARTECH":
-            if target.id == 'MarineA':
-                target.unstructured += \
-                    "Burns of overall extremities and the majority of the torso and face, " + \
-                    "with peppered dirt and shrapnel on all extremities (BSA covers 90% of his body)."
-            elif target.id == 'Intelligence Officer':
-                target.unstructured += \
-                    "Initial injuries show 2nd and 3rd degree burns of the left half of his body (BSA is 50%) " + \
-                    "with peppered dirt and shrapnel over the same area."
-
+        if source.unstructured_postassess:
+            target.unstructured = source.unstructured_postassess
 
     def _proper_treatment(self, treatment: str, injury_name: str, location: str) -> bool:
         # NOTE: Asthmatic, Burns, Forehead Scrape, Ear Bleed are currently untreatable
@@ -131,7 +124,7 @@ class ITMActionHandler:
         # lookup character id in state
         character = None
         if action.character_id:
-            character = next((character for character in self.session.scenario.state.characters if character.id == action.character_id), None)
+            character = next((character for character in self.session.state.characters if character.id == action.character_id), None)
 
         # Validate character when necessary
         if (action.action_type in [ActionTypeEnum.APPLY_TREATMENT, ActionTypeEnum.CHECK_ALL_VITALS, ActionTypeEnum.CHECK_PULSE, ActionTypeEnum.CHECK_RESPIRATION, ActionTypeEnum.MOVE_TO_EVAC, ActionTypeEnum.TAG_CHARACTER]):
@@ -151,7 +144,7 @@ class ITMActionHandler:
             # Ensure there are sufficient Supplies for the treatment. This check also catches invalid treatment values.
             supply_used = action.parameters.get('treatment', None)
             sufficient_supplies = False
-            for supply in self.session.scenario.state.supplies:
+            for supply in self.session.state.supplies:
                 if supply.type == supply_used:
                     sufficient_supplies = supply.quantity >= 1
                     break
@@ -208,7 +201,7 @@ class ITMActionHandler:
 
         # Decrement supplies and increment time passed during treatment, even if the injury is untreated
         time_passed = 0
-        for supply in self.session.scenario.state.supplies:
+        for supply in self.session.state.supplies:
             if supply.type == supply_used:
                 supply.quantity -= 1
                 if supply_used in self.times_dict["treatmentTimes"]:
@@ -337,7 +330,7 @@ class ITMActionHandler:
                     time_passed = self.times_dict["SITREP"]
         else:
             # takes time for each responsive character during sitrep
-            for curr_character in self.session.scenario.state.characters:
+            for curr_character in self.session.state.characters:
                 for isd_character in self.current_isd.scenario.state.characters:
                     if isd_character.id == curr_character.id:
                         curr_character.vitals.mental_status = isd_character.vitals.mental_status
@@ -363,7 +356,7 @@ class ITMActionHandler:
         # keeps track of time passed based on action taken (in seconds)
         time_passed = 0
         # Look up character action is applied to
-        character = next((character for character in self.session.scenario.state.characters \
+        character = next((character for character in self.session.state.characters \
                          if character.id == action.character_id), None)
 
         parameters = {"action_type": action.action_type, "session_id": self.session.session_id}
@@ -406,10 +399,10 @@ class ITMActionHandler:
         self.scenario.state.elapsed_time = self.time_elapsed_scenario_time
         """
 
-        self.session.scenario.state.elapsed_time += time_passed
+        self.session.state.elapsed_time += time_passed
         # Log the action
         self.session.history.add_history("Take Action", parameters,
-                                         self.session.scenario.state.to_dict())
+                                         self.session.state.to_dict())
 
         # TODO: Look up probes and possibly send responses.
         # TODO: Determine if we should transition to the next scene.

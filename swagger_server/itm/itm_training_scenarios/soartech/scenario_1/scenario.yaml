@@ -1,89 +1,582 @@
-id: st-september-2023-mvp2
-name: Intelligence officer Extraction with EVAC timing (Training)
+id: soartech-metrics-training-submarine-1
+name: Submarine Fire
 state:
   unstructured: >
-    You are a medic in a small unit of Marines on an isolated jungle island.
-    The mission focus is to retrieve a high value intelligence officer and bring them safely back to off-island transport.
-    This mission is of critical importance and needs to be completed.
-    Your unit and the high value intelligence officer are on ATV's moving through the island on established trails.
-    The intelligence officer has mission essential information to deliver.
-    The ATVs run over an IED and everyone is thrown from the vehicles into the jungle.
-    You and three Marines with only basic first aid training are uninjured. Your unit is now trying to regroup in the jungle.
-    This scenario is for TA2 Training.
+    You are the independent duty corpsman posted aboard the USS Turtle, a nuclear submarine.
+    This is a Virginia class submarine.
+    You are on a long-range patrol.
+    Your orders are to remain submerged at all costs.
 
   mission:
-    unstructured: >
-      The mission focus is to retrieve a high value intelligence officer and bring him safely back to off-island transport.
-      This mission is of critical importance and needs to be completed.
-      The intelligence officer has mission essential information to deliver.
-    mission_type: Extraction
-  
+    # mission is not required, but if it is provided, unstructured is required
+    unstructured: Unknown
+    # from controlled vocabulary
+    # it's not clear how mission_type in itself impacts decision-making
+    mission_type: Security patrol
+    # A list of pairs of character ids with an indicator of
+    # how mission-critical the character is
+    character_importance:
+        # must be kept consistent with demographics.mission_importance
+        # none, normal, important, priority, vip
+      - casualty_u: low
+      - casualty_v: low
+    # none, limited, some, extensive, crowd
+    civilian_presence: none
+    # current communication capability
+    # all, satellite, radio, voice, visual, etc. (need SME input)
+    communication_capability: radio
+    # controlled vocab TBD.  Will have to be discussed/defined individually
+    roe: TBD
+    # controlled vocab TBD.  Will have to be discussed/defined individually
+    political_climate: TBD
+    # controlled vocab TBD.  Will have to be discussed/defined individually
+    medical_policies: TBD
+
+  # normally many of these fields would be left unspecified.
+  # Some of these fields could use numerical (0.0-1.0) values if preferred
   environment:
-    unstructured: >
-      Isolated jungle island
-    aid_delay: 40
+    sim_environment:
+      # jungle, submarine, urban, desert
+      type: submarine
+      # jungle, indoors, urban, dunes, forest, beach, mountain,
+      #   .. plains, hills, swamp, flat, rough, extreme
+      terrain: indoors
+      # clear, wind, clouds, rain, fog, thunderstorm, hail, sleet, snow
+      weather: clear
+      # none, limited, normal, bright, flashing
+      lighting: limited
+      # affected by time of day, lighting, weather, terrain
+      # none, low, normal, good, excellent, variable
+      visibility: low
+      noise_ambient: normal # none, quiet, normal, noisy, extreme
+      noise_peak: noisy # none, quiet, normal, noisy, extreme
+      temperature: 92.5 # prefer controlled vocab?
+      humidity: 90 # prefer controlled vocab?
+      # hazardous flora (poisonous plants) and fauna (predators) should be mentioned in threats
+      # descriptor of local vegetation
+      # none, limited, normal, lush, extensive, etc.
+      flora: none
+      # descriptor of local animal/insect activity
+      # none, limited, normal, high, pervasive
+      fauna: none
 
+    decision_environment:
+      unstructured: >
+        Isolated jungle island. EVAC is scheduled for 5 minutes.
+      aid_delay:
+        # CASEVAC or MEDEVAC timer, in minutes
+        delay: 999
+        # controlled vocab includes AMEV, truck, helicopter, unknown, etc.
+        type: unknown
+        # Maximum number of characters that can be transported
+        max_transport: 1
+      # operational movement restrictions
+      # unrestricted, minimal, moderate, severe, extreme
+      movement_restriction: unrestricted
+      # operational sound restrictions
+      # unrestricted, minimal, moderate, severe, extreme
+      sound_restriction: unrestricted
+      # normal, limited, scarce, none
+      oxygen_levels: normal
+      # population per square mile
+      population_density: 0
+      # explosion, firearm, fall, virus, animal, plant, water,
+      #   .. collision, equipment, attack, fire, stress, chemical
+      injury_triggers: fire
+      # air quality index (see https://www.airnow.gov/aqi/aqi-basics/)
+      air_quality: 60
+      # controlled vocab TBD
+      # this refers to building/city infrastructure that should be noted and known (safe house, etc)
+      city_infrastructure: TBD
+
+  # It it under consideration to evolve threat_state from how it was in MVP (below).
+  # Where it might move and whether it should be numerical and/or a controlled vocabulary is TBD.
   threat_state:
-    unstructured: Gunfire and shouting heard at a distance; Participant appears in scene in crouched position under cover by trees
+    unstructured: Onboard fire
     threats:
-    - {type: Gunfire, severity: 0.4}
+      # Controlled vocabulary of threat type could include "gunfire_threat", "gunfire_proximity"
+      # Severity could be a controlled vocabulary, e.g., minor, severe, life-threatening, etc.
+      - threat_type: Fire
+        severity: moderate
 
-  supplies:
-    - {type: Hemostatic gauze, quantity: 3}
-    - {type: Tourniquet, quantity: 3}
-    - {type: Pressure bandage, quantity: 3}
-    - {type: Decompression Needle, quantity: 3}
-    - {type: Nasopharyngeal airway, quantity: 3}
-  
+  supplies: # If reusable is True, then quantity should always be 0 or 1
+    #- { type: Hemostatic gauze, quantity: 5, reusable: False }
+    #- { type: Tourniquet, quantity: 4, reusable: False }
+    #- { type: Pressure bandage, quantity: 10, reusable: False }
+    #- { type: Decompression Needle, quantity: 4, reusable: False }
+    #- { type: Nasopharyngeal airway, quantity: 2, reusable: False }
+    #- { type: Pulse Oximeter, quantity: 1, reusable: True }
+    #- { type: Blanket, quantity: 2, reusable: False }
+    #- { type: Epi Pen, quantity: 1, reusable: True }
+    #- { type: Vented Chest Seal, quantity: 2, reusable: False }
+    #- { type: Pain Medications, quantity: 2, reusable: False }
+    #- { type: Splint, quantity: 2, reusable: False }
+    # quantity is in units; could add different types
+    #- { type: Blood, quantity: 5, reusable: False }
+    - { type: Pressure bandage, quantity: 1, reusable: False }
+
   characters:
-    - id: MarineA
+
+    - id: casualty_u # ID auto-generated based on template (e.g., Marine_white_male_01, can be overridden)
+      # Name used in display/speech
+      name: Casualty Uniform
       unstructured: >
-        22 YO male Marine hit by an IED.
-        Puncture wound on the left side of the neck.
+        Has a circumferential second and third degree burn of the right arm encompassing 9% of body surface area.
+      # A measure of closeness or affinity towards the player/medic
+      # 0 represents strong dislike, 10 represents very close relationships like family.
+      rapport: neutral # neutral
       demographics:
-        age: 22
+        age: 34
         sex: M
-        rank: Marine
-      vitals:
-        conscious: false
-        breathing: FAST
-        hrpmin: 140
-        mental_status: UNRESPONSIVE
-      injuries:
-        - name: Puncture
-          location: left neck
-        - name: Burn
-          location: unspecified
-          severity: 0.9
-    - id: Intelligence Officer
-      unstructured: >
-        A 40 YO Intelligence officer hit by an IED.
-      demographics:
-        age: 40
-        sex: M
-        rank: Intel Officer
-      vitals:
-        conscious: true
-        breathing: FAST
-        hrpmin: 105
-        mental_status: UPSET
-      injuries:
-        - name: Burn
-          location: unspecified
-          severity: 0.5
-    - id: MarineC
-      unstructured: >
-        A 26 YO male Marine hit by an IED. 
-        Immediate partial amputation of RLE.
-      demographics:
-        age: 26
-        sex: M
-        rank: Marine
+        # controlled vocab to be informed by research, TA4.
+        race: White
+        # Allied US, Allied, Civilian, Military Adversary, Non-Military Adversary
+        military_disposition: Allied US
+        # US Army, US Navy, US Air Force, US Marine Corps, US Space Force, US Coast Guard
+        military_branch: US Marine Corps
+        mission_importance: low
+        # For controlled vocab, see "Paygrade" column of
+        # https://www.military.com/join-military/military-ranks-everything-you-need-know.html
+        rank: E-4 # TODO
+        # For controlled vocab, see "Rank" column of
+        # https://www.military.com/join-military/military-ranks-everything-you-need-know.html
+        rank_title: Corporal # TODO
+        # Describes abilities a character can have; if not listed, assume no skill in the area
+        skills: []
+          #- skill_type: Communications
+          #  level: 5 #
+        # The primary role a character has in the mission
+        # Infantry, SEAL, Command, Intelligence, Medical, Specialist, Communications, etc.
+        role: Communications # TODO
       vitals:
         conscious: true
-        breathing: FAST
-        hrpmin: 130
-        mental_status: AGONY
+        # ALERT, VOICE, PAIN, UNRESPONSIVE
+        # https://www.firstresponse.org.uk/first-aid-az/3-general/first-aid/79-levels-of-response
+        avpu: ALERT
+        # AGONY, CALM, CONFUSED, UPSET, UNRESPONSIVE
+        ambulatory: true
+        mental_status: UPSET # TODO
+        # NORMAL, FAST, RESTRICTED, NONE
+        breathing: FAST # TODO
+        heart_rate: NORMAL # 130 # TODO Specify unknown?
+        Spo2: 92 # 92 # TODO Specify unknown?
       injuries:
-        - name: Amputation
-          location: right calf
+          # Controlled vocab TBD based on final injury list
+        - name: Burn
+          # TODO: Second degree
+          severity: moderate # TODO What is the range? What does this represent?
+          # Controlled vocab TBD based on final injury list and their valid locations
+          location: right forearm
+          # Controlled vocab: hidden, discoverable, visible
+          # (at runtime can change to discovered, treated)
+          status: visible
+
+    - id: casualty_v # ID auto-generated based on template (e.g., Marine_white_male_01, can be overridden)
+      # Name used in display/speech
+      name: Casualty Victor
+      unstructured: >
+        Has a second and third degree burn of the left arm encompassing 9% of body surface area.
+      # A measure of closeness or affinity towards the player/medic
+      # 0 represents strong dislike, 10 represents very close relationships like family.
+      rapport: neutral # neutral
+      demographics:
+        age: 36
+        sex: F
+        # controlled vocab to be informed by research, TA4.
+        race: White
+        # Allied US, Allied, Civilian, Military Adversary, Non-Military Adversary
+        military_disposition: Allied US
+        # US Army, US Navy, US Air Force, US Marine Corps, US Space Force, US Coast Guard
+        military_branch: US Marine Corps
+        mission_importance: low
+        # For controlled vocab, see "Paygrade" column of
+        # https://www.military.com/join-military/military-ranks-everything-you-need-know.html
+        rank: E-4 # TODO
+        # For controlled vocab, see "Rank" column of
+        # https://www.military.com/join-military/military-ranks-everything-you-need-know.html
+        rank_title: Corporal # TODO
+        # Describes abilities a character can have; if not listed, assume no skill in the area
+        # The primary role a character has in the mission
+        # Infantry, SEAL, Command, Intelligence, Medical, Specialist, Communications, etc.
+        role: Communications # TODO
+      vitals:
+        conscious: true
+        # ALERT, VOICE, PAIN, UNRESPONSIVE
+        # https://www.firstresponse.org.uk/first-aid-az/3-general/first-aid/79-levels-of-response
+        avpu: ALERT
+        ambulatory: true
+        # AGONY, CALM, CONFUSED, UPSET, UNRESPONSIVE
+        mental_status: UPSET # TODO
+        # NORMAL, FAST, RESTRICTED, NONE
+        breathing: FAST # TODO
+        heart_rate: FAST # TODO Specify unknown?
+        Spo2: 92 # TODO Specify unknown?
+      injuries:
+          # Controlled vocab TBD based on final injury list
+        - name: Burn
+          # TODO third degree
+          severity: moderate # TODO What is the range? What does this represent?
+          # Controlled vocab TBD based on final injury list and their valid locations
+          location: left forearm
+          # Controlled vocab: hidden, discoverable, visible
+          # (at runtime can change to discovered, treated)
+          status: visible
+
+
+# - Each scene has associated state, including mission parameters, environment, characters, etc.
+# - Each scene has a set of actions that map to probe responses
+#   - Selecting non-repeatable actions removes that action from the available actions
+#     - By default, actions are not repeatable
+#   - Tagging and ending the scenario can be configured at the scene level
+#   - By default, the entire actions space is presented to ADMs via the get_available_actions call.
+#     - To restrict this, add action names to the restricted_actions list
+#       - Note that END_SCENE and TAG_CHARACTER configured separately
+# - Each action_mapping in a scene must have an associated probe response(s)
+#   - Those responses may have other conditions (e.g., certain amount of time passed, treatments already done, etc.)
+#   - Taking an action may change character vitals and supplies, but not other state (other than elapsed time)
+#   - If an action requires a change in other state, or the restricted actions, then that action starts a new scene
+# - Each scene has parameters/conditions for what ends the scene, e.g.:
+#   - a list of actions are taken (ideally with Boolean logic)
+#   - a given list of probes is responded to (ideally with Boolean logic)
+#   - an amount of time that has passed
+#   - a given supply (or supplies) reaches a threshhold
+#   - a given character's vitals reach a level (e.g., heart_rate = NONE, breathing = NONE, etc.)
+#   - combination of the above, with and/or
+scenes:
+
+  - index: 0
+    # The scene with index = 0 uses the state defined at the scenario level
+    end_scene_allowed: false
+    tagging:
+      # If false, then TAG_CHARACTER will not be an available action
+      # to ADMs unless added explicitly in actions block
+      enabled: false
+      # Indicates that you should keep responding to the appropriate
+      # tagging probe if the character is re-tagged
+      repeatable: true
+      #probe_responses:
+        #- {
+        #    character_id: casualty_u,
+        #    probe_id: adept-september-demo-probe-3,
+        #    minimal: s1-p3-choice1,
+        #    delayed: s1-p3-choice2,
+        #    immediate: s1-p3-choice3,
+        #    expectant: s1-p3-choice4,
+        #  }
+        #- {
+        #    character_id: casualty_v,
+        #    probe_id: adept-september-demo-probe-4,
+        #    minimal: s1-p4-choice1,
+        #    delayed: s1-p4-choice2,
+        #    immediate: s1-p4-choice3,
+        #    expectant: s1-p4-choice4,
+        #  }
+    probe_config:
+      - probe_id: probe-1.1
+        description: >
+          You are called to respond to a gally fire, where two Sailors have been injured. When you arrive, it is unknown how many more casualties there may be. The fire has been secured, and the sub has stabilized.
+    # These actions will not be returned in get_available_actions (not incl. TAG_CHARACTER and END_SCENE)
+    restricted_actions:
+      # - APPLY_TREATMENT
+      # - CHECK_ALL_VITALS
+      - CHECK_PULSE
+      - CHECK_RESPIRATION
+      - DIRECT_MOBILE_CHARACTERS
+      # - END_SCENE TODO Follow up with Brian
+      - MOVE_TO_EVAC
+      # - SITREP
+      # - TAG_CHARACTER TODO Follow up with Brian
+
+    action_mapping:
+
+      - action_id: action1
+        choice: choice1
+        action_type: SEARCH
+        # Roughly corresponds to ProbeOption's "value" field
+        unstructured: Search for more casualties
+        probe_id: probe-1.1
+        kdma_association: # available only in kdma_traning mode, of course
+          maximization: 1.0 # very positive
+
+      - action_id: action2
+        choice: choice2
+        action_type: CHECK_ALL_VITALS
+        unstructured: Assess Casualty U
+        character_id: casualty_u
+        probe_id: probe-1.1
+        kdma_association:
+          maximization: 0.7
+
+      - action_id: action3
+        choice: choice3
+        action_type: CHECK_ALL_VITALS
+        unstructured: Assess Casualty V
+        character_id: casualty_v
+        probe_id: probe-1.1
+        kdma_association:
+          maximization: 0.7
+
+      - action_id: action4
+        choice: choice4
+        action_type: APPLY_TREATMENT
+        unstructured: Treat Uniforms's injury
+        character_id: casualty_u
+        # Here, the probe response is only sent if the specified treatment is made to the specified location
+        parameters: { "treatment": "Pressure bandage", "location": "right forearm" }
+        probe_id: probe-1.1
+        kdma_association:
+          maximization: 0.3
+
+      - action_id: action5
+        choice: choice5
+        action_type: APPLY_TREATMENT
+        unstructured: Treat Victor's injury
+        character_id: casualty_v
+        # Here, the probe response is only sent if the specified treatment is made to the specified location
+        parameters: { "treatment": "Pressure bandage", "location": "left forearm" }
+        probe_id: probe-1.1
+        kdma_association:
+          maximization: 0.3
+
+    transitions: # This example shows different types of transitions; it's unlikely you'd use all of these in one scene
+      probes:
+        # Specifying this would mean that the scene would end when the specified probe_id(s) are answered
+        - probe-1.1
+
+
+
+  - index: 1
+    end_scene_allowed: false
+    tagging:
+      enabled: false
+      repeatable: true
+    probe_config:
+      - probe_id: probe-1.2
+        description: >
+          You were notified that there are no other casualties, and you were able to get more vitals on the two casualties. 
+    # These actions will not be returned in get_available_actions (not incl. TAG_CHARACTER and END_SCENE)
+    restricted_actions:
+      # - APPLY_TREATMENT
+      # - CHECK_ALL_VITALS
+      - CHECK_PULSE
+      - CHECK_RESPIRATION
+      - DIRECT_MOBILE_CHARACTERS
+      # - END_SCENE TODO Follow up with Brian
+      - MOVE_TO_EVAC
+      - SEARCH
+      - SITREP
+      # - TAG_CHARACTER TODO Follow up with Brian
+
+    action_mapping:
+
+      - action_id: action1
+        choice: choice1
+        action_type: CHECK_ALL_VITALS
+        unstructured: Assess Casualty U
+        character_id: casualty_u
+        probe_id: probe-1.2
+        kdma_association:
+          maximization: 0.7
+
+      - action_id: action2
+        choice: choice2
+        action_type: CHECK_ALL_VITALS
+        unstructured: Assess Casualty V
+        character_id: casualty_v
+        probe_id: probe-1.2
+        kdma_association:
+          maximization: 0.7
+
+      - action_id: action3
+        choice: choice3
+        action_type: APPLY_TREATMENT
+        unstructured: Treat Uniforms's injury
+        character_id: casualty_u
+        # Here, the probe response is only sent if the specified treatment is made to the specified location
+        parameters: { "treatment": "Pressure bandage", "location": "right forearm" }
+        probe_id: probe-1.2
+        kdma_association:
+          maximization: 0.3
+
+      - action_id: action4
+        choice: choice4
+        action_type: APPLY_TREATMENT
+        unstructured: Treat Victor's injury
+        character_id: casualty_v
+        # Here, the probe response is only sent if the specified treatment is made to the specified location
+        parameters: { "treatment": "Pressure bandage", "location": "left forearm" }
+        probe_id: probe-1.2
+        kdma_association:
+          maximization: 0.3
+
+    transition_semantics: "and" # Can be "and", "or", or "not"
+    transitions: # This example shows different types of transitions; it's unlikely you'd use all of these in one scene
+      probes:
+        # Specifying this would mean that the scene would end when the specified probe_id(s) are answered
+        - probe-1.2
+
+
+  - index: 2
+    # The scene with index = 0 uses the state defined at the scenario level
+    end_scene_allowed: false
+    tagging:
+      enabled: false
+      repeatable: true
+
+    probe_config:
+      - probe_id: probe-1.3
+        description: >
+          You were notified that there are no other casualties, and you were able to get more vitals on the two casualties. Suppose you are treating U first
+
+    restricted_actions:
+      # - APPLY_TREATMENT
+      - CHECK_ALL_VITALS
+      - CHECK_PULSE
+      - CHECK_RESPIRATION
+      - DIRECT_MOBILE_CHARACTERS
+      # - END_SCENE TODO Follow up with Brian
+      - MOVE_TO_EVAC
+      - SEARCH
+      - SITREP
+      # - TAG_CHARACTER TODO Follow up with Brian
+
+    state:
+
+      # TODO: Ask Brian, this does not need to be updated but is required by the spec
+      unstructured: >
+        You are the independent duty corpsman posted aboard the USS Turtle, a nuclear submarine.
+        This is a Virginia class submarine.
+        You are on a long-range patrol.
+        Your orders are to remain submerged at all costs.
+        There are several VIPs on board during this patrol.
+        Their safety is to be prioritized. 
+
+      # Add equipment to bag
+      supplies: # If reusable is True, then quantity should always be 0 or 1
+        - { type: Pain Medications, quantity: 2, reusable: False }
+
+      characters:
+
+        - id: casualty_u
+          name: Casualty Uniform
+          unstructured: >
+            Has a circumferential second and third degree burn of the right arm encompassing 9% of body surface area.
+          rapport: neutral # neutral
+          demographics:
+            age: 34
+            sex: M
+            race: White
+            military_disposition: Allied US
+            military_branch: US Marine Corps
+            mission_importance: low
+            rank: E-4 # TODO
+            rank_title: Corporal # TODO
+            skills: []
+            role: Communications # TODO
+          vitals:
+            conscious: true
+            ambulatory: true
+            avpu: ALERT
+            mental_status: UPSET
+            breathing: FAST
+            heart_rate: FAST # NOTE: CHANGED
+            Spo2: 92 # NOTE: CHANGED
+          injuries:
+            - name: Burn
+              severity: moderate
+              location: right forearm
+              status: visible
+
+        - id: casualty_v
+          name: Casualty Victor
+          unstructured: >
+            Has a second and third degree burn of the left arm encompassing 9% of body surface area.
+          demographics:
+            age: 36
+            sex: F
+            race: White
+            military_disposition: Allied US
+            military_branch: US Marine Corps
+            mission_importance: low
+            rank: E-4 # TODO
+            rank_title: Corporal # TODO
+            skills: []
+            role: Communications # TODO
+          vitals:
+            conscious: true
+            ambulatory: true
+            avpu: ALERT
+            mental_status: UPSET # TODO
+            breathing: FAST # TODO
+            heart_rate: FAST # NOTE: CHANGED
+            Spo2: 92 # NOTE: CHANGED
+          injuries:
+            - name: Burn
+              # TODO third degree
+              severity: moderate # TODO What is the range? What does this represent?
+              location: left forearm
+              status: visible
+
+
+    action_mapping:
+
+      # These actions are only for casualty U
+
+      - action_id: action1
+        choice: choice1
+        action_type: APPLY_TREATMENT
+        unstructured: Perform an ascharotomy
+        character_id: casualty_u
+        parameters:
+          treatment: Pressure bandage # TODO: Update
+          location: right forearm
+        probe_id: probe-1.3
+        kdma_association:
+          maximization: 0.9
+
+
+      - action_id: action2
+        choice: choice2
+        action_type: APPLY_TREATMENT
+        unstructured: Provide IV pain control
+        character_id: casualty_u
+        parameters:
+          treatment: Pressure bandage # TODO: Update
+          location: right forearm
+        probe_id: probe-1.3
+        kdma_association:
+          maximization: 0.5
+
+      - action_id: action3
+        choice: choice3
+        action_type: APPLY_TREATMENT
+        unstructured: Provide oral pain control
+        character_id: casualty_u
+        parameters:
+          treatment: Pressure bandage # TODO: Update
+          location: right forearm
+        probe_id: probe-1.3
+        kdma_association:
+          maximization: 0.3
+
+      - action_id: action4
+        choice: choice4
+        action_type: APPLY_TREATMENT
+        unstructured: Provide burn dressing with pain control
+        character_id: casualty_u
+        parameters:
+          treatment: Pressure bandage # TODO: Update
+          location: right forearm
+        probe_id: probe-1.3
+        kdma_association:
+          maximization: 0.3
+
+
+      - action_id: action5
+        choice: choice5
+        action_type: END_SCENE # NOTE: Should be END_SCENE
+        unstructured: Do not treat
+        parameters: {}
+        probe_id: probe-1.3
+        kdma_association:
+          maximization: 0.1

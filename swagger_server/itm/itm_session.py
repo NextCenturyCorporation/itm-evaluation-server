@@ -14,38 +14,35 @@ from swagger_server.models import (
     Vitals
 )
 from swagger_server.models.probe_response import ProbeResponse
-from .itm_scenario import (
-    ITMScenario,
-    ITMScenarioData
-)
+from .itm_scenario import ITMScenario
 from .itm_action_handler import ITMActionHandler
 from .itm_history import ITMHistory
 from .itm_ta1_controller import ITMTa1Controller
 
-class ITMScenarioSession:
+class ITMSession:
     """
     Class for representing and manipulating a simulation scenario session.
     """
 
     def __init__(self):
         """
-        Initialize an ITMScenarioSession.
+        Initialize an ITMSession.
         """
         self.session_id = None
         self.adm_name = ''
         self.time_started = 0
         self.time_elapsed_realtime = 0
 
-        # isd is short for ITM Scenario Data
         self.session_type = ''
-        self.current_isd: ITMScenarioData = None
-        self.current_isd_index = 0
-        self.session_isds = []
         self.number_of_scenarios = None
         self.custom_scenario_count = 0 # when scenario_id is specified in start_scenario
-        self.scenario: Scenario = None
-        self.ta1_controllers = {}
         self.ta1_controller: ITMTa1Controller = None
+
+        self.session_complete = False
+        self.state: State = None
+        self.current_scenario_index = 0
+        self.itm_scenarios = []
+        self.itm_scenario: ITMScenario = None
 
         # Action Handler
         self.action_handler: ITMActionHandler = ITMActionHandler(self)
@@ -64,7 +61,7 @@ class ITMScenarioSession:
         Args:
             scenario_id: The scenario ID to compare.
         """
-        if not scenario_id == self.scenario.id:
+        if not scenario_id == self.itm_scenario.id:
             return False, f'Scenario ID {scenario_id} not found', 404
         return True, '', 0
 
@@ -75,7 +72,7 @@ class ITMScenarioSession:
         Returns:
             The session alignment from TA1.
         """
-        self.scenario.state.scenario_complete = True
+        self.state.scenario_complete = True
         session_alignment_score = 0.0
 
         if self.ta1_integration == True:
@@ -127,9 +124,9 @@ class ITMScenarioSession:
 
     # Hide vitals and hidden injuries at start of scenario
     def _clear_hidden_data(self):
-        for character in self.scenario.state.characters:
+        for character in self.state.characters:
             character.injuries[:] = \
-                [injury for injury in character.injuries if injury.name not in self.current_isd.hidden_injury_types]
+                [injury for injury in character.injuries if injury.name not in self.itm_scenario.isd.hidden_injury_types]
             character.vitals = Vitals()
 
 
@@ -148,11 +145,11 @@ class ITMScenarioSession:
         (successful, message, code) = self._check_scenario_id(scenario_id)
         if not successful:
             return message, code
-        if self.scenario.session_complete:
+        if self.session_complete:
             return 'Scenario Complete', 400
         if self.kdma_training:
             return 'No alignment target in training sessions', 400
-        return self.current_isd.alignment_target_reader.alignment_target
+        return self.itm_scenario.alignment_target_reader.alignment_target
 
     def get_scenario_state(self, scenario_id: str) -> State:
         """
@@ -173,9 +170,9 @@ class ITMScenarioSession:
         self.history.add_history(
             "Get Scenario State",
             {"session_id": self.session_id, "scenario_id": scenario_id},
-            self.scenario.state.to_dict())
+            self.state.to_dict())
 
-        return self.scenario.state
+        return self.state
 
 
     def start_scenario(self, scenario_id: str=None) -> Scenario:
@@ -195,44 +192,44 @@ class ITMScenarioSession:
             if self.custom_scenario_count >= self.number_of_scenarios:
                 return self._end_session() # We've executed the specified number of custom scenarios
             index = 0
-            self.current_isd = None
-            for isd in self.session_isds:
-                if scenario_id == isd.scenario.id:
-                    self.current_isd = isd
-                    self.current_isd_index = index
+            self.itm_scenario = None
+            for scenario in self.itm_scenarios:
+                if scenario_id == scenario.id:
+                    self.itm_scenario = scenario
+                    self.current_scenario_index = index
                     self.custom_scenario_count += 1
                     break
                 index += 1
-            if self.current_isd is None:
+            if self.itm_scenario is None:
                 return f'Scenario ID `{scenario_id}` does not exist for `{self.session_type}`', 404
         else:
             # Require ADM to end the scenario explicitly
-            if self.scenario and self.scenario.state and not self.scenario.state.scenario_complete:
-                return f'Must end `{self.scenario.id}` before starting a new scenario', 400
-            if self.current_isd_index < len(self.session_isds):
-                self.current_isd: ITMScenarioData = self.session_isds[self.current_isd_index]
+            if self.state and not self.state.scenario_complete:
+                return f'Must end `{self.itm_scenario.id}` before starting a new scenario', 400
+            if self.current_scenario_index < len(self.itm_scenarios):
+                self.itm_scenario = self.itm_scenarios[self.current_scenario_index]
             else:
                 return self._end_session() # No more scenarios means we can end the session
 
         try:
-            self.scenario = deepcopy(self.current_isd.scenario)
+            self.state = deepcopy(self.itm_scenario.isd.scenario.state)
+            scenario = Scenario(
+                id=self.itm_scenario.id,
+                name=self.itm_scenario.isd.scenario.name,
+                session_complete=False,
+                state=self.state
+            )
             self._clear_hidden_data()
-            self.action_handler.set_isd(self.current_isd)
-            self.current_isd_index += 1
-
-            # the rules are different... so we need to know which group the scenario is from
-            if self.scenario.id.__contains__("adept"):
-                scenario_rules = "ADEPT"
-            else:
-                scenario_rules = "SOARTECH"
+            self.action_handler.set_scenario(self.itm_scenario)
+            self.current_scenario_index += 1
 
             self.history.add_history(
                 "Start Scenario",
                 {"session_id": self.session_id, "adm_name": self.adm_name},
-                self.scenario.to_dict())
+                scenario.to_dict())
 
             if self.ta1_integration:
-                self.ta1_controller = self.ta1_controllers[scenario_rules.lower()]
+                self.ta1_controller = self.itm_scenario.ta1_controller
                 if not self.ta1_controller.session_id \
                         or not self.kdma_training: # When training, allow TA1 sessions to span scenarios
                     ta1_session_id = self.ta1_controller.new_session()
@@ -246,13 +243,13 @@ class ITMScenarioSession:
                     self.history.add_history(
                         "TA1 Alignment Target Data",
                         {"session_id": self.ta1_controller.session_id,
-                        "scenario_id": self.current_isd.scenario.id},
+                        "scenario_id": self.itm_scenario.id},
                         scenario_alignment
                 )
             elif not self.kdma_training:
                 print("--> Got alignment target from TA1.")
 
-            return self.scenario
+            return scenario
         except:
             print("--> Exception getting next scenario; ending session.")
             import traceback
@@ -296,7 +293,7 @@ class ITMScenarioSession:
 
         self.kdma_training = kdma_training
         self.adm_name = adm_name
-        self.session_isds = []
+        self.itm_scenarios = []
         self.session_type = session_type
         self.history.clear_history()
 
@@ -338,12 +335,13 @@ class ITMScenarioSession:
             itm_scenario = \
                 ITMScenario(yaml_path=selected_yaml_directories[i],
                                                 training=self.kdma_training)
-            itm_scenario_data = \
-                itm_scenario.generate_scenario_data()
-            self.session_isds.append(itm_scenario_data)
-            self.ta1_controllers[itm_scenario.scene_type] = itm_scenario_data.ta1_controller
-        self.current_isd_index = 0
+            itm_scenario.generate_scenario_data()
+            self.itm_scenarios.append(itm_scenario)
+        self.current_scenario_index = 0
 
+        print(itm_scenario)
+        print(itm_scenario.isd.scenes[0])
+        print(itm_scenario.isd.scenes[1])
         return self.session_id
 
 
@@ -405,16 +403,16 @@ class ITMScenarioSession:
         if body.action_type == 'END_SCENE':
             self.history.add_history(
                 "Take Action", {"action_type": body.action_type, "session_id": self.session_id,
-                                "elapsed_time": self.scenario.state.elapsed_time}, None)
+                                "elapsed_time": self.state.elapsed_time}, None)
             session_alignment_score = self._end_scenario()
             if self.kdma_training:
-                self.scenario.state.unstructured = f'Scenario {self.scenario.id} complete. Session alignment score = {session_alignment_score}'
+                self.state.unstructured = f'Scenario {self.itm_scenario.id} complete. Session alignment score = {session_alignment_score}'
             else:
-                self.scenario.state.unstructured = 'Scenario complete.'
-            return self.scenario.state
+                self.state.unstructured = 'Scenario complete.'
+            return self.state
 
         self.action_handler.process_action(action=body)
-        return self.scenario.state
+        return self.state
 
 
     def get_session_alignment(self, target_id: str) -> AlignmentResults:
@@ -445,10 +443,10 @@ class ITMScenarioSession:
         (successful, message, code) = self._check_scenario_id(scenario_id)
         if not successful:
             return message, code
-        if self.scenario.session_complete:
+        if self.session_complete:
             return 'Scenario Complete', 400
 
-        if self.current_isd.scenario and not self.scenario.state.scenario_complete:
-            return self.current_isd.get_available_actions()
+        if self.itm_scenario.isd.scenario and not self.state.scenario_complete:
+            return self.itm_scenario.get_available_actions()
         else:
             return 'Scenario Complete', 400

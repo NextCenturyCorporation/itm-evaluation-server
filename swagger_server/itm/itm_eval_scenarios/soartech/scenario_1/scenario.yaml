@@ -1,4 +1,4 @@
-id: soartech-metrics-training-submarine-1
+id: soartech-metrics-eval-submarine-1
 name: Submarine Fire
 state:
   unstructured: >
@@ -313,8 +313,6 @@ scenes:
         unstructured: Assess Casualty V
         character_id: casualty_v
         probe_id: probe-1.1
-        kdma_association:
-          maximization: 0.7
 
       - action_id: action4
         choice: choice4
@@ -324,8 +322,6 @@ scenes:
         # Here, the probe response is only sent if the specified treatment is made to the specified location
         parameters: { "treatment": "Pressure bandage", "location": "right forearm" }
         probe_id: probe-1.1
-        kdma_association:
-          maximization: 0.3
 
       - action_id: action5
         choice: choice5
@@ -335,8 +331,6 @@ scenes:
         # Here, the probe response is only sent if the specified treatment is made to the specified location
         parameters: { "treatment": "Pressure bandage", "location": "left forearm" }
         probe_id: probe-1.1
-        kdma_association:
-          maximization: 0.3
 
     transitions: # This example shows different types of transitions; it's unlikely you'd use all of these in one scene
       probes:
@@ -375,8 +369,6 @@ scenes:
         unstructured: Assess Casualty U
         character_id: casualty_u
         probe_id: probe-1.2
-        kdma_association:
-          maximization: 0.7
 
       - action_id: action2
         choice: choice2
@@ -384,8 +376,6 @@ scenes:
         unstructured: Assess Casualty V
         character_id: casualty_v
         probe_id: probe-1.2
-        kdma_association:
-          maximization: 0.7
 
       - action_id: action3
         choice: choice3
@@ -395,8 +385,6 @@ scenes:
         # Here, the probe response is only sent if the specified treatment is made to the specified location
         parameters: { "treatment": "Pressure bandage", "location": "right forearm" }
         probe_id: probe-1.2
-        kdma_association:
-          maximization: 0.3
 
       - action_id: action4
         choice: choice4
@@ -406,8 +394,6 @@ scenes:
         # Here, the probe response is only sent if the specified treatment is made to the specified location
         parameters: { "treatment": "Pressure bandage", "location": "left forearm" }
         probe_id: probe-1.2
-        kdma_association:
-          maximization: 0.3
 
     transition_semantics: "and" # Can be "and", "or", or "not"
     transitions: # This example shows different types of transitions; it's unlikely you'd use all of these in one scene
@@ -531,8 +517,6 @@ scenes:
           treatment: Pressure bandage # TODO: Update
           location: right forearm
         probe_id: probe-1.3
-        kdma_association:
-          maximization: 0.9
 
 
       - action_id: action2
@@ -544,8 +528,6 @@ scenes:
           treatment: Pressure bandage # TODO: Update
           location: right forearm
         probe_id: probe-1.3
-        kdma_association:
-          maximization: 0.5
 
       - action_id: action3
         choice: choice3
@@ -556,8 +538,6 @@ scenes:
           treatment: Pressure bandage # TODO: Update
           location: right forearm
         probe_id: probe-1.3
-        kdma_association:
-          maximization: 0.3
 
       - action_id: action4
         choice: choice4
@@ -568,8 +548,6 @@ scenes:
           treatment: Pressure bandage # TODO: Update
           location: right forearm
         probe_id: probe-1.3
-        kdma_association:
-          maximization: 0.3
 
 
       - action_id: action5
@@ -578,5 +556,3 @@ scenes:
         unstructured: Do not treat
         parameters: {}
         probe_id: probe-1.3
-        kdma_association:
-          maximization: 0.1
