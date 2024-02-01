@@ -9,6 +9,7 @@ from swagger_server.models import (
     Action,
     AlignmentTarget,
     AlignmentResults,
+    InjuryStatusEnum,
     Scenario,
     State,
     Vitals
@@ -126,7 +127,8 @@ class ITMSession:
     def _clear_hidden_data(self):
         for character in self.state.characters:
             character.injuries[:] = \
-                [injury for injury in character.injuries if injury.name not in self.itm_scenario.isd.hidden_injury_types]
+                [injury for injury in character.injuries if injury.status == InjuryStatusEnum.VISIBLE]
+            character.unstructured_postassess = None
             character.vitals = Vitals()
 
 
@@ -246,8 +248,11 @@ class ITMSession:
                         "scenario_id": self.itm_scenario.id},
                         scenario_alignment
                 )
-            elif not self.kdma_training:
-                print("--> Got alignment target from TA1.")
+            else:
+                # TODO: consider different/better way to disable TA1 communcation from ITMScenario
+                self.itm_scenario.ta1_controller = None
+                if not self.kdma_training:
+                    print("--> Got alignment target from TA1.")
 
             return scenario
         except:
@@ -259,7 +264,7 @@ class ITMSession:
     def _end_session(self) -> Scenario:
         self.__init__()
         return Scenario(session_complete=True, id='', name='',
-                        start_time=None, state=None)
+                        scenes=None, state=None)
 
     def start_session(self, adm_name: str, session_type: str, kdma_training: bool, max_scenarios=None) -> str:
         """
@@ -339,9 +344,6 @@ class ITMSession:
             self.itm_scenarios.append(itm_scenario)
         self.current_scenario_index = 0
 
-        print(itm_scenario)
-        print(itm_scenario.isd.scenes[0])
-        print(itm_scenario.isd.scenes[1])
         return self.session_id
 
 

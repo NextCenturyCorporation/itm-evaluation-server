@@ -3,7 +3,7 @@ import json
 from dataclasses import dataclass
 from typing import List, Dict
 from swagger_server.models import (
-    Scene, Action, ActionTypeEnum, Conditions, SemanticTypeEnum, State, ProbeResponse
+    Scene, Action, ActionTypeEnum, Conditions, SemanticTypeEnum, State
 )
 
 @dataclass
@@ -16,6 +16,8 @@ class ActionMapping:
     probe_id: str
     choice: str
     parameters: Dict[str, str]
+    repeatable: bool
+    action_taken: bool
     kdma_association :Dict[str, float]
     conditions :Conditions
     next_scene :int
@@ -28,6 +30,8 @@ class ActionMapping:
         self.probe_id = action.probe_id
         self.choice = action.choice
         self.parameters = action.parameters
+        self.repeatable = action.repeatable
+        self.action_taken = False
         self.kdma_association = action.kdma_association
         self.conditions = action.conditions
         self.next_scene = scene_index+1 if action.next_scene is None else action.next_scene
@@ -70,6 +74,8 @@ class ITMScene:
         self.transition_semantics :SemanticTypeEnum = scene.transition_semantics
         self.transitions :Conditions = scene.transitions
         self.training = False
+        from .itm_scenario import ITMScenario
+        self.parent_scenario :ITMScenario = None
 
     def __str__(self):
         '''
@@ -105,7 +111,7 @@ class ITMScene:
                 parameters=mapping.parameters,
                 kdma_association=mapping.kdma_association if self.training else None
             )
-            for mapping in self.action_mappings
+            for mapping in self.action_mappings if (not mapping.action_taken) or mapping.repeatable
         ]
         if self.end_scene_allowed:
             actions.append(Action(action_id="end_scene_action", action_type='END_SCENE', unstructured="End the scene"))
@@ -113,6 +119,18 @@ class ITMScene:
 
         return actions
 
-    def lookup_probe_response(self, action_id) -> ProbeResponse:
-        return ProbeResponse(scenario_id=self.scenario.id, probe_id=currentProbe.id,
-                             choice=choice_id, justification=action.justification) if choice_id != None else None
+    def action_taken(self, action_id: str, justification: str):
+        for mapping in self.action_mappings:
+            if mapping.action_id == action_id:
+                mapping.action_taken = True
+                # Respond to probes if conditions are met.
+                if ITMScene.conditions_met(mapping.conditions):
+                    self.parent_scenario.respond_to_probe(mapping.probe_id, mapping.choice, justification)
+                # Determine if we should transition to the next scene.
+                if ITMScene.conditions_met(self.transitions, self.transition_semantics):
+                    self.parent_scenario.change_scene(mapping.next_scene)
+
+    # TODO: implement based on configured conditions
+    @staticmethod
+    def conditions_met(conditions :Conditions, semantics="and") -> bool:
+        return conditions # for now, return True if there are any conditions, otherwise False

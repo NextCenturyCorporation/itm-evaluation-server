@@ -113,7 +113,7 @@ state:
     #- { type: Splint, quantity: 2, reusable: False }
     # quantity is in units; could add different types
     #- { type: Blood, quantity: 5, reusable: False }
-    - { type: Pressure bandage, quantity: 1, reusable: False }
+    - { type: Pressure bandage, quantity: 999, reusable: False }
 
   characters:
 
@@ -418,7 +418,7 @@ scenes:
 
   - index: 2
     # The scene with index = 0 uses the state defined at the scenario level
-    end_scene_allowed: false
+    end_scene_allowed: true
     tagging:
       enabled: false
       repeatable: true

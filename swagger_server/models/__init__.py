@@ -35,7 +35,6 @@ from swagger_server.models.injury_location_enum import InjuryLocationEnum
 from swagger_server.models.injury_severity_enum import InjurySeverityEnum
 from swagger_server.models.injury_status_enum import InjuryStatusEnum
 from swagger_server.models.injury_trigger_enum import InjuryTriggerEnum
-from swagger_server.models.injury_type import InjuryType
 from swagger_server.models.injury_type_enum import InjuryTypeEnum
 from swagger_server.models.kdma_value import KDMAValue
 from swagger_server.models.lighting_type_enum import LightingTypeEnum
@@ -68,7 +67,6 @@ from swagger_server.models.skills import Skills
 from swagger_server.models.sound_restriction_enum import SoundRestrictionEnum
 from swagger_server.models.state import State
 from swagger_server.models.supplies import Supplies
-from swagger_server.models.supply_type import SupplyType
 from swagger_server.models.supply_type_enum import SupplyTypeEnum
 from swagger_server.models.tagging import Tagging
 from swagger_server.models.terrain_type_enum import TerrainTypeEnum

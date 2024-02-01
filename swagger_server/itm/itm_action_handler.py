@@ -4,7 +4,8 @@ from swagger_server.models import (
     ActionTypeEnum,
     Character,
     CharacterTag,
-    InjuryLocation
+    InjuryLocation,
+    InjuryStatusEnum
 )
 from swagger_server.util import get_swagger_class_enum_values
 from .itm_scenario import ITMScenarioData, ITMScenario
@@ -29,16 +30,14 @@ class ITMActionHandler:
         self.current_scenario = scenario
         self.current_isd = scenario.isd
 
-    def _should_reveal_injury(self, source_injury, target):
-        return source_injury.name in self.current_isd.hidden_injury_types and \
-               not any(target_injury.name in self.current_isd.hidden_injury_types for target_injury in target.injuries)
-
     def _reveal_injuries(self, source: Character, target: Character):
         if target.visited: # Don't reveal injuries in visited characters
             return
 
-        # TODO: change discoverable injuries to discovered and add to target
-        revealed_injuries = [source_injury for source_injury in source.injuries if self._should_reveal_injury(source_injury, target)]
+        # Add discoverable injuries target character (with discovered status).
+        revealed_injuries = [source_injury for source_injury in source.injuries if source_injury.status == InjuryStatusEnum.DISCOVERABLE]
+        for injury in revealed_injuries:
+            injury.status = InjuryStatusEnum.DISCOVERED
         target.injuries.extend(revealed_injuries)
         if source.unstructured_postassess:
             target.unstructured = source.unstructured_postassess
@@ -191,13 +190,13 @@ class ITMActionHandler:
             action: The action which specifies parameters such as the treatment to apply and
             the location to treat.
         """
-        # Remove injury from character if the treatment treats the injury at the specified location
+        # If the treatment treats the injury at the specified location, then change its status to treated.
         # NOTE: this assumes there is only one injury per location.
         supply_used = action.parameters.get('treatment', None)
         for injury in character.injuries:
             if injury.location == action.parameters.get('location', None):
                 if self._proper_treatment(supply_used, injury.name, injury.location):
-                    character.injuries.remove(injury)
+                    injury.status = InjuryStatusEnum.TREATED
 
         # Decrement supplies and increment time passed during treatment, even if the injury is untreated
         time_passed = 0
@@ -211,6 +210,8 @@ class ITMActionHandler:
         # Injuries and certain basic vitals are discovered when a character is treated.
         for isd_character in self.current_isd.scenario.state.characters:
             if isd_character.id == character.id:
+                character.vitals.ambulatory = isd_character.vitals.ambulatory
+                character.vitals.avpu = isd_character.vitals.avpu
                 character.vitals.breathing = isd_character.vitals.breathing
                 character.vitals.conscious = isd_character.vitals.conscious
                 character.vitals.mental_status = isd_character.vitals.mental_status
@@ -245,10 +246,12 @@ class ITMActionHandler:
         """
         for isd_character in self.current_isd.scenario.state.characters:
             if isd_character.id == character.id:
+                character.vitals.ambulatory = isd_character.vitals.ambulatory
+                character.vitals.avpu = isd_character.vitals.avpu
                 character.vitals.breathing = isd_character.vitals.breathing
                 character.vitals.conscious = isd_character.vitals.conscious
                 character.vitals.mental_status = isd_character.vitals.mental_status
-                character.vitals.hrpmin = isd_character.vitals.hrpmin
+                character.vitals.heart_rate = isd_character.vitals.heart_rate
                 self._reveal_injuries(isd_character, character)
                 character.visited = True
                 return self.times_dict['CHECK_PULSE']
@@ -263,6 +266,8 @@ class ITMActionHandler:
         """
         for isd_character in self.current_isd.scenario.state.characters:
             if isd_character.id == character.id:
+                character.vitals.ambulatory = isd_character.vitals.ambulatory
+                character.vitals.avpu = isd_character.vitals.avpu
                 character.vitals.breathing = isd_character.vitals.breathing
                 character.vitals.conscious = isd_character.vitals.conscious
                 character.vitals.mental_status = isd_character.vitals.mental_status
@@ -323,6 +328,8 @@ class ITMActionHandler:
                 if isd_character.id == character.id:
                     character.vitals.mental_status = isd_character.vitals.mental_status
                     if character.vitals.mental_status != "UNRESPONSIVE":
+                        character.vitals.ambulatory = isd_character.vitals.ambulatory
+                        character.vitals.avpu = isd_character.vitals.avpu
                         character.vitals.breathing = isd_character.vitals.breathing
                         character.vitals.conscious = isd_character.vitals.conscious
                         self._reveal_injuries(isd_character, character)
@@ -335,6 +342,8 @@ class ITMActionHandler:
                     if isd_character.id == curr_character.id:
                         curr_character.vitals.mental_status = isd_character.vitals.mental_status
                         if curr_character.vitals.mental_status != "UNRESPONSIVE":
+                            curr_character.vitals.ambulatory = isd_character.vitals.ambulatory
+                            curr_character.vitals.avpu = isd_character.vitals.avpu
                             curr_character.vitals.conscious = isd_character.vitals.conscious
                             curr_character.vitals.breathing = isd_character.vitals.breathing
                             self._reveal_injuries(isd_character, curr_character)
@@ -404,5 +413,5 @@ class ITMActionHandler:
         self.session.history.add_history("Take Action", parameters,
                                          self.session.state.to_dict())
 
-        # TODO: Look up probes and possibly send responses.
-        # TODO: Determine if we should transition to the next scene.
+        # Tell Scene what happened
+        self.current_isd.current_scene.action_taken(action.action_id, action.justification)
