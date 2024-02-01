@@ -399,7 +399,14 @@ class ITMSession:
         if not successful:
             return message, code
 
-        print(f"--> ADM chose action {body.action_type} with character {body.character_id} and parameters {body.parameters}.")
+        message = f"--> ADM chose action {body.action_type}"
+        if body.character_id:
+            message += f" with character {body.character_id}"
+            if body.parameters:
+                message += f" and parameters {body.parameters}"
+        elif body.parameters:
+            message += f" with parameters {body.parameters}"
+        print(message + '.')
 
         # Only the ADM can end the scene
         if body.action_type == 'END_SCENE':

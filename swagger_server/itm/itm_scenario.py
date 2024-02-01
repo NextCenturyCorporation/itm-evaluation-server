@@ -58,7 +58,7 @@ class ITMScenario:
 
     def respond_to_probe(self, probe_id, choice_id, justification):
         response = ProbeResponse(scenario_id=self.id, probe_id=probe_id, choice=choice_id,
-                                 justification = '' if justification == None else justification)
+                                 justification = '' if justification is None else justification)
         if self.ta1_controller:
             self.ta1_controller.post_probe(probe_response=response)
             # TODO: Log probe response, see ITMSession.respond_to_probe()
