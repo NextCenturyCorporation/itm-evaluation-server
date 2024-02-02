@@ -46,10 +46,8 @@ class ITMScenarioReader:
         state, character_simulations = self._generate_state(self.yaml_data['state'])
         scenes: List[ITMScene] = self._generate_scenes()
 
-        id_actual = self.yaml_data['id']
-
         scenario = Scenario(
-            id=id_actual,
+            id=self.yaml_data['id'],
             name=self.yaml_data['name'],
             scenes=None,
             state=state,

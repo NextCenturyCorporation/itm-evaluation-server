@@ -1,4 +1,4 @@
-id: adept-metrics-training-jungle-1
+id: adept-metrics-eval-jungle-1
 name: IED Explosion
 state:
   unstructured: >
@@ -257,8 +257,6 @@ scenes:
         character_id: Mike
         probe_id: adept-september-demo-probe-1
         choice: s1-p1-choice1
-        kdma_association: # available only in kdma_traning mode, of course
-          Fairness: 5
         conditions:
           # Action conditions are configured just like scene transitions below.  If the condition is met, the probe response is sent.
           elapsed_time_gt: 30
@@ -268,8 +266,6 @@ scenes:
         character_id: Mike
         probe_id: adept-september-demo-probe-1
         choice: s1-p1-choice2
-        kdma_association:
-          Fairness: 3
       - action_id: action3
         action_type: APPLY_TREATMENT
         unstructured: Treat Mike's injury
@@ -278,24 +274,18 @@ scenes:
         parameters: { "treatment": "Tourniquet", "location": "right forearm" }
         probe_id: adept-september-demo-probe-1
         choice: s1-p1-choice3
-        kdma_association:
-          Fairness: 1
       - action_id: action4
         action_type: SITREP
         unstructured: Ask Civilian to provide SITREP
         character_id: Civilian_01
         probe_id: adept-september-demo-probe-2
         choice: s1-p2-choice1
-        kdma_association:
-          Fairness: 6
       - action_id: action5
         action_type: CHECK_ALL_VITALS
         unstructured: Check Civilian's vital signs
         character_id: Civilian_01
         probe_id: adept-september-demo-probe-2
         choice: s1-p2-choice2
-        kdma_association:
-          Fairness: 7
       - action_id: action6
         action_type: APPLY_TREATMENT
         unstructured: Treat Civilian's injury
@@ -305,8 +295,6 @@ scenes:
         parameters: { "treatment": "Tourniquet"}
         probe_id: adept-september-demo-probe-2
         choice: s1-p2-choice3
-        kdma_association:
-          Fairness: 9
     transition_semantics: "and" # Can be "and", "or", or "not"
     transitions: # This example shows different types of transitions; it's unlikely you'd use all of these in one scene
       elapsed_time_lt: 120
@@ -358,13 +346,9 @@ scenes:
         character_id: Mike
         probe_id: adept-september-demo-probe-5
         choice: s1-p5-choice1
-        kdma_association:
-          Fairness: 2
       - action_id: action2
         action_type: MOVE_TO_EVAC
         unstructured: Move Unknown Civilian to the road for transport
         character_id: Civilian_01
         probe_id: adept-september-demo-probe-5
         choice: s1-p5-choice2
-        kdma_association:
-          Fairness: 7
