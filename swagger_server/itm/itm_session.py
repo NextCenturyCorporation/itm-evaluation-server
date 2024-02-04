@@ -14,11 +14,9 @@ from swagger_server.models import (
     State,
     Vitals
 )
-from swagger_server.models.probe_response import ProbeResponse
 from .itm_scenario import ITMScenario
 from .itm_action_handler import ITMActionHandler
 from .itm_history import ITMHistory
-from .itm_ta1_controller import ITMTa1Controller
 
 class ITMSession:
     """
@@ -37,7 +35,6 @@ class ITMSession:
         self.session_type = ''
         self.number_of_scenarios = None
         self.custom_scenario_count = 0 # when scenario_id is specified in start_scenario
-        self.ta1_controller: ITMTa1Controller = None
 
         self.session_complete = False
         self.state: State = None
@@ -78,12 +75,12 @@ class ITMSession:
 
         if self.ta1_integration == True:
             session_alignment :AlignmentResults = \
-                self.ta1_controller.get_session_alignment()
+                self.itm_scenario.ta1_controller.get_session_alignment()
             session_alignment_score = session_alignment.score
             self.history.add_history(
                 "TA1 Session Alignment",
-                {"session_id": self.ta1_controller.session_id,
-                "target_id": self.ta1_controller.alignment_target_id},
+                {"session_id": self.itm_scenario.ta1_controller.session_id,
+                "target_id": self.itm_scenario.ta1_controller.alignment_target_id},
                 session_alignment.to_dict()
             )
         print(f"--> Got session alignment score {session_alignment_score} from TA1.")
@@ -231,26 +228,23 @@ class ITMSession:
                 scenario.to_dict())
 
             if self.ta1_integration:
-                self.ta1_controller = self.itm_scenario.ta1_controller
-                if not self.ta1_controller.session_id \
+                if not self.itm_scenario.ta1_controller.session_id \
                         or not self.kdma_training: # When training, allow TA1 sessions to span scenarios
-                    ta1_session_id = self.ta1_controller.new_session()
+                    ta1_session_id = self.itm_scenario.ta1_controller.new_session()
                     self.history.add_history(
                         "TA1 Session ID", {}, ta1_session_id
                     )
                     print(f"--> Got new session_id {ta1_session_id} from TA1.")
                 if not self.kdma_training:
-                    scenario_alignment = self.ta1_controller.get_alignment_target()
+                    scenario_alignment = self.itm_scenario.ta1_controller.get_alignment_target()
                     print(f"--> Got alignment target {scenario_alignment} from TA1.")
                     self.history.add_history(
                         "TA1 Alignment Target Data",
-                        {"session_id": self.ta1_controller.session_id,
+                        {"session_id": self.itm_scenario.ta1_controller.session_id,
                         "scenario_id": self.itm_scenario.id},
                         scenario_alignment
                 )
             else:
-                # TODO: consider different/better way to disable TA1 communcation from ITMScenario
-                self.itm_scenario.ta1_controller = None
                 if not self.kdma_training:
                     print("--> Got alignment target from TA1.")
 
@@ -339,48 +333,12 @@ class ITMSession:
         for i in range(max_scenarios):
             itm_scenario = \
                 ITMScenario(yaml_path=selected_yaml_directories[i],
-                                                training=self.kdma_training)
+                            session=self, training=self.kdma_training)
             itm_scenario.generate_scenario_data()
             self.itm_scenarios.append(itm_scenario)
         self.current_scenario_index = 0
 
         return self.session_id
-
-
-    # TODO: Move to ITMScenario or ITMScene
-    def respond_to_probe(self, body: ProbeResponse):
-        """
-        Respond to a probe from the probe system.
-
-        Args:
-            body: The probe response body as a dict.
-        """
-        body.justification = '' if body.justification == None else body.justification
-
-        self.history.add_history(
-            "Respond to TA1 Probe",
-            {"session_id": self.session_id, "scenario_id": body.scenario_id, "probe_id": body.probe_id,
-             "choice": body.choice, "justification": body.justification},
-             None
-            )
-
-        if self.ta1_integration == True:
-            self.ta1_controller.post_probe(body)
-            probe_response_alignment = \
-                self.ta1_controller.get_probe_response_alignment(
-                body.scenario_id,
-                body.probe_id
-            )
-            self.history.add_history(
-                "TA1 Probe Response Alignment",
-                {"session_id": self.ta1_controller.session_id,
-                "scenario_id": body.scenario_id,
-                "target_id": self.ta1_controller.alignment_target_id,
-                "probe_id": body.probe_id},
-                probe_response_alignment
-            )
-        else:
-            print(f"--> Responding to probe {body.probe_id} from scenario {body.scenario_id} with choice {body.choice}.")
 
 
     def take_action(self, body: Action) -> State:
@@ -431,7 +389,7 @@ class ITMSession:
         session_alignment :AlignmentResults = None
         if self.ta1_integration == True:
             session_alignment = \
-                self.ta1_controller.get_session_alignment(target_id=target_id)
+                self.itm_scenario.ta1_controller.get_session_alignment(target_id=target_id)
         else:
             session_alignment = AlignmentResults(None, target_id, 0.0, None)
         print(f"--> Got session alignment score {session_alignment.score} from TA1 for alignment target id {target_id}.")

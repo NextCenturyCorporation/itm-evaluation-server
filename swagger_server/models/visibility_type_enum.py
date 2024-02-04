@@ -19,11 +19,11 @@ class VisibilityTypeEnum(Model):
     allowed enum values
     """
     NONE = "none"
+    VERY_LOW = "very low"
     LOW = "low"
-    NORMAL = "normal"
+    MODERATE = "moderate"
     GOOD = "good"
     EXCELLENT = "excellent"
-    VARIABLE = "variable"
     def __init__(self):  # noqa: E501
         """VisibilityTypeEnum - a model defined in Swagger
 

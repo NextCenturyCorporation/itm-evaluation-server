@@ -1,25 +1,28 @@
 import yaml
 from typing import List, Tuple
 
-from .itm_character_simulator import CharacterSimulation
 from .itm_scene import ITMScene
 
-from swagger_server.models.action import Action
-from swagger_server.models.character import Character
-from swagger_server.models.conditions_character_vitals import ConditionsCharacterVitals
-from swagger_server.models.conditions import Conditions
-from swagger_server.models.demographics import Demographics
-from swagger_server.models.environment import Environment
-from swagger_server.models.decision_environment import DecisionEnvironment
-from swagger_server.models.sim_environment import SimEnvironment
-from swagger_server.models.injury import Injury
-from swagger_server.models.mission import Mission
-from swagger_server.models.scenario import Scenario
-from swagger_server.models.state import State
-from swagger_server.models.scene import Scene
-from swagger_server.models.supplies import Supplies
-from swagger_server.models.threat_state import ThreatState
-from swagger_server.models.vitals import Vitals
+from swagger_server.models import (
+    ActionMapping,
+    Character,
+    ConditionsCharacterVitals,
+    Conditions,
+    Demographics,
+    Environment,
+    DecisionEnvironment,
+    Environment,
+    DecisionEnvironment,
+    SimEnvironment,
+    Injury,
+    Mission,
+    Scenario,
+    State,
+    Scene,
+    Supplies,
+    ThreatState,
+    Vitals
+)
 
 
 class ITMScenarioReader:
@@ -35,15 +38,14 @@ class ITMScenarioReader:
         with open(yaml_path, 'r') as file:
             self.yaml_data = yaml.safe_load(file)
 
-    def read_scenario_from_yaml(self) -> \
-            Tuple[Scenario, List[ITMScene], List[CharacterSimulation]]:
+    def read_scenario_from_yaml(self) -> Tuple[Scenario, List[ITMScene]]:
         """
-        Generate a Scenario, its scenes, and character simulations from the YAML data.
+        Generate a Scenario and its scenes from the YAML data.
 
         Returns:
-            A tuple containing the generated Scenario and a list of both ITMScenes and CharacterSimulation objects.
+            A tuple containing the generated Scenario and a list of ITMScenes.
         """
-        state, character_simulations = self._generate_state(self.yaml_data['state'])
+        state = self._generate_state(self.yaml_data['state'])
         scenes: List[ITMScene] = self._generate_scenes()
 
         scenario = Scenario(
@@ -53,7 +55,7 @@ class ITMScenarioReader:
             state=state,
             session_complete=False
         )
-        return (scenario, scenes, character_simulations)
+        return (scenario, scenes)
 
     def _generate_scenes(self) ->  List[ITMScene]:
         scenes :List[ITMScene] = [
@@ -102,8 +104,8 @@ class ITMScenarioReader:
             self._generate_supplies(supply_data)
             for supply_data in state_data.get('supplies', [])
         ]
-        character_simulations = [
-            self._generate_character_simulations(character_data)
+        characters = [
+            self._generate_character(character_data)
             for character_data in state_data.get('characters', [])
         ]
         state = State(
@@ -114,9 +116,9 @@ class ITMScenarioReader:
             environment=environment,
             threat_state=threat_state,
             supplies=supplies,
-            characters=[character.character for character in character_simulations]
+            characters=characters
         )
-        return state, character_simulations
+        return state
 
     def _generate_mission(self, state) -> Mission:
         mission = state.get('mission')
@@ -125,7 +127,7 @@ class ITMScenarioReader:
         character_importance = mission.get('character_importance', [])
         return Mission(
             unstructured=mission['unstructured'],
-            mission_type=mission['mission_type'],
+            mission_type=mission.get('mission_type'),
             character_importance=character_importance,
             civilian_presence=mission.get('civilian_presence'),
             communication_capability=mission.get('communication_capability'),
@@ -176,13 +178,13 @@ class ITMScenarioReader:
 
     def _generate_decision_environment(self, state) -> DecisionEnvironment:
         """
-        Generate a SimEnvironment instance from the YAML data.
+        Generate a DecisionEnvironment instance from the YAML data.
 
         Args:
-            state: The YAML data representing the sim environment.
+            state: The YAML data representing the decision environment.
 
         Returns:
-            A SimEnvironment object representing the generated simulation environment.
+            A DecisionEnvironment object representing the generated decision environment.
         """
         environment = state['environment'].get('decision_environment', {})
         return DecisionEnvironment(
@@ -252,6 +254,7 @@ class ITMScenarioReader:
                 name=injury['name'],
                 location=injury.get('location'),
                 severity=injury.get('severity'),
+                source_character=injury.get('source_character'),
                 status=injury.get('status', 'visible')
             )
             for injury in character_data.get('injuries', [])
@@ -266,7 +269,9 @@ class ITMScenarioReader:
             injuries=injuries,
             vitals=self._generate_vitals(character_data.get('vitals', {})),
             visited=False,
-            tag=None
+            intent=character_data.get('intent'),
+            directness_of_causality=character_data.get('directness_of_causality'),
+            tag=character_data.get('tag')
         )
         return character
 
@@ -284,8 +289,8 @@ class ITMScenarioReader:
         )
         return vitals
 
-    def _generate_action_mapping(self, mapping_data) -> Action:
-        action = Action(
+    def _generate_action_mapping(self, mapping_data) -> ActionMapping:
+        mapping = ActionMapping(
             action_id=mapping_data['action_id'],
             action_type=mapping_data['action_type'],
             unstructured=mapping_data['unstructured'],
@@ -299,7 +304,7 @@ class ITMScenarioReader:
             condition_semantics=mapping_data.get('condition_semantics', 'and'),
             conditions=self._generate_conditions(mapping_data.get('conditions'))
         )
-        return action
+        return mapping
 
     def _generate_conditions(self, conditions_data) -> Conditions:
         if conditions_data == None:
@@ -334,33 +339,3 @@ class ITMScenarioReader:
     # Deferred
     def _generate_tagging(self, scene_data):
         return None
-
-    def _generate_character_simulations(self, character_data) -> CharacterSimulation:
-        """
-        Generate a CharacterSimulation instance from the YAML data.
-
-        Args:
-            character_data: The YAML data representing a character simulation.
-
-        Returns:
-            A CharacterSimulation object representing the generated character simulation.
-        """
-        character = self._generate_character(character_data=character_data)
-        #hidden_attributes = character_data.get('hidden_attributes', {})
-        #vitals_changes = hidden_attributes.get('vitals_changes_over_time', {})
-        character_simulation = CharacterSimulation(
-            character=character
-            # correct_tag=hidden_attributes.get('correct_tag'),
-            # start_vitals=copy.deepcopy(character.vitals),
-            # current_vitals=copy.deepcopy(character.vitals),
-            # treatments_applied=[],
-            # treatments_needed=hidden_attributes.get('treatements_needed'),
-            # hrpmin_change=vitals_changes.get('hrpmin'),
-            # mmhg_change=vitals_changes.get('mmHg'),
-            # rr_change=vitals_changes.get('RR'),
-            # spo2_change=vitals_changes.get('SpO2%'),
-            # stable=hidden_attributes.get('stable'),
-            # deceased=hidden_attributes.get('deceased'),
-            # deceased_after_minutes=hidden_attributes.get('deceased_after_minutes')
-        )
-        return character_simulation

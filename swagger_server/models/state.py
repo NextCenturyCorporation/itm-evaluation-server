@@ -19,13 +19,13 @@ class State(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, unstructured: str=None, elapsed_time: float=None, scenario_complete: bool=None, mission: Mission=None, environment: Environment=None, threat_state: ThreatState=None, supplies: List[Supplies]=None, characters: List[Character]=None):  # noqa: E501
+    def __init__(self, unstructured: str=None, elapsed_time: int=None, scenario_complete: bool=None, mission: Mission=None, environment: Environment=None, threat_state: ThreatState=None, supplies: List[Supplies]=None, characters: List[Character]=None):  # noqa: E501
         """State - a model defined in Swagger
 
         :param unstructured: The unstructured of this State.  # noqa: E501
         :type unstructured: str
         :param elapsed_time: The elapsed_time of this State.  # noqa: E501
-        :type elapsed_time: float
+        :type elapsed_time: int
         :param scenario_complete: The scenario_complete of this State.  # noqa: E501
         :type scenario_complete: bool
         :param mission: The mission of this State.  # noqa: E501
@@ -41,7 +41,7 @@ class State(Model):
         """
         self.swagger_types = {
             'unstructured': str,
-            'elapsed_time': float,
+            'elapsed_time': int,
             'scenario_complete': bool,
             'mission': Mission,
             'environment': Environment,
@@ -106,24 +106,24 @@ class State(Model):
         self._unstructured = unstructured
 
     @property
-    def elapsed_time(self) -> float:
+    def elapsed_time(self) -> int:
         """Gets the elapsed_time of this State.
 
-        the elapsed time (in minutes) since the scenario started  # noqa: E501
+        the simulated elapsed time (in seconds) since the scenario started  # noqa: E501
 
         :return: The elapsed_time of this State.
-        :rtype: float
+        :rtype: int
         """
         return self._elapsed_time
 
     @elapsed_time.setter
-    def elapsed_time(self, elapsed_time: float):
+    def elapsed_time(self, elapsed_time: int):
         """Sets the elapsed_time of this State.
 
-        the elapsed time (in minutes) since the scenario started  # noqa: E501
+        the simulated elapsed time (in seconds) since the scenario started  # noqa: E501
 
         :param elapsed_time: The elapsed_time of this State.
-        :type elapsed_time: float
+        :type elapsed_time: int
         """
 
         self._elapsed_time = elapsed_time

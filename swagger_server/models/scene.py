@@ -6,7 +6,7 @@ from datetime import date, datetime  # noqa: F401
 from typing import List, Dict  # noqa: F401
 
 from swagger_server.models.base_model_ import Model
-from swagger_server.models.action import Action  # noqa: F401,E501
+from swagger_server.models.action_mapping import ActionMapping  # noqa: F401,E501
 from swagger_server.models.action_type_enum import ActionTypeEnum  # noqa: F401,E501
 from swagger_server.models.conditions import Conditions  # noqa: F401,E501
 from swagger_server.models.probe_config import ProbeConfig  # noqa: F401,E501
@@ -21,7 +21,7 @@ class Scene(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, index: int=None, state: State=None, end_scene_allowed: bool=None, probe_config: List[ProbeConfig]=None, tagging: Tagging=None, action_mapping: List[Action]=None, restricted_actions: List[ActionTypeEnum]=None, transition_semantics: SemanticTypeEnum=None, transitions: Conditions=None):  # noqa: E501
+    def __init__(self, index: int=None, state: State=None, end_scene_allowed: bool=None, probe_config: List[ProbeConfig]=None, tagging: Tagging=None, action_mapping: List[ActionMapping]=None, restricted_actions: List[ActionTypeEnum]=None, transition_semantics: SemanticTypeEnum=None, transitions: Conditions=None):  # noqa: E501
         """Scene - a model defined in Swagger
 
         :param index: The index of this Scene.  # noqa: E501
@@ -35,7 +35,7 @@ class Scene(Model):
         :param tagging: The tagging of this Scene.  # noqa: E501
         :type tagging: Tagging
         :param action_mapping: The action_mapping of this Scene.  # noqa: E501
-        :type action_mapping: List[Action]
+        :type action_mapping: List[ActionMapping]
         :param restricted_actions: The restricted_actions of this Scene.  # noqa: E501
         :type restricted_actions: List[ActionTypeEnum]
         :param transition_semantics: The transition_semantics of this Scene.  # noqa: E501
@@ -49,7 +49,7 @@ class Scene(Model):
             'end_scene_allowed': bool,
             'probe_config': List[ProbeConfig],
             'tagging': Tagging,
-            'action_mapping': List[Action],
+            'action_mapping': List[ActionMapping],
             'restricted_actions': List[ActionTypeEnum],
             'transition_semantics': SemanticTypeEnum,
             'transitions': Conditions
@@ -203,24 +203,24 @@ class Scene(Model):
         self._tagging = tagging
 
     @property
-    def action_mapping(self) -> List[Action]:
+    def action_mapping(self) -> List[ActionMapping]:
         """Gets the action_mapping of this Scene.
 
         List of actions with details of how those actions map to probe responses  # noqa: E501
 
         :return: The action_mapping of this Scene.
-        :rtype: List[Action]
+        :rtype: List[ActionMapping]
         """
         return self._action_mapping
 
     @action_mapping.setter
-    def action_mapping(self, action_mapping: List[Action]):
+    def action_mapping(self, action_mapping: List[ActionMapping]):
         """Sets the action_mapping of this Scene.
 
         List of actions with details of how those actions map to probe responses  # noqa: E501
 
         :param action_mapping: The action_mapping of this Scene.
-        :type action_mapping: List[Action]
+        :type action_mapping: List[ActionMapping]
         """
         if action_mapping is None:
             raise ValueError("Invalid value for `action_mapping`, must not be `None`")  # noqa: E501

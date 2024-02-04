@@ -162,8 +162,12 @@ class ITMActionHandler:
                 tag = action.parameters.get('category')
                 if not tag in allowed_values:
                     return False, f'Malformed {action.action_type} Action: Invalid Tag `{tag}`', 400
+        elif action.action_type == ActionTypeEnum.MOVE_TO_EVAC:
+            # Requires evac_id parameter
+            if not action.parameters or not 'evac_id' in action.parameters:
+                return False, f'Malformed {action.action_type} Action: Missing `evac_id` parameter', 400
         elif action.action_type == ActionTypeEnum.CHECK_ALL_VITALS or action.action_type == ActionTypeEnum.CHECK_PULSE \
-            or action.action_type == ActionTypeEnum.CHECK_RESPIRATION or action.action_type == ActionTypeEnum.MOVE_TO_EVAC:
+            or action.action_type == ActionTypeEnum.CHECK_RESPIRATION:
             pass # Character was already checked
         elif action.action_type == ActionTypeEnum.DIRECT_MOBILE_CHARACTERS or action.action_type == ActionTypeEnum.END_SCENE \
                 or action.action_type == ActionTypeEnum.SEARCH:

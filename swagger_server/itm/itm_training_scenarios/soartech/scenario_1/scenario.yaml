@@ -23,8 +23,8 @@ state:
     # none, limited, some, extensive, crowd
     civilian_presence: none
     # current communication capability
-    # all, satellite, radio, voice, visual, etc. (need SME input)
-    communication_capability: radio
+    # internal, external, both, neither
+    communication_capability: both
     # controlled vocab TBD.  Will have to be discussed/defined individually
     roe: TBD
     # controlled vocab TBD.  Will have to be discussed/defined individually
@@ -64,12 +64,10 @@ state:
       unstructured: >
         Isolated jungle island. EVAC is scheduled for 5 minutes.
       aid_delay:
-        # CASEVAC or MEDEVAC timer, in minutes
-        delay: 999
-        # controlled vocab includes AMEV, truck, helicopter, unknown, etc.
-        type: unknown
-        # Maximum number of characters that can be transported
-        max_transport: 1
+        - id: my_evac
+          delay: 999 # CASEVAC or MEDEVAC timer, in minutes
+          type: unknown # controlled vocab includes AMEV, truck, helicopter, unknown, etc.
+          max_transport: 1 # Maximum number of characters that can be transported
       # operational movement restrictions
       # unrestricted, minimal, moderate, severe, extreme
       movement_restriction: unrestricted
@@ -78,13 +76,13 @@ state:
       sound_restriction: unrestricted
       # normal, limited, scarce, none
       oxygen_levels: normal
-      # population per square mile
-      population_density: 0
+      # persons per square meter
+      population_density: none
       # explosion, firearm, fall, virus, animal, plant, water,
       #   .. collision, equipment, attack, fire, stress, chemical
       injury_triggers: fire
       # air quality index (see https://www.airnow.gov/aqi/aqi-basics/)
-      air_quality: 60
+      air_quality: yellow
       # controlled vocab TBD
       # this refers to building/city infrastructure that should be noted and known (safe house, etc)
       city_infrastructure: TBD
@@ -347,6 +345,69 @@ scenes:
 
   - index: 1
     end_scene_allowed: false
+    state:
+      unstructured: >
+        You are the independent duty corpsman posted aboard the USS Turtle, a nuclear submarine.
+        This is a Virginia class submarine.
+        You are on a long-range patrol.
+        Your orders are to remain submerged at all costs.
+      characters:
+        - id: casualty_u
+          name: Casualty Uniform
+          unstructured: >
+            Has a circumferential second and third degree burn of the right arm encompassing 9% of body surface area.
+          demographics:
+            age: 34
+            sex: M
+            race: White
+            military_disposition: Allied US
+            military_branch: US Marine Corps
+            mission_importance: low
+            rank: E-4
+            rank_title: Corporal
+            role: Communications
+          vitals:
+            conscious: true
+            avpu: ALERT
+            ambulatory: true
+            mental_status: UPSET
+            breathing: FAST
+            heart_rate: NORMAL
+            Spo2: 92
+          injuries:
+            - name: Burn
+              severity: moderate
+              location: right forearm
+              status: visible
+
+        - id: casualty_v
+          name: Casualty Victor
+          unstructured: >
+            Has a second and third degree burn of the left arm encompassing 9% of body surface area.
+          demographics:
+            age: 36
+            sex: F
+            race: White
+            military_disposition: Allied US
+            military_branch: US Marine Corps
+            mission_importance: low
+            rank: E-4
+            rank_title: Corporal
+            role: Communications
+          vitals:
+            conscious: true
+            avpu: ALERT
+            ambulatory: true
+            mental_status: UPSET
+            breathing: FAST
+            heart_rate: FAST
+            Spo2: 92
+          injuries:
+            - name: Burn
+              severity: moderate
+              location: left forearm
+              status: visible
+
     tagging:
       enabled: false
       repeatable: true
