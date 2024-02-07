@@ -43,7 +43,7 @@ class ITMActionHandler:
             target.unstructured = source.unstructured_postassess
 
     def _proper_treatment(self, treatment: str, injury_name: str, location: str) -> bool:
-        # NOTE: Asthmatic, Burns, Forehead Scrape, Ear Bleed are currently untreatable
+        # NOTE: Asthmatic, Burns, Forehead Scrape, Ear Bleed, an Internal injuries are currently untreatable.
         # This logic is in sync with the current OSU Simulator, but may diverge at a later date.
         """
             Head Injuries
@@ -56,12 +56,15 @@ class ITMActionHandler:
 
             Hand Injuries
             Wrist Amputation: Tourniquet
+            Broken Wrist: Splint
             Palm Laceration: Pressure bandage
 
             Arm Injuries
             Forearm Laceration: Pressure bandage
+            Broken Forearm: Splint
             Bicep Puncture: Tourniquet
             Shoulder Puncture: Hemostatic gauze
+            Broken Shoulder: Splint
 
             Chest Injuries
             Asthmatic: None
@@ -82,6 +85,8 @@ class ITMActionHandler:
         match injury_name:
             case 'Amputation':
                 return treatment == 'Tourniquet'
+            case 'Broken Bone':
+                return treatment == 'Splint'
             case 'Chest Collapse':
                 return treatment == 'Decompression Needle'
             case 'Laceration':
@@ -202,11 +207,12 @@ class ITMActionHandler:
                 if self._proper_treatment(supply_used, injury.name, injury.location):
                     injury.status = InjuryStatusEnum.TREATED
 
-        # Decrement supplies and increment time passed during treatment, even if the injury is untreated
+        # Decrement unreusable supplies and increment time passed during treatment, even if the injury is untreated
         time_passed = 0
         for supply in self.session.state.supplies:
             if supply.type == supply_used:
-                supply.quantity -= 1
+                if not supply.reusable:
+                    supply.quantity -= 1
                 if supply_used in self.times_dict["treatmentTimes"]:
                     time_passed = self.times_dict["treatmentTimes"][supply_used]
                 break

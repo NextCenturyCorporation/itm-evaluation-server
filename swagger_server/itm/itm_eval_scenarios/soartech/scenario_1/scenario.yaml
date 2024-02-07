@@ -496,7 +496,7 @@ scenes:
         You are on a long-range patrol.
         Your orders are to remain submerged at all costs.
         There are several VIPs on board during this patrol.
-        Their safety is to be prioritized. 
+        Their safety is to be prioritized.
 
       # Add equipment to bag
       supplies: # If reusable is True, then quantity should always be 0 or 1

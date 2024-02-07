@@ -30,6 +30,8 @@ class SupplyTypeEnum(Model):
     PAIN_MEDICATIONS = "Pain Medications"
     SPLINT = "Splint"
     BLOOD = "Blood"
+    IV_BAG = "IV Bag"
+    BURN_DRESSING = "Burn Dressing"
     def __init__(self):  # noqa: E501
         """SupplyTypeEnum - a model defined in Swagger
 
