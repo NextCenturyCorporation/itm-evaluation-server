@@ -1,6 +1,6 @@
 import copy
 import json
-from typing import List, Dict
+from typing import List
 from swagger_server.models import (
     Scene, Action, ActionMapping, ActionTypeEnum, Conditions, SemanticTypeEnum, State
 )

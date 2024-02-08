@@ -8,7 +8,8 @@ from swagger_server.models import (
     InjuryStatusEnum
 )
 from swagger_server.util import get_swagger_class_enum_values
-from .itm_scenario import ITMScenarioData, ITMScenario
+from .itm_scenario import ITMScenario
+from .itm_scene import ITMScene
 
 class ITMActionHandler:
     """
@@ -21,14 +22,15 @@ class ITMActionHandler:
         """
         from.itm_session import ITMSession
         self.session: ITMSession = session
-        self.current_isd: ITMScenarioData = None
-        self.current_scenario: ITMScenario = None
+        self.current_scene: ITMScene = None
         with open("swagger_server/itm/treatment_times_config/actionTimes.json", 'r') as json_file:
                 self.times_dict = json.load(json_file)
 
-    def set_scenario(self, scenario):
-        self.current_scenario = scenario
-        self.current_isd = scenario.isd
+    def set_scene(self, scene):
+        self.current_scene = scene
+
+    def set_scenario(self, scenario :ITMScenario):
+        self.current_scene = scenario.isd.current_scene
 
     def _reveal_injuries(self, source: Character, target: Character):
         if target.visited: # Don't reveal injuries in visited characters
@@ -220,7 +222,7 @@ class ITMActionHandler:
                 break
 
         # Injuries and certain basic vitals are discovered when a character is treated.
-        for isd_character in self.current_isd.scenario.state.characters:
+        for isd_character in self.current_scene.state.characters:
             if isd_character.id == character.id:
                 character.vitals.ambulatory = isd_character.vitals.ambulatory
                 character.vitals.avpu = isd_character.vitals.avpu
@@ -241,7 +243,7 @@ class ITMActionHandler:
         Args:
             character: The character to check.
         """
-        for isd_character in self.current_isd.scenario.state.characters:
+        for isd_character in self.current_scene.state.characters:
             if isd_character.id == character.id:
                 character.vitals = isd_character.vitals
                 self._reveal_injuries(isd_character, character)
@@ -256,7 +258,7 @@ class ITMActionHandler:
         Args:
             character: The character to check.
         """
-        for isd_character in self.current_isd.scenario.state.characters:
+        for isd_character in self.current_scene.state.characters:
             if isd_character.id == character.id:
                 character.vitals.ambulatory = isd_character.vitals.ambulatory
                 character.vitals.avpu = isd_character.vitals.avpu
@@ -276,7 +278,7 @@ class ITMActionHandler:
         Args:
             character: The character to check.
         """
-        for isd_character in self.current_isd.scenario.state.characters:
+        for isd_character in self.current_scene.state.characters:
             if isd_character.id == character.id:
                 character.vitals.ambulatory = isd_character.vitals.ambulatory
                 character.vitals.avpu = isd_character.vitals.avpu
@@ -314,7 +316,7 @@ class ITMActionHandler:
             tag: The tag to assign to the character.
         """
         character.tag = tag
-        for isd_character in self.current_isd.scenario.state.characters:
+        for isd_character in self.current_scene.state.characters:
             if isd_character.id == character.id:
                 return self.times_dict['TAG_CHARACTER']
 
@@ -336,7 +338,7 @@ class ITMActionHandler:
         """
         time_passed = 0
         if character:
-            for isd_character in self.current_isd.scenario.state.characters:
+            for isd_character in self.current_scene.state.characters:
                 if isd_character.id == character.id:
                     character.vitals.mental_status = isd_character.vitals.mental_status
                     if character.vitals.mental_status != "UNRESPONSIVE":
@@ -350,7 +352,7 @@ class ITMActionHandler:
         else:
             # takes time for each responsive character during sitrep
             for curr_character in self.session.state.characters:
-                for isd_character in self.current_isd.scenario.state.characters:
+                for isd_character in self.current_scene.state.characters:
                     if isd_character.id == curr_character.id:
                         curr_character.vitals.mental_status = isd_character.vitals.mental_status
                         if curr_character.vitals.mental_status != "UNRESPONSIVE":
@@ -409,16 +411,6 @@ class ITMActionHandler:
 
         # TODO ITM-72: Implement character deterioration/amelioration
         # Ultimately, this should update values based DIRECTLY on how the sim does it
-        """
-        time_elapsed_during_treatment = self.current_isd.character_simulator.treat_character(
-            character_id=action.character_id,
-            supply=action.justification
-        )
-
-        self.time_elapsed_scenario_time += time_elapsed_during_treatment + time_passed
-        self.current_isd.character_simulator.update_vitals(time_elapsed_during_treatment)
-        self.scenario.state.elapsed_time = self.time_elapsed_scenario_time
-        """
 
         self.session.state.elapsed_time += time_passed
         # Log the action
@@ -426,4 +418,4 @@ class ITMActionHandler:
                                          self.session.state.to_dict())
 
         # Tell Scene what happened
-        self.current_isd.current_scene.action_taken(action.action_id, action.justification)
+        self.current_scene.action_taken(action.action_id, action.justification)

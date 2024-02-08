@@ -200,10 +200,10 @@ class ITMSession:
                 return self._end_session() # No more scenarios means we can end the session
 
         try:
-            self.state = deepcopy(self.itm_scenario.isd.scenario.state)
+            self.state = deepcopy(self.itm_scenario.isd.current_scene.state)
             scenario = Scenario(
                 id=self.itm_scenario.id,
-                name=self.itm_scenario.isd.scenario.name,
+                name=self.itm_scenario.name,
                 session_complete=False,
                 state=self.state
             )
@@ -231,7 +231,7 @@ class ITMSession:
                         {"session_id": self.itm_scenario.ta1_controller.session_id,
                         "scenario_id": self.itm_scenario.id},
                         scenario_alignment
-                )
+                      )
             else:
                 if not self.kdma_training:
                     print("--> Got alignment target from TA1.")
@@ -401,7 +401,7 @@ class ITMSession:
         if self.session_complete:
             return 'Scenario Complete', 400
 
-        if self.itm_scenario.isd.scenario and not self.state.scenario_complete:
+        if  not self.state.scenario_complete:
             return self.itm_scenario.get_available_actions()
         else:
             return 'Scenario Complete', 400

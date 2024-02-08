@@ -1,7 +1,7 @@
 from typing import List
 from dataclasses import dataclass
 from swagger_server.models import (
-    Action, InjuryStatusEnum, ProbeResponse, Scenario, State, Vitals
+    Action, InjuryStatusEnum, ProbeResponse, State, Vitals
 )
 from .itm_scenario_reader import ITMScenarioReader
 from .itm_scene import ITMScene
@@ -10,7 +10,6 @@ from .itm_ta1_controller import ITMTa1Controller
 
 @dataclass
 class ITMScenarioData:
-    scenario: Scenario = None # Starting state for the scenario
     scenes: List[ITMScene] = None
     current_scene :ITMScene = None
     current_scene_index = 0
@@ -28,6 +27,7 @@ class ITMScenario:
         self.session :ITMSession = session
         self.isd :ITMScenarioData
         self.id=''
+        self.name=''
 
     # Hide vitals and hidden injuries
     @staticmethod
@@ -44,16 +44,17 @@ class ITMScenario:
         isd = ITMScenarioData()
 
         scenario_reader = ITMScenarioReader(self.yaml_path + "scenario.yaml")
-        ( isd.scenario, isd.scenes) = \
+        (scenario, isd.scenes) = \
             scenario_reader.read_scenario_from_yaml()
-        ITMScenario.clear_hidden_data(isd.scenario.state)
+        ITMScenario.clear_hidden_data(isd.scenes[0].state)
         isd.current_scene_index = 0
         isd.current_scene = isd.scenes[0]
         for scene in isd.scenes:
             scene.training = self.training
             scene.parent_scenario = self
         self.isd = isd
-        self.id = isd.scenario.id
+        self.id = scenario.id
+        self.name = scenario.name
 
         if not self.training:
             self.alignment_target_reader = ITMAlignmentTargetReader(self.yaml_path + "alignment_target.yaml")
@@ -114,6 +115,7 @@ class ITMScenario:
             return
         self.isd.current_scene_index = next_scene
         self.isd.current_scene = self.isd.scenes[next_scene]
+        self.session.action_handler.set_scene(self.isd.current_scene)
 
         '''
         Merge state from new scene into session.state.  Approach:
@@ -214,3 +216,11 @@ class ITMScenario:
             current_state.environment.decision_environment = current
 
         ITMScenario.clear_hidden_data(current_state)
+        print(f"--> Changing to scene index {self.isd.current_scene_index}.")
+        self.session.history.add_history(
+            "Change scene",
+            {"session_id": self.session.session_id,
+            "scenario_id": self.id,
+            "scene_index": self.isd.current_scene_index},
+            self.isd.current_scene.state.to_dict()
+        )

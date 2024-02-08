@@ -1,5 +1,6 @@
 import yaml
 from typing import List, Tuple
+from copy import deepcopy
 
 from .itm_scene import ITMScene
 
@@ -48,6 +49,7 @@ class ITMScenarioReader:
         """
         state = self._generate_state(self.yaml_data['state'])
         scenes: List[ITMScene] = self._generate_scenes()
+        scenes[0].state = deepcopy(state)
 
         scenario = Scenario(
             id=self.yaml_data['id'],
