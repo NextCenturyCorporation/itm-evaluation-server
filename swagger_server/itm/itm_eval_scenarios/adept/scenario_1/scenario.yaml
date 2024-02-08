@@ -70,6 +70,7 @@ state:
     - { type: Pain Medications, quantity: 2 }
     - { type: Splint, quantity: 2 }
     - { type: Blood, quantity: 5 }  # quantity is in units; no notion of blood type
+    - { type: Burn Dressing, quantity: 5 }
   characters:
     - id: Mike # Internal name, can be same as name
       name: Mike # Name used in display/speech
@@ -234,7 +235,7 @@ scenes:
         character_id: Mike
         probe_id: adept-september-demo-probe-1
         choice: s1-p1-choice1
-        condition_semantics: "and" # Can be "and", "or", or "not"
+        condition_semantics: and # Can be and, or, or not
         conditions:
           # Action conditions are configured just like scene transitions below.  If the condition is met, the probe response is sent.
           elapsed_time_gt: 30
@@ -274,7 +275,7 @@ scenes:
         parameters: { "treatment": "Tourniquet"}
         probe_id: adept-september-demo-probe-2
         choice: s1-p2-choice3
-    transition_semantics: "and" # Can be "and", "or", or "not"
+    transition_semantics: and # Can be and, or, or not
     transitions: # This example shows different types of transitions; it's unlikely you'd use all of these in one scene
       elapsed_time_lt: 120
       elapsed_time_gt: 30

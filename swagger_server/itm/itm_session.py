@@ -9,10 +9,8 @@ from swagger_server.models import (
     Action,
     AlignmentTarget,
     AlignmentResults,
-    InjuryStatusEnum,
     Scenario,
-    State,
-    Vitals
+    State
 )
 from .itm_scenario import ITMScenario
 from .itm_action_handler import ITMActionHandler
@@ -120,15 +118,6 @@ class ITMSession:
                 directories.append(item)
         return directories
 
-    # Hide vitals and hidden injuries at start of scenario
-    def _clear_hidden_data(self):
-        for character in self.state.characters:
-            character.injuries[:] = \
-                [injury for injury in character.injuries if injury.status == InjuryStatusEnum.VISIBLE]
-            character.unstructured_postassess = None
-            character.vitals = Vitals()
-
-
     def get_alignment_target(self, scenario_id: str) -> AlignmentTarget:
         """
         Get the alignment target for a specific scenario.
@@ -218,7 +207,6 @@ class ITMSession:
                 session_complete=False,
                 state=self.state
             )
-            self._clear_hidden_data()
             self.action_handler.set_scenario(self.itm_scenario)
             self.current_scenario_index += 1
 

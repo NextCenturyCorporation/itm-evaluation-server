@@ -43,7 +43,7 @@ class ITMActionHandler:
             target.unstructured = source.unstructured_postassess
 
     def _proper_treatment(self, treatment: str, injury_name: str, location: str) -> bool:
-        # NOTE: Asthmatic, Burns, Forehead Scrape, Ear Bleed, an Internal injuries are currently untreatable.
+        # NOTE: Asthmatic, Forehead Scrape, Ear Bleed, an Internal injuries are currently untreatable.
         # This logic is in sync with the current OSU Simulator, but may diverge at a later date.
         """
             Head Injuries
@@ -85,6 +85,8 @@ class ITMActionHandler:
         match injury_name:
             case 'Amputation':
                 return treatment == 'Tourniquet'
+            case 'Burn':
+                return treatment == 'Burn Dressing'
             case 'Broken Bone':
                 return treatment == 'Splint'
             case 'Chest Collapse':

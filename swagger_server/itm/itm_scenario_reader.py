@@ -17,6 +17,7 @@ from swagger_server.models import (
     Injury,
     Mission,
     Scenario,
+    SemanticTypeEnum,
     State,
     Scene,
     Supplies,
@@ -88,7 +89,7 @@ class ITMScenarioReader:
             tagging=self._generate_tagging(scene_data),
             action_mapping=action_mapping,
             restricted_actions=scene_data.get('restricted_actions', []),
-            transition_semantics=scene_data.get('transition_semantics', 'and'),
+            transition_semantics=scene_data.get('transition_semantics', SemanticTypeEnum.AND),
             transitions=self._generate_conditions(scene_data.get('transitions'))
         )
         return ITMScene(scene)
@@ -301,7 +302,7 @@ class ITMScenarioReader:
             choice=mapping_data['choice'],
             next_scene=mapping_data.get('next_scene'),
             kdma_association=mapping_data.get('kdma_association'),
-            condition_semantics=mapping_data.get('condition_semantics', 'and'),
+            condition_semantics=mapping_data.get('condition_semantics', SemanticTypeEnum.AND),
             conditions=self._generate_conditions(mapping_data.get('conditions'))
         )
         return mapping

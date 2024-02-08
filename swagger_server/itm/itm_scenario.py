@@ -1,7 +1,7 @@
 from typing import List
 from dataclasses import dataclass
 from swagger_server.models import (
-    Scenario, State, Action, ProbeResponse
+    Action, InjuryStatusEnum, ProbeResponse, Scenario, State, Vitals
 )
 from .itm_scenario_reader import ITMScenarioReader
 from .itm_scene import ITMScene
@@ -10,7 +10,7 @@ from .itm_ta1_controller import ITMTa1Controller
 
 @dataclass
 class ITMScenarioData:
-    scenario: Scenario = None
+    scenario: Scenario = None # Starting state for the scenario
     scenes: List[ITMScene] = None
     current_scene :ITMScene = None
     current_scene_index = 0
@@ -23,10 +23,21 @@ class ITMScenario:
         self.training = training
         self.alignment_target_reader: ITMAlignmentTargetReader = None
         self.ta1_controller: ITMTa1Controller = None
+        self.probes_sent = []
         from.itm_session import ITMSession
         self.session :ITMSession = session
         self.isd :ITMScenarioData
         self.id=''
+
+    # Hide vitals and hidden injuries
+    @staticmethod
+    def clear_hidden_data(state :State):
+        for character in state.characters:
+            character.injuries[:] = \
+                [injury for injury in character.injuries if injury.status == InjuryStatusEnum.VISIBLE]
+            character.unstructured_postassess = None
+            character.vitals = Vitals()
+
 
     def generate_scenario_data(self):
         # isd is short for ITM Scenario Data
@@ -35,6 +46,7 @@ class ITMScenario:
         scenario_reader = ITMScenarioReader(self.yaml_path + "scenario.yaml")
         ( isd.scenario, isd.scenes) = \
             scenario_reader.read_scenario_from_yaml()
+        ITMScenario.clear_hidden_data(isd.scenario.state)
         isd.current_scene_index = 0
         isd.current_scene = isd.scenes[0]
         for scene in isd.scenes:
@@ -90,13 +102,16 @@ class ITMScenario:
                 "probe_id": response.probe_id},
                 probe_response_alignment
             )
+        self.probes_sent.append(probe_id)
         print(f"--> Responding to probe {response.probe_id} from scenario {response.scenario_id} with choice {response.choice}.")
 
 
-    def change_scene(self, next_scene):
+    def change_scene(self, next_scene, had_transitions):
         if (next_scene >= len(self.isd.scenes)):
-            print("--> WARNING: scene configuration issue; final scene should have no transitions to the next scene")
-            return #TODO: Address this and/or End the scenario
+            if had_transitions:
+                #TODO: Address this and/or End the scenario
+                print("--> WARNING: scene configuration issue; final scene should have no transitions to the next scene")
+            return
         self.isd.current_scene_index = next_scene
         self.isd.current_scene = self.isd.scenes[next_scene]
 
@@ -197,3 +212,5 @@ class ITMScenario:
                 current.air_quality=target.air_quality if target.air_quality else current.air_quality
                 current.city_infrastructure=target.city_infrastructure if target.city_infrastructure else current.city_infrastructure
             current_state.environment.decision_environment = current
+
+        ITMScenario.clear_hidden_data(current_state)
