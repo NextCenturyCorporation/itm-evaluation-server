@@ -1,0 +1,3 @@
+id: kdma-alignment-target-1
+kdma_values:
+  - {kdma: maximization, value: 0.7}

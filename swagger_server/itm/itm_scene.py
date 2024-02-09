@@ -85,7 +85,7 @@ class ITMScene:
             for mapping in self.action_mappings if (not mapping.action_id in self.actions_taken) or mapping.repeatable
         ]
         if self.end_scene_allowed:
-            actions.append(Action(action_id="end_scene_action", action_type='END_SCENE', unstructured="End the scene"))
+            actions.append(Action(action_id="end_scene_action", action_type=ActionTypeEnum.END_SCENE, unstructured="End the scene"))
         # TODO: Add unmapped actions that aren't restricted
 
         return actions
@@ -99,8 +99,9 @@ class ITMScene:
                 if self.conditions_met(mapping.conditions, session_state, mapping.condition_semantics):
                     self.parent_scenario.respond_to_probe(mapping.probe_id, mapping.choice, justification)
                 # Determine if we should transition to the next scene.
-                if self.conditions_met(self.transitions, session_state, self.transition_semantics):
-                    self.parent_scenario.change_scene(mapping.next_scene, self.transitions)
+                if mapping.action_type == ActionTypeEnum.END_SCENE or \
+                    self.conditions_met(self.transitions, session_state, self.transition_semantics):
+                        self.parent_scenario.change_scene(mapping.next_scene, self.transitions)
 
 
     def _probe_condition_met(self, probe_conditions :List[str]) -> bool:

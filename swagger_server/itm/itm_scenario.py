@@ -116,16 +116,37 @@ class ITMScenario:
         self.isd.current_scene_index = next_scene
         self.isd.current_scene = self.isd.scenes[next_scene]
         self.session.action_handler.set_scene(self.isd.current_scene)
+        current_state :State = self.session.state
+        target_state :State = self.isd.current_scene.state
+
+        # If the scene has no action mappings, then the scenario can end.
+        if self.isd.current_scene.action_mappings == []:
+            self.session.end_scenario()
+
+        # Log the scene change
+        print(f"--> Changing to scene index {self.isd.current_scene_index}.")
+        self.session.history.add_history(
+            "Change scene",
+            {"session_id": self.session.session_id,
+            "scenario_id": self.id,
+            "scene_index": self.isd.current_scene_index},
+            target_state.to_dict() if target_state else None
+        )
 
         '''
         Merge state from new scene into session.state.  Approach:
+        0. Abort if no state to merge
         1. Always replace entire `characters` structure.
         2. For `supplies`, add or update any specified supplies.
         3. For everything else, replace any specified (non-None) values
            3a. Lists are copied whole (e.g., `character_importance`, `aid_delay`, `threats`).
+        4. Clear hidden data (e.g., character vitals)
         '''
-        current_state :State = self.session.state
-        target_state :State = self.isd.current_scene.state
+        # Rule 0: Abort if no state to merge
+        if not target_state:
+            current_state.characters = []
+            return
+
         # Rule 1: Always replace entire `characters` structure.
         current_state.characters = target_state.characters
 
@@ -215,12 +236,5 @@ class ITMScenario:
                 current.city_infrastructure=target.city_infrastructure if target.city_infrastructure else current.city_infrastructure
             current_state.environment.decision_environment = current
 
+        # 4. Clear hidden data (e.g., character vitals)
         ITMScenario.clear_hidden_data(current_state)
-        print(f"--> Changing to scene index {self.isd.current_scene_index}.")
-        self.session.history.add_history(
-            "Change scene",
-            {"session_id": self.session.session_id,
-            "scenario_id": self.id,
-            "scene_index": self.isd.current_scene_index},
-            self.isd.current_scene.state.to_dict()
-        )

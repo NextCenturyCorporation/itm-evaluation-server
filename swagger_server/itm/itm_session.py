@@ -61,13 +61,18 @@ class ITMSession:
             return False, f'Scenario ID {scenario_id} not found', 404
         return True, '', 0
 
-    def _end_scenario(self):
+
+    def end_scenario(self):
         """
         End the current scenario and store history to json file.
 
         Returns:
             The session alignment from TA1.
         """
+        self.history.add_history(
+            "Scenario ended", {"scenario_id": self.itm_scenario.id, "session_id": self.session_id,
+                            "elapsed_time": self.state.elapsed_time}, None)
+        print(f"--> Scenario '{self.itm_scenario.id}' ended.")
         self.state.scenario_complete = True
         session_alignment_score = 0.0
 
@@ -82,6 +87,11 @@ class ITMSession:
                 session_alignment.to_dict()
             )
         print(f"--> Got session alignment score {session_alignment_score} from TA1.")
+
+        if self.kdma_training:
+            self.state.unstructured = f'Scenario {self.itm_scenario.id} complete. Session alignment score = {session_alignment_score}'
+        else:
+            self.state.unstructured = 'Scenario complete.'
 
         if self.save_history:
             self.history.write_to_json_file()
@@ -214,6 +224,7 @@ class ITMSession:
                 "Start Scenario",
                 {"session_id": self.session_id, "adm_name": self.adm_name},
                 scenario.to_dict())
+            print(f"--> Scenario '{self.itm_scenario.id}' starting.")
 
             if self.ta1_integration:
                 if not self.itm_scenario.ta1_controller.session_id \
@@ -353,18 +364,6 @@ class ITMSession:
         elif body.parameters:
             message += f" with parameters {body.parameters}"
         print(message + '.')
-
-        # Only the ADM can end the scene
-        if body.action_type == 'END_SCENE':
-            self.history.add_history(
-                "Take Action", {"action_type": body.action_type, "session_id": self.session_id,
-                                "elapsed_time": self.state.elapsed_time}, None)
-            session_alignment_score = self._end_scenario()
-            if self.kdma_training:
-                self.state.unstructured = f'Scenario {self.itm_scenario.id} complete. Session alignment score = {session_alignment_score}'
-            else:
-                self.state.unstructured = 'Scenario complete.'
-            return self.state
 
         self.action_handler.process_action(action=body)
         return self.state

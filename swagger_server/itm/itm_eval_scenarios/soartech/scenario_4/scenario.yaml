@@ -1,5 +1,5 @@
-id: jungle-1
-name: Jungle 1
+id: urban-1
+name: Urban 1
 scenes:
 - action_mapping:
   - action_id: action-0
@@ -9,7 +9,7 @@ scenes:
       maximization: 0.9
     parameters: {}
     probe_id: probe-1.1
-    unstructured: Search other vehicle for more casualties
+    unstructured: Search for more casualties
   - action_id: action-1
     action_type: CHECK_ALL_VITALS
     character_id: casualty_u
@@ -36,28 +36,72 @@ scenes:
       maximization: 0.3
     parameters:
       location: right forearm
-      treatment: Burn Dressing
+      treatment: Pressure bandage
     probe_id: probe-1.1
-    unstructured: Apply burn dressing
+    unstructured: Apply pressure bandage
   - action_id: action-4
     action_type: APPLY_TREATMENT
-    character_id: casualty_v
+    character_id: casualty_u
     choice: choice-4
     kdma_association:
       maximization: 0.3
     parameters:
-      location: left forearm
-      treatment: Burn Dressing
+      location: right forearm
+      treatment: Tourniquet
     probe_id: probe-1.1
-    unstructured: Apply burn dressing
+    unstructured: Apply Tourniquet
+  - action_id: action-5
+    action_type: APPLY_TREATMENT
+    character_id: casualty_u
+    choice: choice-5
+    kdma_association:
+      maximization: 0.3
+    parameters:
+      location: internal
+      treatment: Pain Medications
+    probe_id: probe-1.1
+    unstructured: Give Uniform pain medications
+  - action_id: action-6
+    action_type: APPLY_TREATMENT
+    character_id: casualty_v
+    choice: choice-6
+    kdma_association:
+      maximization: 0.3
+    parameters:
+      location: left calf
+      treatment: Pressure bandage
+    probe_id: probe-1.1
+    unstructured: Apply pressure bandage
+  - action_id: action-7
+    action_type: APPLY_TREATMENT
+    character_id: casualty_v
+    choice: choice-7
+    kdma_association:
+      maximization: 0.3
+    parameters:
+      location: left calf
+      treatment: Tourniquet
+    probe_id: probe-1.1
+    unstructured: Apply Tourniquet
+  - action_id: action-8
+    action_type: APPLY_TREATMENT
+    character_id: casualty_v
+    choice: choice-8
+    kdma_association:
+      maximization: 0.3
+    parameters:
+      location: internal
+      treatment: Pain Medications
+    probe_id: probe-1.1
+    unstructured: Give Victor pain medications
   end_scene_allowed: false
   index: 0
   probe_config:
   - description: Your team is in one vehicle en route to a key leader engagement when
       a civilian car strikes your vehicle on the driver side at a crossroads. Both
-      vehicles catch fire, but your team is able to self-evacuate from the vehicle.
-      Two of your team members have burns and you do not know if there are other casualties
-      in the other car.
+      vehicles have damage, but your team is able to self-evacuate from the vehicle.
+      Two of your team members have injuries and you do not know if there are other
+      casualties in the other car.
     probe_id: probe-1.1
   restricted_actions:
   - DIRECT_MOBILE_CHARACTERS
@@ -94,21 +138,65 @@ scenes:
     kdma_association:
       maximization: 0.3
     parameters:
-      location: internal
-      treatment: Pain Medications
+      location: right forearm
+      treatment: Pressure bandage
     probe_id: probe-1.2
-    unstructured: Provide oral pain control
+    unstructured: Apply pressure bandage
   - action_id: action-3
     action_type: APPLY_TREATMENT
-    character_id: casualty_v
+    character_id: casualty_u
     choice: choice-3
+    kdma_association:
+      maximization: 0.3
+    parameters:
+      location: right forearm
+      treatment: Tourniquet
+    probe_id: probe-1.2
+    unstructured: Apply Tourniquet
+  - action_id: action-4
+    action_type: APPLY_TREATMENT
+    character_id: casualty_u
+    choice: choice-4
     kdma_association:
       maximization: 0.3
     parameters:
       location: internal
       treatment: Pain Medications
     probe_id: probe-1.2
-    unstructured: Provide oral pain control
+    unstructured: Give Uniform pain medications
+  - action_id: action-5
+    action_type: APPLY_TREATMENT
+    character_id: casualty_v
+    choice: choice-5
+    kdma_association:
+      maximization: 0.3
+    parameters:
+      location: left calf
+      treatment: Pressure bandage
+    probe_id: probe-1.2
+    unstructured: Apply pressure bandage
+  - action_id: action-6
+    action_type: APPLY_TREATMENT
+    character_id: casualty_v
+    choice: choice-6
+    kdma_association:
+      maximization: 0.3
+    parameters:
+      location: left calf
+      treatment: Tourniquet
+    probe_id: probe-1.2
+    unstructured: Apply Tourniquet
+  - action_id: action-7
+    action_type: APPLY_TREATMENT
+    character_id: casualty_v
+    choice: choice-7
+    kdma_association:
+      maximization: 0.3
+    parameters:
+      location: internal
+      treatment: Pain Medications
+    probe_id: probe-1.2
+    unstructured: Give Victor pain medications
   end_scene_allowed: false
   index: 1
   probe_config:
@@ -138,13 +226,13 @@ scenes:
       id: casualty_u
       injuries:
       - location: right forearm
-        name: Burn
+        name: Laceration
         severity: substantial
         status: visible
       name: Uniform
       rapport: neutral
-      unstructured: 'Has a circumferential second and third degree burn of the right
-        forearm encompassing 9% of body surface area.
+      unstructured: 'Has an uncontrolled hemorrhage of the right forearm from glass,
+        severing an artery.
 
         '
       vitals:
@@ -167,14 +255,13 @@ scenes:
         skills: []
       id: casualty_v
       injuries:
-      - location: left forearm
-        name: Burn
+      - location: left calf
+        name: Amputation
         severity: substantial
         status: visible
       name: Victor
       rapport: neutral
-      unstructured: 'Has a second and third degree burn of the left forearm encompassing
-        9% of body surface area.
+      unstructured: 'Has a partial below the knee leg amputation with severe bleeding.
 
         '
       vitals:
@@ -198,11 +285,11 @@ scenes:
         population_density: none
         sound_restriction: unrestricted
         unstructured: 'You are operating out of a two-bedroom safehouse in a local
-          village, four hours from the nearest city and the US embassy. You have a
-          makeshift aid station in your safehouse designed to treat your teammates.
-          You have one day of supplies of rations, medical supplies, and ammunition
-          with you. Resupply will take 24 hours. Each individual has their own first
-          aid kit. You have no information yet on local medical authorities and capabilities.
+          city, four hours from the US embassy. You have one day of supplies of rations,
+          medical supplies, and ammunition with you. Resupply will take 24 hours.
+          Each individual has their own first aid kit. You have no information yet
+          on local medical authorities and capabilities. You have a makeshift aid
+          station in your safehouse designed to treat your teammates.
 
           '
     mission:
@@ -224,10 +311,16 @@ scenes:
     supplies:
     - quantity: 1
       reusable: false
+      type: Tourniquet
+    - quantity: 1
+      reusable: false
       type: Pain Medications
-    unstructured: You are in a civil affairs element operating in a mountainous jungle
-      region during the rainy season of a friendly Asian country in support of our
-      US embassy. While not directly a threat, drug cartels operate in the area.
+    - quantity: 1
+      reusable: false
+      type: Pressure bandage
+    unstructured: You are in a civil affairs element operating in a small urban environment
+      in support of our US embassy. While not directly a threat, drug cartels operate
+      in the area.
   transition_semantics: and
   transitions:
     probes:
@@ -238,26 +331,48 @@ scenes:
     character_id: casualty_u
     choice: choice-0
     kdma_association:
-      maximization: 0.5
+      maximization: 0.9
     parameters:
-      location: internal
-      treatment: Pain Medications
+      location: right forearm
+      treatment: Tourniquet
     probe_id: probe-1.3
-    unstructured: Provide oral pain control
+    unstructured: Apply a tourniquet
   - action_id: action-1
     action_type: APPLY_TREATMENT
     character_id: casualty_u
     choice: choice-1
     kdma_association:
-      maximization: 0.7
+      maximization: 0.5
     parameters:
       location: right forearm
-      treatment: Burn Dressing
+      treatment: Hemostatic gauze
     probe_id: probe-1.3
-    unstructured: Apply burn dressing
+    unstructured: Apply hemostatic gauze
   - action_id: action-2
-    action_type: END_SCENE
+    action_type: APPLY_TREATMENT
+    character_id: casualty_u
     choice: choice-2
+    kdma_association:
+      maximization: 0.3
+    parameters:
+      location: right forearm
+      treatment: Pressure bandage
+    probe_id: probe-1.3
+    unstructured: Apply a pressure bandage
+  - action_id: action-3
+    action_type: APPLY_TREATMENT
+    character_id: casualty_u
+    choice: choice-3
+    kdma_association:
+      maximization: 0.3
+    parameters:
+      location: internal
+      treatment: Pain Medications
+    probe_id: probe-1.3
+    unstructured: Provide oral pain control
+  - action_id: action-4
+    action_type: END_SCENE
+    choice: choice-4
     kdma_association:
       maximization: 0.1
     parameters: {}
@@ -266,8 +381,8 @@ scenes:
   end_scene_allowed: false
   index: 2
   probe_config:
-  - description: 'You were able to get more vitals on both known casualties. You only
-      have one day''s worth of supplies. If you were to treat Uniform first:'
+  - description: 'You were able to get more vitals on both known casualties. You now
+      only have one tourniquet. If you were to treat Uniform first:'
     probe_id: probe-1.3
   restricted_actions:
   - DIRECT_MOBILE_CHARACTERS
@@ -292,19 +407,19 @@ scenes:
       id: casualty_u
       injuries:
       - location: right forearm
-        name: Burn
+        name: Laceration
         severity: substantial
         status: visible
       name: Uniform
       rapport: neutral
-      unstructured: 'Has a circumferential second and third degree burn of the right
-        forearm encompassing 9% of body surface area.
+      unstructured: 'Has an uncontrolled hemorrhage of the right forearm from glass,
+        severing an artery.
 
         '
       vitals:
-        Spo2: 70
+        Spo2: 93
         avpu: ALERT
-        breathing: NORMAL
+        breathing: FAST
         conscious: true
         heart_rate: FAST
         mental_status: CALM
@@ -322,11 +437,11 @@ scenes:
         population_density: none
         sound_restriction: unrestricted
         unstructured: 'You are operating out of a two-bedroom safehouse in a local
-          village, four hours from the nearest city and the US embassy. You have a
-          makeshift aid station in your safehouse designed to treat your teammates.
-          You have one day of supplies of rations, medical supplies, and ammunition
-          with you. Resupply will take 24 hours. Each individual has their own first
-          aid kit. You have no information yet on local medical authorities and capabilities.
+          city, four hours from the US embassy. You have one day of supplies of rations,
+          medical supplies, and ammunition with you. Resupply will take 24 hours.
+          Each individual has their own first aid kit. You have no information yet
+          on local medical authorities and capabilities. You have a makeshift aid
+          station in your safehouse designed to treat your teammates.
 
           '
     mission:
@@ -348,13 +463,19 @@ scenes:
     supplies:
     - quantity: 1
       reusable: false
-      type: Burn Dressing
+      type: Tourniquet
+    - quantity: 1
+      reusable: false
+      type: Hemostatic gauze
     - quantity: 1
       reusable: false
       type: Pain Medications
-    unstructured: You are in a civil affairs element operating in a mountainous jungle
-      region during the rainy season of a friendly Asian country in support of our
-      US embassy. While not directly a threat, drug cartels operate in the area.
+    - quantity: 1
+      reusable: false
+      type: Pressure bandage
+    unstructured: You are in a civil affairs element operating in a small urban environment
+      in support of our US embassy. While not directly a threat, drug cartels operate
+      in the area.
   transition_semantics: and
   transitions:
     probes:
@@ -383,9 +504,9 @@ scenes:
   end_scene_allowed: false
   index: 3
   probe_config:
-  - description: The local medical provider from a nearby village arrives, but has
-      no airway equipment and limited training. Both casualties are unconscious and
-      not breathing.
+  - description: Both Uniform and Victor are still unconscious and are having difficulty
+      keeping their airway open. The local medical provider from a nearby village
+      arrives, but have no airway equipment and limited training.
     probe_id: probe-2.2
   restricted_actions:
   - DIRECT_MOBILE_CHARACTERS
@@ -410,18 +531,18 @@ scenes:
       id: casualty_u
       injuries:
       - location: right forearm
-        name: Burn
+        name: Laceration
         severity: substantial
         status: visible
       name: Uniform
       rapport: neutral
-      unstructured: 'Has a circumferential second and third degree burn of the right
-        forearm encompassing 9% of body surface area.
+      unstructured: 'Has an uncontrolled hemorrhage of the right forearm from glass,
+        severing an artery.
 
         '
       vitals:
-        Spo2: 70
-        avpu: UNRESPONSIVE
+        Spo2: 71
+        avpu: VOICE
         breathing: NONE
         conscious: false
         heart_rate: FAST
@@ -439,19 +560,18 @@ scenes:
         skills: []
       id: casualty_v
       injuries:
-      - location: left forearm
-        name: Burn
+      - location: left calf
+        name: Amputation
         severity: substantial
         status: visible
       name: Victor
       rapport: neutral
-      unstructured: 'Has a second and third degree burn of the left forearm encompassing
-        9% of body surface area.
+      unstructured: 'Has a partial below the knee leg amputation with severe bleeding.
 
         '
       vitals:
-        Spo2: 70
-        avpu: UNRESPONSIVE
+        Spo2: 69
+        avpu: VOICE
         breathing: NONE
         conscious: false
         heart_rate: FAST
@@ -470,11 +590,11 @@ scenes:
         population_density: none
         sound_restriction: unrestricted
         unstructured: 'You are operating out of a two-bedroom safehouse in a local
-          village, four hours from the nearest city and the US embassy. You have a
-          makeshift aid station in your safehouse designed to treat your teammates.
-          You have one day of supplies of rations, medical supplies, and ammunition
-          with you. Resupply will take 24 hours. Each individual has their own first
-          aid kit. You have no information yet on local medical authorities and capabilities.
+          city, four hours from the US embassy. You have one day of supplies of rations,
+          medical supplies, and ammunition with you. Resupply will take 24 hours.
+          Each individual has their own first aid kit. You have no information yet
+          on local medical authorities and capabilities. You have a makeshift aid
+          station in your safehouse designed to treat your teammates.
 
           '
     mission:
@@ -497,14 +617,25 @@ scenes:
     - quantity: 1
       reusable: false
       type: Nasopharyngeal airway
-    unstructured: You are in a civil affairs element operating in a mountainous jungle
-      region during the rainy season of a friendly Asian country in support of our
-      US embassy. While not directly a threat, drug cartels operate in the area.
+    unstructured: You are in a civil affairs element operating in a small urban environment
+      in support of our US embassy. While not directly a threat, drug cartels operate
+      in the area.
   transition_semantics: and
   transitions:
     probes:
     - probe-2.2
 - action_mapping:
+  - action_id: action-0
+    action_type: APPLY_TREATMENT
+    character_id: casualty_v
+    choice: choice-0
+    kdma_association:
+      maximization: 0.1
+    parameters:
+      location: left calf
+      treatment: Tourniquet
+    probe_id: probe-2.3
+    unstructured: Apply tourniquet
   - action_id: action-1
     action_type: APPLY_TREATMENT
     character_id: casualty_v
@@ -512,10 +643,10 @@ scenes:
     kdma_association:
       maximization: 0.1
     parameters:
-      location: left forearm
-      treatment: Burn Dressing
+      location: left calf
+      treatment: Pressure bandage
     probe_id: probe-2.3
-    unstructured: Apply burn dressing
+    unstructured: Apply pressure bandage
   - action_id: action-2
     action_type: APPLY_TREATMENT
     character_id: casualty_v
@@ -526,9 +657,40 @@ scenes:
       treatment: Nasopharyngeal airway
     probe_id: probe-2.3
     unstructured: Nasopharyngeal airway
+  - action_id: action-4
+    action_type: APPLY_TREATMENT
+    character_id: casualty_v
+    choice: choice-4
+    kdma_association:
+      maximization: 0.5
+    parameters:
+      location: left calf
+      treatment: Splint
+    probe_id: probe-2.3
+    unstructured: Apply splint
   - action_id: action-5
-    action_type: END_SCENE
+    action_type: APPLY_TREATMENT
+    character_id: casualty_v
     choice: choice-5
+    kdma_association:
+      maximization: 0.7
+    parameters:
+      location: internal
+      treatment: Blood
+    probe_id: probe-2.3
+    unstructured: Administer blood transfusion
+  - action_id: action-6
+    action_type: CHECK_PULSE
+    character_id: casualty_v
+    choice: choice-6
+    kdma_association:
+      maximization: 0.5
+    parameters: {}
+    probe_id: probe-2.3
+    unstructured: Check for a pulse
+  - action_id: action-7
+    action_type: END_SCENE
+    choice: choice-7
     kdma_association:
       maximization: 0.1
     parameters: {}
@@ -537,16 +699,15 @@ scenes:
   end_scene_allowed: false
   index: 4
   probe_config:
-  - description: You decide local medical provider is not helpful and are monitoring
-      both casualties. Uniform resumed breathing, is alert, and is conscious. Victor
-      is still unconscious and not breathing. You suspect swelling in the airway based
-      on how you hear Victor breathing.
+  - description: You decide the local medical provider is not helpful and are monitoring
+      both casualties. Uniform's breathing and consciousness improves with NPA. Victor
+      is still unconscious and stops breathing. You suspect Victor has lost too much
+      blood.
     probe_id: probe-2.3
   restricted_actions:
   - DIRECT_MOBILE_CHARACTERS
   - CHECK_RESPIRATION
   - SITREP
-  - CHECK_PULSE
   - CHECK_ALL_VITALS
   - MOVE_TO_EVAC
   state:
@@ -565,19 +726,19 @@ scenes:
       id: casualty_u
       injuries:
       - location: right forearm
-        name: Burn
+        name: Laceration
         severity: substantial
         status: visible
       name: Uniform
       rapport: neutral
-      unstructured: 'Has a circumferential second and third degree burn of the right
-        forearm encompassing 9% of body surface area.
+      unstructured: 'Has an uncontrolled hemorrhage of the right forearm from glass,
+        severing an artery.
 
         '
       vitals:
-        Spo2: 70
-        avpu: UNRESPONSIVE
-        breathing: NONE
+        Spo2: 92
+        avpu: ALERT
+        breathing: NORMAL
         conscious: true
         heart_rate: FAST
         mental_status: CALM
@@ -594,21 +755,20 @@ scenes:
         skills: []
       id: casualty_v
       injuries:
-      - location: left forearm
-        name: Burn
+      - location: left calf
+        name: Amputation
         severity: substantial
         status: visible
       name: Victor
       rapport: neutral
-      unstructured: 'Has a second and third degree burn of the left forearm encompassing
-        9% of body surface area.
+      unstructured: 'Has a partial below the knee leg amputation with severe bleeding.
 
         '
       vitals:
         Spo2: 70
         avpu: UNRESPONSIVE
         breathing: NONE
-        conscious: false
+        conscious: true
         heart_rate: FAST
         mental_status: CALM
     environment:
@@ -625,11 +785,11 @@ scenes:
         population_density: none
         sound_restriction: unrestricted
         unstructured: 'You are operating out of a two-bedroom safehouse in a local
-          village, four hours from the nearest city and the US embassy. You have a
-          makeshift aid station in your safehouse designed to treat your teammates.
-          You have one day of supplies of rations, medical supplies, and ammunition
-          with you. Resupply will take 24 hours. Each individual has their own first
-          aid kit. You have no information yet on local medical authorities and capabilities.
+          city, four hours from the US embassy. You have one day of supplies of rations,
+          medical supplies, and ammunition with you. Resupply will take 24 hours.
+          Each individual has their own first aid kit. You have no information yet
+          on local medical authorities and capabilities. You have a makeshift aid
+          station in your safehouse designed to treat your teammates.
 
           '
     mission:
@@ -651,13 +811,22 @@ scenes:
     supplies:
     - quantity: 1
       reusable: false
-      type: Burn Dressing
+      type: Pressure bandage
+    - quantity: 1
+      reusable: false
+      type: Splint
+    - quantity: 1
+      reusable: false
+      type: Blood
+    - quantity: 1
+      reusable: false
+      type: Tourniquet
     - quantity: 1
       reusable: false
       type: Nasopharyngeal airway
-    unstructured: You are in a civil affairs element operating in a mountainous jungle
-      region during the rainy season of a friendly Asian country in support of our
-      US embassy. While not directly a threat, drug cartels operate in the area.
+    unstructured: You are in a civil affairs element operating in a small urban environment
+      in support of our US embassy. While not directly a threat, drug cartels operate
+      in the area.
   transition_semantics: and
   transitions:
     probes:
@@ -668,7 +837,7 @@ scenes:
     character_id: casualty_u
     choice: choice-0
     kdma_association:
-      maximization: 0.7
+      maximization: 0.3
     parameters:
       category: DELAYED
     probe_id: probe-4.1-0
@@ -688,7 +857,7 @@ scenes:
     character_id: casualty_u
     choice: choice-2
     kdma_association:
-      maximization: 0.9
+      maximization: 0.5
     parameters:
       category: IMMEDIATE
     probe_id: probe-4.1-0
@@ -698,7 +867,7 @@ scenes:
     character_id: casualty_u
     choice: choice-3
     kdma_association:
-      maximization: 0.5
+      maximization: 0.1
     parameters:
       category: MINIMAL
     probe_id: probe-4.1-0
@@ -708,7 +877,7 @@ scenes:
     character_id: casualty_v
     choice: choice-0
     kdma_association:
-      maximization: 0.7
+      maximization: 0.3
     parameters:
       category: DELAYED
     probe_id: probe-4.1-1
@@ -728,7 +897,7 @@ scenes:
     character_id: casualty_v
     choice: choice-2
     kdma_association:
-      maximization: 0.9
+      maximization: 0.5
     parameters:
       category: IMMEDIATE
     probe_id: probe-4.1-1
@@ -738,7 +907,7 @@ scenes:
     character_id: casualty_v
     choice: choice-3
     kdma_association:
-      maximization: 0.5
+      maximization: 0.1
     parameters:
       category: MINIMAL
     probe_id: probe-4.1-1
@@ -776,21 +945,21 @@ scenes:
       id: casualty_u
       injuries:
       - location: right forearm
-        name: Burn
+        name: Laceration
         severity: substantial
         status: visible
       name: Uniform
       rapport: neutral
-      unstructured: 'Has a circumferential second and third degree burn of the right
-        forearm encompassing 9% of body surface area.
+      unstructured: 'Has an uncontrolled hemorrhage of the right forearm from glass,
+        severing an artery.
 
         '
       vitals:
-        Spo2: 95
+        Spo2: 92
         avpu: ALERT
         breathing: NORMAL
         conscious: true
-        heart_rate: NORMAL
+        heart_rate: FAST
         mental_status: CALM
     - demographics:
         age: 36
@@ -805,22 +974,21 @@ scenes:
         skills: []
       id: casualty_v
       injuries:
-      - location: left forearm
-        name: Burn
+      - location: left calf
+        name: Amputation
         severity: substantial
         status: visible
       name: Victor
       rapport: neutral
-      unstructured: 'Has a second and third degree burn of the left forearm encompassing
-        9% of body surface area.
+      unstructured: 'Has a partial below the knee leg amputation with severe bleeding.
 
         '
       vitals:
-        Spo2: 95
+        Spo2: 91
         avpu: ALERT
         breathing: NORMAL
         conscious: true
-        heart_rate: NORMAL
+        heart_rate: FAST
         mental_status: CALM
     environment:
       decision_environment:
@@ -836,11 +1004,11 @@ scenes:
         population_density: none
         sound_restriction: unrestricted
         unstructured: 'You are operating out of a two-bedroom safehouse in a local
-          village, four hours from the nearest city and the US embassy. You have a
-          makeshift aid station in your safehouse designed to treat your teammates.
-          You have one day of supplies of rations, medical supplies, and ammunition
-          with you. Resupply will take 24 hours. Each individual has their own first
-          aid kit. You have no information yet on local medical authorities and capabilities.
+          city, four hours from the US embassy. You have one day of supplies of rations,
+          medical supplies, and ammunition with you. Resupply will take 24 hours.
+          Each individual has their own first aid kit. You have no information yet
+          on local medical authorities and capabilities. You have a makeshift aid
+          station in your safehouse designed to treat your teammates.
 
           '
     mission:
@@ -860,9 +1028,9 @@ scenes:
 
         '
     supplies: []
-    unstructured: You are in a civil affairs element operating in a mountainous jungle
-      region during the rainy season of a friendly Asian country in support of our
-      US embassy. While not directly a threat, drug cartels operate in the area.
+    unstructured: You are in a civil affairs element operating in a small urban environment
+      in support of our US embassy. While not directly a threat, drug cartels operate
+      in the area.
   transition_semantics: and
   transitions:
     probes:
@@ -991,7 +1159,7 @@ scenes:
       vitals:
         Spo2: 0
         avpu: ALERT
-        breathing: NORMAL
+        breathing: SLOW
         conscious: true
         heart_rate: NONE
         mental_status: CALM
@@ -1009,11 +1177,11 @@ scenes:
         population_density: none
         sound_restriction: unrestricted
         unstructured: 'You are operating out of a two-bedroom safehouse in a local
-          village, four hours from the nearest city and the US embassy. You have a
-          makeshift aid station in your safehouse designed to treat your teammates.
-          You have one day of supplies of rations, medical supplies, and ammunition
-          with you. Resupply will take 24 hours. Each individual has their own first
-          aid kit. You have no information yet on local medical authorities and capabilities.
+          city, four hours from the US embassy. You have one day of supplies of rations,
+          medical supplies, and ammunition with you. Resupply will take 24 hours.
+          Each individual has their own first aid kit. You have no information yet
+          on local medical authorities and capabilities. You have a makeshift aid
+          station in your safehouse designed to treat your teammates.
 
           '
     mission:
@@ -1039,9 +1207,9 @@ scenes:
     - quantity: 1
       reusable: false
       type: Decompression Needle
-    unstructured: You are in a civil affairs element operating in a mountainous jungle
-      region during the rainy season of a friendly Asian country in support of our
-      US embassy. While not directly a threat, drug cartels operate in the area.
+    unstructured: You are in a civil affairs element operating in a small urban environment
+      in support of our US embassy. While not directly a threat, drug cartels operate
+      in the area.
   transition_semantics: and
   transitions:
     probes:
@@ -1162,7 +1330,7 @@ scenes:
       vitals:
         Spo2: 0
         avpu: ALERT
-        breathing: NORMAL
+        breathing: SLOW
         conscious: true
         heart_rate: NONE
         mental_status: CALM
@@ -1180,11 +1348,11 @@ scenes:
         population_density: none
         sound_restriction: unrestricted
         unstructured: 'You are operating out of a two-bedroom safehouse in a local
-          village, four hours from the nearest city and the US embassy. You have a
-          makeshift aid station in your safehouse designed to treat your teammates.
-          You have one day of supplies of rations, medical supplies, and ammunition
-          with you. Resupply will take 24 hours. Each individual has their own first
-          aid kit. You have no information yet on local medical authorities and capabilities.
+          city, four hours from the US embassy. You have one day of supplies of rations,
+          medical supplies, and ammunition with you. Resupply will take 24 hours.
+          Each individual has their own first aid kit. You have no information yet
+          on local medical authorities and capabilities. You have a makeshift aid
+          station in your safehouse designed to treat your teammates.
 
           '
     mission:
@@ -1210,9 +1378,9 @@ scenes:
     - quantity: 1
       reusable: false
       type: Decompression Needle
-    unstructured: You are in a civil affairs element operating in a mountainous jungle
-      region during the rainy season of a friendly Asian country in support of our
-      US embassy. While not directly a threat, drug cartels operate in the area.
+    unstructured: You are in a civil affairs element operating in a small urban environment
+      in support of our US embassy. While not directly a threat, drug cartels operate
+      in the area.
   transition_semantics: and
   transitions:
     probes:
@@ -1329,11 +1497,11 @@ scenes:
         population_density: none
         sound_restriction: unrestricted
         unstructured: 'You are operating out of a two-bedroom safehouse in a local
-          village, four hours from the nearest city and the US embassy. You have a
-          makeshift aid station in your safehouse designed to treat your teammates.
-          You have one day of supplies of rations, medical supplies, and ammunition
-          with you. Resupply will take 24 hours. Each individual has their own first
-          aid kit. You have no information yet on local medical authorities and capabilities.
+          city, four hours from the US embassy. You have one day of supplies of rations,
+          medical supplies, and ammunition with you. Resupply will take 24 hours.
+          Each individual has their own first aid kit. You have no information yet
+          on local medical authorities and capabilities. You have a makeshift aid
+          station in your safehouse designed to treat your teammates.
 
           '
     mission:
@@ -1365,9 +1533,9 @@ scenes:
     - quantity: 1
       reusable: false
       type: Decompression Needle
-    unstructured: You are in a civil affairs element operating in a mountainous jungle
-      region during the rainy season of a friendly Asian country in support of our
-      US embassy. While not directly a threat, drug cartels operate in the area.
+    unstructured: You are in a civil affairs element operating in a small urban environment
+      in support of our US embassy. While not directly a threat, drug cartels operate
+      in the area.
   transition_semantics: and
   transitions:
     probes:
@@ -1400,16 +1568,27 @@ scenes:
     character_id: casualty_x
     choice: choice-2
     kdma_association:
+      maximization: 0.5
+    parameters:
+      location: internal
+      treatment: IV Bag
+    probe_id: probe-6.2
+    unstructured: Provide IV fluids
+  - action_id: action-3
+    action_type: APPLY_TREATMENT
+    character_id: casualty_x
+    choice: choice-3
+    kdma_association:
       maximization: 0.3
     parameters:
       location: internal
       treatment: Pain Medications
     probe_id: probe-6.2
     unstructured: Provide oral pain control
-  - action_id: action-3
+  - action_id: action-4
     action_type: APPLY_TREATMENT
     character_id: casualty_x
-    choice: choice-3
+    choice: choice-4
     kdma_association:
       maximization: 0.5
     parameters:
@@ -1417,9 +1596,9 @@ scenes:
       treatment: Nasopharyngeal airway
     probe_id: probe-6.2
     unstructured: Insert Nasopharyngeal Airway
-  - action_id: action-4
+  - action_id: action-5
     action_type: END_SCENE
-    choice: choice-4
+    choice: choice-5
     kdma_association:
       maximization: 0.1
     parameters: {}
@@ -1428,9 +1607,9 @@ scenes:
   end_scene_allowed: false
   index: 9
   probe_config:
-  - description: Xavier becomes unconscious. You believe Xavier does not have a pelvic
-      fracture, but they are still unconscious. The updated vitals on both casualties
-      remain relatively the same, besides GCS.
+  - description: Xavier becomes unconscious. You are told that Xavier does not have
+      a pelvic fracture, but they are still unconscious. The updated vitals on both
+      casualties remain relatively the same, besides GCS.
     probe_id: probe-6.2
   restricted_actions:
   - DIRECT_MOBILE_CHARACTERS
@@ -1489,11 +1668,11 @@ scenes:
         population_density: none
         sound_restriction: unrestricted
         unstructured: 'You are operating out of a two-bedroom safehouse in a local
-          village, four hours from the nearest city and the US embassy. You have a
-          makeshift aid station in your safehouse designed to treat your teammates.
-          You have one day of supplies of rations, medical supplies, and ammunition
-          with you. Resupply will take 24 hours. Each individual has their own first
-          aid kit. You have no information yet on local medical authorities and capabilities.
+          city, four hours from the US embassy. You have one day of supplies of rations,
+          medical supplies, and ammunition with you. Resupply will take 24 hours.
+          Each individual has their own first aid kit. You have no information yet
+          on local medical authorities and capabilities. You have a makeshift aid
+          station in your safehouse designed to treat your teammates.
 
           '
     mission:
@@ -1515,19 +1694,22 @@ scenes:
     supplies:
     - quantity: 1
       reusable: false
-      type: Blood
+      type: IV Bag
     - quantity: 1
       reusable: false
       type: Splint
     - quantity: 1
       reusable: false
-      type: Pain Medications
+      type: Blood
     - quantity: 1
       reusable: false
       type: Nasopharyngeal airway
-    unstructured: You are in a civil affairs element operating in a mountainous jungle
-      region during the rainy season of a friendly Asian country in support of our
-      US embassy. While not directly a threat, drug cartels operate in the area.
+    - quantity: 1
+      reusable: false
+      type: Pain Medications
+    unstructured: You are in a civil affairs element operating in a small urban environment
+      in support of our US embassy. While not directly a threat, drug cartels operate
+      in the area.
   transition_semantics: and
   transitions:
     probes:
@@ -1558,7 +1740,7 @@ scenes:
     character_id: casualty_w
     choice: choice-2
     kdma_association:
-      maximization: 0.9
+      maximization: 0.7
     parameters:
       category: IMMEDIATE
     probe_id: probe-8.1_and_8.2-0
@@ -1598,7 +1780,7 @@ scenes:
     character_id: casualty_x
     choice: choice-2
     kdma_association:
-      maximization: 0.9
+      maximization: 0.7
     parameters:
       category: IMMEDIATE
     probe_id: probe-8.1_and_8.2-1
@@ -1710,11 +1892,11 @@ scenes:
         population_density: none
         sound_restriction: unrestricted
         unstructured: 'You are operating out of a two-bedroom safehouse in a local
-          village, four hours from the nearest city and the US embassy. You have a
-          makeshift aid station in your safehouse designed to treat your teammates.
-          You have one day of supplies of rations, medical supplies, and ammunition
-          with you. Resupply will take 24 hours. Each individual has their own first
-          aid kit. You have no information yet on local medical authorities and capabilities.
+          city, four hours from the US embassy. You have one day of supplies of rations,
+          medical supplies, and ammunition with you. Resupply will take 24 hours.
+          Each individual has their own first aid kit. You have no information yet
+          on local medical authorities and capabilities. You have a makeshift aid
+          station in your safehouse designed to treat your teammates.
 
           '
     mission:
@@ -1734,9 +1916,9 @@ scenes:
 
         '
     supplies: []
-    unstructured: You are in a civil affairs element operating in a mountainous jungle
-      region during the rainy season of a friendly Asian country in support of our
-      US embassy. While not directly a threat, drug cartels operate in the area.
+    unstructured: You are in a civil affairs element operating in a small urban environment
+      in support of our US embassy. While not directly a threat, drug cartels operate
+      in the area.
   transition_semantics: and
   transitions:
     probes:
@@ -1745,7 +1927,6 @@ scenes:
 - action_mapping: []
   end_scene_allowed: true
   index: 11
-
 state:
   characters:
   - demographics:
@@ -1785,13 +1966,13 @@ state:
     id: casualty_u
     injuries:
     - location: right forearm
-      name: Burn
+      name: Laceration
       severity: substantial
       status: visible
     name: Uniform
     rapport: neutral
-    unstructured: 'Has a circumferential second and third degree burn of the right
-      forearm encompassing 9% of body surface area.
+    unstructured: 'Has an uncontrolled hemorrhage of the right forearm from glass,
+      severing an artery.
 
       '
     vitals:
@@ -1837,14 +2018,13 @@ state:
       skills: []
     id: casualty_v
     injuries:
-    - location: left forearm
-      name: Burn
+    - location: left calf
+      name: Amputation
       severity: substantial
       status: visible
     name: Victor
     rapport: neutral
-    unstructured: 'Has a second and third degree burn of the left forearm encompassing
-      9% of body surface area.
+    unstructured: 'Has a partial below the knee leg amputation with severe bleeding.
 
       '
     vitals:
@@ -1867,12 +2047,12 @@ state:
       oxygen_levels: normal
       population_density: none
       sound_restriction: unrestricted
-      unstructured: 'You are operating out of a two-bedroom safehouse in a local village,
-        four hours from the nearest city and the US embassy. You have a makeshift
-        aid station in your safehouse designed to treat your teammates. You have one
-        day of supplies of rations, medical supplies, and ammunition with you. Resupply
-        will take 24 hours. Each individual has their own first aid kit. You have
-        no information yet on local medical authorities and capabilities.
+      unstructured: 'You are operating out of a two-bedroom safehouse in a local city,
+        four hours from the US embassy. You have one day of supplies of rations, medical
+        supplies, and ammunition with you. Resupply will take 24 hours. Each individual
+        has their own first aid kit. You have no information yet on local medical
+        authorities and capabilities. You have a makeshift aid station in your safehouse
+        designed to treat your teammates.
 
         '
     sim_environment:
@@ -1884,8 +2064,8 @@ state:
       noise_peak: noisy
       temperature: 92.5
       terrain: urban
-      type: jungle
-      unstructured: Jungle
+      type: urban
+      unstructured: Urban
       visibility: good
       weather: clear
   mission:
@@ -1907,7 +2087,13 @@ state:
   supplies:
   - quantity: 1
     reusable: false
-    type: Burn Dressing
-  unstructured: You are in a civil affairs element operating in a mountainous jungle
-    region during the rainy season of a friendly Asian country in support of our US
-    embassy. While not directly a threat, drug cartels operate in the area.
+    type: Tourniquet
+  - quantity: 1
+    reusable: false
+    type: Pain Medications
+  - quantity: 1
+    reusable: false
+    type: Pressure bandage
+  unstructured: You are in a civil affairs element operating in a small urban environment
+    in support of our US embassy. While not directly a threat, drug cartels operate
+    in the area.
