@@ -1,4 +1,4 @@
-id: adept-metrics-training-jungle-1
+id: adept-metrics-eval-jungle-1
 name: IED Explosion
 state:
   unstructured: >
@@ -235,11 +235,11 @@ scenes:
         character_id: Mike
         probe_id: adept-september-demo-probe-1
         choice: s1-p1-choice1
-        condition_semantics: and # Can be and, or, or not
+        condition_semantics: not # 'not' semantics means that the probe is fired if all of the conditions are false
         conditions:
           # Action conditions are configured just like scene transitions below.  If the condition is met, the probe response is sent.
-          elapsed_time_gt: 30
-          elapsed_time_lt: 60
+          elapsed_time_gt: 3000
+          elapsed_time_lt: 2
       - action_id: action2
         action_type: CHECK_ALL_VITALS
         unstructured: Check Mike's vital signs
@@ -275,7 +275,7 @@ scenes:
         parameters: { "treatment": "Tourniquet"}
         probe_id: adept-september-demo-probe-2
         choice: s1-p2-choice3
-    transition_semantics: and # Can be and, or, or not
+    transition_semantics: or # Can be and, or, or not
     transitions: # This example shows different types of transitions; it's unlikely you'd use all of these in one scene
       elapsed_time_lt: 120
       elapsed_time_gt: 30
@@ -297,7 +297,7 @@ scenes:
       supplies: # Specifying this would mean that the scene would end when the specified supply reaches the specified quantity
         - { type: Tourniquet, quantity: 1 } # Only 1 tourniquet left
   - index: 1
-    end_scene_allowed: true
+    end_scene_allowed: false
     # NOTE: The tagging property is NOT planned to be supported in the Metrics Evaluation.  Tagging can be achieved with explicit action_mappings.
     tagging:
       reference: 0 # Re-use the tagging configuration from the specified scene index
@@ -407,3 +407,30 @@ scenes:
         parameters: {"evac_id": "small_evac"}
         probe_id: adept-september-demo-probe-5
         choice: s1-p5-choice2
+    transitions:
+      probes:
+       - adept-september-demo-probe-5
+  - index: 2
+    end_scene_allowed: true
+    state:
+      characters:
+        - id: foobar
+          name: Foo Bar
+          unstructured: FooBar
+          demographics:
+            sex: Unknown
+            race: White
+          vitals:
+            conscious: true
+            avpu: ALERT
+            ambulatory: true
+            mental_status: CALM
+            breathing: NORMAL
+            heart_rate: NORMAL
+            Spo2: 98
+    action_mapping:
+      - action_id: injected_end_scene_action
+        action_type: END_SCENE
+        choice: end-scenario
+        probe_id: injected_end_scene_probe
+        unstructured: There is no more triaging to do. The scenario is over.

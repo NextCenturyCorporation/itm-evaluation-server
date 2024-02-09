@@ -310,7 +310,7 @@ class ITMScenarioReader:
         return mapping
 
     def _generate_conditions(self, conditions_data) -> Conditions:
-        if conditions_data == None:
+        if conditions_data is None:
             return None
         actions = []
         for action_list in conditions_data.get('actions', []):

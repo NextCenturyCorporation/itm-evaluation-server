@@ -267,7 +267,7 @@ class ITMSession:
             )
 
         # Re-use current session for same ADM after a client crash
-        if self.session_id == None:
+        if self.session_id is None:
             self.session_id = str(uuid.uuid4())
         elif self.adm_name == adm_name:
             print(f"--> Re-using session {self.session_id} for ADM {self.adm_name}")

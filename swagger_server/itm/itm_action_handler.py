@@ -418,4 +418,4 @@ class ITMActionHandler:
                                          self.session.state.to_dict())
 
         # Tell Scene what happened
-        self.current_scene.action_taken(action.action_id, action.justification)
+        self.current_scene.action_taken(action.action_id, action.justification, self.session.state)

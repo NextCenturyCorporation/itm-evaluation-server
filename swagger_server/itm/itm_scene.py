@@ -1,5 +1,6 @@
 import copy
 import json
+from inspect import signature
 from typing import List
 from swagger_server.models import (
     Scene, Action, ActionMapping, ActionTypeEnum, Conditions, SemanticTypeEnum, State
@@ -90,77 +91,104 @@ class ITMScene:
         return actions
 
 
-    def action_taken(self, action_id: str, justification: str):
+    def action_taken(self, action_id, justification, session_state):
         for mapping in self.action_mappings:
             if mapping.action_id == action_id:
                 self.actions_taken.append(mapping.action_id)
                 # Respond to probes if conditions are met.
-                if self.conditions_met(mapping.conditions):
+                if self.conditions_met(mapping.conditions, session_state, mapping.condition_semantics):
                     self.parent_scenario.respond_to_probe(mapping.probe_id, mapping.choice, justification)
                 # Determine if we should transition to the next scene.
-                if self.conditions_met(self.transitions, self.transition_semantics):
+                if self.conditions_met(self.transitions, session_state, self.transition_semantics):
                     self.parent_scenario.change_scene(mapping.next_scene, self.transitions)
 
 
     def _probe_condition_met(self, probe_conditions :List[str]) -> bool:
         if not probe_conditions:
             return True
-        print(self.parent_scenario.probes_sent)
         return all(probe in self.parent_scenario.probes_sent for probe in probe_conditions)
 
-    def _elapsed_gt_condition_met(self, elapsed_gt) -> bool:
+    def _elapsed_gt_condition_met(self, elapsed_gt, session_state :State) -> bool:
         if elapsed_gt is None:
             return True
-        return False # TODO: get from state
+        return session_state.elapsed_time > elapsed_gt
 
-    def _elapsed_lt_condition_met(self, elapsed_lt) -> bool:
+    def _elapsed_lt_condition_met(self, elapsed_lt, session_state :State) -> bool:
         if elapsed_lt is None:
             return True
-        return True # TODO: get from state
+        return session_state.elapsed_time < elapsed_lt
 
+    # Each list of actions is true if all specified actions have been taken.
+    # Return True if the any of the specified lists of actions are true.
+    # That is, multiple action lists have "or" semantics.
     def _actions_condition_met(self, actions_condition) -> bool:
-        if actions_condition is None:
+        if not actions_condition:
             return True
-        return True # TODO: get from action_lists
+        for action_list in actions_condition:
+            if all(action in self.actions_taken for action in action_list):
+                print(f'Returning true for action list {action_list}')
+                return True
+        return False
 
-    def _evaluate_condition(self, property, eval_function, prop_name, semantics):
-        condition_met = eval_function(property)
-        if property and condition_met:
-            if semantics == SemanticTypeEnum.OR:
-                print(f'returning true due to {prop_name} with "{SemanticTypeEnum.OR}" semantics')
-                return True, condition_met
-            elif semantics == SemanticTypeEnum.NOT:
-                print(f'returning false due to {prop_name} with "{SemanticTypeEnum.NOT}" semantics')
-                return True, condition_met
-        return False, condition_met
 
-    # TODO: implement based on all configured conditions
-    def conditions_met(self, conditions :Conditions, semantics=SemanticTypeEnum.AND) -> bool:
+    # First returned value is whether to short-circuit conditions checking;
+    # Second returned value is whether the condition was met
+    # "not" semantics means that the overall condition is true if all of the conditions are false
+    def _evaluate_condition(self, property, eval_function, prop_name, session_state, semantics):
+        if property:
+            condition_met = \
+                eval_function(property) if len(signature(eval_function).parameters) == 1 \
+                else eval_function(property, session_state)
+            if condition_met:
+                if semantics == SemanticTypeEnum.AND:
+                    return False, True
+                elif semantics == SemanticTypeEnum.OR:
+                    print(f'returning true due to {prop_name} with "{semantics}" semantics')
+                    return True, True
+                else: # 'not'
+                    print(f'returning false due to {prop_name} with "{semantics}" semantics')
+                    return True, False
+            else:
+                if semantics == SemanticTypeEnum.AND:
+                    print(f'returning false due to {prop_name} with "{semantics}" semantics')
+                    return True, False
+                if semantics == SemanticTypeEnum.OR:
+                    return False, False
+                else: # 'not'
+                    return False, True
+
+        # Lack of a property shouldn't make 'and' fail or 'or'/'not' succeed
+        return False, semantics == SemanticTypeEnum.AND
+
+
+    # TODO: implement based on all configurable conditions
+    def conditions_met(self, conditions :Conditions, session_state: State, semantics) -> bool:
         if not conditions:
             return True
         print(conditions)
         (short_circuit, probe_condition_met) = \
-             self._evaluate_condition(conditions.probes, self._probe_condition_met, "probe_conditions", semantics)
+             self._evaluate_condition(conditions.probes, self._probe_condition_met, "probe_conditions", session_state, semantics)
         if short_circuit:
             return probe_condition_met
         (short_circuit, elapsed_gt_condition_met) = \
-             self._evaluate_condition(conditions.elapsed_time_gt, self._elapsed_gt_condition_met, "elapsed_gt", semantics)
+             self._evaluate_condition(conditions.elapsed_time_gt, self._elapsed_gt_condition_met, "elapsed_gt", session_state, semantics)
         if short_circuit:
             return elapsed_gt_condition_met
         (short_circuit, elapsed_lt_condition_met) = \
-             self._evaluate_condition(conditions.elapsed_time_lt, self._elapsed_lt_condition_met, "elapsed_lt", semantics)
+             self._evaluate_condition(conditions.elapsed_time_lt, self._elapsed_lt_condition_met, "elapsed_lt", session_state, semantics)
         if short_circuit:
             return elapsed_lt_condition_met
         (short_circuit, actions_condition_met) = \
-             self._evaluate_condition(conditions.actions, self._actions_condition_met, "actions", semantics)
+             self._evaluate_condition(conditions.actions, self._actions_condition_met, "actions", session_state, semantics)
         if short_circuit:
             return actions_condition_met
 
+        print(f'probe: {probe_condition_met}; gt: {elapsed_gt_condition_met}; lt: {elapsed_lt_condition_met}; actions: {actions_condition_met}')
         if (semantics == SemanticTypeEnum.AND):
             conditions_met = probe_condition_met and elapsed_gt_condition_met and elapsed_lt_condition_met and actions_condition_met
         elif (semantics == SemanticTypeEnum.OR):
             conditions_met = probe_condition_met  or elapsed_gt_condition_met  or elapsed_lt_condition_met  or actions_condition_met
-        else:
-            conditions_met = True # If anything was NOT true, it would have short-circuited already
+        else: # "not" semantics means that the overall condition is true if all of the conditions are false
+            conditions_met = not (probe_condition_met or elapsed_gt_condition_met or elapsed_lt_condition_met or actions_condition_met)
         print(f'returning {conditions_met} due to overall conditions with "{semantics}" semantics')
         return conditions_met
