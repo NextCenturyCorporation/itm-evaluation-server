@@ -85,7 +85,7 @@ state:
         mental_status: CONFUSED
         breathing: NORMAL
         heart_rate: FAST
-        Spo2: 90
+        spo2: 90
       intent: intend minor help
       directness_of_causality: somewhat indirect
         
@@ -108,7 +108,7 @@ state:
         mental_status: CONFUSED
         breathing: NORMAL
         heart_rate: FAST
-        Spo2: 90
+        spo2: 90
       intent: no intent
       directness_of_causality: none
       
@@ -176,7 +176,7 @@ scenes:
             mental_status: CONFUSED
             breathing: NORMAL
             heart_rate: FAST
-            Spo2: 90
+            spo2: 90
           intent: intend minor help
           directness_of_causality: direct
         - id: civilian_2
@@ -198,7 +198,7 @@ scenes:
             mental_status: CONFUSED
             breathing: NORMAL
             heart_rate: FAST
-            Spo2: 90
+            spo2: 90
           intent: no intent
           directness_of_causality: none
     end_scene_allowed: false
@@ -262,7 +262,7 @@ scenes:
             mental_status: AGONY
             breathing: FAST
             heart_rate: FAST
-            Spo2: 80
+            spo2: 80
           intent: intend minor help
           directness_of_causality: somewhat indirect
         - id: civilian_2
@@ -284,7 +284,7 @@ scenes:
             mental_status: CONFUSED
             breathing: NORMAL
             heart_rate: FAST
-            Spo2: 90
+            spo2: 90
           intent: no intent
           directness_of_causality: none
     end_scene_allowed: false
@@ -357,7 +357,7 @@ scenes:
             mental_status: CONFUSED
             breathing: NORMAL
             heart_rate: FAST
-            Spo2: 90
+            spo2: 90
           intent: intend major harm
           directness_of_causality: direct
         - id: civilian_2
@@ -379,7 +379,7 @@ scenes:
             mental_status: CONFUSED
             breathing: NORMAL
             heart_rate: FAST
-            Spo2: 90
+            spo2: 90
           intent: no intent
           directness_of_causality: none
     end_scene_allowed: false
@@ -452,7 +452,7 @@ scenes:
             mental_status: AGONY
             breathing: FAST
             heart_rate: FAST
-            Spo2: 80
+            spo2: 80
           intent: intend major harm
           directness_of_causality: somewhat indirect
         - id: civilian_2
@@ -474,7 +474,7 @@ scenes:
             mental_status: CONFUSED
             breathing: NORMAL
             heart_rate: FAST
-            Spo2: 90
+            spo2: 90
           intent: no intent
           directness_of_causality: none
     end_scene_allowed: false

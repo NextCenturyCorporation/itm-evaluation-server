@@ -167,74 +167,25 @@ class ITMScenario:
 
         # Rule 3: For everything else, replace any specified (non-None) values.
         # Lists are copied whole (e.g., `character_importance`, `aid_delay`, `threats`).
-
-        # Top-level unstructured.
         if target_state.unstructured:
             current_state.unstructured = target_state.unstructured
-
-        # Threat state
-        if target_state.threat_state:
-            target = target_state.threat_state
-            current = current_state.threat_state
-            if not current:
-                current = target
-            else:
-                current.unstructured=target.unstructured if target.unstructured else current.unstructured
-                current.threats = target.threats if target.threats else current.threats
-            current_state.threat_state = current
-
-        # Mission
-        if target_state.mission:
-            target = target_state.mission
-            current = current_state.mission
-            if not current:
-                current = target
-            else:
-                current.unstructured=target.unstructured if target.unstructured else current.unstructured
-                current.mission_type=target.mission_type if target.mission_type else current.mission_type
-                current.character_importance=target.character_importance if target.character_importance else current.character_importance
-                current.civilian_presence=target.civilian_presence if target.civilian_presence else current.civilian_presence
-                current.communication_capability=target.communication_capability if target.communication_capability else current.communication_capability
-                current.medical_policies=target.medical_policies if target.medical_policies else current.medical_policies
-                current.political_climate=target.political_climate if target.political_climate else current.political_climate
-                current.roe=target.roe if target.roe else current.roe
-            current_state.mission = current
-
-        # Simulation Environment
-        if target_state.environment and target_state.environment.sim_environment:
-            target = target_state.environment.sim_environment
-            current = current_state.environment.sim_environment # Valid scenarios will have sim_environment
-            current.unstructured=target.unstructured if target.unstructured else current.unstructured
-            current.temperature=target.temperature if target.temperature else current.temperature
-            current.terrain=target.terrain if target.terrain else current.terrain
-            current.weather=target.weather if target.weather else current.weather
-            current.lighting=target.lighting if target.lighting else current.lighting
-            current.visibility=target.visibility if target.visibility else current.visibility
-            current.noise_ambient=target.noise_ambient if target.noise_ambient else current.noise_ambient
-            current.noise_peak=target.noise_peak if target.noise_peak else current.noise_peak
-            current.temperature=target.temperature if target.temperature else current.temperature
-            current.humidity=target.humidity if target.humidity else current.humidity
-            current.flora=target.flora if target.flora else current.flora
-            current.fauna=target.fauna if target.fauna else current.fauna
-            current_state.environment.sim_environment = current
-
-        # Decision Environment
-        if target_state.environment and target_state.environment.decision_environment:
-            target = target_state.environment.decision_environment
-            current = current_state.environment.decision_environment
-            if not current:
-                current = target
-            else:
-                current.unstructured=target.unstructured if target.unstructured else current.unstructured
-                current.aid_delay=target.aid_delay if target.aid_delay else current.aid_delay
-                current.movement_restriction=target.movement_restriction if target.movement_restriction else current.movement_restriction
-                current.sound_restriction=target.sound_restriction if target.sound_restriction else current.sound_restriction
-                current.oxygen_levels=target.oxygen_levels if target.oxygen_levels else current.oxygen_levels
-                current.population_density=target.population_density if target.population_density else current.population_density
-                current.injury_triggers=target.injury_triggers if target.injury_triggers else current.injury_triggers
-                current.air_quality=target.air_quality if target.air_quality else current.air_quality
-                current.city_infrastructure=target.city_infrastructure if target.city_infrastructure else current.city_infrastructure
-            current_state.environment.decision_environment = current
+        current_state.threat_state = self.update_property(current_state.threat_state, target_state.threat_state)
+        current_state.mission = self.update_property(current_state.mission, target_state.mission)
+        if target_state.environment:
+            current_state.environment.sim_environment = \
+                self.update_property(current_state.environment.sim_environment, target_state.environment.sim_environment)
+            current_state.environment.decision_environment = \
+                self.update_property(current_state.environment.decision_environment, target_state.environment.decision_environment)
 
         # 4. Clear hidden data (e.g., character vitals)
         ITMScenario.clear_hidden_data(current_state)
+
+
+    def update_property(self, current_state, target_state):
+        if target_state:
+            if not current_state:
+                return target_state
+            else:
+                for attr in current_state.attribute_map.keys():
+                    setattr(current_state, attr, getattr(target_state, attr) or getattr(current_state, attr))
+        return current_state

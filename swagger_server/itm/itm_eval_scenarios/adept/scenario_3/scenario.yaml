@@ -235,7 +235,7 @@ scenes:
             mental_status: CONFUSED
             breathing: NORMAL
             heart_rate: NORMAL
-            Spo2: 90
+            spo2: 90
           intent: no intent
           directness_of_causality: somewhat indirect
         - id: sailor_1
@@ -260,7 +260,7 @@ scenes:
             mental_status: CONFUSED
             breathing: NORMAL
             heart_rate: NORMAL
-            Spo2: 90
+            spo2: 90
           intent: no intent
           directness_of_causality: indirect
     end_scene_allowed: false
@@ -335,7 +335,7 @@ scenes:
             mental_status: CONFUSED
             breathing: NORMAL
             heart_rate: NORMAL
-            Spo2: 90
+            spo2: 90
           intent: no intent
           directness_of_causality: somewhat direct
         - id: sailor_1
@@ -360,7 +360,7 @@ scenes:
             mental_status: CONFUSED
             breathing: NORMAL
             heart_rate: NORMAL
-            Spo2: 90  # changed from PAIN to VOICE because they are talking to you
+            spo2: 90  # changed from PAIN to VOICE because they are talking to you
           intent: no intent
           directness_of_causality: somewhat direct
         - id: sailor_2

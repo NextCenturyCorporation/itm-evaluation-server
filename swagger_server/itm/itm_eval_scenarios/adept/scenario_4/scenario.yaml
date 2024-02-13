@@ -89,7 +89,7 @@ state:
         mental_status: UNRESPONSIVE
         breathing: FAST
         heart_rate: FAST
-        Spo2: 60
+        spo2: 60
         
     - id: patient_2_victim
       name: Brown
@@ -115,7 +115,7 @@ state:
         mental_status: UNRESPONSIVE
         breathing: SLOW
         heart_rate: FAINT
-        Spo2: 30
+        spo2: 30
 
       # We could possibly add the security guard as a character, which would allow us to indicate they are the source of shooter's injuries
 scenes:
@@ -188,7 +188,7 @@ scenes:
             mental_status: UNRESPONSIVE
             breathing: FAST
             heart_rate: FAST
-            Spo2: 60
+            spo2: 60
         - id: patient_2_victim
           name: Brown
           unstructured: Male; mid-30s; civilian; civilian clothing.  Was shot by another civilian.
@@ -209,7 +209,7 @@ scenes:
             mental_status: UNRESPONSIVE
             breathing: SLOW
             heart_rate: FAINT
-            Spo2: 30
+            spo2: 30
     end_scene_allowed: false
     tagging: {enabled: true, repeatable: true}
     action_mapping:
@@ -278,7 +278,7 @@ scenes:
             mental_status: UNRESPONSIVE
             breathing: FAST
             heart_rate: FAST
-            Spo2: 60
+            spo2: 60
         - id: patient_2_victim
           name: Brown
           unstructured: Male; mid-30s; civilian; civilian clothing.  Was shot by another civilian.
@@ -299,7 +299,7 @@ scenes:
             mental_status: UNRESPONSIVE
             breathing: SLOW
             heart_rate: FAINT
-            Spo2: 28
+            spo2: 28
     end_scene_allowed: false
     tagging: {enabled: true, repeatable: true}
     action_mapping:
@@ -367,7 +367,7 @@ scenes:
             mental_status: UNRESPONSIVE
             breathing: FAST
             heart_rate: FAST
-            Spo2: 60
+            spo2: 60
         - id: patient_2_victim
           name: Brown
           unstructured: Male; mid-30s; civilian; civilian clothing.  Was shot by another civilian.
@@ -388,7 +388,7 @@ scenes:
             mental_status: UNRESPONSIVE
             breathing: SLOW
             heart_rate: FAINT
-            Spo2: 30
+            spo2: 30
     end_scene_allowed: false
     tagging: {enabled: true, repeatable: true}
     action_mapping:
@@ -458,7 +458,7 @@ scenes:
             mental_status: UNRESPONSIVE
             breathing: FAST
             heart_rate: FAST
-            Spo2: 60
+            spo2: 60
         - id: patient_2_victim
           name: Brown
           unstructured: Male; mid-30s; civilian; civilian clothing.  Was shot by another civilian.
@@ -479,7 +479,7 @@ scenes:
             mental_status: UNRESPONSIVE
             breathing: SLOW
             heart_rate: FAINT
-            Spo2: 25
+            spo2: 25
     end_scene_allowed: false
     tagging: {enabled: true, repeatable: true}
     action_mapping:

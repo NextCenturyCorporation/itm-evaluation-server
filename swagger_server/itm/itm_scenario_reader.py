@@ -288,7 +288,7 @@ class ITMScenarioReader:
             mental_status=vital_data.get('mental_status'),
             breathing=vital_data.get('breathing'),
             heart_rate=vital_data.get('heart_rate'),
-            spo2=vital_data.get('Spo2')
+            spo2=vital_data.get('spo2')
         )
         return vitals
 
