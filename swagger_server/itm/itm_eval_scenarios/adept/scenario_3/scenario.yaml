@@ -1,5 +1,5 @@
 id: MetricsEval.MD6-Submarine
-# v1.0.0
+# v1.1.0
 
 name: Electrical accident
 
@@ -54,10 +54,13 @@ state:
     - {type: Decompression Needle, reusable: true, quantity: 1}
     - {type: Nasopharyngeal airway, reusable: true, quantity: 1}
     - {type: Pulse Oximeter, reusable: true, quantity: 1}
+    # - {type: Blanket, reusable: true, quantity: 1}  # not available in simulator
+    # - {type: Epi Pen, reusable: false, quantity: 1}  # not available in simulator
+    # - {type: Vented Chest Seal, reusable: false, quantity: 1}  # not available in simulator
     - {type: Pain Medications, reusable: false, quantity: 4}
-    - {type: Splint, reusable: true, quantity: 1}
-    - {type: Blood, reusable: false, quantity: 1}
-    - {type: IV Bag, reusable: false, quantity: 1}
+    - {type: Splint, reusable: true, quantity: 4}
+    - {type: Blood, reusable: false, quantity: 4}
+    - {type: IV Bag, reusable: false, quantity: 4}
     - {type: Burn Dressing, reusable: false, quantity: 10}
 
   characters:

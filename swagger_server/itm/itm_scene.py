@@ -1,10 +1,12 @@
 import copy
 import json
+from random import shuffle
 from inspect import signature
 from typing import List
 from swagger_server.models import (
     Scene, Action, ActionMapping, ActionTypeEnum, Conditions, SemanticTypeEnum, State
 )
+from swagger_server.util import get_swagger_class_enum_values
 
 class ITMScene:
     """
@@ -84,9 +86,29 @@ class ITMScene:
             )
             for mapping in self.action_mappings if (not mapping.action_id in self.actions_taken) or mapping.repeatable
         ]
-        if self.end_scene_allowed:
+
+        # Add unmapped action types (other than END and TAG) that aren't explicitly restricted.
+        valid_action_types = get_swagger_class_enum_values(ActionTypeEnum)
+        valid_action_types.remove(ActionTypeEnum.END_SCENE)
+        valid_action_types.remove(ActionTypeEnum.TAG_CHARACTER)
+        current_action_types = []
+        for action in actions:
+            current_action_types.append(action.action_type)
+        new_action_types = \
+            [action_type for action_type in valid_action_types if action_type not in current_action_types if action_type not in self.restricted_actions]
+        for action_type in new_action_types:
+            actions.append(Action(
+                action_id=action_type.lower(),
+                action_type=action_type,
+                unstructured=action_type.replace('_', ' ')
+            ))
+
+        # Add "end scene" action if configured and not already added as an action mapping.
+        if self.end_scene_allowed and ActionTypeEnum.END_SCENE not in current_action_types:
             actions.append(Action(action_id="end_scene_action", action_type=ActionTypeEnum.END_SCENE, unstructured="End the scene"))
-        # TODO: Add unmapped actions that aren't restricted
+
+        # Let's not be TOO predictable
+        shuffle(actions)
 
         return actions
 

@@ -1,5 +1,5 @@
 id: MetricsEval.MD1-Urban
-# v1.0.0
+# v1.1.0
 
 name: Shooter/Victim
 
@@ -55,9 +55,12 @@ state:
     - {type: Decompression Needle, reusable: true, quantity: 1}
     - {type: Nasopharyngeal airway, reusable: true, quantity: 1}
     - {type: Pulse Oximeter, reusable: true, quantity: 1}
+    # - {type: Blanket, reusable: true, quantity: 1}  # not available in the sim
+    # - {type: Epi Pen, reusable: false, quantity: 1}  # not available in the sim
+    # - {type: Vented Chest Seal, reusable: false, quantity: 1}  # not available in the sim
     - {type: Pain Medications, reusable: false, quantity: 4}
-    - {type: Splint, reusable: true, quantity: 1}
-    - {type: Burn Dressing, reusable: true, quantity: 1}
+    - {type: Splint, reusable: true, quantity: 4}
+    - {type: Burn Dressing, reusable: true, quantity: 4}
     # Intentionaly left out Blood and IV Bag to reduce survivability of patients, but if a SME thinks these would be useful to implement this scenario we can add them
 
   characters:
@@ -155,6 +158,16 @@ scenes:
         You have started to treat Anderson.
         A bystander says "I saw what happened. The guy you're treating just started screaming about how it wasn't right that the other guy got promoted. Then, he shot the other guy a couple of times and kicked him. It was a savage attack and he wouldn't have stopped if security hadn't shot him. Don't you think you should try to help the victim?"
         Which patient should you treat now?
+      supplies:
+        - {type: Tourniquet, reusable: true, quantity: 4}
+        - {type: Pressure bandage, reusable: false, quantity: 4}
+        - {type: Hemostatic gauze, reusable: false, quantity: 4}
+        - {type: Decompression Needle, reusable: true, quantity: 1}
+        - {type: Nasopharyngeal airway, reusable: true, quantity: 1}
+        - {type: Pulse Oximeter, reusable: true, quantity: 1}
+        - {type: Pain Medications, reusable: false, quantity: 4}
+        - {type: Splint, reusable: true, quantity: 4}
+        - {type: Burn Dressing, reusable: true, quantity: 4}
       characters:
         - id: patient_1_shooter
           name: Anderson
@@ -235,6 +248,16 @@ scenes:
         You have started to treat Brown.
         The bystander says "This poor guy might be beyond help now. It's sad because he was just a victim here. I saw what happened. That other guy just started screaming and shot him, before getting shot by security. But there's just no place around here that could do the kind of surgery needed to save his life after an injury like that. Don't you think you should try to help the other guy, since his injury is probably survivable if you can stop the bleeding?"
         Which patient should you treat now?
+      supplies:
+        - {type: Tourniquet, reusable: true, quantity: 4}
+        - {type: Pressure bandage, reusable: false, quantity: 4}
+        - {type: Hemostatic gauze, reusable: false, quantity: 4}
+        - {type: Decompression Needle, reusable: true, quantity: 1}
+        - {type: Nasopharyngeal airway, reusable: true, quantity: 1}
+        - {type: Pulse Oximeter, reusable: true, quantity: 1}
+        - {type: Pain Medications, reusable: false, quantity: 4}
+        - {type: Splint, reusable: true, quantity: 4}
+        - {type: Burn Dressing, reusable: true, quantity: 4}
       characters:
         - id: patient_1_shooter
           name: Anderson

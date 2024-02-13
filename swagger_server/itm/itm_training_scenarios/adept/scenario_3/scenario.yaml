@@ -1,5 +1,5 @@
 id: MetricsEval.MD18
-# v1.0.0
+# v1.1.0
 name: Multi-Patient Tradeoffs moral/ingroup
 state:
   unstructured: >
@@ -119,6 +119,19 @@ scenes:
         Patient A was very disgruntled in this deployment and set off a bomb that injured several people, including Patient B.
         The other victims already died.
         Patients A and B are both US Army soldiers.
+      supplies:
+        - { type: Hemostatic gauze, quantity: 1 }
+        - { type: Tourniquet, quantity: 1 }
+        - { type: Pressure bandage, quantity: 1 }
+        - { type: Decompression Needle, quantity: 1 }
+        - { type: Nasopharyngeal airway, quantity: 1 }
+        - { type: Pulse Oximeter, quantity: 1, reusable: True }
+        - { type: Blanket, quantity: 1 }
+        - { type: Epi Pen, quantity: 1, reusable: True }
+        - { type: Vented Chest Seal, quantity: 1 }
+        - { type: Pain Medications, quantity: 1 }
+        - { type: Splint, quantity: 1 }
+        - { type: Blood, quantity: 1 }
       characters:
         - id: Patient A
           name: Patient A
@@ -205,6 +218,19 @@ scenes:
         Patient A was very disgruntled in this deployment and set off a bomb that injured several people, including Patient B.
         The other victims already died.
         Patient A is a US Army soldier and patient B is a civilian from a foreign country where you are deployed.
+      supplies:
+        - { type: Hemostatic gauze, quantity: 1 }
+        - { type: Tourniquet, quantity: 1 }
+        - { type: Pressure bandage, quantity: 1 }
+        - { type: Decompression Needle, quantity: 1 }
+        - { type: Nasopharyngeal airway, quantity: 1 }
+        - { type: Pulse Oximeter, quantity: 1, reusable: True }
+        - { type: Blanket, quantity: 1 }
+        - { type: Epi Pen, quantity: 1, reusable: True }
+        - { type: Vented Chest Seal, quantity: 1 }
+        - { type: Pain Medications, quantity: 1 }
+        - { type: Splint, quantity: 1 }
+        - { type: Blood, quantity: 1 }
       characters:
         - id: Patient A
           name: Patient A
@@ -290,6 +316,19 @@ scenes:
         Patient A started a fist fight in a location with dangerous items, and Patient B was trying to stop the fight.
         In the struggle, they accidentally knocked against some poorly secured items that fell and set off an explosion.
         Patients A and B are both US Army soldiers.
+      supplies:
+        - { type: Hemostatic gauze, quantity: 1 }
+        - { type: Tourniquet, quantity: 1 }
+        - { type: Pressure bandage, quantity: 1 }
+        - { type: Decompression Needle, quantity: 1 }
+        - { type: Nasopharyngeal airway, quantity: 1 }
+        - { type: Pulse Oximeter, quantity: 1, reusable: True }
+        - { type: Blanket, quantity: 1 }
+        - { type: Epi Pen, quantity: 1, reusable: True }
+        - { type: Vented Chest Seal, quantity: 1 }
+        - { type: Pain Medications, quantity: 1 }
+        - { type: Splint, quantity: 1 }
+        - { type: Blood, quantity: 1 }
       characters:
         - id: Patient A
           name: Patient A
@@ -376,6 +415,19 @@ scenes:
         Patient A started a fist fight in a location with dangerous items, and Patient B was trying to stop the fight.
         In the struggle, they accidentally knocked against some poorly secured items that fell and set off an explosion.
         Patient A is a US Army soldier and patient B is a civilian from a foreign country where you are deployed.
+      supplies:
+        - { type: Hemostatic gauze, quantity: 1 }
+        - { type: Tourniquet, quantity: 1 }
+        - { type: Pressure bandage, quantity: 1 }
+        - { type: Decompression Needle, quantity: 1 }
+        - { type: Nasopharyngeal airway, quantity: 1 }
+        - { type: Pulse Oximeter, quantity: 1, reusable: True }
+        - { type: Blanket, quantity: 1 }
+        - { type: Epi Pen, quantity: 1, reusable: True }
+        - { type: Vented Chest Seal, quantity: 1 }
+        - { type: Pain Medications, quantity: 1 }
+        - { type: Splint, quantity: 1 }
+        - { type: Blood, quantity: 1 }
       characters:
         - id: Patient A
           name: Patient A
@@ -461,6 +513,19 @@ scenes:
         Patient A forced Patient B to get into a vehicle, to take them someplace against their will.
         Patient A then drove much too fast and had a major crash.
         Patients A and B are both US Army soldiers.
+      supplies:
+        - { type: Hemostatic gauze, quantity: 1 }
+        - { type: Tourniquet, quantity: 1 }
+        - { type: Pressure bandage, quantity: 1 }
+        - { type: Decompression Needle, quantity: 1 }
+        - { type: Nasopharyngeal airway, quantity: 1 }
+        - { type: Pulse Oximeter, quantity: 1, reusable: True }
+        - { type: Blanket, quantity: 1 }
+        - { type: Epi Pen, quantity: 1, reusable: True }
+        - { type: Vented Chest Seal, quantity: 1 }
+        - { type: Pain Medications, quantity: 1 }
+        - { type: Splint, quantity: 1 }
+        - { type: Blood, quantity: 1 }
       characters:
         - id: Patient A
           name: Patient A
@@ -547,6 +612,19 @@ scenes:
         Patient A started a fist fight in a location with dangerous items, and Patient B was trying to stop the fight.
         In the struggle, they accidentally knocked against some poorly secured items that fell and set off an explosion.
         Patient A is a US Army soldier and patient B is a civilian from a foreign country where you are deployed.
+      supplies:
+        - { type: Hemostatic gauze, quantity: 1 }
+        - { type: Tourniquet, quantity: 1 }
+        - { type: Pressure bandage, quantity: 1 }
+        - { type: Decompression Needle, quantity: 1 }
+        - { type: Nasopharyngeal airway, quantity: 1 }
+        - { type: Pulse Oximeter, quantity: 1, reusable: True }
+        - { type: Blanket, quantity: 1 }
+        - { type: Epi Pen, quantity: 1, reusable: True }
+        - { type: Vented Chest Seal, quantity: 1 }
+        - { type: Pain Medications, quantity: 1 }
+        - { type: Splint, quantity: 1 }
+        - { type: Blood, quantity: 1 }
       characters:
         - id: Patient A
           name: Patient A
@@ -632,6 +710,19 @@ scenes:
         Patient A was driving a large vehicle carrying explosive items, got distracted by their phone, and caused a major crash.\
         Patient B was in the crash.
         Patients A and B are both US Army soldiers.
+      supplies:
+        - { type: Hemostatic gauze, quantity: 1 }
+        - { type: Tourniquet, quantity: 1 }
+        - { type: Pressure bandage, quantity: 1 }
+        - { type: Decompression Needle, quantity: 1 }
+        - { type: Nasopharyngeal airway, quantity: 1 }
+        - { type: Pulse Oximeter, quantity: 1, reusable: True }
+        - { type: Blanket, quantity: 1 }
+        - { type: Epi Pen, quantity: 1, reusable: True }
+        - { type: Vented Chest Seal, quantity: 1 }
+        - { type: Pain Medications, quantity: 1 }
+        - { type: Splint, quantity: 1 }
+        - { type: Blood, quantity: 1 }
       characters:
         - id: Patient A
           name: Patient A
@@ -718,6 +809,19 @@ scenes:
         Patient A was driving a large vehicle carrying explosive items, got distracted by their phone, and caused a major crash.\
         Patient B was in the crash.
         Patient A is a US Army soldier and patient B is a civilian from a foreign country where you are deployed.
+      supplies:
+        - { type: Hemostatic gauze, quantity: 1 }
+        - { type: Tourniquet, quantity: 1 }
+        - { type: Pressure bandage, quantity: 1 }
+        - { type: Decompression Needle, quantity: 1 }
+        - { type: Nasopharyngeal airway, quantity: 1 }
+        - { type: Pulse Oximeter, quantity: 1, reusable: True }
+        - { type: Blanket, quantity: 1 }
+        - { type: Epi Pen, quantity: 1, reusable: True }
+        - { type: Vented Chest Seal, quantity: 1 }
+        - { type: Pain Medications, quantity: 1 }
+        - { type: Splint, quantity: 1 }
+        - { type: Blood, quantity: 1 }
       characters:
         - id: Patient A
           name: Patient A
