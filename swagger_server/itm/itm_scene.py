@@ -149,7 +149,6 @@ class ITMScene:
             return True
         for action_list in actions_condition:
             if all(action in self.actions_taken for action in action_list):
-                print(f'Returning true for action list {action_list}')
                 return True
         return False
 
@@ -157,7 +156,7 @@ class ITMScene:
     # First returned value is whether to short-circuit conditions checking;
     # Second returned value is whether the condition was met
     # "not" semantics means that the overall condition is true if all of the conditions are false
-    def _evaluate_condition(self, property, eval_function, prop_name, session_state, semantics):
+    def _evaluate_condition(self, property, eval_function, session_state, semantics):
         if property:
             condition_met = \
                 eval_function(property) if len(signature(eval_function).parameters) == 1 \
@@ -166,14 +165,11 @@ class ITMScene:
                 if semantics == SemanticTypeEnum.AND:
                     return False, True
                 elif semantics == SemanticTypeEnum.OR:
-                    print(f'returning true due to {prop_name} with "{semantics}" semantics')
                     return True, True
                 else: # 'not'
-                    print(f'returning false due to {prop_name} with "{semantics}" semantics')
                     return True, False
             else:
                 if semantics == SemanticTypeEnum.AND:
-                    print(f'returning false due to {prop_name} with "{semantics}" semantics')
                     return True, False
                 if semantics == SemanticTypeEnum.OR:
                     return False, False
@@ -188,30 +184,28 @@ class ITMScene:
     def conditions_met(self, conditions :Conditions, session_state: State, semantics) -> bool:
         if not conditions:
             return True
-        print(conditions)
+
         (short_circuit, probe_condition_met) = \
-             self._evaluate_condition(conditions.probes, self._probe_condition_met, "probe_conditions", session_state, semantics)
+             self._evaluate_condition(conditions.probes, self._probe_condition_met, session_state, semantics)
         if short_circuit:
             return probe_condition_met
         (short_circuit, elapsed_gt_condition_met) = \
-             self._evaluate_condition(conditions.elapsed_time_gt, self._elapsed_gt_condition_met, "elapsed_gt", session_state, semantics)
+             self._evaluate_condition(conditions.elapsed_time_gt, self._elapsed_gt_condition_met, session_state, semantics)
         if short_circuit:
             return elapsed_gt_condition_met
         (short_circuit, elapsed_lt_condition_met) = \
-             self._evaluate_condition(conditions.elapsed_time_lt, self._elapsed_lt_condition_met, "elapsed_lt", session_state, semantics)
+             self._evaluate_condition(conditions.elapsed_time_lt, self._elapsed_lt_condition_met, session_state, semantics)
         if short_circuit:
             return elapsed_lt_condition_met
         (short_circuit, actions_condition_met) = \
-             self._evaluate_condition(conditions.actions, self._actions_condition_met, "actions", session_state, semantics)
+             self._evaluate_condition(conditions.actions, self._actions_condition_met, session_state, semantics)
         if short_circuit:
             return actions_condition_met
 
-        print(f'probe: {probe_condition_met}; gt: {elapsed_gt_condition_met}; lt: {elapsed_lt_condition_met}; actions: {actions_condition_met}')
         if (semantics == SemanticTypeEnum.AND):
             conditions_met = probe_condition_met and elapsed_gt_condition_met and elapsed_lt_condition_met and actions_condition_met
         elif (semantics == SemanticTypeEnum.OR):
             conditions_met = probe_condition_met  or elapsed_gt_condition_met  or elapsed_lt_condition_met  or actions_condition_met
         else: # "not" semantics means that the overall condition is true if all of the conditions are false
             conditions_met = not (probe_condition_met or elapsed_gt_condition_met or elapsed_lt_condition_met or actions_condition_met)
-        print(f'returning {conditions_met} due to overall conditions with "{semantics}" semantics')
         return conditions_met
