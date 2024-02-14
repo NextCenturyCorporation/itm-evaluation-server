@@ -8,7 +8,9 @@ from typing import List, Dict  # noqa: F401
 from swagger_server.models.base_model_ import Model
 from swagger_server.models.character_tag_enum import CharacterTagEnum  # noqa: F401,E501
 from swagger_server.models.demographics import Demographics  # noqa: F401,E501
+from swagger_server.models.directness_enum import DirectnessEnum  # noqa: F401,E501
 from swagger_server.models.injury import Injury  # noqa: F401,E501
+from swagger_server.models.intent_enum import IntentEnum  # noqa: F401,E501
 from swagger_server.models.rapport_enum import RapportEnum  # noqa: F401,E501
 from swagger_server.models.vitals import Vitals  # noqa: F401,E501
 from swagger_server import util
@@ -19,7 +21,7 @@ class Character(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, id: str=None, name: str=None, unstructured: str=None, unstructured_postassess: str=None, rapport: RapportEnum=None, demographics: Demographics=None, injuries: List[Injury]=None, vitals: Vitals=None, visited: bool=False, tag: CharacterTagEnum=None):  # noqa: E501
+    def __init__(self, id: str=None, name: str=None, unstructured: str=None, unstructured_postassess: str=None, intent: IntentEnum=None, directness_of_causality: DirectnessEnum=None, rapport: RapportEnum=None, demographics: Demographics=None, injuries: List[Injury]=None, vitals: Vitals=None, visited: bool=False, tag: CharacterTagEnum=None):  # noqa: E501
         """Character - a model defined in Swagger
 
         :param id: The id of this Character.  # noqa: E501
@@ -30,6 +32,10 @@ class Character(Model):
         :type unstructured: str
         :param unstructured_postassess: The unstructured_postassess of this Character.  # noqa: E501
         :type unstructured_postassess: str
+        :param intent: The intent of this Character.  # noqa: E501
+        :type intent: IntentEnum
+        :param directness_of_causality: The directness_of_causality of this Character.  # noqa: E501
+        :type directness_of_causality: DirectnessEnum
         :param rapport: The rapport of this Character.  # noqa: E501
         :type rapport: RapportEnum
         :param demographics: The demographics of this Character.  # noqa: E501
@@ -48,6 +54,8 @@ class Character(Model):
             'name': str,
             'unstructured': str,
             'unstructured_postassess': str,
+            'intent': IntentEnum,
+            'directness_of_causality': DirectnessEnum,
             'rapport': RapportEnum,
             'demographics': Demographics,
             'injuries': List[Injury],
@@ -61,6 +69,8 @@ class Character(Model):
             'name': 'name',
             'unstructured': 'unstructured',
             'unstructured_postassess': 'unstructured_postassess',
+            'intent': 'intent',
+            'directness_of_causality': 'directness_of_causality',
             'rapport': 'rapport',
             'demographics': 'demographics',
             'injuries': 'injuries',
@@ -72,6 +82,8 @@ class Character(Model):
         self._name = name
         self._unstructured = unstructured
         self._unstructured_postassess = unstructured_postassess
+        self._intent = intent
+        self._directness_of_causality = directness_of_causality
         self._rapport = rapport
         self._demographics = demographics
         self._injuries = injuries
@@ -187,6 +199,48 @@ class Character(Model):
         """
 
         self._unstructured_postassess = unstructured_postassess
+
+    @property
+    def intent(self) -> IntentEnum:
+        """Gets the intent of this Character.
+
+
+        :return: The intent of this Character.
+        :rtype: IntentEnum
+        """
+        return self._intent
+
+    @intent.setter
+    def intent(self, intent: IntentEnum):
+        """Sets the intent of this Character.
+
+
+        :param intent: The intent of this Character.
+        :type intent: IntentEnum
+        """
+
+        self._intent = intent
+
+    @property
+    def directness_of_causality(self) -> DirectnessEnum:
+        """Gets the directness_of_causality of this Character.
+
+
+        :return: The directness_of_causality of this Character.
+        :rtype: DirectnessEnum
+        """
+        return self._directness_of_causality
+
+    @directness_of_causality.setter
+    def directness_of_causality(self, directness_of_causality: DirectnessEnum):
+        """Sets the directness_of_causality of this Character.
+
+
+        :param directness_of_causality: The directness_of_causality of this Character.
+        :type directness_of_causality: DirectnessEnum
+        """
+
+        self._directness_of_causality = directness_of_causality
 
     @property
     def rapport(self) -> RapportEnum:

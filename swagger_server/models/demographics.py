@@ -13,6 +13,7 @@ from swagger_server.models.military_disposition_enum import MilitaryDispositionE
 from swagger_server.models.military_rank_enum import MilitaryRankEnum  # noqa: F401,E501
 from swagger_server.models.military_rank_title_enum import MilitaryRankTitleEnum  # noqa: F401,E501
 from swagger_server.models.mission_importance_enum import MissionImportanceEnum  # noqa: F401,E501
+from swagger_server.models.race_enum import RaceEnum  # noqa: F401,E501
 from swagger_server.models.skills import Skills  # noqa: F401,E501
 from swagger_server import util
 
@@ -22,7 +23,7 @@ class Demographics(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, age: int=None, sex: DemographicSexEnum=None, race: str=None, military_disposition: MilitaryDispositionEnum=None, military_branch: MilitaryBranchEnum=None, rank: MilitaryRankEnum=None, rank_title: MilitaryRankTitleEnum=None, skills: List[Skills]=None, role: CharacterRoleEnum=None, mission_importance: MissionImportanceEnum=None):  # noqa: E501
+    def __init__(self, age: int=None, sex: DemographicSexEnum=None, race: RaceEnum=None, military_disposition: MilitaryDispositionEnum=None, military_branch: MilitaryBranchEnum=None, rank: MilitaryRankEnum=None, rank_title: MilitaryRankTitleEnum=None, skills: List[Skills]=None, role: CharacterRoleEnum=None, mission_importance: MissionImportanceEnum=None):  # noqa: E501
         """Demographics - a model defined in Swagger
 
         :param age: The age of this Demographics.  # noqa: E501
@@ -30,7 +31,7 @@ class Demographics(Model):
         :param sex: The sex of this Demographics.  # noqa: E501
         :type sex: DemographicSexEnum
         :param race: The race of this Demographics.  # noqa: E501
-        :type race: str
+        :type race: RaceEnum
         :param military_disposition: The military_disposition of this Demographics.  # noqa: E501
         :type military_disposition: MilitaryDispositionEnum
         :param military_branch: The military_branch of this Demographics.  # noqa: E501
@@ -49,7 +50,7 @@ class Demographics(Model):
         self.swagger_types = {
             'age': int,
             'sex': DemographicSexEnum,
-            'race': str,
+            'race': RaceEnum,
             'military_disposition': MilitaryDispositionEnum,
             'military_branch': MilitaryBranchEnum,
             'rank': MilitaryRankEnum,
@@ -140,24 +141,22 @@ class Demographics(Model):
         self._sex = sex
 
     @property
-    def race(self) -> str:
+    def race(self) -> RaceEnum:
         """Gets the race of this Demographics.
 
-        Race or ethnicity  # noqa: E501
 
         :return: The race of this Demographics.
-        :rtype: str
+        :rtype: RaceEnum
         """
         return self._race
 
     @race.setter
-    def race(self, race: str):
+    def race(self, race: RaceEnum):
         """Sets the race of this Demographics.
 
-        Race or ethnicity  # noqa: E501
 
         :param race: The race of this Demographics.
-        :type race: str
+        :type race: RaceEnum
         """
         if race is None:
             raise ValueError("Invalid value for `race`, must not be `None`")  # noqa: E501
@@ -252,7 +251,7 @@ class Demographics(Model):
     def skills(self) -> List[Skills]:
         """Gets the skills of this Demographics.
 
-        A list of pairs of skill type and numeric skill level  # noqa: E501
+        A list of pairs of skill type and descriptive skill level  # noqa: E501
 
         :return: The skills of this Demographics.
         :rtype: List[Skills]
@@ -263,7 +262,7 @@ class Demographics(Model):
     def skills(self, skills: List[Skills]):
         """Sets the skills of this Demographics.
 
-        A list of pairs of skill type and numeric skill level  # noqa: E501
+        A list of pairs of skill type and descriptive skill level  # noqa: E501
 
         :param skills: The skills of this Demographics.
         :type skills: List[Skills]

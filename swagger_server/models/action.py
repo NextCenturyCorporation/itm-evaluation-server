@@ -7,8 +7,6 @@ from typing import List, Dict  # noqa: F401
 
 from swagger_server.models.base_model_ import Model
 from swagger_server.models.action_type_enum import ActionTypeEnum  # noqa: F401,E501
-from swagger_server.models.conditions import Conditions  # noqa: F401,E501
-from swagger_server.models.semantic_type_enum import SemanticTypeEnum  # noqa: F401,E501
 from swagger_server import util
 
 
@@ -17,7 +15,7 @@ class Action(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, action_id: str=None, action_type: ActionTypeEnum=None, unstructured: str=None, repeatable: bool=False, character_id: str=None, parameters: Dict[str, str]=None, probe_id: str=None, choice: str=None, next_scene: int=None, justification: str=None, kdma_association: Dict[str, float]=None, condition_semantics: SemanticTypeEnum=None, conditions: Conditions=None):  # noqa: E501
+    def __init__(self, action_id: str=None, action_type: ActionTypeEnum=None, unstructured: str=None, character_id: str=None, parameters: Dict[str, str]=None, justification: str=None, kdma_association: Dict[str, float]=None):  # noqa: E501
         """Action - a model defined in Swagger
 
         :param action_id: The action_id of this Action.  # noqa: E501
@@ -26,71 +24,41 @@ class Action(Model):
         :type action_type: ActionTypeEnum
         :param unstructured: The unstructured of this Action.  # noqa: E501
         :type unstructured: str
-        :param repeatable: The repeatable of this Action.  # noqa: E501
-        :type repeatable: bool
         :param character_id: The character_id of this Action.  # noqa: E501
         :type character_id: str
         :param parameters: The parameters of this Action.  # noqa: E501
         :type parameters: Dict[str, str]
-        :param probe_id: The probe_id of this Action.  # noqa: E501
-        :type probe_id: str
-        :param choice: The choice of this Action.  # noqa: E501
-        :type choice: str
-        :param next_scene: The next_scene of this Action.  # noqa: E501
-        :type next_scene: int
         :param justification: The justification of this Action.  # noqa: E501
         :type justification: str
         :param kdma_association: The kdma_association of this Action.  # noqa: E501
         :type kdma_association: Dict[str, float]
-        :param condition_semantics: The condition_semantics of this Action.  # noqa: E501
-        :type condition_semantics: SemanticTypeEnum
-        :param conditions: The conditions of this Action.  # noqa: E501
-        :type conditions: Conditions
         """
         self.swagger_types = {
             'action_id': str,
             'action_type': ActionTypeEnum,
             'unstructured': str,
-            'repeatable': bool,
             'character_id': str,
             'parameters': Dict[str, str],
-            'probe_id': str,
-            'choice': str,
-            'next_scene': int,
             'justification': str,
-            'kdma_association': Dict[str, float],
-            'condition_semantics': SemanticTypeEnum,
-            'conditions': Conditions
+            'kdma_association': Dict[str, float]
         }
 
         self.attribute_map = {
             'action_id': 'action_id',
             'action_type': 'action_type',
             'unstructured': 'unstructured',
-            'repeatable': 'repeatable',
             'character_id': 'character_id',
             'parameters': 'parameters',
-            'probe_id': 'probe_id',
-            'choice': 'choice',
-            'next_scene': 'next_scene',
             'justification': 'justification',
-            'kdma_association': 'kdma_association',
-            'condition_semantics': 'condition_semantics',
-            'conditions': 'conditions'
+            'kdma_association': 'kdma_association'
         }
         self._action_id = action_id
         self._action_type = action_type
         self._unstructured = unstructured
-        self._repeatable = repeatable
         self._character_id = character_id
         self._parameters = parameters
-        self._probe_id = probe_id
-        self._choice = choice
-        self._next_scene = next_scene
         self._justification = justification
         self._kdma_association = kdma_association
-        self._condition_semantics = condition_semantics
-        self._conditions = conditions
 
     @classmethod
     def from_dict(cls, dikt) -> 'Action':
@@ -171,33 +139,8 @@ class Action(Model):
         :param unstructured: The unstructured of this Action.
         :type unstructured: str
         """
-        if unstructured is None:
-            raise ValueError("Invalid value for `unstructured`, must not be `None`")  # noqa: E501
 
         self._unstructured = unstructured
-
-    @property
-    def repeatable(self) -> bool:
-        """Gets the repeatable of this Action.
-
-        Whether or not this action should remain after it's selected by an ADM  # noqa: E501
-
-        :return: The repeatable of this Action.
-        :rtype: bool
-        """
-        return self._repeatable
-
-    @repeatable.setter
-    def repeatable(self, repeatable: bool):
-        """Sets the repeatable of this Action.
-
-        Whether or not this action should remain after it's selected by an ADM  # noqa: E501
-
-        :param repeatable: The repeatable of this Action.
-        :type repeatable: bool
-        """
-
-        self._repeatable = repeatable
 
     @property
     def character_id(self) -> str:
@@ -246,75 +189,6 @@ class Action(Model):
         self._parameters = parameters
 
     @property
-    def probe_id(self) -> str:
-        """Gets the probe_id of this Action.
-
-        A valid probe_id from the appropriate TA1  # noqa: E501
-
-        :return: The probe_id of this Action.
-        :rtype: str
-        """
-        return self._probe_id
-
-    @probe_id.setter
-    def probe_id(self, probe_id: str):
-        """Sets the probe_id of this Action.
-
-        A valid probe_id from the appropriate TA1  # noqa: E501
-
-        :param probe_id: The probe_id of this Action.
-        :type probe_id: str
-        """
-
-        self._probe_id = probe_id
-
-    @property
-    def choice(self) -> str:
-        """Gets the choice of this Action.
-
-        A valid choice for the specified probe_id  # noqa: E501
-
-        :return: The choice of this Action.
-        :rtype: str
-        """
-        return self._choice
-
-    @choice.setter
-    def choice(self, choice: str):
-        """Sets the choice of this Action.
-
-        A valid choice for the specified probe_id  # noqa: E501
-
-        :param choice: The choice of this Action.
-        :type choice: str
-        """
-
-        self._choice = choice
-
-    @property
-    def next_scene(self) -> int:
-        """Gets the next_scene of this Action.
-
-        The next scene in the scenario, by index  # noqa: E501
-
-        :return: The next_scene of this Action.
-        :rtype: int
-        """
-        return self._next_scene
-
-    @next_scene.setter
-    def next_scene(self, next_scene: int):
-        """Sets the next_scene of this Action.
-
-        The next scene in the scenario, by index  # noqa: E501
-
-        :param next_scene: The next_scene of this Action.
-        :type next_scene: int
-        """
-
-        self._next_scene = next_scene
-
-    @property
     def justification(self) -> str:
         """Gets the justification of this Action.
 
@@ -359,45 +233,3 @@ class Action(Model):
         """
 
         self._kdma_association = kdma_association
-
-    @property
-    def condition_semantics(self) -> SemanticTypeEnum:
-        """Gets the condition_semantics of this Action.
-
-
-        :return: The condition_semantics of this Action.
-        :rtype: SemanticTypeEnum
-        """
-        return self._condition_semantics
-
-    @condition_semantics.setter
-    def condition_semantics(self, condition_semantics: SemanticTypeEnum):
-        """Sets the condition_semantics of this Action.
-
-
-        :param condition_semantics: The condition_semantics of this Action.
-        :type condition_semantics: SemanticTypeEnum
-        """
-
-        self._condition_semantics = condition_semantics
-
-    @property
-    def conditions(self) -> Conditions:
-        """Gets the conditions of this Action.
-
-
-        :return: The conditions of this Action.
-        :rtype: Conditions
-        """
-        return self._conditions
-
-    @conditions.setter
-    def conditions(self, conditions: Conditions):
-        """Sets the conditions of this Action.
-
-
-        :param conditions: The conditions of this Action.
-        :type conditions: Conditions
-        """
-
-        self._conditions = conditions

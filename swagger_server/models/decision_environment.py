@@ -7,9 +7,11 @@ from typing import List, Dict  # noqa: F401
 
 from swagger_server.models.base_model_ import Model
 from swagger_server.models.aid_delay import AidDelay  # noqa: F401,E501
+from swagger_server.models.air_quality_enum import AirQualityEnum  # noqa: F401,E501
 from swagger_server.models.injury_trigger_enum import InjuryTriggerEnum  # noqa: F401,E501
 from swagger_server.models.movement_restriction_enum import MovementRestrictionEnum  # noqa: F401,E501
 from swagger_server.models.oxygen_levels_enum import OxygenLevelsEnum  # noqa: F401,E501
+from swagger_server.models.population_density_enum import PopulationDensityEnum  # noqa: F401,E501
 from swagger_server.models.sound_restriction_enum import SoundRestrictionEnum  # noqa: F401,E501
 from swagger_server import util
 
@@ -19,13 +21,13 @@ class DecisionEnvironment(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, unstructured: str=None, aid_delay: AidDelay=None, movement_restriction: MovementRestrictionEnum=None, sound_restriction: SoundRestrictionEnum=None, oxygen_levels: OxygenLevelsEnum=None, population_density: float=None, injury_triggers: InjuryTriggerEnum=None, air_quality: int=None, city_infrastructure: str=None):  # noqa: E501
+    def __init__(self, unstructured: str=None, aid_delay: List[AidDelay]=None, movement_restriction: MovementRestrictionEnum=None, sound_restriction: SoundRestrictionEnum=None, oxygen_levels: OxygenLevelsEnum=None, population_density: PopulationDensityEnum=None, injury_triggers: InjuryTriggerEnum=None, air_quality: AirQualityEnum=None, city_infrastructure: str=None):  # noqa: E501
         """DecisionEnvironment - a model defined in Swagger
 
         :param unstructured: The unstructured of this DecisionEnvironment.  # noqa: E501
         :type unstructured: str
         :param aid_delay: The aid_delay of this DecisionEnvironment.  # noqa: E501
-        :type aid_delay: AidDelay
+        :type aid_delay: List[AidDelay]
         :param movement_restriction: The movement_restriction of this DecisionEnvironment.  # noqa: E501
         :type movement_restriction: MovementRestrictionEnum
         :param sound_restriction: The sound_restriction of this DecisionEnvironment.  # noqa: E501
@@ -33,23 +35,23 @@ class DecisionEnvironment(Model):
         :param oxygen_levels: The oxygen_levels of this DecisionEnvironment.  # noqa: E501
         :type oxygen_levels: OxygenLevelsEnum
         :param population_density: The population_density of this DecisionEnvironment.  # noqa: E501
-        :type population_density: float
+        :type population_density: PopulationDensityEnum
         :param injury_triggers: The injury_triggers of this DecisionEnvironment.  # noqa: E501
         :type injury_triggers: InjuryTriggerEnum
         :param air_quality: The air_quality of this DecisionEnvironment.  # noqa: E501
-        :type air_quality: int
+        :type air_quality: AirQualityEnum
         :param city_infrastructure: The city_infrastructure of this DecisionEnvironment.  # noqa: E501
         :type city_infrastructure: str
         """
         self.swagger_types = {
             'unstructured': str,
-            'aid_delay': AidDelay,
+            'aid_delay': List[AidDelay],
             'movement_restriction': MovementRestrictionEnum,
             'sound_restriction': SoundRestrictionEnum,
             'oxygen_levels': OxygenLevelsEnum,
-            'population_density': float,
+            'population_density': PopulationDensityEnum,
             'injury_triggers': InjuryTriggerEnum,
-            'air_quality': int,
+            'air_quality': AirQualityEnum,
             'city_infrastructure': str
         }
 
@@ -111,22 +113,24 @@ class DecisionEnvironment(Model):
         self._unstructured = unstructured
 
     @property
-    def aid_delay(self) -> AidDelay:
+    def aid_delay(self) -> List[AidDelay]:
         """Gets the aid_delay of this DecisionEnvironment.
 
+        A list of evacuation opportunities  # noqa: E501
 
         :return: The aid_delay of this DecisionEnvironment.
-        :rtype: AidDelay
+        :rtype: List[AidDelay]
         """
         return self._aid_delay
 
     @aid_delay.setter
-    def aid_delay(self, aid_delay: AidDelay):
+    def aid_delay(self, aid_delay: List[AidDelay]):
         """Sets the aid_delay of this DecisionEnvironment.
 
+        A list of evacuation opportunities  # noqa: E501
 
         :param aid_delay: The aid_delay of this DecisionEnvironment.
-        :type aid_delay: AidDelay
+        :type aid_delay: List[AidDelay]
         """
 
         self._aid_delay = aid_delay
@@ -195,24 +199,22 @@ class DecisionEnvironment(Model):
         self._oxygen_levels = oxygen_levels
 
     @property
-    def population_density(self) -> float:
+    def population_density(self) -> PopulationDensityEnum:
         """Gets the population_density of this DecisionEnvironment.
 
-        Population per square mile  # noqa: E501
 
         :return: The population_density of this DecisionEnvironment.
-        :rtype: float
+        :rtype: PopulationDensityEnum
         """
         return self._population_density
 
     @population_density.setter
-    def population_density(self, population_density: float):
+    def population_density(self, population_density: PopulationDensityEnum):
         """Sets the population_density of this DecisionEnvironment.
 
-        Population per square mile  # noqa: E501
 
         :param population_density: The population_density of this DecisionEnvironment.
-        :type population_density: float
+        :type population_density: PopulationDensityEnum
         """
 
         self._population_density = population_density
@@ -239,24 +241,22 @@ class DecisionEnvironment(Model):
         self._injury_triggers = injury_triggers
 
     @property
-    def air_quality(self) -> int:
+    def air_quality(self) -> AirQualityEnum:
         """Gets the air_quality of this DecisionEnvironment.
 
-        Air Quality Index (AQI); see [airnow.gov](https://www.airnow.gov/aqi/aqi-basics/)  # noqa: E501
 
         :return: The air_quality of this DecisionEnvironment.
-        :rtype: int
+        :rtype: AirQualityEnum
         """
         return self._air_quality
 
     @air_quality.setter
-    def air_quality(self, air_quality: int):
+    def air_quality(self, air_quality: AirQualityEnum):
         """Sets the air_quality of this DecisionEnvironment.
 
-        Air Quality Index (AQI); see [airnow.gov](https://www.airnow.gov/aqi/aqi-basics/)  # noqa: E501
 
         :param air_quality: The air_quality of this DecisionEnvironment.
-        :type air_quality: int
+        :type air_quality: AirQualityEnum
         """
 
         self._air_quality = air_quality

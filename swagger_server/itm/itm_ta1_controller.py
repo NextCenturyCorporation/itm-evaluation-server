@@ -6,10 +6,10 @@ from swagger_server.models.probe_response import ProbeResponse  # noqa: F401,E50
 from swagger_server.models.alignment_results import AlignmentResults  # noqa: F401,E501
 
 ADEPT_PORT = os.getenv("ADEPT_PORT")
-if (ADEPT_PORT == None or ADEPT_PORT == ""):
+if (ADEPT_PORT is None or ADEPT_PORT == ""):
     ADEPT_PORT = '8081'
 SOARTECH_PORT = os.getenv("SOARTECH_PORT")
-if (SOARTECH_PORT == None or SOARTECH_PORT == ""):
+if (SOARTECH_PORT is None or SOARTECH_PORT == ""):
     SOARTECH_PORT = '8084'
 
 class ITMTa1Controller:
@@ -19,7 +19,7 @@ class ITMTa1Controller:
         self.alignment_target_body = None
         self.port = ADEPT_PORT if scene_type == 'adept' else SOARTECH_PORT
         self.host =  os.getenv("ADEPT_HOSTNAME") if scene_type == 'adept' else os.getenv("SOARTECH_HOSTNAME")
-        if self.host == None or self.host == "":
+        if self.host is None or self.host == "":
             self.host = "localhost"
     
 

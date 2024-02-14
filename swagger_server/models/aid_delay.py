@@ -15,9 +15,11 @@ class AidDelay(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, delay: float=None, type: AidTypeEnum=None, max_transport: int=None):  # noqa: E501
+    def __init__(self, id: str=None, delay: float=None, type: AidTypeEnum=None, max_transport: int=None):  # noqa: E501
         """AidDelay - a model defined in Swagger
 
+        :param id: The id of this AidDelay.  # noqa: E501
+        :type id: str
         :param delay: The delay of this AidDelay.  # noqa: E501
         :type delay: float
         :param type: The type of this AidDelay.  # noqa: E501
@@ -26,16 +28,19 @@ class AidDelay(Model):
         :type max_transport: int
         """
         self.swagger_types = {
+            'id': str,
             'delay': float,
             'type': AidTypeEnum,
             'max_transport': int
         }
 
         self.attribute_map = {
+            'id': 'id',
             'delay': 'delay',
             'type': 'type',
             'max_transport': 'max_transport'
         }
+        self._id = id
         self._delay = delay
         self._type = type
         self._max_transport = max_transport
@@ -50,6 +55,31 @@ class AidDelay(Model):
         :rtype: AidDelay
         """
         return util.deserialize_model(dikt, cls)
+
+    @property
+    def id(self) -> str:
+        """Gets the id of this AidDelay.
+
+        An identifier for the evacuation opportunity, unique within the scene  # noqa: E501
+
+        :return: The id of this AidDelay.
+        :rtype: str
+        """
+        return self._id
+
+    @id.setter
+    def id(self, id: str):
+        """Sets the id of this AidDelay.
+
+        An identifier for the evacuation opportunity, unique within the scene  # noqa: E501
+
+        :param id: The id of this AidDelay.
+        :type id: str
+        """
+        if id is None:
+            raise ValueError("Invalid value for `id`, must not be `None`")  # noqa: E501
+
+        self._id = id
 
     @property
     def delay(self) -> float:

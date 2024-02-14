@@ -18,9 +18,9 @@ class AidTypeEnum(Model):
     """
     allowed enum values
     """
-    AMEV = "AMEV"
-    TRUCK = "truck"
-    HELICOPTER = "helicopter"
+    AIR = "air"
+    GROUND = "ground"
+    WATER = "water"
     UNKNOWN = "unknown"
     def __init__(self):  # noqa: E501
         """AidTypeEnum - a model defined in Swagger

@@ -18,11 +18,10 @@ class CommunicationCapabilityEnum(Model):
     """
     allowed enum values
     """
-    ALL = "all"
-    SATELLITE = "satellite"
-    RADIO = "radio"
-    VOICE = "voice"
-    VISUAL = "visual"
+    INTERNAL = "internal"
+    EXTERNAL = "external"
+    BOTH = "both"
+    NEITHER = "neither"
     def __init__(self):  # noqa: E501
         """CommunicationCapabilityEnum - a model defined in Swagger
 

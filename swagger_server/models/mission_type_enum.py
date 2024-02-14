@@ -18,6 +18,12 @@ class MissionTypeEnum(Model):
     """
     allowed enum values
     """
+    ATTACK = "Attack"
+    DEFEND = "Defend"
+    DELAY = "Delay"
+    PATROL = "Patrol"
+    RECONNAISSANCE = "Reconnaissance"
+    AMBUSH = "Ambush"
     LISTENING_OBSERVATION = "Listening/Observation"
     DIRECT_ACTION = "Direct Action"
     HOSTAGE_RESCUE = "Hostage rescue"
