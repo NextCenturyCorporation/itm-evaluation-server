@@ -88,21 +88,24 @@ class ITMScenario:
              None
             )
         if self.ta1_controller:
-            self.ta1_controller.post_probe(probe_response=response)
-            # Get and log probe response alignment
-            probe_response_alignment = \
-                self.ta1_controller.get_probe_response_alignment(
-                response.scenario_id,
-                response.probe_id
-            )
-            self.session.history.add_history(
-                "TA1 Probe Response Alignment",
-                {"session_id": self.ta1_controller.session_id,
-                "scenario_id": response.scenario_id,
-                "target_id": self.ta1_controller.alignment_target_id,
-                "probe_id": response.probe_id},
-                probe_response_alignment
-            )
+            try:
+                self.ta1_controller.post_probe(probe_response=response)
+                # Get and log probe response alignment
+                probe_response_alignment = \
+                    self.ta1_controller.get_probe_response_alignment(
+                    response.scenario_id,
+                    response.probe_id
+                )
+                self.session.history.add_history(
+                    "TA1 Probe Response Alignment",
+                    {"session_id": self.ta1_controller.session_id,
+                    "scenario_id": response.scenario_id,
+                    "target_id": self.ta1_controller.alignment_target_id,
+                    "probe_id": response.probe_id},
+                    probe_response_alignment
+                )
+            except:
+                print("--> WARNING: Exception posting probe response to TA1.")
         self.probes_sent.append(probe_id)
         print(f"--> Responding to probe {response.probe_id} from scenario {response.scenario_id} with choice {response.choice}.")
 

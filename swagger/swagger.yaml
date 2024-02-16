@@ -128,6 +128,8 @@ paths:
               schema:
                 type: string
                 x-content-type: text/plain
+        "503":
+          description: Could not communicate with TA1 server
       x-openapi-router-controller: swagger_server.controllers.itm_ta2_eval_controller
   /ta2/getAlignmentTarget:
     get:
@@ -198,7 +200,7 @@ paths:
             type: string
       responses:
         "200":
-          description: Successful Response
+          description: Successful Response; if server is configured to run without TA1, then session alignment will be empty/None/null.
           content:
             application/json:
               schema:
@@ -214,6 +216,8 @@ paths:
               schema:
                 type: string
                 x-content-type: text/plain
+        "503":
+          description: Could not get session alignment from TA1
       x-openapi-router-controller: swagger_server.controllers.itm_ta2_eval_controller
   /ta2/{scenario_id}/getState:
     get:

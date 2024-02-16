@@ -45,7 +45,7 @@ class ITMSession:
         # ADM History
         self.history: ITMHistory = ITMHistory()
         # This determines whether the server makes calls to TA1
-        self.ta1_integration = False
+        self.ta1_integration = True
         # This determines whether the server saves history to JSON
         self.save_history = False
 
@@ -77,16 +77,19 @@ class ITMSession:
         session_alignment_score = 0.0
 
         if self.ta1_integration == True:
-            session_alignment :AlignmentResults = \
-                self.itm_scenario.ta1_controller.get_session_alignment()
-            session_alignment_score = session_alignment.score
-            self.history.add_history(
-                "TA1 Session Alignment",
-                {"session_id": self.itm_scenario.ta1_controller.session_id,
-                "target_id": self.itm_scenario.ta1_controller.alignment_target_id},
-                session_alignment.to_dict()
-            )
-        print(f"--> Got session alignment score {session_alignment_score} from TA1.")
+            try:
+                session_alignment :AlignmentResults = \
+                    self.itm_scenario.ta1_controller.get_session_alignment()
+                session_alignment_score = session_alignment.score
+                self.history.add_history(
+                    "TA1 Session Alignment",
+                    {"session_id": self.itm_scenario.ta1_controller.session_id,
+                    "target_id": self.itm_scenario.ta1_controller.alignment_target_id},
+                    session_alignment.to_dict()
+                )
+                print(f"--> Got session alignment score {session_alignment_score} from TA1.")
+            except:
+                print("--> WARNING: Exception getting session alignment. Ignoring.")
 
         if self.kdma_training:
             self.state.unstructured = f'Scenario {self.itm_scenario.id} complete. Session alignment score = {session_alignment_score}'
@@ -227,29 +230,34 @@ class ITMSession:
             print(f"--> Scenario '{self.itm_scenario.id}' starting.")
 
             if self.ta1_integration:
-                if not self.itm_scenario.ta1_controller.session_id \
-                        or not self.kdma_training: # When training, allow TA1 sessions to span scenarios
-                    ta1_session_id = self.itm_scenario.ta1_controller.new_session()
-                    self.history.add_history(
-                        "TA1 Session ID", {}, ta1_session_id
-                    )
-                    print(f"--> Got new session_id {ta1_session_id} from TA1.")
-                if not self.kdma_training:
-                    scenario_alignment = self.itm_scenario.ta1_controller.get_alignment_target()
-                    print(f"--> Got alignment target {scenario_alignment} from TA1.")
-                    self.history.add_history(
-                        "TA1 Alignment Target Data",
-                        {"session_id": self.itm_scenario.ta1_controller.session_id,
-                        "scenario_id": self.itm_scenario.id},
-                        scenario_alignment
-                      )
+                try:
+                    if not self.itm_scenario.ta1_controller.session_id \
+                            or not self.kdma_training: # When training, allow TA1 sessions to span scenarios
+                        ta1_session_id = self.itm_scenario.ta1_controller.new_session()
+                        self.history.add_history(
+                            "TA1 Session ID", {}, ta1_session_id
+                        )
+                        print(f"--> Got new session_id {ta1_session_id} from TA1.")
+                    if not self.kdma_training:
+                        scenario_alignment = self.itm_scenario.ta1_controller.get_alignment_target()
+                        print(f"--> Got alignment target {scenario_alignment} from TA1.")
+                        self.history.add_history(
+                            "TA1 Alignment Target Data",
+                            {"session_id": self.itm_scenario.ta1_controller.session_id,
+                            "scenario_id": self.itm_scenario.id},
+                            scenario_alignment
+                        )
+                except:
+                    print("--> WARNING: Exception communicating with TA1; is the TA1 server running?  Ending session.")
+                    self._end_session() # Exception here ends the session
+                    return 'Exception communicating with TA1; is the TA1 server running?  Ending session.', 503
             else:
                 if not self.kdma_training:
                     print("--> Got alignment target from TA1.")
 
             return scenario
         except:
-            print("--> Exception getting next scenario; ending session.")
+            print("--> WARNING: Exception getting next scenario; ending session.")
             import traceback
             traceback.print_exc()
             return self._end_session() # Exception here ends the session
@@ -297,7 +305,6 @@ class ITMSession:
 
         if self.session_type == 'eval':
             self.save_history = True
-            self.ta1_integration = True
             max_scenarios = None
 
         self.history.add_history(
@@ -375,8 +382,12 @@ class ITMSession:
 
         session_alignment :AlignmentResults = None
         if self.ta1_integration == True:
-            session_alignment = \
-                self.itm_scenario.ta1_controller.get_session_alignment(target_id=target_id)
+            try:
+                session_alignment = \
+                    self.itm_scenario.ta1_controller.get_session_alignment(target_id=target_id)
+            except:
+                print("--> WARNING: Exception getting session alignment.")
+                return 'Could not get session alignment; is a TA1 server running?', 503
         else:
             session_alignment = AlignmentResults(None, target_id, 0.0, None)
         print(f"--> Got session alignment score {session_alignment.score} from TA1 for alignment target id {target_id}.")
