@@ -31,8 +31,8 @@ class ITMSession:
         self.time_elapsed_realtime = 0
 
         self.session_type = ''
-        self.number_of_scenarios = None
-        self.custom_scenario_count = 0 # when scenario_id is specified in start_scenario
+        self.using_max_scenarios = False
+        self.kdma_training = False
 
         self.session_complete = False
         self.state: State = None
@@ -181,30 +181,28 @@ class ITMSession:
         Start a new scenario.
 
         Args:
-            scenario_id: a scenario ID to start, used internally by TA3
+            scenario_id: a scenario ID to start
 
         Returns:
             The started scenario as a Scenario object.
         """
 
         if scenario_id:
-            if self.adm_name != 'TA3':
-                raise connexion.ProblemException(status=403, title="Forbidden", detail="Specifying a scenario ID is unauthorized")
-            if self.custom_scenario_count >= self.number_of_scenarios:
-                return self._end_session() # We've executed the specified number of custom scenarios
+            if self.using_max_scenarios:
+                return "Specifying a scenario ID is incompatible with /ta2/startSession's max_scenarios parameter.", 400
             index = 0
             self.itm_scenario = None
             for scenario in self.itm_scenarios:
                 if scenario_id == scenario.id:
                     self.itm_scenario = scenario
                     self.current_scenario_index = index
-                    self.custom_scenario_count += 1
                     break
                 index += 1
             if self.itm_scenario is None:
-                return f'Scenario ID `{scenario_id}` does not exist for `{self.session_type}`', 404
+                return f'Scenario ID `{scenario_id}` does not exist as {"a training" if self.kdma_training else "an eval"} scenario for `{self.session_type}`', 404
+            if self.itm_scenario.isd.current_scene.state is None:
+                return self._end_session() # We have already run the specified scenario to completion
         else:
-            # Require ADM to end the scenario explicitly
             if self.state and not self.state.scenario_complete:
                 return f'Must end `{self.itm_scenario.id}` before starting a new scenario', 400
             if self.current_scenario_index < len(self.itm_scenarios):
@@ -320,13 +318,13 @@ class ITMSession:
             yaml_paths.append(yaml_path + 'soartech/')
         if session_type == 'adept' or session_type == 'eval':
             yaml_paths.append(yaml_path + 'adept/')
-        self.number_of_scenarios = max_scenarios if max_scenarios else 1
 
         selected_yaml_directories = [
             f"{path}{folder}/"
             for path in yaml_paths
             for folder in self._get_sub_directory_names(path)]
-        if max_scenarios != None and max_scenarios >= 1:
+        if max_scenarios is not None and max_scenarios >= 1:
+            self.using_max_scenarios = True
             # fill in extra scenarios with random copies
             inital_selected_yaml_directories = deepcopy(selected_yaml_directories)
             while len(selected_yaml_directories) < max_scenarios:
