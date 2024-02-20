@@ -813,7 +813,7 @@ components:
           $ref: "#/components/schemas/BreathingLevelEnum"
         heart_rate:
           $ref: "#/components/schemas/HeartRateEnum"
-        Spo2:
+        spo2:
           type: number
           format: float
           description: blood oxygen level (percentage)

@@ -212,6 +212,7 @@ class ITMSession:
 
         try:
             self.state = deepcopy(self.itm_scenario.isd.current_scene.state)
+            ITMScenario.clear_hidden_data(self.state)
             scenario = Scenario(
                 id=self.itm_scenario.id,
                 name=self.itm_scenario.name,

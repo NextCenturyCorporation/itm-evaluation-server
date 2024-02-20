@@ -1,5 +1,5 @@
 id: MetricsEval.MD3
-# v1.0.0
+# v1.2.0
 name: Military Base Fire
 state:
   unstructured: >
@@ -55,7 +55,7 @@ state:
         mental_status: CONFUSED
         breathing: RESTRICTED
         heart_rate: FAST
-        Spo2: 85
+        spo2: 85
       injuries:
         - name: Asthmatic  # Smoke Inhalation
           location: internal  # chest
@@ -82,7 +82,7 @@ state:
         mental_status: CONFUSED
         breathing: RESTRICTED
         heart_rate: FAST
-        Spo2: 85
+        spo2: 85
       injuries:
         - name: Asthmatic  # Smoke Inhalation
           location: internal  # chest
@@ -109,7 +109,7 @@ state:
         mental_status: AGONY
         breathing: RESTRICTED
         heart_rate: FAST
-        Spo2: 85
+        spo2: 85
       injuries:
         - name: Asthmatic  # Smoke Inhalation
           location: internal  # chest
@@ -138,7 +138,8 @@ scenes:
     probe_config:
       - probe_id: MetricsEval.MD3.1
         description: Who to treat first
-    restricted_actions: []
+    restricted_actions:
+      - MOVE_TO_EVAC
     action_mapping:
       - action_id: treat_intox_soldier_1
         action_type: APPLY_TREATMENT

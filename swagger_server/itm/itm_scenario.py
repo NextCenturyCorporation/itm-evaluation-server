@@ -46,7 +46,6 @@ class ITMScenario:
         scenario_reader = ITMScenarioReader(self.yaml_path + "scenario.yaml")
         (scenario, isd.scenes) = \
             scenario_reader.read_scenario_from_yaml()
-        ITMScenario.clear_hidden_data(isd.scenes[0].state)
         isd.current_scene_index = 0
         isd.current_scene = isd.scenes[0]
         for scene in isd.scenes:

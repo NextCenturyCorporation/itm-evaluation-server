@@ -236,7 +236,7 @@ scenes:
 
         '
       vitals:
-        Spo2: 0
+        spo2: 0
         avpu: ALERT
         breathing: NORMAL
         conscious: true
@@ -265,7 +265,7 @@ scenes:
 
         '
       vitals:
-        Spo2: 0
+        spo2: 0
         avpu: ALERT
         breathing: NORMAL
         conscious: true
@@ -417,7 +417,7 @@ scenes:
 
         '
       vitals:
-        Spo2: 96
+        spo2: 96
         avpu: ALERT
         breathing: FAST
         conscious: true
@@ -541,7 +541,7 @@ scenes:
 
         '
       vitals:
-        Spo2: 70
+        spo2: 70
         avpu: VOICE
         breathing: NONE
         conscious: false
@@ -570,7 +570,7 @@ scenes:
 
         '
       vitals:
-        Spo2: 72
+        spo2: 72
         avpu: VOICE
         breathing: NONE
         conscious: false
@@ -736,7 +736,7 @@ scenes:
 
         '
       vitals:
-        Spo2: 91
+        spo2: 91
         avpu: ALERT
         breathing: FAST
         conscious: true
@@ -765,7 +765,7 @@ scenes:
 
         '
       vitals:
-        Spo2: 70
+        spo2: 70
         avpu: UNRESPONSIVE
         breathing: NONE
         conscious: true
@@ -955,7 +955,7 @@ scenes:
 
         '
       vitals:
-        Spo2: 91
+        spo2: 91
         avpu: ALERT
         breathing: FAST
         conscious: true
@@ -984,7 +984,7 @@ scenes:
 
         '
       vitals:
-        Spo2: 93
+        spo2: 93
         avpu: ALERT
         breathing: NORMAL
         conscious: true
@@ -1127,7 +1127,7 @@ scenes:
 
         '
       vitals:
-        Spo2: 0
+        spo2: 0
         avpu: ALERT
         breathing: NORMAL
         conscious: true
@@ -1157,7 +1157,7 @@ scenes:
 
         '
       vitals:
-        Spo2: 0
+        spo2: 0
         avpu: ALERT
         breathing: SLOW
         conscious: true
@@ -1298,7 +1298,7 @@ scenes:
 
         '
       vitals:
-        Spo2: 0
+        spo2: 0
         avpu: ALERT
         breathing: NORMAL
         conscious: true
@@ -1328,7 +1328,7 @@ scenes:
 
         '
       vitals:
-        Spo2: 0
+        spo2: 0
         avpu: ALERT
         breathing: SLOW
         conscious: true
@@ -1477,7 +1477,7 @@ scenes:
 
         '
       vitals:
-        Spo2: 91
+        spo2: 91
         avpu: ALERT
         breathing: FAST
         conscious: true
@@ -1648,7 +1648,7 @@ scenes:
 
         '
       vitals:
-        Spo2: 98
+        spo2: 98
         avpu: VOICE
         breathing: NORMAL
         conscious: false
@@ -1842,7 +1842,7 @@ scenes:
 
         '
       vitals:
-        Spo2: 98
+        spo2: 98
         avpu: VOICE
         breathing: NORMAL
         conscious: false
@@ -1872,7 +1872,7 @@ scenes:
 
         '
       vitals:
-        Spo2: 91
+        spo2: 91
         avpu: ALERT
         breathing: FAST
         conscious: true
@@ -1946,7 +1946,7 @@ state:
     rapport: neutral
     unstructured: ''
     vitals:
-      Spo2: 0
+      spo2: 0
       avpu: ALERT
       breathing: NORMAL
       conscious: true
@@ -1976,7 +1976,7 @@ state:
 
       '
     vitals:
-      Spo2: 0
+      spo2: 0
       avpu: ALERT
       breathing: NORMAL
       conscious: true
@@ -1999,7 +1999,7 @@ state:
     rapport: neutral
     unstructured: ''
     vitals:
-      Spo2: 0
+      spo2: 0
       avpu: ALERT
       breathing: NORMAL
       conscious: true
@@ -2028,7 +2028,7 @@ state:
 
       '
     vitals:
-      Spo2: 0
+      spo2: 0
       avpu: ALERT
       breathing: NORMAL
       conscious: true
