@@ -84,6 +84,14 @@ state:
         mission_importance: normal
       injuries:
         - {name: Broken Bone, location: right shoulder, severity: major, status: visible}  # this is weird because the injuries are known at a high-level due to report, not by seeing them.  Also not filling in source_character because it is both himself and the local
+      vitals:
+        conscious: true
+        avpu: PAIN
+        ambulatory: false
+        mental_status: AGONY
+        breathing: NORMAL
+        heart_rate: NORMAL
+        spo2: 90
       intent: intend minor harm
       directness_of_causality: somewhat indirect
         
@@ -99,6 +107,14 @@ state:
         mission_importance: normal
       injuries:
         - {name: Broken Bone, location: right shoulder, severity: major, status: visible}
+      vitals:
+        conscious: true
+        avpu: PAIN
+        ambulatory: false
+        mental_status: AGONY
+        breathing: NORMAL
+        heart_rate: NORMAL
+        spo2: 90
       intent: intend minor help
       directness_of_causality: indirect
       
@@ -178,6 +194,14 @@ scenes:
             mission_importance: normal
           injuries:
             - {name: Broken Bone, location: right shoulder, severity: major, status: visible}  # A severe injury is "known" but you aren't present with the patients so not actually "visible"
+          vitals:
+            conscious: true
+            avpu: PAIN
+            ambulatory: false
+            mental_status: AGONY
+            breathing: NORMAL
+            heart_rate: NORMAL
+            spo2: 90
           intent: intend minor harm
           directness_of_causality: somewhat indirect
         - id: local_soldier_1
@@ -192,6 +216,14 @@ scenes:
             mission_importance: normal
           injuries:
             - {name: Broken Bone, location: right shoulder, severity: major, status: visible}
+          vitals:
+            conscious: true
+            avpu: PAIN
+            ambulatory: false
+            mental_status: AGONY
+            breathing: NORMAL
+            heart_rate: NORMAL
+            spo2: 90
           intent: intend major help
           directness_of_causality: none
         - id: bystander_1
@@ -293,6 +325,14 @@ scenes:
             mission_importance: normal
           injuries:
             - {name: Broken Bone, location: right shoulder, severity: major, status: visible}  # A severe injury is "known" but you aren't present with the patients so not actually "visible"
+          vitals:
+            conscious: true
+            avpu: PAIN
+            ambulatory: false
+            mental_status: AGONY
+            breathing: NORMAL
+            heart_rate: NORMAL
+            spo2: 90
           intent: intend minor help  # started fight + saved unit = minor help
           directness_of_causality: somewhat indirect
         - id: local_soldier_1
@@ -307,6 +347,14 @@ scenes:
             mission_importance: normal
           injuries:
             - {name: Broken Bone, location: right shoulder, severity: major, status: visible}  # A severe injury is "known" but you aren't present with the patients so not actually "visible"
+          vitals:
+            conscious: true
+            avpu: PAIN
+            ambulatory: false
+            mental_status: AGONY
+            breathing: NORMAL
+            heart_rate: NORMAL
+            spo2: 90
           intent: intend minor help
           directness_of_causality: indirect
         - id: bystander_1
