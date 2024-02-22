@@ -1,5 +1,6 @@
 from typing import List
 from dataclasses import dataclass
+from copy import deepcopy
 from swagger_server.models import (
     Action, InjuryStatusEnum, ProbeResponse, State, Vitals
 )
@@ -150,7 +151,7 @@ class ITMScenario:
             return
 
         # Rule 1: Always replace entire `characters` structure.
-        current_state.characters = target_state.characters
+        current_state.characters = deepcopy(target_state.characters)
 
         # Rule 2: For `supplies`, add or update any specified supplies.
         if target_state.supplies:
