@@ -2,7 +2,6 @@ import time
 import uuid
 import random
 import os
-import connexion
 from typing import List
 from copy import deepcopy
 from swagger_server.models import (
@@ -76,7 +75,7 @@ class ITMSession:
         self.state.scenario_complete = True
         session_alignment_score = 0.0
 
-        if self.ta1_integration == True:
+        if self.ta1_integration and not self.kdma_training:
             try:
                 session_alignment :AlignmentResults = \
                     self.itm_scenario.ta1_controller.get_session_alignment()
@@ -380,15 +379,19 @@ class ITMSession:
             return 'Session alignment can only be requested during a training session', 403
 
         session_alignment :AlignmentResults = None
-        if self.ta1_integration == True:
+        if self.ta1_integration:
             try:
-                session_alignment = \
-                    self.itm_scenario.ta1_controller.get_session_alignment(target_id=target_id)
+                if len(self.itm_scenario.probes_sent) > 0:
+                    session_alignment = \
+                        self.itm_scenario.ta1_controller.get_session_alignment(target_id=target_id)
+                else:
+                    session_alignment = AlignmentResults(alignment_source=[], alignment_target_id=target_id, score=0.5, kdma_values=[])
+
             except:
                 print("--> WARNING: Exception getting session alignment.")
                 return 'Could not get session alignment; is a TA1 server running?', 503
         else:
-            session_alignment = AlignmentResults(None, target_id, 0.0, None)
+            session_alignment = AlignmentResults(alignment_source=[], alignment_target_id=target_id, score=0.5, kdma_values=[])
         print(f"--> Got session alignment score {session_alignment.score} from TA1 for alignment target id {target_id}.")
         return session_alignment
 

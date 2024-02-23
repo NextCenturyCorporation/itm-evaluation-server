@@ -5,7 +5,8 @@ from swagger_server.models import (
     Character,
     CharacterTag,
     InjuryLocation,
-    InjuryStatusEnum
+    InjuryStatusEnum,
+    MentalStatusEnum
 )
 from swagger_server.util import get_swagger_class_enum_values
 from .itm_scenario import ITMScenario
@@ -294,6 +295,12 @@ class ITMActionHandler:
         """
         Direct mobile characters to a safe zone (or equivalent).
         """
+        for character in self.session.state.characters:
+            for isd_character in self.current_scene.state.characters:
+                if isd_character.id == character.id:
+                    if isd_character.vitals.ambulatory:
+                        character.vitals.ambulatory = True
+                        character.vitals.conscious = True
         return self.times_dict["DIRECT_MOBILE_CHARACTERS"]
 
 
@@ -337,11 +344,12 @@ class ITMActionHandler:
             character: The character from which to request SITREP, or empty if requesting from all
         """
         time_passed = 0
+        unresponsive_statuses = [MentalStatusEnum.UNRESPONSIVE, MentalStatusEnum.SHOCK, MentalStatusEnum.CONFUSED]
         if character:
             for isd_character in self.current_scene.state.characters:
                 if isd_character.id == character.id:
                     character.vitals.mental_status = isd_character.vitals.mental_status
-                    if character.vitals.mental_status != "UNRESPONSIVE":
+                    if character.vitals.mental_status not in unresponsive_statuses:
                         character.vitals.ambulatory = isd_character.vitals.ambulatory
                         character.vitals.avpu = isd_character.vitals.avpu
                         character.vitals.breathing = isd_character.vitals.breathing
@@ -355,7 +363,7 @@ class ITMActionHandler:
                 for isd_character in self.current_scene.state.characters:
                     if isd_character.id == curr_character.id:
                         curr_character.vitals.mental_status = isd_character.vitals.mental_status
-                        if curr_character.vitals.mental_status != "UNRESPONSIVE":
+                        if curr_character.vitals.mental_status not in unresponsive_statuses:
                             curr_character.vitals.ambulatory = isd_character.vitals.ambulatory
                             curr_character.vitals.avpu = isd_character.vitals.avpu
                             curr_character.vitals.conscious = isd_character.vitals.conscious
