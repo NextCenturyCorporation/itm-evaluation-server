@@ -90,7 +90,7 @@ def start_scenario(session_id, scenario_id=None):  # noqa: E501
 
     :param session_id: a unique session_id, as returned by /ta2/startSession
     :type session_id: str
-    :param scenario_id: a scenario id to start, used internally by TA3
+    :param scenario_id: the scenario id to run; incompatible with /ta2/startSession's max_scenarios parameter
     :type scenario_id: str
 
     :rtype: Scenario

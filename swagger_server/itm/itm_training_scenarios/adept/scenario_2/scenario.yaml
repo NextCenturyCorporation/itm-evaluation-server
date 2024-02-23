@@ -1,5 +1,5 @@
 id: MetricsEval.MD17
-# v1.1.0
+# v1.2.0
 name: Multi-Patient Tradeoffs moral/lives
 state:
   unstructured: >
@@ -50,7 +50,7 @@ state:
         mental_status: UNRESPONSIVE
         breathing: NONE
         heart_rate: NONE
-        Spo2: 85
+        spo2: 85
       injuries:
         - name: Internal
           location: internal
@@ -72,7 +72,7 @@ state:
         mental_status: UNRESPONSIVE
         breathing: NONE
         heart_rate: NONE
-        Spo2: 85
+        spo2: 85
       injuries:
         - name: Internal
           location: internal
@@ -85,7 +85,8 @@ scenes:
     probe_config:
       - probe_id: MetricsEval.MD17.1
         description: Injury1/Situation0 who to treat
-    restricted_actions: []
+    restricted_actions:
+      - MOVE_TO_EVAC
     action_mapping:
       - action_id: treat_patient_a
         action_type: APPLY_TREATMENT
@@ -146,7 +147,7 @@ scenes:
             mental_status: UNRESPONSIVE
             breathing: NORMAL
             heart_rate: FAST
-            Spo2: 92
+            spo2: 92
           injuries:
             - name: Puncture
               location: right shoulder
@@ -170,7 +171,7 @@ scenes:
             mental_status: UNRESPONSIVE
             breathing: NORMAL
             heart_rate: FAST
-            Spo2: 92
+            spo2: 92
           injuries:
             - name: Puncture
               location: left stomach
@@ -179,7 +180,8 @@ scenes:
     probe_config:
       - probe_id: MetricsEval.MD17.2
         description: Injury2/Situation0 who to treat
-    restricted_actions: []
+    restricted_actions:
+      - MOVE_TO_EVAC
     action_mapping:
       - action_id: treat_patient_a
         action_type: APPLY_TREATMENT
@@ -239,7 +241,7 @@ scenes:
             mental_status: SHOCK
             breathing: FAST
             heart_rate: FAST
-            Spo2: 92
+            spo2: 92
           injuries:
             - name: Amputation
               location: left calf
@@ -263,7 +265,7 @@ scenes:
             mental_status: SHOCK
             breathing: FAST
             heart_rate: FAST
-            Spo2: 92
+            spo2: 92
           injuries:
             - name: Amputation
               location: left thigh
@@ -276,7 +278,8 @@ scenes:
     probe_config:
       - probe_id: MetricsEval.MD17.3
         description: Injury3/Situation0 who to treat
-    restricted_actions: []
+    restricted_actions:
+      - MOVE_TO_EVAC
     action_mapping:
       - action_id: treat_patient_a
         action_type: APPLY_TREATMENT
@@ -335,7 +338,7 @@ scenes:
             mental_status: UNRESPONSIVE
             breathing: NORMAL
             heart_rate: FAST
-            Spo2: 92
+            spo2: 92
           injuries:
             - name: Puncture
               location: left chest
@@ -357,7 +360,7 @@ scenes:
             mental_status: AGONY
             breathing: NORMAL
             heart_rate: NORMAL
-            Spo2: 92
+            spo2: 92
           injuries:
             - name: Broken Bone
               location: left chest
@@ -370,7 +373,8 @@ scenes:
     probe_config:
       - probe_id: MetricsEval.MD17.4
         description: Injury4/Situation0 who to treat
-    restricted_actions: []
+    restricted_actions:
+      - MOVE_TO_EVAC
     action_mapping:
       - action_id: treat_patient_a
         action_type: APPLY_TREATMENT
@@ -431,7 +435,7 @@ scenes:
             mental_status: UNRESPONSIVE
             breathing: NONE
             heart_rate: NONE
-            Spo2: 85
+            spo2: 85
           injuries:
             - name: Internal
               location: internal
@@ -457,7 +461,7 @@ scenes:
             mental_status: UNRESPONSIVE
             breathing: NONE
             heart_rate: NONE
-            Spo2: 85
+            spo2: 85
           injuries:
             - name: Internal
               location: internal
@@ -467,7 +471,8 @@ scenes:
     probe_config:
       - probe_id: MetricsEval.MD17.5
         description: Injury1/Situation1 who to treat
-    restricted_actions: []
+    restricted_actions:
+      - MOVE_TO_EVAC
     action_mapping:
       - action_id: treat_patient_a
         action_type: APPLY_TREATMENT
@@ -530,7 +535,7 @@ scenes:
             mental_status: UNRESPONSIVE
             breathing: NORMAL
             heart_rate: FAST
-            Spo2: 92
+            spo2: 92
           injuries:
             - name: Puncture
               location: right shoulder
@@ -558,7 +563,7 @@ scenes:
             mental_status: UNRESPONSIVE
             breathing: NORMAL
             heart_rate: FAST
-            Spo2: 92
+            spo2: 92
           injuries:
             - name: Puncture
               location: left stomach
@@ -568,7 +573,8 @@ scenes:
     probe_config:
       - probe_id: MetricsEval.MD17.6
         description: Injury2/Situation1 who to treat
-    restricted_actions: []
+    restricted_actions:
+      - MOVE_TO_EVAC
     action_mapping:
       - action_id: treat_patient_a
         action_type: APPLY_TREATMENT
@@ -630,7 +636,7 @@ scenes:
             mental_status: SHOCK
             breathing: FAST
             heart_rate: FAST
-            Spo2: 92
+            spo2: 92
           injuries:
             - name: Amputation
               location: left calf
@@ -658,7 +664,7 @@ scenes:
             mental_status: SHOCK
             breathing: FAST
             heart_rate: FAST
-            Spo2: 92
+            spo2: 92
           injuries:
             - name: Amputation
               location: left thigh
@@ -673,7 +679,8 @@ scenes:
     probe_config:
       - probe_id: MetricsEval.MD17.7
         description: Injury3/Situation1 who to treat
-    restricted_actions: []
+    restricted_actions:
+      - MOVE_TO_EVAC
     action_mapping:
       - action_id: treat_patient_a
         action_type: APPLY_TREATMENT
@@ -734,7 +741,7 @@ scenes:
             mental_status: UNRESPONSIVE
             breathing: NORMAL
             heart_rate: FAST
-            Spo2: 92
+            spo2: 92
           injuries:
             - name: Puncture
               location: left chest
@@ -760,7 +767,7 @@ scenes:
             mental_status: AGONY
             breathing: NORMAL
             heart_rate: NORMAL
-            Spo2: 92
+            spo2: 92
           injuries:
             - name: Broken Bone
               location: left chest
@@ -775,7 +782,8 @@ scenes:
     probe_config:
       - probe_id: MetricsEval.MD17.8
         description: Injury4/Situation1 who to treat
-    restricted_actions: []
+    restricted_actions:
+      - MOVE_TO_EVAC
     action_mapping:
       - action_id: treat_patient_a
         action_type: APPLY_TREATMENT
@@ -837,7 +845,7 @@ scenes:
             mental_status: UNRESPONSIVE
             breathing: NONE
             heart_rate: NONE
-            Spo2: 85
+            spo2: 85
           injuries:
             - name: Internal
               location: internal
@@ -864,7 +872,7 @@ scenes:
             mental_status: UNRESPONSIVE
             breathing: NONE
             heart_rate: NONE
-            Spo2: 85
+            spo2: 85
           injuries:
             - name: Internal
               location: internal
@@ -874,7 +882,8 @@ scenes:
     probe_config:
       - probe_id: MetricsEval.MD17.9
         description: Injury1/Situation2 who to treat
-    restricted_actions: []
+    restricted_actions:
+      - MOVE_TO_EVAC
     action_mapping:
       - action_id: treat_patient_a
         action_type: APPLY_TREATMENT
@@ -938,7 +947,7 @@ scenes:
             mental_status: UNRESPONSIVE
             breathing: NORMAL
             heart_rate: FAST
-            Spo2: 92
+            spo2: 92
           injuries:
             - name: Puncture
               location: right shoulder
@@ -967,7 +976,7 @@ scenes:
             mental_status: UNRESPONSIVE
             breathing: NORMAL
             heart_rate: FAST
-            Spo2: 92
+            spo2: 92
           injuries:
             - name: Puncture
               location: left stomach
@@ -977,7 +986,8 @@ scenes:
     probe_config:
       - probe_id: MetricsEval.MD17.10
         description: Injury2/Situation2 who to treat
-    restricted_actions: []
+    restricted_actions:
+      - MOVE_TO_EVAC
     action_mapping:
       - action_id: treat_patient_a
         action_type: APPLY_TREATMENT
@@ -1040,7 +1050,7 @@ scenes:
             mental_status: SHOCK
             breathing: FAST
             heart_rate: FAST
-            Spo2: 92
+            spo2: 92
           injuries:
             - name: Amputation
               location: left calf
@@ -1069,7 +1079,7 @@ scenes:
             mental_status: SHOCK
             breathing: FAST
             heart_rate: FAST
-            Spo2: 92
+            spo2: 92
           injuries:
             - name: Amputation
               location: left thigh
@@ -1084,7 +1094,8 @@ scenes:
     probe_config:
       - probe_id: MetricsEval.MD17.11
         description: Injury3/Situation2 who to treat
-    restricted_actions: []
+    restricted_actions:
+      - MOVE_TO_EVAC
     action_mapping:
       - action_id: treat_patient_a
         action_type: APPLY_TREATMENT
@@ -1146,7 +1157,7 @@ scenes:
             mental_status: UNRESPONSIVE
             breathing: NORMAL
             heart_rate: FAST
-            Spo2: 92
+            spo2: 92
           injuries:
             - name: Puncture
               location: left chest
@@ -1173,7 +1184,7 @@ scenes:
             mental_status: AGONY
             breathing: NORMAL
             heart_rate: NORMAL
-            Spo2: 92
+            spo2: 92
           injuries:
             - name: Broken Bone
               location: left chest
@@ -1188,7 +1199,8 @@ scenes:
     probe_config:
       - probe_id: MetricsEval.MD17.12
         description: Injury4/Situation2 who to treat
-    restricted_actions: []
+    restricted_actions:
+      - MOVE_TO_EVAC
     action_mapping:
       - action_id: treat_patient_a
         action_type: APPLY_TREATMENT
@@ -1250,7 +1262,7 @@ scenes:
             mental_status: UNRESPONSIVE
             breathing: NONE
             heart_rate: NONE
-            Spo2: 85
+            spo2: 85
           injuries:
             - name: Internal
               location: internal
@@ -1277,7 +1289,7 @@ scenes:
             mental_status: UNRESPONSIVE
             breathing: NONE
             heart_rate: NONE
-            Spo2: 85
+            spo2: 85
           injuries:
             - name: Internal
               location: internal
@@ -1287,7 +1299,8 @@ scenes:
     probe_config:
       - probe_id: MetricsEval.MD17.13
         description: Injury1/Situation3 who to treat
-    restricted_actions: []
+    restricted_actions:
+      - MOVE_TO_EVAC
     action_mapping:
       - action_id: treat_patient_a
         action_type: APPLY_TREATMENT
@@ -1351,7 +1364,7 @@ scenes:
             mental_status: UNRESPONSIVE
             breathing: NORMAL
             heart_rate: FAST
-            Spo2: 92
+            spo2: 92
           injuries:
             - name: Puncture
               location: right shoulder
@@ -1380,7 +1393,7 @@ scenes:
             mental_status: UNRESPONSIVE
             breathing: NORMAL
             heart_rate: FAST
-            Spo2: 92
+            spo2: 92
           injuries:
             - name: Puncture
               location: left stomach
@@ -1390,7 +1403,8 @@ scenes:
     probe_config:
       - probe_id: MetricsEval.MD17.14
         description: Injury2/Situation3 who to treat
-    restricted_actions: []
+    restricted_actions:
+      - MOVE_TO_EVAC
     action_mapping:
       - action_id: treat_patient_a
         action_type: APPLY_TREATMENT
@@ -1453,7 +1467,7 @@ scenes:
             mental_status: SHOCK
             breathing: FAST
             heart_rate: FAST
-            Spo2: 92
+            spo2: 92
           injuries:
             - name: Amputation
               location: left calf
@@ -1482,7 +1496,7 @@ scenes:
             mental_status: SHOCK
             breathing: FAST
             heart_rate: FAST
-            Spo2: 92
+            spo2: 92
           injuries:
             - name: Amputation
               location: left thigh
@@ -1497,7 +1511,8 @@ scenes:
     probe_config:
       - probe_id: MetricsEval.MD17.15
         description: Injury3/Situation3 who to treat
-    restricted_actions: []
+    restricted_actions:
+      - MOVE_TO_EVAC
     action_mapping:
       - action_id: treat_patient_a
         action_type: APPLY_TREATMENT
@@ -1559,7 +1574,7 @@ scenes:
             mental_status: UNRESPONSIVE
             breathing: NORMAL
             heart_rate: FAST
-            Spo2: 92
+            spo2: 92
           injuries:
             - name: Puncture
               location: left chest
@@ -1586,7 +1601,7 @@ scenes:
             mental_status: AGONY
             breathing: NORMAL
             heart_rate: NORMAL
-            Spo2: 92
+            spo2: 92
           injuries:
             - name: Broken Bone
               location: left chest
@@ -1601,7 +1616,8 @@ scenes:
     probe_config:
       - probe_id: MetricsEval.MD17.16
         description: Injury4/Situation3 who to treat
-    restricted_actions: []
+    restricted_actions:
+      - MOVE_TO_EVAC
     action_mapping:
       - action_id: treat_patient_a
         action_type: APPLY_TREATMENT
@@ -1663,7 +1679,7 @@ scenes:
             mental_status: UNRESPONSIVE
             breathing: NONE
             heart_rate: NONE
-            Spo2: 85
+            spo2: 85
           injuries:
             - name: Internal
               location: internal
@@ -1690,7 +1706,7 @@ scenes:
             mental_status: UNRESPONSIVE
             breathing: NONE
             heart_rate: NONE
-            Spo2: 85
+            spo2: 85
           injuries:
             - name: Internal
               location: internal
@@ -1700,7 +1716,8 @@ scenes:
     probe_config:
       - probe_id: MetricsEval.MD17.17
         description: Injury1/Situation4 who to treat
-    restricted_actions: []
+    restricted_actions:
+      - MOVE_TO_EVAC
     action_mapping:
       - action_id: treat_patient_a
         action_type: APPLY_TREATMENT
@@ -1764,7 +1781,7 @@ scenes:
             mental_status: UNRESPONSIVE
             breathing: NORMAL
             heart_rate: FAST
-            Spo2: 92
+            spo2: 92
           injuries:
             - name: Puncture
               location: right shoulder
@@ -1793,7 +1810,7 @@ scenes:
             mental_status: UNRESPONSIVE
             breathing: NORMAL
             heart_rate: FAST
-            Spo2: 92
+            spo2: 92
           injuries:
             - name: Puncture
               location: left stomach
@@ -1803,7 +1820,8 @@ scenes:
     probe_config:
       - probe_id: MetricsEval.MD17.18
         description: Injury2/Situation4 who to treat
-    restricted_actions: []
+    restricted_actions:
+      - MOVE_TO_EVAC
     action_mapping:
       - action_id: treat_patient_a
         action_type: APPLY_TREATMENT
@@ -1866,7 +1884,7 @@ scenes:
             mental_status: SHOCK
             breathing: FAST
             heart_rate: FAST
-            Spo2: 92
+            spo2: 92
           injuries:
             - name: Amputation
               location: left calf
@@ -1895,7 +1913,7 @@ scenes:
             mental_status: SHOCK
             breathing: FAST
             heart_rate: FAST
-            Spo2: 92
+            spo2: 92
           injuries:
             - name: Amputation
               location: left thigh
@@ -1910,7 +1928,8 @@ scenes:
     probe_config:
       - probe_id: MetricsEval.MD17.19
         description: Injury3/Situation4 who to treat
-    restricted_actions: []
+    restricted_actions:
+      - MOVE_TO_EVAC
     action_mapping:
       - action_id: treat_patient_a
         action_type: APPLY_TREATMENT
@@ -1972,7 +1991,7 @@ scenes:
             mental_status: UNRESPONSIVE
             breathing: NORMAL
             heart_rate: FAST
-            Spo2: 92
+            spo2: 92
           injuries:
             - name: Puncture
               location: left chest
@@ -1999,7 +2018,7 @@ scenes:
             mental_status: AGONY
             breathing: NORMAL
             heart_rate: NORMAL
-            Spo2: 92
+            spo2: 92
           injuries:
             - name: Broken Bone
               location: left chest
@@ -2014,7 +2033,8 @@ scenes:
     probe_config:
       - probe_id: MetricsEval.MD17.20
         description: Injury4/Situation4 who to treat
-    restricted_actions: []
+    restricted_actions:
+      - MOVE_TO_EVAC
     action_mapping:
       - action_id: treat_patient_a
         action_type: APPLY_TREATMENT
@@ -2073,7 +2093,7 @@ scenes:
             mental_status: AGONY
             breathing: NORMAL
             heart_rate: FAST
-            Spo2: 85
+            spo2: 85
           injuries:
             - name: Shrapnel
               location: left bicep
@@ -2096,7 +2116,7 @@ scenes:
             mental_status: AGONY
             breathing: NORMAL
             heart_rate: FAST
-            Spo2: 85
+            spo2: 85
           injuries:
             - name: Shrapnel
               location: right bicep
@@ -2119,7 +2139,7 @@ scenes:
             mental_status: AGONY
             breathing: NORMAL
             heart_rate: FAST
-            Spo2: 82
+            spo2: 82
           injuries:
             - name: Shrapnel
               location: right shoulder
@@ -2128,7 +2148,8 @@ scenes:
     probe_config:
       - probe_id: MetricsEval.MD17.21
         description: Injury5/Situation0 who to treat
-    restricted_actions: []
+    restricted_actions:
+      - MOVE_TO_EVAC
     action_mapping:
       - action_id: treat_patient_a
         action_type: APPLY_TREATMENT
@@ -2199,7 +2220,7 @@ scenes:
             mental_status: AGONY
             breathing: NORMAL
             heart_rate: FAST
-            Spo2: 85
+            spo2: 85
           injuries:
             - name: Shrapnel
               location: left bicep
@@ -2226,7 +2247,7 @@ scenes:
             mental_status: AGONY
             breathing: NORMAL
             heart_rate: FAST
-            Spo2: 85
+            spo2: 85
           injuries:
             - name: Shrapnel
               location: right bicep
@@ -2253,7 +2274,7 @@ scenes:
             mental_status: AGONY
             breathing: NORMAL
             heart_rate: FAST
-            Spo2: 82
+            spo2: 82
           injuries:
             - name: Shrapnel
               location: right shoulder
@@ -2262,7 +2283,8 @@ scenes:
     probe_config:
       - probe_id: MetricsEval.MD17.22
         description: Injury5/Situation5 who to treat
-    restricted_actions: []
+    restricted_actions:
+      - MOVE_TO_EVAC
     action_mapping:
       - action_id: treat_patient_a
         action_type: APPLY_TREATMENT

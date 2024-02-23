@@ -53,7 +53,7 @@ class Vitals(Model):
             'mental_status': 'mental_status',
             'breathing': 'breathing',
             'heart_rate': 'heart_rate',
-            'spo2': 'Spo2'
+            'spo2': 'spo2'
         }
         self._conscious = conscious
         self._avpu = avpu
