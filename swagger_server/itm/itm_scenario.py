@@ -126,6 +126,7 @@ class ITMScenario:
         # If the scene has no action mappings, then the scenario can end.
         if self.isd.current_scene.action_mappings == []:
             self.session.end_scenario()
+            return
 
         # Log the scene change
         print(f"--> Changing to scene index {self.isd.current_scene_index}.")

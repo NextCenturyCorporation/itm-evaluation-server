@@ -64,18 +64,20 @@ class ITMSession:
     def end_scenario(self):
         """
         End the current scenario and store history to json file.
-
-        Returns:
-            The session alignment from TA1.
         """
         self.history.add_history(
             "Scenario ended", {"scenario_id": self.itm_scenario.id, "session_id": self.session_id,
                             "elapsed_time": self.state.elapsed_time}, None)
         print(f"--> Scenario '{self.itm_scenario.id}' ended.")
         self.state.scenario_complete = True
-        session_alignment_score = 0.0
 
-        if self.ta1_integration and not self.kdma_training:
+        if self.kdma_training:
+            self.state.unstructured = 'Scenario complete.'
+            self._cleanup()
+            return
+
+        session_alignment_score = None
+        if self.ta1_integration:
             try:
                 session_alignment :AlignmentResults = \
                     self.itm_scenario.ta1_controller.get_session_alignment()
@@ -90,16 +92,14 @@ class ITMSession:
             except:
                 print("--> WARNING: Exception getting session alignment. Ignoring.")
 
-        if self.kdma_training:
-            self.state.unstructured = f'Scenario {self.itm_scenario.id} complete. Session alignment score = {session_alignment_score}'
-        else:
-            self.state.unstructured = 'Scenario complete.'
+        self.state.unstructured = f'Scenario {self.itm_scenario.id} complete. Session alignment score = {session_alignment_score}'
+        self._cleanup()
 
+
+    def _cleanup(self):
         if self.save_history:
             self.history.write_to_json_file()
-
         self.history.clear_history()
-        return session_alignment_score
 
 
     def _get_realtime_elapsed_time(self) -> float:
