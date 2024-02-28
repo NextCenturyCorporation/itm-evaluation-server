@@ -348,28 +348,32 @@ class ITMActionHandler:
         if character:
             for isd_character in self.current_scene.state.characters:
                 if isd_character.id == character.id:
-                    character.vitals.mental_status = isd_character.vitals.mental_status
-                    if character.vitals.mental_status not in unresponsive_statuses:
+                    if isd_character.vitals.mental_status not in unresponsive_statuses:
+                        character.vitals.mental_status = isd_character.vitals.mental_status
                         character.vitals.ambulatory = isd_character.vitals.ambulatory
                         character.vitals.avpu = isd_character.vitals.avpu
                         character.vitals.breathing = isd_character.vitals.breathing
                         character.vitals.conscious = isd_character.vitals.conscious
                         self._reveal_injuries(isd_character, character)
                         character.visited = True
+                    else:
+                        character.vitals.mental_status = MentalStatusEnum.UNRESPONSIVE
                     time_passed = self.times_dict["SITREP"]
         else:
             # takes time for each responsive character during sitrep
             for curr_character in self.session.state.characters:
                 for isd_character in self.current_scene.state.characters:
                     if isd_character.id == curr_character.id:
-                        curr_character.vitals.mental_status = isd_character.vitals.mental_status
-                        if curr_character.vitals.mental_status not in unresponsive_statuses:
+                        if isd_character.vitals.mental_status not in unresponsive_statuses:
+                            curr_character.vitals.mental_status = isd_character.vitals.mental_status
                             curr_character.vitals.ambulatory = isd_character.vitals.ambulatory
                             curr_character.vitals.avpu = isd_character.vitals.avpu
                             curr_character.vitals.conscious = isd_character.vitals.conscious
                             curr_character.vitals.breathing = isd_character.vitals.breathing
                             self._reveal_injuries(isd_character, curr_character)
                             curr_character.visited = True
+                        else:
+                            curr_character.vitals.mental_status = MentalStatusEnum.UNRESPONSIVE
                         time_passed += self.times_dict["SITREP"]
 
         return time_passed
