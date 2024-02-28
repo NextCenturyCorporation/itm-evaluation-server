@@ -44,7 +44,7 @@ class ITMSession:
         # ADM History
         self.history: ITMHistory = ITMHistory()
         # This determines whether the server makes calls to TA1
-        self.ta1_integration = True
+        self.ta1_integration = False
         # This determines whether the server saves history to JSON
         self.save_history = False
 
@@ -303,7 +303,10 @@ class ITMSession:
 
         if self.session_type == 'eval':
             self.save_history = True
+            self.ta1_integration = True
             max_scenarios = None
+        elif kdma_training:
+            self.ta1_integration = True
 
         self.history.add_history(
                 "Start Session",
@@ -356,11 +359,6 @@ class ITMSession:
             The current state of the scenario as a State object.
         """
 
-        # Validate that action is a valid, well-formed action
-        (successful, message, code) = self.action_handler.validate_action(body)
-        if not successful:
-            return message, code
-
         message = f"--> ADM chose action {body.action_type}"
         if body.character_id:
             message += f" with character {body.character_id}"
@@ -369,6 +367,11 @@ class ITMSession:
         elif body.parameters:
             message += f" with parameters {body.parameters}"
         print(message + '.')
+
+        # Validate that action is a valid, well-formed action
+        (successful, message, code) = self.action_handler.validate_action(body)
+        if not successful:
+            return message, code
 
         self.action_handler.process_action(action=body)
         return self.state
