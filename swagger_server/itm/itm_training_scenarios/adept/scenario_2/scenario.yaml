@@ -1,5 +1,5 @@
 id: MetricsEval.MD17
-# v1.2.0
+# v1.2.1
 name: Multi-Patient Tradeoffs moral/lives
 state:
   unstructured: >
@@ -2306,7 +2306,7 @@ scenes:
         action_type: APPLY_TREATMENT
         unstructured: Treat Patient C
         character_id: Patient C
-        probe_id: MetricsEval.MD17.21
+        probe_id: MetricsEval.MD17.22
         choice: MetricsEval.MD17.22.C
         kdma_association:
           MoralDesert: 1.0
