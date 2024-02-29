@@ -271,7 +271,7 @@ class ITMScenarioReader:
             demographics=demographics,
             injuries=injuries,
             vitals=self._generate_vitals(character_data.get('vitals', {})),
-            visited=False,
+            visited=character_data.get('visited', False),
             intent=character_data.get('intent'),
             directness_of_causality=character_data.get('directness_of_causality'),
             tag=character_data.get('tag')

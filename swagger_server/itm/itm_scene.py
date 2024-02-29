@@ -110,22 +110,24 @@ class ITMScene:
 
         # Let's not be TOO predictable
         shuffle(actions)
-
         return actions
 
 
-    def action_taken(self, action_id, justification, session_state):
+    def action_taken(self, action :Action, session_state :State):
+        self.actions_taken.append(action.action_id)
+        next_scene_index = self.index + 1
         for mapping in self.action_mappings:
-            if mapping.action_id == action_id:
-                self.actions_taken.append(mapping.action_id)
+            if mapping.action_id == action.action_id:
+                next_scene_index = mapping.next_scene
                 # Respond to probes if conditions are met.
                 if self.conditions_met(mapping.conditions, session_state, mapping.condition_semantics):
-                    self.parent_scenario.respond_to_probe(mapping.probe_id, mapping.choice, justification)
-                # Determine if we should transition to the next scene.
-                if mapping.action_type == ActionTypeEnum.END_SCENE or \
-                    self.conditions_met(self.transitions, session_state, self.transition_semantics):
-                        self.parent_scenario.change_scene(mapping.next_scene, self.transitions)
+                    self.parent_scenario.respond_to_probe(mapping.probe_id, mapping.choice, action.justification)
+                break  # action_id's are unique within a scene
 
+        # Determine if we should transition to the next scene.
+        if action.action_type == ActionTypeEnum.END_SCENE or \
+            self.conditions_met(self.transitions, session_state, self.transition_semantics):
+                self.parent_scenario.change_scene(next_scene_index, self.transitions)
 
     def _probe_condition_met(self, probe_conditions :List[str]) -> bool:
         if not probe_conditions:
