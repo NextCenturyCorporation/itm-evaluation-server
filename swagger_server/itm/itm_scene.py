@@ -87,10 +87,11 @@ class ITMScene:
             for mapping in self.action_mappings if (not mapping.action_id in self.actions_taken) or mapping.repeatable
         ]
 
-        # Add unmapped action types (other than END and TAG) that aren't explicitly restricted.
+        # Add unmapped action types (other than END_SCENE) that aren't explicitly restricted.
         valid_action_types = get_swagger_class_enum_values(ActionTypeEnum)
         valid_action_types.remove(ActionTypeEnum.END_SCENE)
-        valid_action_types.remove(ActionTypeEnum.TAG_CHARACTER)
+        #TODO: uncomment when tagging configuration is supported (ITM-217)
+        #valid_action_types.remove(ActionTypeEnum.TAG_CHARACTER)
         current_action_types = []
         for action in actions:
             current_action_types.append(action.action_type)

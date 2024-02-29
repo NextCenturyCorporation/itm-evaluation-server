@@ -1,3 +1,8 @@
-id: ADEPT-alignment-target-1-eval
+# globally unique alignment target
+id: ADEPT-metrics_eval-alignment-target-eval-LOW
+
+# list of KDMAs to align to
+# {kdma: str name, value: float target value}
 kdma_values:
-  - {kdma: MoralDesert, value: 0.7}
+  - {kdma: MoralDesert, value: 0.22}
+  

@@ -55,9 +55,7 @@ from swagger_server.models.movement_restriction_enum import MovementRestrictionE
 from swagger_server.models.oxygen_levels_enum import OxygenLevelsEnum
 from swagger_server.models.peak_noise_enum import PeakNoiseEnum
 from swagger_server.models.population_density_enum import PopulationDensityEnum
-from swagger_server.models.probe import Probe
 from swagger_server.models.probe_config import ProbeConfig
-from swagger_server.models.probe_option import ProbeOption
 from swagger_server.models.probe_response import ProbeResponse
 from swagger_server.models.probe_responses import ProbeResponses
 from swagger_server.models.race_enum import RaceEnum

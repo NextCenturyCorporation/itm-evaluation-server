@@ -109,7 +109,7 @@ class ProbeResponse(Model):
     def choice(self) -> str:
         """Gets the choice of this ProbeResponse.
 
-        id of choice made (from ProbeOption)  # noqa: E501
+        id of choice made  # noqa: E501
 
         :return: The choice of this ProbeResponse.
         :rtype: str
@@ -120,7 +120,7 @@ class ProbeResponse(Model):
     def choice(self, choice: str):
         """Sets the choice of this ProbeResponse.
 
-        id of choice made (from ProbeOption)  # noqa: E501
+        id of choice made  # noqa: E501
 
         :param choice: The choice of this ProbeResponse.
         :type choice: str

@@ -2,7 +2,6 @@ import time
 import uuid
 import random
 import os
-import connexion
 from typing import List
 from copy import deepcopy
 from swagger_server.models import (
@@ -45,7 +44,7 @@ class ITMSession:
         # ADM History
         self.history: ITMHistory = ITMHistory()
         # This determines whether the server makes calls to TA1
-        self.ta1_integration = True
+        self.ta1_integration = False
         # This determines whether the server saves history to JSON
         self.save_history = False
 
@@ -65,18 +64,20 @@ class ITMSession:
     def end_scenario(self):
         """
         End the current scenario and store history to json file.
-
-        Returns:
-            The session alignment from TA1.
         """
         self.history.add_history(
             "Scenario ended", {"scenario_id": self.itm_scenario.id, "session_id": self.session_id,
                             "elapsed_time": self.state.elapsed_time}, None)
         print(f"--> Scenario '{self.itm_scenario.id}' ended.")
         self.state.scenario_complete = True
-        session_alignment_score = 0.0
 
-        if self.ta1_integration == True:
+        if self.kdma_training:
+            self.state.unstructured = 'Scenario complete.'
+            self._cleanup()
+            return
+
+        session_alignment_score = None
+        if self.ta1_integration:
             try:
                 session_alignment :AlignmentResults = \
                     self.itm_scenario.ta1_controller.get_session_alignment()
@@ -91,16 +92,14 @@ class ITMSession:
             except:
                 print("--> WARNING: Exception getting session alignment. Ignoring.")
 
-        if self.kdma_training:
-            self.state.unstructured = f'Scenario {self.itm_scenario.id} complete. Session alignment score = {session_alignment_score}'
-        else:
-            self.state.unstructured = 'Scenario complete.'
+        self.state.unstructured = f'Scenario {self.itm_scenario.id} complete. Session alignment score = {session_alignment_score}'
+        self._cleanup()
 
+
+    def _cleanup(self):
         if self.save_history:
             self.history.write_to_json_file()
-
         self.history.clear_history()
-        return session_alignment_score
 
 
     def _get_realtime_elapsed_time(self) -> float:
@@ -304,7 +303,10 @@ class ITMSession:
 
         if self.session_type == 'eval':
             self.save_history = True
+            self.ta1_integration = True
             max_scenarios = None
+        elif kdma_training:
+            self.ta1_integration = True
 
         self.history.add_history(
                 "Start Session",
@@ -357,11 +359,6 @@ class ITMSession:
             The current state of the scenario as a State object.
         """
 
-        # Validate that action is a valid, well-formed action
-        (successful, message, code) = self.action_handler.validate_action(body)
-        if not successful:
-            return message, code
-
         message = f"--> ADM chose action {body.action_type}"
         if body.character_id:
             message += f" with character {body.character_id}"
@@ -370,6 +367,11 @@ class ITMSession:
         elif body.parameters:
             message += f" with parameters {body.parameters}"
         print(message + '.')
+
+        # Validate that action is a valid, well-formed action
+        (successful, message, code) = self.action_handler.validate_action(body)
+        if not successful:
+            return message, code
 
         self.action_handler.process_action(action=body)
         return self.state
@@ -380,15 +382,19 @@ class ITMSession:
             return 'Session alignment can only be requested during a training session', 403
 
         session_alignment :AlignmentResults = None
-        if self.ta1_integration == True:
+        if self.ta1_integration:
             try:
-                session_alignment = \
-                    self.itm_scenario.ta1_controller.get_session_alignment(target_id=target_id)
+                if len(self.itm_scenario.probes_sent) > 0:
+                    session_alignment = \
+                        self.itm_scenario.ta1_controller.get_session_alignment(target_id=target_id)
+                else:
+                    session_alignment = AlignmentResults(alignment_source=[], alignment_target_id=target_id, score=0.5, kdma_values=[])
+
             except:
                 print("--> WARNING: Exception getting session alignment.")
                 return 'Could not get session alignment; is a TA1 server running?', 503
         else:
-            session_alignment = AlignmentResults(None, target_id, 0.0, None)
+            session_alignment = AlignmentResults(alignment_source=[], alignment_target_id=target_id, score=0.5, kdma_values=[])
         print(f"--> Got session alignment score {session_alignment.score} from TA1 for alignment target id {target_id}.")
         return session_alignment
 
