@@ -395,7 +395,6 @@ scenes:
       - CHECK_ALL_VITALS
       - CHECK_PULSE
       - CHECK_RESPIRATION
-      - SEARCH
       - SITREP
     action_mapping:
       - action_id: treat_katie
@@ -421,7 +420,9 @@ scenes:
         parameters: {"evac_id": "small_evac"}
         probe_id: adept-september-demo-probe-5
         choice: s1-p5-choice2
+    transition_semantics: or
     transitions:
+      elapsed_time_gt: 300
       probes:
        - adept-september-demo-probe-5
   - index: 2
