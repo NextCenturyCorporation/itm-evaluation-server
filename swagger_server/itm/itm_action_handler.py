@@ -303,7 +303,8 @@ class ITMActionHandler:
         for character in self.session.state.characters:
             for isd_character in self.current_scene.state.characters:
                 if isd_character.id == character.id:
-                    if isd_character.vitals.ambulatory:
+                    if isd_character.vitals.ambulatory and \
+                    isd_character.vitals.mental_status in [MentalStatusEnum.CALM, MentalStatusEnum.UPSET]:
                         character.vitals.ambulatory = True
                         character.vitals.conscious = True
         return self.times_dict["DIRECT_MOBILE_CHARACTERS"]
