@@ -46,7 +46,8 @@ class ITMScenario:
         # isd is short for ITM Scenario Data
         isd = ITMScenarioData()
 
-        scenario_reader = ITMScenarioReader(self.yaml_path + "scenario.yaml")
+        #scenario_reader = ITMScenarioReader(self.yaml_path + "scenario.yaml")
+        scenario_reader = ITMScenarioReader(self.yaml_path)
         (scenario, isd.scenes) = \
             scenario_reader.read_scenario_from_yaml()
         isd.current_scene_index = 0
@@ -58,6 +59,7 @@ class ITMScenario:
         self.id = scenario.id
         self.name = scenario.name
 
+        """
         if not self.training:
             self.alignment_target_reader = ITMAlignmentTargetReader(self.yaml_path + "alignment_target.yaml")
 
@@ -66,6 +68,7 @@ class ITMScenario:
                 self.alignment_target_reader.alignment_target.id if not self.training else None,
                 self.scene_type
             )
+        """
 
     # Pass-through to ITMScene
     def get_available_actions(self) -> List[Action]:

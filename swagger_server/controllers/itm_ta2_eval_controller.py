@@ -8,6 +8,8 @@ MAX_SESSIONS = 5     # Hard limit on simultaneously active sessions
 SESSION_TIMEOUT = 60 * 60 * 24  # 24 hour timeout in seconds
 itm_sessions = {}     # one for each active adm_name
 session_mapping = {}  # maps session_id to adm_name and last active time
+ITMSession.initialize()
+
 """
 The internal controller for ITM Server.
 """

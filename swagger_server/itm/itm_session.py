@@ -13,12 +13,17 @@ from swagger_server.models import (
 )
 from .itm_scenario import ITMScenario
 from .itm_action_handler import ITMActionHandler
+from .itm_alignment_target_reader import ITMAlignmentTargetReader
+from .itm_ta1_controller import ITMTa1Controller
 from .itm_history import ITMHistory
 
 class ITMSession:
     """
     Class for representing and manipulating a simulation scenario session.
     """
+    # Class variables
+    EVALUATION_TYPE = 'metrics'
+    local_alignment_targets = {}
 
     def __init__(self):
         """
@@ -47,6 +52,92 @@ class ITMSession:
         self.ta1_integration = False
         # This determines whether the server saves history to JSON
         self.save_history = False
+
+    @staticmethod
+    def initialize():
+        path = f"swagger_server/itm/data/{ITMSession.EVALUATION_TYPE}/local_alignment_targets/"
+        ta1_names = ITMSession._get_sub_directory_names(path)
+        print('ta1_names:')
+        print(ta1_names)
+        for ta1_name in ta1_names:
+            targets = ITMSession._get_file_names(path + ta1_name)
+            print('targets:')
+            print(targets)
+            ITMSession.local_alignment_targets[ta1_name] = []
+            for target in targets:
+                target_reader = ITMAlignmentTargetReader(f"{path}{ta1_name}/{target}")
+                ITMSession.local_alignment_targets[ta1_name].append(target_reader.alignment_target)
+
+        print('local_alignment_targets:')
+        print(ITMSession.local_alignment_targets['adept'])
+        print(ITMSession.local_alignment_targets['soartech'])
+
+        my_ta1_names = ta1_names
+        ta1_integration = True
+        alignment_data = {} # maps ta1_name to list alignment_targets, used whether connecting to TA1 or not
+        ta1_controllers = {} # map of ta1_names to lists of ta1_controllers
+
+        if ta1_integration:
+            # Populate alignment_data from ITMTa1Controller.get_alignment_data
+            # Populate ta1_controllers from alignment_data
+            for ta1_name in my_ta1_names:
+                alignment_data[ta1_name] = ITMTa1Controller.get_alignment_data(ta1_name)
+            print('alignment_data:')
+            print(alignment_data)
+            for ta1_name in my_ta1_names:
+                alignment_targets = alignment_data[ta1_name]
+                alignment_targets = [target for target in alignment_targets if 'train' not in target.id]
+                controllers = []
+                for alignment_target in alignment_targets:
+                        controllers.append(ITMTa1Controller(alignment_target_id=alignment_target.id,
+                                                            scene_type=ta1_name,
+                                                            alignment_target=alignment_target))
+                """
+                controllers = [
+                    ITMTa1Controller(alignment_target_id=target_id,
+                                     scene_type=ta1_name,
+                                     alignment_target=alignment_target)
+                    for alignment_target in alignment_targets for target_id in alignment_target.id
+                ]
+                """
+                ta1_controllers[ta1_name] = controllers
+        else:
+            # Populate alignment_data from ITMSession.local_alignment_targets
+            for ta1_name in my_ta1_names:
+                pass
+
+        path = f"swagger_server/itm/data/{ITMSession.EVALUATION_TYPE}/scenarios/"
+        itm_scenarios = []
+        for ta1_name in my_ta1_names:
+            scenarios = ITMSession._get_file_names(path, [ITMSession.EVALUATION_TYPE, ta1_name, 'eval'])
+            num_scenarios = len(my_ta1_names) * len(scenarios) # Or max_scenarios
+            print('scenarios')
+            print(scenarios)
+            alignment_targets = alignment_data[ta1_name]
+            alignment_targets = [target for target in alignment_targets if 'train' not in target.id]
+            for scenario in scenarios:
+                itm_scenario = \
+                    ITMScenario(yaml_path=f'{path}{scenario}',
+                                session=ITMSession(), training=False)
+                itm_scenario.generate_scenario_data()
+                itm_scenarios.append(itm_scenario)
+                for counter in range(1, len(alignment_targets)):
+                    new_scenario = deepcopy(itm_scenario)
+                    itm_scenarios.append(new_scenario)
+
+            print(f'There are now {len(itm_scenarios)} scenarios.')
+            # if integrated, add ta1_controllers to each scenario
+            # else, add alignment_targets to each scenario
+            # (or could just add alignment_targets either way)
+            if ta1_integration:
+                controllers = ta1_controllers[ta1_name]
+                print(f'Iterating through {len(scenarios)} scenarios with {len(controllers)} controllers.')
+                for scenario_ctr in range(len(scenarios)):
+                    print(f'looking for controller #{scenario_ctr % (len(controllers))}')
+                    itm_scenarios[scenario_ctr].ta1_controller = controllers[scenario_ctr % (len(controllers))]
+            else:
+                pass
+        print(f'itm_scenarios length: {len(itm_scenarios)}')
 
 
     def _check_scenario_id(self, scenario_id: str) -> None:
@@ -114,7 +205,37 @@ class ITMSession:
         return round(self.time_elapsed_realtime, 2)
 
 
-    def _get_sub_directory_names(self, directory):
+    @staticmethod
+    def _contains_filters(filespec, filters):
+        for filter in filters:
+            if filter not in filespec:
+                return False
+        return True
+
+    @staticmethod
+    def _get_file_names(directory, filters = [""]):
+        """
+        Return the filespec of all of the files inside of the
+        specified directory.
+
+        Args:
+            directory: The directory to search inside of for files.
+            filters: optional list of substrings to filter results
+        """
+
+        filespecs = []
+        full_list = os.listdir(directory)
+        filtered_list = [
+            filespec for filespec in full_list if ITMSession._contains_filters(filespec, filters)
+        ]
+        for item in filtered_list:
+            item_path = os.path.join(directory, item)
+            if os.path.isfile(item_path):
+                filespecs.append(item)
+        return filespecs
+
+    @staticmethod
+    def _get_sub_directory_names(directory):
         """
         Return the names of all of the subdirectories inside of the
         parameter directory.
