@@ -1,4 +1,4 @@
 id: maximization_low
-kdmas:
-  - name: maximization
+kdma_values:
+  - kdma: maximization
     value: 0.1

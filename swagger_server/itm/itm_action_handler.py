@@ -34,10 +34,10 @@ class ITMActionHandler:
         self.current_scene = scenario.isd.current_scene
 
     def _reveal_injuries(self, source: Character, target: Character):
-        if target.visited: # Don't reveal injuries in visited characters
-            return
+        if target.visited:
+            pass # Character could be pre-configured visited but with discoverable injuries
 
-        # Add discoverable injuries target character (with discovered status).
+        # Add discoverable injuries to target character (with discovered status).
         revealed_injuries = [source_injury for source_injury in source.injuries if source_injury.status == InjuryStatusEnum.DISCOVERABLE]
         for injury in revealed_injuries:
             injury.status = InjuryStatusEnum.DISCOVERED
@@ -205,12 +205,17 @@ class ITMActionHandler:
             the location to treat.
         """
         # If the treatment treats the injury at the specified location, then change its status to treated.
-        # NOTE: this assumes there is only one injury per location.
         supply_used = action.parameters.get('treatment', None)
+        attempted_treatment = False
         for injury in character.injuries:
             if injury.location == action.parameters.get('location', None):
-                if self._proper_treatment(supply_used, injury.name, injury.location):
-                    injury.status = InjuryStatusEnum.TREATED
+                if injury.status != InjuryStatusEnum.TREATED: # Can't attempt to treat a treated injury
+                    attempted_treatment = True
+                    if self._proper_treatment(supply_used, injury.name, injury.location):
+                        injury.status = InjuryStatusEnum.TREATED
+
+        if not attempted_treatment: # Realize the injury is already treated, but no vital/injury discovery happens
+            return self.times_dict["treatmentTimes"]["ALREADY_TREATED"]
 
         # Decrement unreusable supplies and increment time passed during treatment, even if the injury is untreated
         time_passed = 0
@@ -298,7 +303,8 @@ class ITMActionHandler:
         for character in self.session.state.characters:
             for isd_character in self.current_scene.state.characters:
                 if isd_character.id == character.id:
-                    if isd_character.vitals.ambulatory:
+                    if isd_character.vitals.ambulatory and \
+                    isd_character.vitals.mental_status in [MentalStatusEnum.CALM, MentalStatusEnum.UPSET]:
                         character.vitals.ambulatory = True
                         character.vitals.conscious = True
         return self.times_dict["DIRECT_MOBILE_CHARACTERS"]
@@ -430,4 +436,4 @@ class ITMActionHandler:
                                          self.session.state.to_dict())
 
         # Tell Scene what happened
-        self.current_scene.action_taken(action.action_id, action.justification, self.session.state)
+        self.current_scene.action_taken(action=action, session_state=self.session.state)

@@ -30,14 +30,16 @@ class ITMScenario:
         self.id=''
         self.name=''
 
-    # Hide vitals and hidden injuries
+    # Hide vitals (if not already visited) and hidden injuries
     @staticmethod
     def clear_hidden_data(state :State):
+        initially_visible_injuries = [InjuryStatusEnum.VISIBLE, InjuryStatusEnum.TREATED, InjuryStatusEnum.DISCOVERED]
         for character in state.characters:
             character.injuries[:] = \
-                [injury for injury in character.injuries if injury.status == InjuryStatusEnum.VISIBLE]
-            character.unstructured_postassess = None
-            character.vitals = Vitals()
+                [injury for injury in character.injuries if injury.status in initially_visible_injuries]
+            if not character.visited:
+                character.unstructured_postassess = None
+                character.vitals = Vitals()
 
 
     def generate_scenario_data(self):

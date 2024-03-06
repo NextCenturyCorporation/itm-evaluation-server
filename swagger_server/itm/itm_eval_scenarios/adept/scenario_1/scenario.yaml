@@ -511,4 +511,3 @@ scenes:
   - index: 5  # dummy scene
     end_scene_allowed: true
     action_mapping: []
-  
