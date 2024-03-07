@@ -73,7 +73,9 @@ class ITMSession:
         print(ITMSession.local_alignment_targets['soartech'])
 
         my_ta1_names = ta1_names
-        ta1_integration = True
+        #my_ta1_names.pop(1)
+
+        ta1_integration = False
         alignment_data = {} # maps ta1_name to list alignment_targets, used whether connecting to TA1 or not
         ta1_controllers = {} # map of ta1_names to lists of ta1_controllers
 
@@ -104,17 +106,18 @@ class ITMSession:
         else:
             # Populate alignment_data from ITMSession.local_alignment_targets
             for ta1_name in my_ta1_names:
-                pass
+                alignment_data[ta1_name] = ITMSession.local_alignment_targets[ta1_name]
 
         path = f"swagger_server/itm/data/{ITMSession.EVALUATION_TYPE}/scenarios/"
-        itm_scenarios = []
+        total_itm_scenarios = []
         for ta1_name in my_ta1_names:
             scenarios = ITMSession._get_file_names(path, [ITMSession.EVALUATION_TYPE, ta1_name, 'eval'])
             num_scenarios = len(my_ta1_names) * len(scenarios) # Or max_scenarios
             print('scenarios')
             print(scenarios)
-            alignment_targets = alignment_data[ta1_name]
-            alignment_targets = [target for target in alignment_targets if 'train' not in target.id]
+            #alignment_targets = alignment_data[ta1_name]
+            alignment_targets = [target for target in alignment_data[ta1_name] if 'train' not in target.id]
+            itm_scenarios = []
             for scenario in scenarios:
                 itm_scenario = \
                     ITMScenario(yaml_path=f'{path}{scenario}',
@@ -125,19 +128,25 @@ class ITMSession:
                     new_scenario = deepcopy(itm_scenario)
                     itm_scenarios.append(new_scenario)
 
-            print(f'There are now {len(itm_scenarios)} scenarios.')
+            print(f'There are now {len(itm_scenarios)} scenarios for {ta1_name}.')
             # if integrated, add ta1_controllers to each scenario
             # else, add alignment_targets to each scenario
             # (or could just add alignment_targets either way)
             if ta1_integration:
                 controllers = ta1_controllers[ta1_name]
-                print(f'Iterating through {len(scenarios)} scenarios with {len(controllers)} controllers.')
-                for scenario_ctr in range(len(scenarios)):
+                print(f'Iterating through {len(itm_scenarios)} scenarios with {len(controllers)} controllers.')
+                for scenario_ctr in range(len(itm_scenarios)):
                     print(f'looking for controller #{scenario_ctr % (len(controllers))}')
                     itm_scenarios[scenario_ctr].ta1_controller = controllers[scenario_ctr % (len(controllers))]
             else:
-                pass
-        print(f'itm_scenarios length: {len(itm_scenarios)}')
+                print(f'Iterating through {len(itm_scenarios)} scenarios with {len(alignment_targets)} alignment targets.')
+                for scenario_ctr in range(len(itm_scenarios)):
+                    target = alignment_targets[scenario_ctr % (len(alignment_targets))]
+                    print(f'adding target: {target.id}')
+                    itm_scenarios[scenario_ctr].alignment_target = alignment_targets[scenario_ctr % (len(alignment_targets))]
+            total_itm_scenarios.extend(itm_scenarios)
+            print(f'Adding {len(itm_scenarios)} scenarios for {ta1_name} for a total of {len(total_itm_scenarios)}')
+        print(f'Total itm_scenarios length: {len(total_itm_scenarios)}')
 
 
     def _check_scenario_id(self, scenario_id: str) -> None:

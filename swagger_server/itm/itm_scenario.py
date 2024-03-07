@@ -2,7 +2,7 @@ from typing import List
 from dataclasses import dataclass
 from copy import deepcopy
 from swagger_server.models import (
-    Action, InjuryStatusEnum, ProbeResponse, State, Vitals
+    Action, AlignmentTarget, InjuryStatusEnum, ProbeResponse, State, Vitals
 )
 from .itm_scenario_reader import ITMScenarioReader
 from .itm_scene import ITMScene
@@ -22,6 +22,7 @@ class ITMScenario:
         self.scene_type = 'adept' if 'adept' in self.yaml_path else 'soartech'
         self.training = training
         self.alignment_target_reader: ITMAlignmentTargetReader = None
+        self.alignment_target: AlignmentTarget = None
         self.ta1_controller: ITMTa1Controller = None
         self.probes_sent = []
         from.itm_session import ITMSession
