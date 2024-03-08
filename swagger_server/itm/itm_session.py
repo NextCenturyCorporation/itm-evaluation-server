@@ -23,7 +23,10 @@ class ITMSession:
     """
     # Class variables
     EVALUATION_TYPE = 'metrics'
-    local_alignment_targets = {}
+    local_alignment_targets = {} # alignment_targets baked into server, for use when not connecting to TA1
+    alignment_data = {} # maps ta1_name to list alignment_targets, used whether connecting to TA1 or not
+    ta1_controllers = {} # map of ta1_names to lists of ta1_controllers
+    ta1_connected = False # have we successfully connected to TA1?
 
     def __init__(self):
         """
@@ -49,12 +52,30 @@ class ITMSession:
         # ADM History
         self.history: ITMHistory = ITMHistory()
         # This determines whether the server makes calls to TA1
-        self.ta1_integration = False
+        self.ta1_integration = False # Default here applies to non-training, non-eval sessions
         # This determines whether the server saves history to JSON
         self.save_history = False
 
+    def __deepcopy__(self, memo):
+        return self # Allows us to deepcopy ITMScenarios
+
     @staticmethod
     def initialize():
+        ta1_names = ITMSession.init_local_data()
+        try:
+            ITMSession.init_ta1_data(ta1_names)
+            ITMSession.ta1_connected = True
+        except:
+            print("--> Could not initialize TA1 data. Running standalone with local alignment targets.")
+
+        # If we couldn't use data from TA1, initialize with local data.
+        if not ITMSession.ta1_connected:
+            for ta1_name in ta1_names:
+                ITMSession.alignment_data[ta1_name] = ITMSession.local_alignment_targets[ta1_name]
+
+
+    @staticmethod
+    def init_local_data():
         path = f"swagger_server/itm/data/{ITMSession.EVALUATION_TYPE}/local_alignment_targets/"
         ta1_names = ITMSession._get_sub_directory_names(path)
         print('ta1_names:')
@@ -71,82 +92,26 @@ class ITMSession:
         print('local_alignment_targets:')
         print(ITMSession.local_alignment_targets['adept'])
         print(ITMSession.local_alignment_targets['soartech'])
+        return ta1_names
 
-        my_ta1_names = ta1_names
-        #my_ta1_names.pop(1)
 
-        ta1_integration = False
-        alignment_data = {} # maps ta1_name to list alignment_targets, used whether connecting to TA1 or not
-        ta1_controllers = {} # map of ta1_names to lists of ta1_controllers
-
-        if ta1_integration:
-            # Populate alignment_data from ITMTa1Controller.get_alignment_data
-            # Populate ta1_controllers from alignment_data
-            for ta1_name in my_ta1_names:
-                alignment_data[ta1_name] = ITMTa1Controller.get_alignment_data(ta1_name)
-            print('alignment_data:')
-            print(alignment_data)
-            for ta1_name in my_ta1_names:
-                alignment_targets = alignment_data[ta1_name]
-                alignment_targets = [target for target in alignment_targets if 'train' not in target.id]
-                controllers = []
-                for alignment_target in alignment_targets:
-                        controllers.append(ITMTa1Controller(alignment_target_id=alignment_target.id,
-                                                            scene_type=ta1_name,
-                                                            alignment_target=alignment_target))
-                """
-                controllers = [
-                    ITMTa1Controller(alignment_target_id=target_id,
-                                     scene_type=ta1_name,
-                                     alignment_target=alignment_target)
-                    for alignment_target in alignment_targets for target_id in alignment_target.id
-                ]
-                """
-                ta1_controllers[ta1_name] = controllers
-        else:
-            # Populate alignment_data from ITMSession.local_alignment_targets
-            for ta1_name in my_ta1_names:
-                alignment_data[ta1_name] = ITMSession.local_alignment_targets[ta1_name]
-
-        path = f"swagger_server/itm/data/{ITMSession.EVALUATION_TYPE}/scenarios/"
-        total_itm_scenarios = []
-        for ta1_name in my_ta1_names:
-            scenarios = ITMSession._get_file_names(path, [ITMSession.EVALUATION_TYPE, ta1_name, 'eval'])
-            num_scenarios = len(my_ta1_names) * len(scenarios) # Or max_scenarios
-            print('scenarios')
-            print(scenarios)
-            #alignment_targets = alignment_data[ta1_name]
-            alignment_targets = [target for target in alignment_data[ta1_name] if 'train' not in target.id]
-            itm_scenarios = []
-            for scenario in scenarios:
-                itm_scenario = \
-                    ITMScenario(yaml_path=f'{path}{scenario}',
-                                session=ITMSession(), training=False)
-                itm_scenario.generate_scenario_data()
-                itm_scenarios.append(itm_scenario)
-                for counter in range(1, len(alignment_targets)):
-                    new_scenario = deepcopy(itm_scenario)
-                    itm_scenarios.append(new_scenario)
-
-            print(f'There are now {len(itm_scenarios)} scenarios for {ta1_name}.')
-            # if integrated, add ta1_controllers to each scenario
-            # else, add alignment_targets to each scenario
-            # (or could just add alignment_targets either way)
-            if ta1_integration:
-                controllers = ta1_controllers[ta1_name]
-                print(f'Iterating through {len(itm_scenarios)} scenarios with {len(controllers)} controllers.')
-                for scenario_ctr in range(len(itm_scenarios)):
-                    print(f'looking for controller #{scenario_ctr % (len(controllers))}')
-                    itm_scenarios[scenario_ctr].ta1_controller = controllers[scenario_ctr % (len(controllers))]
-            else:
-                print(f'Iterating through {len(itm_scenarios)} scenarios with {len(alignment_targets)} alignment targets.')
-                for scenario_ctr in range(len(itm_scenarios)):
-                    target = alignment_targets[scenario_ctr % (len(alignment_targets))]
-                    print(f'adding target: {target.id}')
-                    itm_scenarios[scenario_ctr].alignment_target = alignment_targets[scenario_ctr % (len(alignment_targets))]
-            total_itm_scenarios.extend(itm_scenarios)
-            print(f'Adding {len(itm_scenarios)} scenarios for {ta1_name} for a total of {len(total_itm_scenarios)}')
-        print(f'Total itm_scenarios length: {len(total_itm_scenarios)}')
+    @staticmethod
+    def init_ta1_data(ta1_names):
+        # Populate alignment_data from ITMTa1Controller.get_alignment_data
+        # Populate ta1_controllers from alignment_data
+        for ta1_name in ta1_names:
+            ITMSession.alignment_data[ta1_name] = ITMTa1Controller.get_alignment_data(ta1_name)
+        print('alignment_data:')
+        print(ITMSession.alignment_data)
+        for ta1_name in ta1_names:
+            alignment_targets = ITMSession.alignment_data[ta1_name]
+            alignment_targets = [target for target in alignment_targets if 'train' not in target.id]
+            controllers = []
+            for alignment_target in alignment_targets:
+                    controllers.append(ITMTa1Controller(alignment_target_id=alignment_target.id,
+                                                        scene_type=ta1_name,
+                                                        alignment_target=alignment_target))
+            ITMSession.ta1_controllers[ta1_name] = controllers
 
 
     def _check_scenario_id(self, scenario_id: str) -> None:
@@ -279,7 +244,7 @@ class ITMSession:
             return 'Scenario Complete', 400
         if self.kdma_training:
             return 'No alignment target in training sessions', 400
-        return self.itm_scenario.alignment_target_reader.alignment_target
+        return self.itm_scenario.alignment_target
 
     def get_scenario_state(self, scenario_id: str) -> State:
         """
@@ -367,7 +332,7 @@ class ITMSession:
                         )
                         print(f"--> Got new session_id {ta1_session_id} from TA1.")
                     if not self.kdma_training:
-                        scenario_alignment = self.itm_scenario.ta1_controller.get_alignment_target()
+                        scenario_alignment = self.itm_scenario.ta1_controller.alignment_target
                         print(f"--> Got alignment target {scenario_alignment} from TA1.")
                         self.history.add_history(
                             "TA1 Alignment Target Data",
@@ -431,11 +396,15 @@ class ITMSession:
         self.session_type = session_type
         self.history.clear_history()
 
+        ta1_names = []
         if self.session_type == 'eval':
             self.save_history = True
             self.ta1_integration = True
             max_scenarios = None
-        elif kdma_training:
+            ta1_names = ['soartech', 'adept']
+        else:
+            ta1_names.append(self.session_type)
+        if kdma_training:
             self.ta1_integration = True
 
         self.history.add_history(
@@ -445,34 +414,72 @@ class ITMSession:
                 "session_type": session_type},
                 self.session_id)
 
-        yaml_paths = []
-        yaml_path = "swagger_server/itm/itm_" + ("training_scenarios/" if self.kdma_training else "eval_scenarios/")
-        if session_type == 'soartech' or session_type == 'eval':
-            yaml_paths.append(yaml_path + 'soartech/')
-        if session_type == 'adept' or session_type == 'eval':
-            yaml_paths.append(yaml_path + 'adept/')
+        if self.ta1_integration and not ITMSession.ta1_connected:
+            # Try to get TA1 data, otherwise Fail
+            try:
+                print("Attempting just-in-time connection to TA1.")
+                ITMSession.init_ta1_data(ta1_names)
+                ITMSession.ta1_connected = True
+            except:
+                print("--> WARNING: Exception communicating with TA1; is the TA1 server running?  Ending session.")
+                self._end_session() # Exception here ends the session
+                return 'Exception communicating with TA1; is the TA1 server running?  Ending session.', 503
 
-        selected_yaml_directories = [
-            f"{path}{folder}/"
-            for path in yaml_paths
-            for folder in self._get_sub_directory_names(path)]
-        if max_scenarios is not None and max_scenarios >= 1:
+        path = f"swagger_server/itm/data/{ITMSession.EVALUATION_TYPE}/scenarios/"
+        num_read_scenarios = 0
+        for ta1_name in ta1_names:
+            scenarios = ITMSession._get_file_names(path, [ITMSession.EVALUATION_TYPE, ta1_name,
+                                                          'train' if kdma_training else 'eval'])
+            print('scenarios:')
+            print(scenarios)
+            alignment_targets = [target for target in ITMSession.alignment_data[ta1_name] if 'train' not in target.id]
+            ta1_scenarios = []
+            """
+            for scenario in scenarios:
+                for counter in range(len(alignment_targets)):
+                    itm_scenario = \
+                        ITMScenario(yaml_path=f'{path}{scenario}',
+                                    session=self, training=self.kdma_training)
+                    itm_scenario.generate_scenario_data()
+                    ta1_scenarios.append(itm_scenario)
+            """
+            for scenario in scenarios:
+                itm_scenario = \
+                    ITMScenario(yaml_path=f'{path}{scenario}',
+                                session=self, training=self.kdma_training)
+                itm_scenario.generate_scenario_data()
+                ta1_scenarios.append(itm_scenario)
+                for counter in range(1, len(alignment_targets)):
+                    ta1_scenarios.append(deepcopy(itm_scenario))
+
+            print(f'There are now {len(ta1_scenarios)} scenarios for {ta1_name}.')
+            # if an integrated session, add ta1_controllers to each scenario
+            # else, add alignment_targets to each scenario
+            if self.ta1_integration:
+                controllers = ITMSession.ta1_controllers[ta1_name]
+                print(f'Iterating through {len(ta1_scenarios)} scenarios with {len(controllers)} controllers.')
+                for scenario_ctr in range(len(ta1_scenarios)):
+                    print(f'Using controller #{scenario_ctr % (len(controllers))}')
+                    ta1_scenarios[scenario_ctr].set_controller(controllers[scenario_ctr % (len(controllers))])
+                    print(f'Has alignment target of {ta1_scenarios[scenario_ctr].ta1_controller.alignment_target}')
+            else:
+                print(f'Iterating through {len(ta1_scenarios)} scenarios with {len(alignment_targets)} alignment targets.')
+                for scenario_ctr in range(len(ta1_scenarios)):
+                    target = alignment_targets[scenario_ctr % (len(alignment_targets))]
+                    print(f'adding target: {target.id}')
+                    ta1_scenarios[scenario_ctr].alignment_target = alignment_targets[scenario_ctr % (len(alignment_targets))]
+            self.itm_scenarios.extend(ta1_scenarios)
+            num_read_scenarios += len(ta1_scenarios)
+            print(f'Adding {len(ta1_scenarios)} scenarios for {ta1_name} for a total of {num_read_scenarios}')
+
+        if max_scenarios is not None and max_scenarios >= num_read_scenarios:
             self.using_max_scenarios = True
-            # fill in extra scenarios with random copies
-            inital_selected_yaml_directories = deepcopy(selected_yaml_directories)
-            while len(selected_yaml_directories) < max_scenarios:
-                random_directory = random.choice(inital_selected_yaml_directories)
-                selected_yaml_directories.append(random_directory)
-        else:
-            max_scenarios = len(selected_yaml_directories)
-        if session_type != 'eval':
-            random.shuffle(selected_yaml_directories)
-        for i in range(max_scenarios):
-            itm_scenario = \
-                ITMScenario(yaml_path=selected_yaml_directories[i],
-                            session=self, training=self.kdma_training)
-            itm_scenario.generate_scenario_data()
-            self.itm_scenarios.append(itm_scenario)
+            # Fill in extra scenarios with random copies of original scenarios
+            while len(self.itm_scenarios) < max_scenarios:
+                random_index = random.randint(0, num_read_scenarios - 1)
+                self.itm_scenarios.append(deepcopy(self.itm_scenarios[random_index]))
+
+        print(f'Total itm_scenarios length: {len(self.itm_scenarios)}')
         self.current_scenario_index = 0
 
         return self.session_id
@@ -510,6 +517,9 @@ class ITMSession:
     def get_session_alignment(self, target_id: str) -> AlignmentResults:
         if not self.kdma_training:
             return 'Session alignment can only be requested during a training session', 403
+
+        if 'base' in self.adm_name:
+            print('LOUD LOGGING!  An ADM with "base" in the name is requesting an alignment target.')
 
         session_alignment :AlignmentResults = None
         if self.ta1_integration:
