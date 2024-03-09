@@ -206,15 +206,16 @@ class ITMActionHandler:
         """
         # If the treatment treats the injury at the specified location, then change its status to treated.
         supply_used = action.parameters.get('treatment', None)
-        attempted_treatment = False
+        attempted_retreatment = False
         for injury in character.injuries:
             if injury.location == action.parameters.get('location', None):
                 if injury.status != InjuryStatusEnum.TREATED: # Can't attempt to treat a treated injury
-                    attempted_treatment = True
                     if self._proper_treatment(supply_used, injury.name, injury.location):
                         injury.status = InjuryStatusEnum.TREATED
+                else:
+                    attempted_retreatment = True
 
-        if not attempted_treatment: # Realize the injury is already treated, but no vital/injury discovery happens
+        if attempted_retreatment: # Realize the injury is already treated, but no vital/injury discovery happens
             return self.times_dict["treatmentTimes"]["ALREADY_TREATED"]
 
         # Decrement unreusable supplies and increment time passed during treatment, even if the injury is untreated
