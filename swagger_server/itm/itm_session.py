@@ -324,13 +324,11 @@ class ITMSession:
 
             if self.ta1_integration:
                 try:
-                    if not self.itm_scenario.ta1_controller.session_id \
-                            or not self.kdma_training: # When training, allow TA1 sessions to span scenarios
-                        ta1_session_id = self.itm_scenario.ta1_controller.new_session()
-                        self.history.add_history(
-                            "TA1 Session ID", {}, ta1_session_id
-                        )
-                        print(f"--> Got new session_id {ta1_session_id} from TA1.")
+                    ta1_session_id = self.itm_scenario.ta1_controller.new_session()
+                    self.history.add_history(
+                        "TA1 Session ID", {}, ta1_session_id
+                    )
+                    print(f"--> Got new session_id {ta1_session_id} from TA1.")
                     if not self.kdma_training:
                         scenario_alignment = self.itm_scenario.ta1_controller.alignment_target
                         print(f"--> Got alignment target {scenario_alignment} from TA1.")
