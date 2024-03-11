@@ -94,22 +94,16 @@ class ITMSession:
         # Populate alignment_data from ITMTa1Controller.get_alignment_data
         # Populate ta1_controllers from alignment_data
         for ta1_name in ta1_names:
-            ITMSession.alignment_data[ta1_name] = ITMTa1Controller.get_alignment_data(ta1_name)
-        for ta1_name in ta1_names:
-            alignment_targets = ITMSession.alignment_data[ta1_name]
-            alignment_targets = [target for target in alignment_targets if 'train' not in target.id]
-            controllers = []
-            for alignment_target in alignment_targets:
-                # Temporary work-around for SoarTech
-                if alignment_target.kdma_values == None:
-                    print('Working around SoarTech alignment targets.')
-                    from swagger_server.models import KDMAValue
-                    kdma = KDMAValue(kdma='maximization', value=0.9 if alignment_target.id == 'maximization_high' else 0.1)
-                    alignment_target.kdma_values = [kdma]
-                controllers.append(ITMTa1Controller(alignment_target_id=alignment_target.id,
-                                                    scene_type=ta1_name,
-                                                    alignment_target=alignment_target))
-            ITMSession.ta1_controllers[ta1_name] = controllers
+            ITMSession.alignment_data[ta1_name] = [
+                alignment_target for alignment_target in ITMTa1Controller.get_alignment_data(ta1_name)
+                    if 'train' not in alignment_target.id
+            ]
+            ITMSession.ta1_controllers[ta1_name] = [
+                ITMTa1Controller(alignment_target_id=alignment_target.id,
+                                 scene_type=ta1_name,
+                                 alignment_target=alignment_target)
+                                 for alignment_target in ITMSession.alignment_data[ta1_name]
+                                 ]
 
 
     def _check_scenario_id(self, scenario_id: str) -> None:
@@ -429,7 +423,7 @@ class ITMSession:
         for ta1_name in ta1_names:
             scenarios = ITMSession._get_file_names(path, [ITMSession.EVALUATION_TYPE, ta1_name,
                                                           'train' if kdma_training else 'eval'])
-            alignment_targets = [target for target in ITMSession.alignment_data[ta1_name] if 'train' not in target.id]
+            alignment_targets = [target for target in ITMSession.alignment_data[ta1_name]]
             ta1_scenarios = []
             for scenario in scenarios:
                 itm_scenario = \
