@@ -64,9 +64,10 @@ class ITMSession:
         ta1_names = ITMSession.init_local_data()
         print("Loaded local alignment targets from configuration.")
         try:
+            print("Loading TA1 configuration from TA1 servers...")
             ITMSession.init_ta1_data(ta1_names)
             ITMSession.ta1_connected = True
-            print("Loaded TA1 configuration from TA1 servers.")
+            print("Done.")
         except:
             print("--> Could not initialize TA1 data. Running standalone with local alignment targets.")
 
@@ -238,7 +239,7 @@ class ITMSession:
             return 'No alignment target in training sessions', 400
 
         if self.session_type == 'eval' and 'base' in self.adm_name:
-            print('LOUD LOGGING!  An ADM with "base" in the name is requesting an alignment target during evaluation.')
+            print('\033[92mWARNING!  An ADM with "base" in the name is requesting an alignment target during evaluation.\033[00m')
 
         return self.itm_scenario.alignment_target
 

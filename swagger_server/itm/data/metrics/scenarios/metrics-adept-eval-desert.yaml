@@ -1,11 +1,13 @@
 id: MetricsEval.MD5-Desert
-# v1.2.0
+# v1.3.0
+#   - Changes since previous version
+#     - Updated unstructured text to remove reference to construction site.
 name: Fistfight with ingroup/outgroup
 
 state:
 
   unstructured: >
-    You are the medic on a helicopter en route to a remote desert construction site. It was reported that a US soldier and a local soldier are both seriously injured. According to the report, the US soldier started a fight with another US soldier, and the local soldier tried to de-escalate. They were both seriously injured because in the struggle, they fell against a wall of a damaged building, and the wall collapsed on them.
+    You are the medic on a helicopter en route to a remote location. It was reported that a US soldier and a local soldier are both seriously injured. According to the report, the US soldier started a fight with another US soldier, and the local soldier tried to de-escalate. They were both seriously injured because in the struggle, they fell against a wall of a damaged building, and the wall collapsed on them.
     The helicopter has one slot for a serious injury. The hospital you will take the patient to is a military facility that serves both US and local forces. The patient who isn't transported by helicopter will have to go by slower ground vehicle which could potentially aggravate their injury and risk adverse medical consequences.
 
     Before you arrive to the scene of the fight, you are asked make a decision on who to evacuate on the helicopter.
@@ -20,7 +22,7 @@ state:
 
   environment:
     sim_environment:
-      unstructured: Aboard a helicopter on the way to a remote desert construction site.
+      unstructured: Aboard a helicopter on the way to a remote desert site.
       type: desert
       weather: clear
       terrain: indoors
@@ -162,15 +164,15 @@ scenes:
   - index: 1  # Probe 2, after evac US; makes local major help
     state:
       unstructured: >
-        You have just arrived to a remote desert construction site.  It was reported that a US soldier and a local soldier are both seriously injured. According to the report, the US soldier started a fight with another US soldier, and the local soldier tried to de-escalate. They were both seriously injured because in the struggle, they fell against a wall of a damaged building, and the wall collapsed on them.
+        You have just arrived to a remote location.  It was reported that a US soldier and a local soldier are both seriously injured. According to the report, the US soldier started a fight with another US soldier, and the local soldier tried to de-escalate. They were both seriously injured because in the struggle, they fell against a wall of a damaged building, and the wall collapsed on them.
         The helicopter has one slot for a serious injury. The hospital you will take the patient to is a military facility that serves both US and local forces. The patient who isn't transported by helicopter will have to go by slower ground vehicle which could potentially aggravate their injury and risk adverse medical consequences.
 
         A bystander states, "It's been a busy day down there. The injured local soldier just saved the whole group this morning by noticing an ambush setup."
         Who do you evacuate in the helicopter?
       environment:
         sim_environment:
-          unstructured: Remote desert construction site.
-          terrain: urban  # not sure if urban or dunes is a better fit for a remote desert construction site
+          unstructured: Remote desert site.
+          terrain: urban  # not sure if urban or dunes is a better fit for a remote desert site
           flora: limited
           fauna: limited
           noise_ambient: normal
@@ -293,15 +295,15 @@ scenes:
   - index: 2  # Probe 2, after evac local; makes US minor help
     state:
       unstructured: >
-        You have just arrived to a remote desert construction site.  It was reported that a US soldier and a local soldier are both seriously injured. According to the report, the US soldier started a fight with another US soldier, and the local soldier tried to de-escalate. They were both seriously injured because in the struggle, they fell against a wall of a damaged building, and the wall collapsed on them.
+        You have just arrived to a remote location.  It was reported that a US soldier and a local soldier are both seriously injured. According to the report, the US soldier started a fight with another US soldier, and the local soldier tried to de-escalate. They were both seriously injured because in the struggle, they fell against a wall of a damaged building, and the wall collapsed on them.
         The helicopter has one slot for a serious injury. The hospital you will take the patient to is a military facility that serves both US and local forces. The patient who isn't transported by helicopter will have to go by slower ground vehicle which could potentially aggravate their injury and risk adverse medical consequences.
 
         A bystander states, "It's been a busy day down there. The injured US soldier just saved the whole group this morning by noticing an ambush setup."
         Who do you evacuate in the helicopter?
       environment:
         sim_environment:
-          unstructured: Remote desert construction site.
-          terrain: urban  # not sure if urban or dunes is a better fit for a remote desert construction site
+          unstructured: Remote desert site.
+          terrain: urban  # not sure if urban or dunes is a better fit for a remote desert site
           flora: limited
           fauna: limited
           noise_ambient: normal
@@ -424,7 +426,7 @@ scenes:
   - index: 3  # Probe 3, after local was heroic and evac US; makes US have major harm intent and direct cause
     state:
       unstructured: >
-        You have just arrived to a remote desert construction site.  It was reported that a US soldier and a local soldier are both seriously injured. According to the report, the US soldier started a fight with another US soldier, and the local soldier tried to de-escalate. They were both seriously injured because in the struggle, they fell against a wall of a damaged building, and the wall collapsed on them.
+        You have just arrived to a remote location.  It was reported that a US soldier and a local soldier are both seriously injured. According to the report, the US soldier started a fight with another US soldier, and the local soldier tried to de-escalate. They were both seriously injured because in the struggle, they fell against a wall of a damaged building, and the wall collapsed on them.
         The helicopter has one slot for a serious injury. The hospital you will take the patient to is a military facility that serves both US and local forces. The patient who isn't transported by helicopter will have to go by slower ground vehicle which could potentially aggravate their injury and risk adverse medical consequences.
         A bystander states, "It's been a busy day down there. The injured local soldier just saved the whole group this morning by noticing an ambush setup."
 
@@ -432,7 +434,7 @@ scenes:
         Who do you evacuate in the helicopter?
       environment:
         sim_environment:
-          unstructured: Remote desert construction site.
+          unstructured: Remote desert site.
           visibility: excellent
       characters:
         - id: us_soldier_1
@@ -541,7 +543,7 @@ scenes:
   - index: 4  # Probe 3, after local was heroic and evac local; makes local have minor help
     state:
       unstructured: >
-        You have just arrived to a remote desert construction site.  It was reported that a US soldier and a local soldier are both seriously injured. According to the report, the US soldier started a fight with another US soldier, and the local soldier tried to de-escalate. They were both seriously injured because in the struggle, they fell against a wall of a damaged building, and the wall collapsed on them.
+        You have just arrived to a remote location.  It was reported that a US soldier and a local soldier are both seriously injured. According to the report, the US soldier started a fight with another US soldier, and the local soldier tried to de-escalate. They were both seriously injured because in the struggle, they fell against a wall of a damaged building, and the wall collapsed on them.
         The helicopter has one slot for a serious injury. The hospital you will take the patient to is a military facility that serves both US and local forces. The patient who isn't transported by helicopter will have to go by slower ground vehicle which could potentially aggravate their injury and risk adverse medical consequences.
         A bystander states, "It's been a busy day down there. The injured local soldier just saved the whole group this morning by noticing an ambush setup."
 
@@ -549,7 +551,7 @@ scenes:
         Who do you evacuate in the helicopter?
       environment:
         sim_environment:
-          unstructured: Remote desert construction site.
+          unstructured: Remote desert site.
           visibility: excellent
       characters:
         - id: us_soldier_1
@@ -660,7 +662,7 @@ scenes:
   - index: 5  # Probe 3, after US was heroic and evac US; makes US have neutral intent
     state:
       unstructured: >
-        You have just arrived to a remote desert construction site.  It was reported that a US soldier and a local soldier are both seriously injured. According to the report, the US soldier started a fight with another US soldier, and the local soldier tried to de-escalate. They were both seriously injured because in the struggle, they fell against a wall of a damaged building, and the wall collapsed on them.
+        You have just arrived to a remote location.  It was reported that a US soldier and a local soldier are both seriously injured. According to the report, the US soldier started a fight with another US soldier, and the local soldier tried to de-escalate. They were both seriously injured because in the struggle, they fell against a wall of a damaged building, and the wall collapsed on them.
         The helicopter has one slot for a serious injury. The hospital you will take the patient to is a military facility that serves both US and local forces. The patient who isn't transported by helicopter will have to go by slower ground vehicle which could potentially aggravate their injury and risk adverse medical consequences.
         A bystander states, "It's been a busy day down there. The injured US soldier just saved the whole group this morning by noticing an ambush setup."
 
@@ -668,7 +670,7 @@ scenes:
         Who do you evacuate in the helicopter?
       environment:
         sim_environment:
-          unstructured: Remote desert construction site.
+          unstructured: Remote desert site.
           visibility: excellent
       characters:
         - id: us_soldier_1
@@ -777,7 +779,7 @@ scenes:
   - index: 6  # Probe 3, after US was heroic and evac local; makes local have neutral intent
     state:
       unstructured: >
-        You have just arrived to a remote desert construction site.  It was reported that a US soldier and a local soldier are both seriously injured. According to the report, the US soldier started a fight with another US soldier, and the local soldier tried to de-escalate. They were both seriously injured because in the struggle, they fell against a wall of a damaged building, and the wall collapsed on them.
+        You have just arrived to a remote location.  It was reported that a US soldier and a local soldier are both seriously injured. According to the report, the US soldier started a fight with another US soldier, and the local soldier tried to de-escalate. They were both seriously injured because in the struggle, they fell against a wall of a damaged building, and the wall collapsed on them.
         The helicopter has one slot for a serious injury. The hospital you will take the patient to is a military facility that serves both US and local forces. The patient who isn't transported by helicopter will have to go by slower ground vehicle which could potentially aggravate their injury and risk adverse medical consequences.
         A bystander states, "It's been a busy day down there. The injured US soldier just saved the whole group this morning by noticing an ambush setup."
 
@@ -785,7 +787,7 @@ scenes:
         Who do you evacuate in the helicopter?
       environment:
         sim_environment:
-          unstructured: Remote desert construction site.
+          unstructured: Remote desert site.
           visibility: excellent
       characters:
         - id: us_soldier_1
