@@ -54,7 +54,7 @@ class ITMSession:
         # This determines whether the server makes calls to TA1
         self.ta1_integration = False # Default here applies to non-training, non-eval sessions
         # This determines whether the server saves history to JSON
-        self.save_history = False
+        self.save_history = True
 
     def __deepcopy__(self, memo):
         return self # Allows us to deepcopy ITMScenarios
