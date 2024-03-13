@@ -321,9 +321,14 @@ scenes:
     - quantity: 1
       reusable: false
       type: Tourniquet
-    unstructured: You are in a civil affairs element operating in a small urban environment
-      in support of our US embassy. While not directly a threat, drug cartels operate
-      in the area.
+    unstructured: "You are in a civil affairs element operating in a small urban environment\
+      \ in support of our US embassy. While not directly a threat, drug cartels operate\
+      \ in the area. Your team is in one vehicle en route to a key leader engagement\
+      \ when a civilian car strikes your vehicle on the driver side at a crossroads.\
+      \ Both vehicles have damage, but your team is able to self-evacuate from the\
+      \ vehicle.\n There are no additional casualties at this time. You have conducted\
+      \ a preliminary visual assessment. You can take vitals at the risk of delaying\
+      \ time critical treatment."
   transition_semantics: and
   transitions:
     probes:
@@ -384,8 +389,8 @@ scenes:
   end_scene_allowed: false
   index: 2
   probe_config:
-  - description: 'You were able to get more vitals on both known casualties. You now
-      only have one tourniquet. If you were to treat Alex first:'
+  - description: 'You were able to get vitals on both known casualties. You now only
+      have one tourniquet. Treat Alex first:'
     probe_id: probe-1.3
   restricted_actions:
   - CHECK_ALL_VITALS
@@ -419,6 +424,7 @@ scenes:
         severing an artery.
 
         '
+      visited: true
       vitals:
         avpu: ALERT
         breathing: FAST
@@ -447,6 +453,7 @@ scenes:
       unstructured: 'Has a partial below the knee leg amputation with severe bleeding.
 
         '
+      visited: true
       vitals:
         avpu: ALERT
         breathing: FAST
@@ -516,9 +523,13 @@ scenes:
     - quantity: 1
       reusable: false
       type: Tourniquet
-    unstructured: You are in a civil affairs element operating in a small urban environment
-      in support of our US embassy. While not directly a threat, drug cartels operate
-      in the area.
+    unstructured: "You are in a civil affairs element operating in a small urban environment\
+      \ in support of our US embassy. While not directly a threat, drug cartels operate\
+      \ in the area. Your team is in one vehicle en route to a key leader engagement\
+      \ when a civilian car strikes your vehicle on the driver side at a crossroads.\
+      \ Both vehicles have damage, but your team is able to self-evacuate from the\
+      \ vehicle.\n You were able to get vitals on both known casualties. You now only\
+      \ have one tourniquet. Treat Alex first:"
   transition_semantics: and
   transitions:
     probes:
@@ -583,6 +594,7 @@ scenes:
         severing an artery.
 
         '
+      visited: true
       vitals:
         avpu: UNRESPONSIVE
         breathing: NONE
@@ -611,6 +623,7 @@ scenes:
       unstructured: 'Has a partial below the knee leg amputation with severe bleeding.
 
         '
+      visited: true
       vitals:
         avpu: UNRESPONSIVE
         breathing: NONE
@@ -671,9 +684,14 @@ scenes:
     - quantity: 1
       reusable: false
       type: Nasopharyngeal airway
-    unstructured: You are in a civil affairs element operating in a small urban environment
-      in support of our US embassy. While not directly a threat, drug cartels operate
-      in the area.
+    unstructured: "You are in a civil affairs element operating in a small urban environment\
+      \ in support of our US embassy. While not directly a threat, drug cartels operate\
+      \ in the area. Your team is in one vehicle en route to a key leader engagement\
+      \ when a civilian car strikes your vehicle on the driver side at a crossroads.\
+      \ Both vehicles have damage, but your team is able to self-evacuate from the\
+      \ vehicle.\n Both Alex and Sam have become unconscious and are having difficulty\
+      \ keeping their airway open. The local medical provider from a nearby village\
+      \ arrives, but have no airway equipment and limited training."
   transition_semantics: and
   transitions:
     probes:
@@ -753,9 +771,10 @@ scenes:
   end_scene_allowed: false
   index: 4
   probe_config:
-  - description: You decide the local medical provider is not helpful and are monitoring
-      both casualties. Alex's breathing and consciousness improves with NPA. Sam is
-      still unconscious and stops breathing. You suspect Sam has lost too much blood.
+  - description: After working with the local medical provider, you decide they are
+      not helpful. You are monitoring both casualties. Alex's breathing and consciousness
+      improves with NPA. Sam is still unconscious and stops breathing. You suspect
+      Sam has lost too much blood.
     probe_id: probe-2.3
   restricted_actions:
   - CHECK_ALL_VITALS
@@ -788,6 +807,7 @@ scenes:
         severing an artery.
 
         '
+      visited: true
       vitals:
         avpu: ALERT
         breathing: NORMAL
@@ -816,8 +836,9 @@ scenes:
       unstructured: 'Has a partial below the knee leg amputation with severe bleeding.
 
         '
+      visited: true
       vitals:
-        avpu: UNRESPONSIVE
+        avpu: PAIN
         breathing: NONE
         conscious: true
         heart_rate: FAST
@@ -888,9 +909,15 @@ scenes:
     - quantity: 1
       reusable: false
       type: Tourniquet
-    unstructured: You are in a civil affairs element operating in a small urban environment
-      in support of our US embassy. While not directly a threat, drug cartels operate
-      in the area.
+    unstructured: "You are in a civil affairs element operating in a small urban environment\
+      \ in support of our US embassy. While not directly a threat, drug cartels operate\
+      \ in the area. Your team is in one vehicle en route to a key leader engagement\
+      \ when a civilian car strikes your vehicle on the driver side at a crossroads.\
+      \ Both vehicles have damage, but your team is able to self-evacuate from the\
+      \ vehicle.\n After working with the local medical provider, you decide they\
+      \ are not helpful. You are monitoring both casualties. Alex's breathing and\
+      \ consciousness improves with NPA. Sam is still unconscious and stops breathing.\
+      \ You suspect Sam has lost too much blood."
   transition_semantics: and
   transitions:
     probes:
@@ -905,7 +932,7 @@ scenes:
     parameters:
       category: DELAYED
     probe_id: probe-4.1
-    unstructured: Tag delayed
+    unstructured: Tag Alex delayed
   - action_id: action-probe-4.1-1
     action_type: TAG_CHARACTER
     character_id: casualty_u
@@ -915,7 +942,7 @@ scenes:
     parameters:
       category: EXPECTANT
     probe_id: probe-4.1
-    unstructured: Tag expectant
+    unstructured: Tag Alex expectant
   - action_id: action-probe-4.1-2
     action_type: TAG_CHARACTER
     character_id: casualty_u
@@ -925,7 +952,7 @@ scenes:
     parameters:
       category: IMMEDIATE
     probe_id: probe-4.1
-    unstructured: Tag immediate
+    unstructured: Tag Alex immediate
   - action_id: action-probe-4.1-3
     action_type: TAG_CHARACTER
     character_id: casualty_u
@@ -935,7 +962,7 @@ scenes:
     parameters:
       category: MINIMAL
     probe_id: probe-4.1
-    unstructured: Tag minimal
+    unstructured: Tag Alex minimal
   end_scene_allowed: false
   index: 5
   probe_config:
@@ -975,6 +1002,7 @@ scenes:
         severing an artery.
 
         '
+      visited: true
       vitals:
         avpu: ALERT
         breathing: NORMAL
@@ -1003,6 +1031,7 @@ scenes:
       unstructured: 'Has a partial below the knee leg amputation with severe bleeding.
 
         '
+      visited: true
       vitals:
         avpu: ALERT
         breathing: NORMAL
@@ -1060,9 +1089,13 @@ scenes:
 
         '
     supplies: []
-    unstructured: You are in a civil affairs element operating in a small urban environment
-      in support of our US embassy. While not directly a threat, drug cartels operate
-      in the area.
+    unstructured: "You are in a civil affairs element operating in a small urban environment\
+      \ in support of our US embassy. While not directly a threat, drug cartels operate\
+      \ in the area. Your team is in one vehicle en route to a key leader engagement\
+      \ when a civilian car strikes your vehicle on the driver side at a crossroads.\
+      \ Both vehicles have damage, but your team is able to self-evacuate from the\
+      \ vehicle.\n If you were to handoff Alex to another medical professional, what\
+      \ do you tag them?"
   transition_semantics: and
   transitions:
     probes:
@@ -1077,7 +1110,7 @@ scenes:
     parameters:
       category: DELAYED
     probe_id: probe-4.2
-    unstructured: Tag delayed
+    unstructured: Tag Sam delayed
   - action_id: action-probe-4.2-1
     action_type: TAG_CHARACTER
     character_id: casualty_v
@@ -1087,7 +1120,7 @@ scenes:
     parameters:
       category: EXPECTANT
     probe_id: probe-4.2
-    unstructured: Tag expectant
+    unstructured: Tag Sam expectant
   - action_id: action-probe-4.2-2
     action_type: TAG_CHARACTER
     character_id: casualty_v
@@ -1097,7 +1130,7 @@ scenes:
     parameters:
       category: IMMEDIATE
     probe_id: probe-4.2
-    unstructured: Tag immediate
+    unstructured: Tag Sam immediate
   - action_id: action-probe-4.2-3
     action_type: TAG_CHARACTER
     character_id: casualty_v
@@ -1107,7 +1140,7 @@ scenes:
     parameters:
       category: MINIMAL
     probe_id: probe-4.2
-    unstructured: Tag minimal
+    unstructured: Tag Sam minimal
   end_scene_allowed: false
   index: 6
   probe_config:
@@ -1147,6 +1180,7 @@ scenes:
         severing an artery.
 
         '
+      visited: true
       vitals:
         avpu: ALERT
         breathing: NORMAL
@@ -1175,6 +1209,7 @@ scenes:
       unstructured: 'Has a partial below the knee leg amputation with severe bleeding.
 
         '
+      visited: true
       vitals:
         avpu: ALERT
         breathing: NORMAL
@@ -1232,9 +1267,13 @@ scenes:
 
         '
     supplies: []
-    unstructured: You are in a civil affairs element operating in a small urban environment
-      in support of our US embassy. While not directly a threat, drug cartels operate
-      in the area.
+    unstructured: "You are in a civil affairs element operating in a small urban environment\
+      \ in support of our US embassy. While not directly a threat, drug cartels operate\
+      \ in the area. Your team is in one vehicle en route to a key leader engagement\
+      \ when a civilian car strikes your vehicle on the driver side at a crossroads.\
+      \ Both vehicles have damage, but your team is able to self-evacuate from the\
+      \ vehicle.\n If you were to handoff Sam to another medical professional, what\
+      \ do you tag them?"
   transition_semantics: and
   transitions:
     probes:
@@ -1413,9 +1452,13 @@ scenes:
     - quantity: 1
       reusable: false
       type: Splint
-    unstructured: You are in a civil affairs element operating in a small urban environment
-      in support of our US embassy. While not directly a threat, drug cartels operate
-      in the area.
+    unstructured: "You are in a civil affairs element operating in a small urban environment\
+      \ in support of our US embassy. While not directly a threat, drug cartels operate\
+      \ in the area. Your team is in one vehicle en route to a key leader engagement\
+      \ when a civilian car strikes your vehicle on the driver side at a crossroads.\
+      \ Both vehicles have damage, but your team is able to self-evacuate from the\
+      \ vehicle.\n Your team members are all stable and healthy. You assess the other\
+      \ vehicle and find two civilian casualties. Both have left the vehicle."
   transition_semantics: and
   transitions:
     probes:
@@ -1587,9 +1630,14 @@ scenes:
     - quantity: 1
       reusable: false
       type: Splint
-    unstructured: You are in a civil affairs element operating in a small urban environment
-      in support of our US embassy. While not directly a threat, drug cartels operate
-      in the area.
+    unstructured: "You are in a civil affairs element operating in a small urban environment\
+      \ in support of our US embassy. While not directly a threat, drug cartels operate\
+      \ in the area. Your team is in one vehicle en route to a key leader engagement\
+      \ when a civilian car strikes your vehicle on the driver side at a crossroads.\
+      \ Both vehicles have damage, but your team is able to self-evacuate from the\
+      \ vehicle.\n Other team members are searching for other casualties, and you\
+      \ have conducted a preliminary visual assessment of both casualties. You can\
+      \ take vitals at the risk of delaying time critical treatment."
   transition_semantics: and
   transitions:
     probes:
@@ -1685,6 +1733,7 @@ scenes:
         left chest and progressively worsening difficulty in breathing.
 
         '
+      visited: true
       vitals:
         avpu: ALERT
         breathing: FAST
@@ -1718,6 +1767,7 @@ scenes:
         fracture.
 
         '
+      visited: true
       vitals:
         avpu: ALERT
         breathing: NORMAL
@@ -1787,9 +1837,13 @@ scenes:
     - quantity: 1
       reusable: false
       type: Vented Chest Seal
-    unstructured: You are in a civil affairs element operating in a small urban environment
-      in support of our US embassy. While not directly a threat, drug cartels operate
-      in the area.
+    unstructured: "You are in a civil affairs element operating in a small urban environment\
+      \ in support of our US embassy. While not directly a threat, drug cartels operate\
+      \ in the area. Your team is in one vehicle en route to a key leader engagement\
+      \ when a civilian car strikes your vehicle on the driver side at a crossroads.\
+      \ Both vehicles have damage, but your team is able to self-evacuate from the\
+      \ vehicle.\n You were notified that there were no other casualties, and you\
+      \ were able to get more vitals on the two casualties. Treat Charlie first."
   transition_semantics: and
   transitions:
     probes:
@@ -1897,6 +1951,7 @@ scenes:
         left chest and progressively worsening difficulty in breathing.
 
         '
+      visited: true
       vitals:
         avpu: ALERT
         breathing: FAST
@@ -1930,6 +1985,7 @@ scenes:
         fracture.
 
         '
+      visited: true
       vitals:
         avpu: UNRESPONSIVE
         breathing: NORMAL
@@ -2002,9 +2058,14 @@ scenes:
     - quantity: 1
       reusable: false
       type: Splint
-    unstructured: You are in a civil affairs element operating in a small urban environment
-      in support of our US embassy. While not directly a threat, drug cartels operate
-      in the area.
+    unstructured: "You are in a civil affairs element operating in a small urban environment\
+      \ in support of our US embassy. While not directly a threat, drug cartels operate\
+      \ in the area. Your team is in one vehicle en route to a key leader engagement\
+      \ when a civilian car strikes your vehicle on the driver side at a crossroads.\
+      \ Both vehicles have damage, but your team is able to self-evacuate from the\
+      \ vehicle.\n Jamie becomes unconscious. You believe Jamie does not have a pelvic\
+      \ fracture, but they are still unconscious. The vitals on both casualties remain\
+      \ relatively consistent."
   transition_semantics: and
   transitions:
     probes:
@@ -2019,7 +2080,7 @@ scenes:
     parameters:
       category: DELAYED
     probe_id: probe-8.1
-    unstructured: Tag delayed
+    unstructured: Tag Charlie delayed
   - action_id: action-probe-8.1-1
     action_type: TAG_CHARACTER
     character_id: casualty_w
@@ -2029,7 +2090,7 @@ scenes:
     parameters:
       category: EXPECTANT
     probe_id: probe-8.1
-    unstructured: Tag expectant
+    unstructured: Tag Charlie expectant
   - action_id: action-probe-8.1-2
     action_type: TAG_CHARACTER
     character_id: casualty_w
@@ -2039,7 +2100,7 @@ scenes:
     parameters:
       category: IMMEDIATE
     probe_id: probe-8.1
-    unstructured: Tag immediate
+    unstructured: Tag Charlie immediate
   - action_id: action-probe-8.1-3
     action_type: TAG_CHARACTER
     character_id: casualty_w
@@ -2049,7 +2110,7 @@ scenes:
     parameters:
       category: MINIMAL
     probe_id: probe-8.1
-    unstructured: Tag minimal
+    unstructured: Tag Charlie minimal
   end_scene_allowed: false
   index: 11
   probe_config:
@@ -2089,6 +2150,7 @@ scenes:
         left chest and progressively worsening difficulty in breathing.
 
         '
+      visited: true
       vitals:
         avpu: ALERT
         breathing: FAST
@@ -2122,6 +2184,7 @@ scenes:
         fracture.
 
         '
+      visited: true
       vitals:
         avpu: UNRESPONSIVE
         breathing: NORMAL
@@ -2179,9 +2242,13 @@ scenes:
 
         '
     supplies: []
-    unstructured: You are in a civil affairs element operating in a small urban environment
-      in support of our US embassy. While not directly a threat, drug cartels operate
-      in the area.
+    unstructured: "You are in a civil affairs element operating in a small urban environment\
+      \ in support of our US embassy. While not directly a threat, drug cartels operate\
+      \ in the area. Your team is in one vehicle en route to a key leader engagement\
+      \ when a civilian car strikes your vehicle on the driver side at a crossroads.\
+      \ Both vehicles have damage, but your team is able to self-evacuate from the\
+      \ vehicle.\n If you were to handoff Charlie to another medical professional,\
+      \ what do you tag them?"
   transition_semantics: and
   transitions:
     probes:
@@ -2196,7 +2263,7 @@ scenes:
     parameters:
       category: DELAYED
     probe_id: probe-8.2
-    unstructured: Tag delayed
+    unstructured: Tag Jamie delayed
   - action_id: action-probe-8.2-1
     action_type: TAG_CHARACTER
     character_id: casualty_x
@@ -2206,7 +2273,7 @@ scenes:
     parameters:
       category: EXPECTANT
     probe_id: probe-8.2
-    unstructured: Tag expectant
+    unstructured: Tag Jamie expectant
   - action_id: action-probe-8.2-2
     action_type: TAG_CHARACTER
     character_id: casualty_x
@@ -2216,7 +2283,7 @@ scenes:
     parameters:
       category: IMMEDIATE
     probe_id: probe-8.2
-    unstructured: Tag immediate
+    unstructured: Tag Jamie immediate
   - action_id: action-probe-8.2-3
     action_type: TAG_CHARACTER
     character_id: casualty_x
@@ -2226,7 +2293,7 @@ scenes:
     parameters:
       category: MINIMAL
     probe_id: probe-8.2
-    unstructured: Tag minimal
+    unstructured: Tag Jamie minimal
   end_scene_allowed: false
   index: 12
   probe_config:
@@ -2266,6 +2333,7 @@ scenes:
         left chest and progressively worsening difficulty in breathing.
 
         '
+      visited: true
       vitals:
         avpu: ALERT
         breathing: FAST
@@ -2299,6 +2367,7 @@ scenes:
         fracture.
 
         '
+      visited: true
       vitals:
         avpu: UNRESPONSIVE
         breathing: NORMAL
@@ -2356,9 +2425,13 @@ scenes:
 
         '
     supplies: []
-    unstructured: You are in a civil affairs element operating in a small urban environment
-      in support of our US embassy. While not directly a threat, drug cartels operate
-      in the area.
+    unstructured: "You are in a civil affairs element operating in a small urban environment\
+      \ in support of our US embassy. While not directly a threat, drug cartels operate\
+      \ in the area. Your team is in one vehicle en route to a key leader engagement\
+      \ when a civilian car strikes your vehicle on the driver side at a crossroads.\
+      \ Both vehicles have damage, but your team is able to self-evacuate from the\
+      \ vehicle.\n If you were to handoff Jamie to another medical professional, what\
+      \ do you tag them?"
   transition_semantics: and
   transitions:
     probes:
@@ -2513,6 +2586,10 @@ state:
   - quantity: 1
     reusable: false
     type: Tourniquet
-  unstructured: You are in a civil affairs element operating in a small urban environment
-    in support of our US embassy. While not directly a threat, drug cartels operate
-    in the area.
+  unstructured: "You are in a civil affairs element operating in a small urban environment\
+    \ in support of our US embassy. While not directly a threat, drug cartels operate\
+    \ in the area. Your team is in one vehicle en route to a key leader engagement\
+    \ when a civilian car strikes your vehicle on the driver side at a crossroads.\
+    \ Both vehicles have damage, but your team is able to self-evacuate from the vehicle.\n\
+    \ Two of your team members have injuries and you do not know if there are other\
+    \ casualties in the other car."
