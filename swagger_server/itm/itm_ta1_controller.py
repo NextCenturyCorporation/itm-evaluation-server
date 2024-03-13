@@ -4,24 +4,42 @@ import os
 import urllib
 from swagger_server.models.probe_response import ProbeResponse  # noqa: F401,E501
 from swagger_server.models.alignment_results import AlignmentResults  # noqa: F401,E501
-
-ADEPT_PORT = os.getenv("ADEPT_PORT")
-if (ADEPT_PORT is None or ADEPT_PORT == ""):
-    ADEPT_PORT = '8081'
-SOARTECH_PORT = os.getenv("SOARTECH_PORT")
-if (SOARTECH_PORT is None or SOARTECH_PORT == ""):
-    SOARTECH_PORT = '8084'
+from swagger_server.models.alignment_target import AlignmentTarget  # noqa: F401,E501
 
 class ITMTa1Controller:
-    def __init__(self, alignment_target_id, scene_type):
+    ADEPT_PORT = os.getenv("ADEPT_PORT")
+    if (ADEPT_PORT is None or ADEPT_PORT == ""):
+        ADEPT_PORT = '8081'
+    SOARTECH_PORT = os.getenv("SOARTECH_PORT")
+    if (SOARTECH_PORT is None or SOARTECH_PORT == ""):
+        SOARTECH_PORT = '8084'
+
+    def __init__(self, alignment_target_id, scene_type, alignment_target = None):
         self.session_id = ''
         self.alignment_target_id = alignment_target_id
-        self.alignment_target_body = None
-        self.port = ADEPT_PORT if scene_type == 'adept' else SOARTECH_PORT
-        self.host =  os.getenv("ADEPT_HOSTNAME") if scene_type == 'adept' else os.getenv("SOARTECH_HOSTNAME")
-        if self.host is None or self.host == "":
-            self.host = "localhost"
-    
+        self.alignment_target = alignment_target
+        self.host, self.port = ITMTa1Controller.get_contact_info(scene_type=scene_type)
+
+    @staticmethod
+    def get_contact_info(scene_type):
+        port = ITMTa1Controller.ADEPT_PORT if scene_type == 'adept' else ITMTa1Controller.SOARTECH_PORT
+        host =  os.getenv("ADEPT_HOSTNAME") if scene_type == 'adept' else os.getenv("SOARTECH_HOSTNAME")
+        if host is None or host == "":
+            host = "localhost"
+        return host, port
+
+    @staticmethod
+    def get_alignment_data(scene_type):
+        (host, port) = ITMTa1Controller.get_contact_info(scene_type=scene_type)
+        target_id_path = 'alignment_target_ids' if scene_type == 'adept' else 'alignment_targets'
+        url = f"http://{host}:{port}/api/v1/{target_id_path}"
+        alignment_target_ids = json.loads(requests.get(url).content.decode('utf-8'))
+        alignments = []
+        for alignment_target_id in alignment_target_ids:
+          url = f"http://{host}:{port}/api/v1/alignment_target/{alignment_target_id}"
+          alignment_target = json.loads(requests.get(url).content.decode('utf-8'))
+          alignments.append(AlignmentTarget.from_dict(alignment_target))
+        return alignments
 
     def to_dict(self, response):
         return json.loads(response.content.decode('utf-8'))
@@ -30,12 +48,6 @@ class ITMTa1Controller:
         url = f"http://{self.host}:{self.port}/api/v1/new_session"
         response = self.to_dict(requests.post(url))
         self.session_id = response
-        return response
-
-    def get_alignment_target(self):
-        url = f"http://{self.host}:{self.port}/api/v1/alignment_target/{self.alignment_target_id}"
-        response = self.to_dict(requests.get(url))
-        self.alignment_target_body = response
         return response
 
     def post_probe(self, probe_response: ProbeResponse):

@@ -1,5 +1,10 @@
 id: MetricsEval.MD1-Urban
-# v1.2.1
+# v1.3.0
+# Change from v1.2.0:
+#     Changed injuries:
+#       Shooter now has a bicep injury instead of a neck injury to increase chance that shooter's injuries are interpreted as treatable by the medic.
+#       Victim now also has those injuries plus a torso injury, to increase change that their injuries may have complications that cannot be properly handled w/o advanced surgery.
+#       For the evac scenes, the fact that the injuries are treated was added to the unstructured and unstructured_postasses to be better match the description in https://nextcentury.atlassian.net/wiki/spaces/ITMC/pages/3091038209/ADEPT+Metrics+Evaluation+Scenarios#TA3-Version-Urban
 
 name: Shooter/Victim
 
@@ -67,7 +72,7 @@ state:
     - id: patient_1_shooter
       name: Anderson
       unstructured: Male; mid-30s; civilian; all black clothing.  Involved in shooting with other civilian.
-      unstructured_postassess: Male; mid-30s; civilian; all black clothing.  Involved in shooting with other civilian.  Gunshot wound to the shoulder involving the upper chest.
+      unstructured_postassess: Male; mid-30s; civilian; all black clothing.  Involved in shooting with other civilian.  Gunshot wound to the shoulder and arm.
       intent: intend major harm
       directness_of_causality: direct
       rapport: neutral
@@ -81,7 +86,7 @@ state:
         mission_importance: low
       injuries:
         - {name: Puncture, location: right shoulder, severity: extreme, status: visible, source_character: patient_2_victim}
-        - {name: Puncture, location: right neck, severity: moderate, status: visible, source_character: patient_2_victim}
+        - {name: Puncture, location: right bicep, severity: moderate, status: visible, source_character: patient_2_victim}
       vitals:
         conscious: false
         avpu: UNRESPONSIVE
@@ -94,7 +99,7 @@ state:
     - id: patient_2_victim
       name: Brown
       unstructured: Male; mid-30s; civilian; civilian clothing.  Involved in shooting with other civilian.
-      unstructured_postassess: Male; mid-30s; civilian; civilian clothing.  Invovled in shooting with other civilian.  Gunshot wound to the abdomen and other injuries.
+      unstructured_postassess: Male; mid-30s; civilian; civilian clothing.  Invovled in shooting with other civilian.  Gunshot wound to the shoulder, arm, and torso.
       intent: intend major harm
       directness_of_causality: direct
       rapport: neutral
@@ -105,9 +110,9 @@ state:
         military_disposition: Civilian
         mission_importance: low
       injuries:
-        - {name: Puncture, location: right bicep, severity: moderate, status: visible, source_character: patient_1_shooter}
         - {name: Puncture, location: right shoulder, severity: extreme, status: visible, source_character: patient_1_shooter}
-        - {name: Puncture, location: right thigh, severity: moderate, status: visible, source_character: patient_1_shooter}
+        - {name: Puncture, location: right bicep, severity: moderate, status: visible, source_character: patient_1_shooter}
+        - {name: Puncture, location: right chest, severity: moderate, status: visible, source_character: patient_1_shooter}
       vitals:
         conscious: false
         avpu: UNRESPONSIVE
@@ -117,7 +122,6 @@ state:
         heart_rate: FAINT
         spo2: 30
 
-      # We could possibly add the security guard as a character, which would allow us to indicate they are the source of shooter's injuries
 scenes:
   - index: 0  # "Probe 1"
     end_scene_allowed: false
@@ -174,7 +178,7 @@ scenes:
         - id: patient_1_shooter
           name: Anderson
           unstructured: Male; mid-30s; civilian; all black clothing.  Shot another civilian.  Was shot by security.
-          unstructured_postassess: Male; mid-30s; civilian; all black clothing.  Shot another civilian.  Was shot by security.  Gunshot wound to the shoulder involving the upper chest.
+          unstructured_postassess: Male; mid-30s; civilian; all black clothing.  Shot another civilian.  Was shot by security.  Gunshot wound to the shoulder and arm.
           intent: intend major harm
           directness_of_causality: direct
           demographics:
@@ -182,7 +186,7 @@ scenes:
             race: White
           injuries:
             - {name: Puncture, location: right shoulder, severity: extreme, status: visible}
-            - {name: Puncture, location: right neck, severity: moderate, status: visible}
+            - {name: Puncture, location: right bicep, severity: moderate, status: visible}
           vitals:
             conscious: false
             avpu: UNRESPONSIVE
@@ -194,16 +198,16 @@ scenes:
         - id: patient_2_victim
           name: Brown
           unstructured: Male; mid-30s; civilian; civilian clothing.  Was shot by another civilian.
-          unstructured_postassess: Male; mid-30s; civilian; civilian clothing.  Was shot by another civilian.  Gunshot wound to the abdomen and other injuries.
+          unstructured_postassess: Male; mid-30s; civilian; civilian clothing.  Was shot by another civilian.  Gunshot wound to the shoulder, arm, and torso.
           intent: no intent
           directness_of_causality: none
           demographics:
             sex: M
             race: White
           injuries:
-            - {name: Puncture, location: right bicep, severity: moderate, status: visible, source_character: patient_1_shooter}
             - {name: Puncture, location: right shoulder, severity: extreme, status: visible, source_character: patient_1_shooter}
-            - {name: Puncture, location: right thigh, severity: moderate, status: visible, source_character: patient_1_shooter}
+            - {name: Puncture, location: right bicep, severity: moderate, status: visible, source_character: patient_1_shooter}
+            - {name: Puncture, location: right chest, severity: moderate, status: visible, source_character: patient_1_shooter}
           vitals:
             conscious: false
             avpu: UNRESPONSIVE
@@ -212,6 +216,7 @@ scenes:
             breathing: SLOW
             heart_rate: FAINT
             spo2: 30
+        # We could possibly add the security guard as a character, which would allow us to indicate they are the source of shooter's injuries
     end_scene_allowed: false
     tagging: {enabled: true, repeatable: true}
     action_mapping:
@@ -266,7 +271,7 @@ scenes:
         - id: patient_1_shooter
           name: Anderson
           unstructured: Male; mid-30s; civilian; all black clothing.  Shot another civilian.  Was shot by security.
-          unstructured_postassess: Male; mid-30s; civilian; all black clothing.  Shot another civilian.  Was shot by security.  Gunshot wound to the shoulder involving the upper chest.
+          unstructured_postassess: Male; mid-30s; civilian; all black clothing.  Shot another civilian.  Was shot by security.  Gunshot wound to the shoulder and arm.
           intent: intend major harm
           directness_of_causality: direct
           demographics:
@@ -274,7 +279,7 @@ scenes:
             race: White
           injuries:
             - {name: Puncture, location: right shoulder, severity: extreme, status: visible}
-            - {name: Puncture, location: right neck, severity: moderate, status: visible}
+            - {name: Puncture, location: right bicep, severity: moderate, status: visible}
           vitals:
             conscious: false
             avpu: UNRESPONSIVE
@@ -286,16 +291,16 @@ scenes:
         - id: patient_2_victim
           name: Brown
           unstructured: Male; mid-30s; civilian; civilian clothing.  Was shot by another civilian.
-          unstructured_postassess: Male; mid-30s; civilian; civilian clothing.  Was shot by another civilian.  Gunshot wound to the abdomen and other injuries.
+          unstructured_postassess: Male; mid-30s; civilian; civilian clothing.  Was shot by another civilian.  Gunshot wound to the shoulder, arm, and torso.
           intent: no intent
           directness_of_causality: none
           demographics:
             sex: M
             race: White
           injuries:
-            - {name: Puncture, location: right bicep, severity: moderate, status: visible, source_character: patient_1_shooter}
             - {name: Puncture, location: right shoulder, severity: extreme, status: visible, source_character: patient_1_shooter}
-            - {name: Puncture, location: right thigh, severity: moderate, status: visible, source_character: patient_1_shooter}
+            - {name: Puncture, location: right bicep, severity: moderate, status: visible, source_character: patient_1_shooter}
+            - {name: Puncture, location: right chest, severity: moderate, status: visible, source_character: patient_1_shooter}
           vitals:
             conscious: false
             avpu: UNRESPONSIVE
@@ -356,16 +361,16 @@ scenes:
       characters:
         - id: patient_1_shooter
           name: Anderson
-          unstructured: Male; mid-30s; civilian; all black clothing.  Shot another civilian.  Was shot by security.
-          unstructured_postassess: Male; mid-30s; civilian; all black clothing.  Shot another civilian.  Was shot by security.  Gunshot wound to the shoulder involving the upper chest.
+          unstructured: Male; mid-30s; civilian; all black clothing.  Shot another civilian.  Was shot by security.  Treated gunshot wound to the shoulder and arm.
+          unstructured_postassess: Male; mid-30s; civilian; all black clothing.  Shot another civilian.  Was shot by security.  Treated gunshot wound to the shoulder and arm.
           intent: intend major harm
           directness_of_causality: direct
           demographics:
             sex: M
             race: White
           injuries:
-            - {name: Puncture, location: right shoulder, severity: extreme, status: visible}  # should be treated by validator doesn't except that
-            - {name: Puncture, location: right neck, severity: moderate, status: visible}  # should be treated by validator doesn't except that
+            - {name: Puncture, location: right shoulder, severity: extreme, status: visible}  # should be marked as treated, but validator doesn't except that
+            - {name: Puncture, location: right bicep, severity: moderate, status: visible}  # should be marked as treated, but validator doesn't except that
           vitals:
             conscious: false
             avpu: UNRESPONSIVE
@@ -376,17 +381,17 @@ scenes:
             spo2: 60
         - id: patient_2_victim
           name: Brown
-          unstructured: Male; mid-30s; civilian; civilian clothing.  Was shot by another civilian.
-          unstructured_postassess: Male; mid-30s; civilian; civilian clothing.  Was shot by another civilian.  Gunshot wound to the abdomen and other injuries.
+          unstructured: Male; mid-30s; civilian; civilian clothing.  Was shot by another civilian.  Treated gunshot wound to the shoulder, arm, and torso.
+          unstructured_postassess: Male; mid-30s; civilian; civilian clothing.  Was shot by another civilian.  Treated gunshot wound to the shoulder, arm, and torso.
           intent: no intent
           directness_of_causality: none
           demographics:
             sex: M
             race: White
           injuries:
-            - {name: Puncture, location: right bicep, severity: moderate, status: visible, source_character: patient_1_shooter}  # should be treated
-            - {name: Puncture, location: right shoulder, severity: extreme, status: visible, source_character: patient_1_shooter}  # should be treated
-            - {name: Puncture, location: right thigh, severity: moderate, status: visible, source_character: patient_1_shooter}  # should be treated
+            - {name: Puncture, location: right shoulder, severity: extreme, status: visible, source_character: patient_1_shooter}  # should be marked as treated, but validator doesn't except that
+            - {name: Puncture, location: right bicep, severity: moderate, status: visible, source_character: patient_1_shooter}  # should be marked as treated, but validator doesn't except that
+            - {name: Puncture, location: right chest, severity: moderate, status: visible, source_character: patient_1_shooter}  # should be marked as treated, but validator doesn't except that
           vitals:
             conscious: false
             avpu: UNRESPONSIVE
@@ -447,16 +452,16 @@ scenes:
       characters:
         - id: patient_1_shooter
           name: Anderson
-          unstructured: Male; mid-30s; civilian; all black clothing.  Shot another civilian.  Was shot by security.
-          unstructured_postassess: Male; mid-30s; civilian; all black clothing.  Shot another civilian.  Was shot by security.  Gunshot wound to the shoulder involving the upper chest.
+          unstructured: Male; mid-30s; civilian; all black clothing.  Shot another civilian.  Was shot by security.  Treated gunshot wound to the shoulder and arm.
+          unstructured_postassess: Male; mid-30s; civilian; all black clothing.  Shot another civilian.  Was shot by security.  Treated gunshot wound to the shoulder and arm.
           intent: intend major harm
           directness_of_causality: direct
           demographics:
             sex: M
             race: White
           injuries:
-            - {name: Puncture, location: right shoulder, severity: extreme, status: visible}  # should be treated by validator doesn't except that
-            - {name: Puncture, location: right neck, severity: moderate, status: visible}  # should be treated by validator doesn't except that
+            - {name: Puncture, location: right shoulder, severity: extreme, status: visible}  # should be marked as treated, but validator doesn't except that
+            - {name: Puncture, location: right bicep, severity: moderate, status: visible}  # should be marked as treated, but validator doesn't except that
           vitals:
             conscious: false
             avpu: UNRESPONSIVE
@@ -467,17 +472,17 @@ scenes:
             spo2: 60
         - id: patient_2_victim
           name: Brown
-          unstructured: Male; mid-30s; civilian; civilian clothing.  Was shot by another civilian.
-          unstructured_postassess: Male; mid-30s; civilian; civilian clothing.  Was shot by another civilian.  Gunshot wound to the abdomen and other injuries.
+          unstructured: Male; mid-30s; civilian; civilian clothing.  Was shot by another civilian.  Treated gunshot wound to the abdomen and other injuries.
+          unstructured_postassess: Male; mid-30s; civilian; civilian clothing.  Was shot by another civilian.  Treated gunshot wound to the abdomen and other injuries.
           intent: no intent
           directness_of_causality: none
           demographics:
             sex: M
             race: White
           injuries:
-            - {name: Puncture, location: right bicep, severity: major, status: visible, source_character: patient_1_shooter}  # should be treated
-            - {name: Puncture, location: right shoulder, severity: extreme, status: visible, source_character: patient_1_shooter}  # should be treated
-            - {name: Puncture, location: right thigh, severity: moderate, status: visible, source_character: patient_1_shooter}  # should be treated
+            - {name: Puncture, location: right shoulder, severity: extreme, status: visible, source_character: patient_1_shooter}
+            - {name: Puncture, location: right bicep, severity: major, status: visible, source_character: patient_1_shooter}  # increased severity from previous scenes
+            - {name: Puncture, location: right chest, severity: moderate, status: visible, source_character: patient_1_shooter}
           vitals:
             conscious: false
             avpu: UNRESPONSIVE

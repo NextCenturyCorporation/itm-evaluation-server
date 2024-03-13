@@ -1,5 +1,7 @@
-id: MetricsEval.MD-Jungle
-# v1.2.0
+id: MetricsEval.MD4-Jungle
+# v1.3.0
+#   - Change from 1.2.0:
+#     - Updated name from MetricsEval.MD-Jungle to MetricsEval.MD4-Jungle
 
 name: IED
 
@@ -511,3 +513,4 @@ scenes:
   - index: 5  # dummy scene
     end_scene_allowed: true
     action_mapping: []
+  

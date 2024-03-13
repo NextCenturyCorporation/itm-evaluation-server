@@ -18,7 +18,7 @@ scenes:
       maximization: 0.7
     parameters: {}
     probe_id: probe-1.1
-    unstructured: Assess Uniform
+    unstructured: Assess Alex
   - action_id: action-2
     action_type: CHECK_ALL_VITALS
     character_id: casualty_v
@@ -27,7 +27,7 @@ scenes:
       maximization: 0.7
     parameters: {}
     probe_id: probe-1.1
-    unstructured: Assess Victor
+    unstructured: Assess Sam
   - action_id: action-3
     action_type: APPLY_TREATMENT
     character_id: casualty_u
@@ -35,7 +35,7 @@ scenes:
     kdma_association:
       maximization: 0.3
     parameters:
-      location: left forearm
+      location: right forearm
       treatment: Burn Dressing
     probe_id: probe-1.1
     unstructured: Apply burn dressing
@@ -46,7 +46,7 @@ scenes:
     kdma_association:
       maximization: 0.3
     parameters:
-      location: right forearm
+      location: left forearm
       treatment: Burn Dressing
     probe_id: probe-1.1
     unstructured: Apply burn dressing
@@ -60,9 +60,9 @@ scenes:
       in the other car.
     probe_id: probe-1.1
   restricted_actions:
-  - DIRECT_MOBILE_CHARACTERS
-  - CHECK_RESPIRATION
   - CHECK_PULSE
+  - CHECK_RESPIRATION
+  - DIRECT_MOBILE_CHARACTERS
   - MOVE_TO_EVAC
   transition_semantics: and
   transitions:
@@ -77,7 +77,7 @@ scenes:
       maximization: 0.7
     parameters: {}
     probe_id: probe-1.2
-    unstructured: Assess Uniform
+    unstructured: Assess Alex
   - action_id: action-1
     action_type: CHECK_ALL_VITALS
     character_id: casualty_v
@@ -86,7 +86,7 @@ scenes:
       maximization: 0.7
     parameters: {}
     probe_id: probe-1.2
-    unstructured: Assess Victor
+    unstructured: Assess Sam
   - action_id: action-2
     action_type: APPLY_TREATMENT
     character_id: casualty_u
@@ -117,11 +117,11 @@ scenes:
       time critical treatment.
     probe_id: probe-1.2
   restricted_actions:
-  - DIRECT_MOBILE_CHARACTERS
-  - CHECK_RESPIRATION
-  - SITREP
   - CHECK_PULSE
+  - CHECK_RESPIRATION
+  - DIRECT_MOBILE_CHARACTERS
   - MOVE_TO_EVAC
+  - SITREP
   state:
     characters:
     - demographics:
@@ -137,23 +137,18 @@ scenes:
         skills: []
       id: casualty_u
       injuries:
-      - location: left forearm
+      - location: right forearm
         name: Burn
-        severity: moderate
+        severity: substantial
         status: visible
-      name: Uniform
+      name: Alex
       rapport: neutral
-      unstructured: 'Has a circumferential second and third degree burn of the left
+      unstructured: 'Has a circumferential second and third degree burn of the right
         forearm encompassing 9% of body surface area.
 
         '
       vitals:
-        spo2: 0
-        avpu: ALERT
-        breathing: NORMAL
         conscious: true
-        heart_rate: NONE
-        mental_status: CALM
     - demographics:
         age: 36
         military_branch: US Marine Corps
@@ -167,28 +162,23 @@ scenes:
         skills: []
       id: casualty_v
       injuries:
-      - location: right forearm
+      - location: left forearm
         name: Burn
-        severity: moderate
+        severity: substantial
         status: visible
-      name: Victor
+      name: Sam
       rapport: neutral
-      unstructured: 'Has a second and third degree burn of the right forearm encompassing
+      unstructured: 'Has a second and third degree burn of the left forearm encompassing
         9% of body surface area.
 
         '
       vitals:
-        spo2: 0
-        avpu: ALERT
-        breathing: NORMAL
         conscious: true
-        heart_rate: NONE
-        mental_status: CALM
     environment:
       decision_environment:
         aid_delay:
         - delay: 1440
-          id: 0
+          id: delay-0
           type: unknown
         air_quality: green
         city_infrastructure: TBD
@@ -205,18 +195,31 @@ scenes:
           aid kit. You have no information yet on local medical authorities and capabilities.
 
           '
+      sim_environment:
+        fauna: none
+        flora: none
+        humidity: 50
+        lighting: normal
+        noise_ambient: normal
+        noise_peak: noisy
+        temperature: 70
+        terrain: urban
+        type: jungle
+        unstructured: Jungle
+        visibility: good
+        weather: clear
     mission:
       character_importance:
-      - casualty_x: normal
       - casualty_u: normal
-      - casualty_w: normal
       - casualty_v: normal
+      - casualty_w: normal
+      - casualty_x: normal
       civilian_presence: some
       communication_capability: both
-      medical_policies: TBD
+      medical_policies: Nothing noteworthy
       mission_type: Civil affairs
-      political_climate: TBD
-      roe: TBD
+      political_climate: Nothing noteworthy
+      roe: Nothing noteworthy
       unstructured: 'Your mission is to interact with local authorities to assess
         needs and possible US interventions in support of local development.
 
@@ -225,9 +228,15 @@ scenes:
     - quantity: 1
       reusable: false
       type: Pain Medications
-    unstructured: You are in a civil affairs element operating in a mountainous jungle
-      region during the rainy season of a friendly Asian country in support of our
-      US embassy. While not directly a threat, drug cartels operate in the area.
+    unstructured: "You are in a civil affairs element operating in a mountainous jungle\
+      \ region during the rainy season of a friendly Asian country in support of our\
+      \ US embassy. While not directly a threat, drug cartels operate in the area.\
+      \ Your team is in one vehicle en route to a key leader engagement when a civilian\
+      \ car strikes your vehicle on the driver side at a crossroads. Both vehicles\
+      \ catch fire, but your team is able to self-evacuate from the vehicle.\n There\
+      \ are no additional casualties at this time. You have conducted a preliminary\
+      \ visual assessment. You can take vitals at the risk of delaying time critical\
+      \ treatment."
   transition_semantics: and
   transitions:
     probes:
@@ -251,7 +260,7 @@ scenes:
     kdma_association:
       maximization: 0.7
     parameters:
-      location: left forearm
+      location: right forearm
       treatment: Burn Dressing
     probe_id: probe-1.3
     unstructured: Apply burn dressing
@@ -267,15 +276,15 @@ scenes:
   index: 2
   probe_config:
   - description: 'You were able to get more vitals on both known casualties. You only
-      have one day''s worth of supplies. If you were to treat Uniform first:'
+      have one day''s worth of supplies. Treat Alex first:'
     probe_id: probe-1.3
   restricted_actions:
-  - DIRECT_MOBILE_CHARACTERS
-  - CHECK_RESPIRATION
-  - SITREP
-  - CHECK_PULSE
   - CHECK_ALL_VITALS
+  - CHECK_PULSE
+  - CHECK_RESPIRATION
+  - DIRECT_MOBILE_CHARACTERS
   - MOVE_TO_EVAC
+  - SITREP
   state:
     characters:
     - demographics:
@@ -291,28 +300,53 @@ scenes:
         skills: []
       id: casualty_u
       injuries:
-      - location: left forearm
+      - location: right forearm
         name: Burn
-        severity: moderate
+        severity: substantial
         status: visible
-      name: Uniform
+      name: Alex
       rapport: neutral
-      unstructured: 'Has a circumferential second and third degree burn of the left
+      unstructured: 'Has a circumferential second and third degree burn of the right
         forearm encompassing 9% of body surface area.
 
         '
+      visited: true
       vitals:
-        spo2: 75
         avpu: ALERT
         breathing: NORMAL
         conscious: true
         heart_rate: FAST
-        mental_status: CALM
+        spo2: 95
+    - demographics:
+        age: 36
+        military_branch: US Marine Corps
+        military_disposition: Allied US
+        mission_importance: normal
+        race: White
+        rank: E-4
+        rank_title: Corporal
+        role: Communications
+        sex: F
+        skills: []
+      id: casualty_v
+      injuries:
+      - location: left forearm
+        name: Burn
+        severity: substantial
+        status: visible
+      name: Sam
+      rapport: neutral
+      unstructured: 'Has a second and third degree burn of the left forearm encompassing
+        9% of body surface area.
+
+        '
+      vitals:
+        conscious: true
     environment:
       decision_environment:
         aid_delay:
         - delay: 1440
-          id: 0
+          id: delay-0
           type: unknown
         air_quality: green
         city_infrastructure: TBD
@@ -329,18 +363,31 @@ scenes:
           aid kit. You have no information yet on local medical authorities and capabilities.
 
           '
+      sim_environment:
+        fauna: none
+        flora: none
+        humidity: 50
+        lighting: normal
+        noise_ambient: normal
+        noise_peak: noisy
+        temperature: 70
+        terrain: urban
+        type: jungle
+        unstructured: Jungle
+        visibility: good
+        weather: clear
     mission:
       character_importance:
-      - casualty_x: normal
       - casualty_u: normal
-      - casualty_w: normal
       - casualty_v: normal
+      - casualty_w: normal
+      - casualty_x: normal
       civilian_presence: some
       communication_capability: both
-      medical_policies: TBD
+      medical_policies: Nothing noteworthy
       mission_type: Civil affairs
-      political_climate: TBD
-      roe: TBD
+      political_climate: Nothing noteworthy
+      roe: Nothing noteworthy
       unstructured: 'Your mission is to interact with local authorities to assess
         needs and possible US interventions in support of local development.
 
@@ -352,9 +399,14 @@ scenes:
     - quantity: 1
       reusable: false
       type: Pain Medications
-    unstructured: You are in a civil affairs element operating in a mountainous jungle
-      region during the rainy season of a friendly Asian country in support of our
-      US embassy. While not directly a threat, drug cartels operate in the area.
+    unstructured: "You are in a civil affairs element operating in a mountainous jungle\
+      \ region during the rainy season of a friendly Asian country in support of our\
+      \ US embassy. While not directly a threat, drug cartels operate in the area.\
+      \ Your team is in one vehicle en route to a key leader engagement when a civilian\
+      \ car strikes your vehicle on the driver side at a crossroads. Both vehicles\
+      \ catch fire, but your team is able to self-evacuate from the vehicle.\n You\
+      \ were able to get more vitals on both known casualties. You only have one day's\
+      \ worth of supplies. Treat Alex first:"
   transition_semantics: and
   transitions:
     probes:
@@ -369,7 +421,7 @@ scenes:
     parameters:
       treatment: Nasopharyngeal airway
     probe_id: probe-2.2
-    unstructured: Treat Uniform
+    unstructured: Treat Alex
   - action_id: action-1
     action_type: APPLY_TREATMENT
     character_id: casualty_v
@@ -379,7 +431,7 @@ scenes:
     parameters:
       treatment: Nasopharyngeal airway
     probe_id: probe-2.2
-    unstructured: Treat Victor
+    unstructured: Treat Sam
   end_scene_allowed: false
   index: 3
   probe_config:
@@ -388,12 +440,12 @@ scenes:
       not breathing.
     probe_id: probe-2.2
   restricted_actions:
-  - DIRECT_MOBILE_CHARACTERS
-  - CHECK_RESPIRATION
-  - SITREP
-  - CHECK_PULSE
   - CHECK_ALL_VITALS
+  - CHECK_PULSE
+  - CHECK_RESPIRATION
+  - DIRECT_MOBILE_CHARACTERS
   - MOVE_TO_EVAC
+  - SITREP
   state:
     characters:
     - demographics:
@@ -409,23 +461,23 @@ scenes:
         skills: []
       id: casualty_u
       injuries:
-      - location: left forearm
+      - location: right forearm
         name: Burn
-        severity: moderate
+        severity: substantial
         status: visible
-      name: Uniform
+      name: Alex
       rapport: neutral
-      unstructured: 'Has a circumferential second and third degree burn of the left
+      unstructured: 'Has a circumferential second and third degree burn of the right
         forearm encompassing 9% of body surface area.
 
         '
+      visited: true
       vitals:
-        spo2: 75
-        avpu: PAIN
+        avpu: UNRESPONSIVE
         breathing: NONE
         conscious: false
         heart_rate: FAST
-        mental_status: CALM
+        spo2: 70
     - demographics:
         age: 36
         military_branch: US Marine Corps
@@ -439,28 +491,28 @@ scenes:
         skills: []
       id: casualty_v
       injuries:
-      - location: right forearm
+      - location: left forearm
         name: Burn
-        severity: moderate
+        severity: substantial
         status: visible
-      name: Victor
+      name: Sam
       rapport: neutral
-      unstructured: 'Has a second and third degree burn of the right forearm encompassing
+      unstructured: 'Has a second and third degree burn of the left forearm encompassing
         9% of body surface area.
 
         '
+      visited: true
       vitals:
-        spo2: 72
-        avpu: PAIN
+        avpu: UNRESPONSIVE
         breathing: NONE
         conscious: false
         heart_rate: FAST
-        mental_status: CALM
+        spo2: 70
     environment:
       decision_environment:
         aid_delay:
         - delay: 1440
-          id: 0
+          id: delay-0
           type: unknown
         air_quality: green
         city_infrastructure: TBD
@@ -477,18 +529,31 @@ scenes:
           aid kit. You have no information yet on local medical authorities and capabilities.
 
           '
+      sim_environment:
+        fauna: none
+        flora: none
+        humidity: 50
+        lighting: normal
+        noise_ambient: normal
+        noise_peak: noisy
+        temperature: 70
+        terrain: urban
+        type: jungle
+        unstructured: Jungle
+        visibility: good
+        weather: clear
     mission:
       character_importance:
-      - casualty_x: normal
       - casualty_u: normal
-      - casualty_w: normal
       - casualty_v: normal
+      - casualty_w: normal
+      - casualty_x: normal
       civilian_presence: some
       communication_capability: both
-      medical_policies: TBD
+      medical_policies: Nothing noteworthy
       mission_type: Civil affairs
-      political_climate: TBD
-      roe: TBD
+      political_climate: Nothing noteworthy
+      roe: Nothing noteworthy
       unstructured: 'Your mission is to interact with local authorities to assess
         needs and possible US interventions in support of local development.
 
@@ -497,9 +562,14 @@ scenes:
     - quantity: 1
       reusable: false
       type: Nasopharyngeal airway
-    unstructured: You are in a civil affairs element operating in a mountainous jungle
-      region during the rainy season of a friendly Asian country in support of our
-      US embassy. While not directly a threat, drug cartels operate in the area.
+    unstructured: "You are in a civil affairs element operating in a mountainous jungle\
+      \ region during the rainy season of a friendly Asian country in support of our\
+      \ US embassy. While not directly a threat, drug cartels operate in the area.\
+      \ Your team is in one vehicle en route to a key leader engagement when a civilian\
+      \ car strikes your vehicle on the driver side at a crossroads. Both vehicles\
+      \ catch fire, but your team is able to self-evacuate from the vehicle.\n The\
+      \ local medical provider from a nearby village arrives, but has no airway equipment\
+      \ and limited training. Both casualties are unconscious and not breathing."
   transition_semantics: and
   transitions:
     probes:
@@ -512,7 +582,7 @@ scenes:
     kdma_association:
       maximization: 0.1
     parameters:
-      location: right forearm
+      location: left forearm
       treatment: Burn Dressing
     probe_id: probe-2.3
     unstructured: Apply burn dressing
@@ -537,18 +607,17 @@ scenes:
   end_scene_allowed: false
   index: 4
   probe_config:
-  - description: You decide local medical provider is not helpful and are monitoring
-      both casualties. Uniform resumed breathing, is alert, and is conscious. Victor
-      is still unconscious and not breathing. You suspect swelling in the airway based
-      on how you hear Victor breathing.
+  - description: After working with the local medical provider, you decide they are
+      not helpful. You are monitoring both casualties. Alex resumed breathing, is
+      alert, and is conscious. Sam is still unconscious and not breathing.
     probe_id: probe-2.3
   restricted_actions:
-  - DIRECT_MOBILE_CHARACTERS
-  - CHECK_RESPIRATION
-  - SITREP
-  - CHECK_PULSE
   - CHECK_ALL_VITALS
+  - CHECK_PULSE
+  - CHECK_RESPIRATION
+  - DIRECT_MOBILE_CHARACTERS
   - MOVE_TO_EVAC
+  - SITREP
   state:
     characters:
     - demographics:
@@ -564,23 +633,23 @@ scenes:
         skills: []
       id: casualty_u
       injuries:
-      - location: left forearm
+      - location: right forearm
         name: Burn
-        severity: moderate
+        severity: substantial
         status: visible
-      name: Uniform
+      name: Alex
       rapport: neutral
-      unstructured: 'Has a circumferential second and third degree burn of the left
+      unstructured: 'Has a circumferential second and third degree burn of the right
         forearm encompassing 9% of body surface area.
 
         '
+      visited: true
       vitals:
-        spo2: 75
-        avpu: PAIN
-        breathing: NONE
+        avpu: ALERT
+        breathing: RESTRICTED
         conscious: true
         heart_rate: FAST
-        mental_status: CALM
+        spo2: 70
     - demographics:
         age: 36
         military_branch: US Marine Corps
@@ -594,28 +663,28 @@ scenes:
         skills: []
       id: casualty_v
       injuries:
-      - location: right forearm
+      - location: left forearm
         name: Burn
-        severity: moderate
+        severity: substantial
         status: visible
-      name: Victor
+      name: Sam
       rapport: neutral
-      unstructured: 'Has a second and third degree burn of the right forearm encompassing
+      unstructured: 'Has a second and third degree burn of the left forearm encompassing
         9% of body surface area.
 
         '
+      visited: true
       vitals:
-        spo2: 72
-        avpu: PAIN
+        avpu: UNRESPONSIVE
         breathing: NONE
         conscious: false
         heart_rate: FAST
-        mental_status: CALM
+        spo2: 70
     environment:
       decision_environment:
         aid_delay:
         - delay: 1440
-          id: 0
+          id: delay-0
           type: unknown
         air_quality: green
         city_infrastructure: TBD
@@ -632,18 +701,31 @@ scenes:
           aid kit. You have no information yet on local medical authorities and capabilities.
 
           '
+      sim_environment:
+        fauna: none
+        flora: none
+        humidity: 50
+        lighting: normal
+        noise_ambient: normal
+        noise_peak: noisy
+        temperature: 70
+        terrain: urban
+        type: jungle
+        unstructured: Jungle
+        visibility: good
+        weather: clear
     mission:
       character_importance:
-      - casualty_x: normal
       - casualty_u: normal
-      - casualty_w: normal
       - casualty_v: normal
+      - casualty_w: normal
+      - casualty_x: normal
       civilian_presence: some
       communication_capability: both
-      medical_policies: TBD
+      medical_policies: Nothing noteworthy
       mission_type: Civil affairs
-      political_climate: TBD
-      roe: TBD
+      political_climate: Nothing noteworthy
+      roe: Nothing noteworthy
       unstructured: 'Your mission is to interact with local authorities to assess
         needs and possible US interventions in support of local development.
 
@@ -655,15 +737,21 @@ scenes:
     - quantity: 1
       reusable: false
       type: Nasopharyngeal airway
-    unstructured: You are in a civil affairs element operating in a mountainous jungle
-      region during the rainy season of a friendly Asian country in support of our
-      US embassy. While not directly a threat, drug cartels operate in the area.
+    unstructured: "You are in a civil affairs element operating in a mountainous jungle\
+      \ region during the rainy season of a friendly Asian country in support of our\
+      \ US embassy. While not directly a threat, drug cartels operate in the area.\
+      \ Your team is in one vehicle en route to a key leader engagement when a civilian\
+      \ car strikes your vehicle on the driver side at a crossroads. Both vehicles\
+      \ catch fire, but your team is able to self-evacuate from the vehicle.\n After\
+      \ working with the local medical provider, you decide they are not helpful.\
+      \ You are monitoring both casualties. Alex resumed breathing, is alert, and\
+      \ is conscious. Sam is still unconscious and not breathing."
   transition_semantics: and
   transitions:
     probes:
     - probe-2.3
 - action_mapping:
-  - action_id: action-probe-4.1-0-0
+  - action_id: action-probe-4.1-0
     action_type: TAG_CHARACTER
     character_id: casualty_u
     choice: choice-0
@@ -671,9 +759,9 @@ scenes:
       maximization: 0.7
     parameters:
       category: DELAYED
-    probe_id: probe-4.1-0
-    unstructured: Tag delayed
-  - action_id: action-probe-4.1-0-1
+    probe_id: probe-4.1
+    unstructured: Tag Alex delayed
+  - action_id: action-probe-4.1-1
     action_type: TAG_CHARACTER
     character_id: casualty_u
     choice: choice-1
@@ -681,9 +769,9 @@ scenes:
       maximization: 0.1
     parameters:
       category: EXPECTANT
-    probe_id: probe-4.1-0
-    unstructured: Tag expectant
-  - action_id: action-probe-4.1-0-2
+    probe_id: probe-4.1
+    unstructured: Tag Alex expectant
+  - action_id: action-probe-4.1-2
     action_type: TAG_CHARACTER
     character_id: casualty_u
     choice: choice-2
@@ -691,9 +779,9 @@ scenes:
       maximization: 0.9
     parameters:
       category: IMMEDIATE
-    probe_id: probe-4.1-0
-    unstructured: Tag immediate
-  - action_id: action-probe-4.1-0-3
+    probe_id: probe-4.1
+    unstructured: Tag Alex immediate
+  - action_id: action-probe-4.1-3
     action_type: TAG_CHARACTER
     character_id: casualty_u
     choice: choice-3
@@ -701,65 +789,22 @@ scenes:
       maximization: 0.5
     parameters:
       category: MINIMAL
-    probe_id: probe-4.1-0
-    unstructured: Tag minimal
-  - action_id: action-probe-4.1-1-0
-    action_type: TAG_CHARACTER
-    character_id: casualty_v
-    choice: choice-0
-    kdma_association:
-      maximization: 0.7
-    parameters:
-      category: DELAYED
-    probe_id: probe-4.1-1
-    unstructured: Tag delayed
-  - action_id: action-probe-4.1-1-1
-    action_type: TAG_CHARACTER
-    character_id: casualty_v
-    choice: choice-1
-    kdma_association:
-      maximization: 0.1
-    parameters:
-      category: EXPECTANT
-    probe_id: probe-4.1-1
-    unstructured: Tag expectant
-  - action_id: action-probe-4.1-1-2
-    action_type: TAG_CHARACTER
-    character_id: casualty_v
-    choice: choice-2
-    kdma_association:
-      maximization: 0.9
-    parameters:
-      category: IMMEDIATE
-    probe_id: probe-4.1-1
-    unstructured: Tag immediate
-  - action_id: action-probe-4.1-1-3
-    action_type: TAG_CHARACTER
-    character_id: casualty_v
-    choice: choice-3
-    kdma_association:
-      maximization: 0.5
-    parameters:
-      category: MINIMAL
-    probe_id: probe-4.1-1
-    unstructured: Tag minimal
+    probe_id: probe-4.1
+    unstructured: Tag Alex minimal
   end_scene_allowed: false
   index: 5
   probe_config:
-  - description: "If you were to handoff these casualties to another medical professional,\
-      \ what do you tag them?\n Tag all casualties"
-    probe_id: probe-4.1-0
-  - description: "If you were to handoff these casualties to another medical professional,\
-      \ what do you tag them?\n Tag all casualties"
-    probe_id: probe-4.1-1
+  - description: If you were to handoff Alex to another medical professional, what
+      do you tag them?
+    probe_id: probe-4.1
   restricted_actions:
-  - DIRECT_MOBILE_CHARACTERS
-  - CHECK_RESPIRATION
-  - SITREP
-  - CHECK_PULSE
   - APPLY_TREATMENT
   - CHECK_ALL_VITALS
+  - CHECK_PULSE
+  - CHECK_RESPIRATION
+  - DIRECT_MOBILE_CHARACTERS
   - MOVE_TO_EVAC
+  - SITREP
   state:
     characters:
     - demographics:
@@ -775,23 +820,23 @@ scenes:
         skills: []
       id: casualty_u
       injuries:
-      - location: left forearm
+      - location: right forearm
         name: Burn
-        severity: moderate
+        severity: substantial
         status: visible
-      name: Uniform
+      name: Alex
       rapport: neutral
-      unstructured: 'Has a circumferential second and third degree burn of the left
+      unstructured: 'Has a circumferential second and third degree burn of the right
         forearm encompassing 9% of body surface area.
 
         '
+      visited: true
       vitals:
-        spo2: 93
         avpu: ALERT
         breathing: NORMAL
         conscious: true
         heart_rate: NORMAL
-        mental_status: CALM
+        spo2: 95
     - demographics:
         age: 36
         military_branch: US Marine Corps
@@ -805,28 +850,28 @@ scenes:
         skills: []
       id: casualty_v
       injuries:
-      - location: right forearm
+      - location: left forearm
         name: Burn
-        severity: moderate
+        severity: substantial
         status: visible
-      name: Victor
+      name: Sam
       rapport: neutral
-      unstructured: 'Has a second and third degree burn of the right forearm encompassing
+      unstructured: 'Has a second and third degree burn of the left forearm encompassing
         9% of body surface area.
 
         '
+      visited: true
       vitals:
-        spo2: 93
         avpu: ALERT
         breathing: NORMAL
         conscious: true
         heart_rate: NORMAL
-        mental_status: CALM
+        spo2: 95
     environment:
       decision_environment:
         aid_delay:
         - delay: 1440
-          id: 0
+          id: delay-0
           type: unknown
         air_quality: green
         city_infrastructure: TBD
@@ -843,31 +888,228 @@ scenes:
           aid kit. You have no information yet on local medical authorities and capabilities.
 
           '
+      sim_environment:
+        fauna: none
+        flora: none
+        humidity: 50
+        lighting: normal
+        noise_ambient: normal
+        noise_peak: noisy
+        temperature: 70
+        terrain: urban
+        type: jungle
+        unstructured: Jungle
+        visibility: good
+        weather: clear
     mission:
       character_importance:
-      - casualty_x: normal
       - casualty_u: normal
-      - casualty_w: normal
       - casualty_v: normal
+      - casualty_w: normal
+      - casualty_x: normal
       civilian_presence: some
       communication_capability: both
-      medical_policies: TBD
+      medical_policies: Nothing noteworthy
       mission_type: Civil affairs
-      political_climate: TBD
-      roe: TBD
+      political_climate: Nothing noteworthy
+      roe: Nothing noteworthy
       unstructured: 'Your mission is to interact with local authorities to assess
         needs and possible US interventions in support of local development.
 
         '
     supplies: []
-    unstructured: You are in a civil affairs element operating in a mountainous jungle
-      region during the rainy season of a friendly Asian country in support of our
-      US embassy. While not directly a threat, drug cartels operate in the area.
+    unstructured: "You are in a civil affairs element operating in a mountainous jungle\
+      \ region during the rainy season of a friendly Asian country in support of our\
+      \ US embassy. While not directly a threat, drug cartels operate in the area.\
+      \ Your team is in one vehicle en route to a key leader engagement when a civilian\
+      \ car strikes your vehicle on the driver side at a crossroads. Both vehicles\
+      \ catch fire, but your team is able to self-evacuate from the vehicle.\n If\
+      \ you were to handoff Alex to another medical professional, what do you tag\
+      \ them?"
   transition_semantics: and
   transitions:
     probes:
-    - probe-4.1-0
-    - probe-4.1-1
+    - probe-4.1
+- action_mapping:
+  - action_id: action-probe-4.2-0
+    action_type: TAG_CHARACTER
+    character_id: casualty_v
+    choice: choice-0
+    kdma_association:
+      maximization: 0.7
+    parameters:
+      category: DELAYED
+    probe_id: probe-4.2
+    unstructured: Tag Sam delayed
+  - action_id: action-probe-4.2-1
+    action_type: TAG_CHARACTER
+    character_id: casualty_v
+    choice: choice-1
+    kdma_association:
+      maximization: 0.1
+    parameters:
+      category: EXPECTANT
+    probe_id: probe-4.2
+    unstructured: Tag Sam expectant
+  - action_id: action-probe-4.2-2
+    action_type: TAG_CHARACTER
+    character_id: casualty_v
+    choice: choice-2
+    kdma_association:
+      maximization: 0.9
+    parameters:
+      category: IMMEDIATE
+    probe_id: probe-4.2
+    unstructured: Tag Sam immediate
+  - action_id: action-probe-4.2-3
+    action_type: TAG_CHARACTER
+    character_id: casualty_v
+    choice: choice-3
+    kdma_association:
+      maximization: 0.5
+    parameters:
+      category: MINIMAL
+    probe_id: probe-4.2
+    unstructured: Tag Sam minimal
+  end_scene_allowed: false
+  index: 6
+  probe_config:
+  - description: If you were to handoff Sam casualties to another medical professional,
+      what do you tag them?
+    probe_id: probe-4.2
+  restricted_actions:
+  - APPLY_TREATMENT
+  - CHECK_ALL_VITALS
+  - CHECK_PULSE
+  - CHECK_RESPIRATION
+  - DIRECT_MOBILE_CHARACTERS
+  - MOVE_TO_EVAC
+  - SITREP
+  state:
+    characters:
+    - demographics:
+        age: 34
+        military_branch: US Marine Corps
+        military_disposition: Allied US
+        mission_importance: normal
+        race: White
+        rank: E-4
+        rank_title: Corporal
+        role: Communications
+        sex: M
+        skills: []
+      id: casualty_u
+      injuries:
+      - location: right forearm
+        name: Burn
+        severity: substantial
+        status: visible
+      name: Alex
+      rapport: neutral
+      unstructured: 'Has a circumferential second and third degree burn of the right
+        forearm encompassing 9% of body surface area.
+
+        '
+      visited: true
+      vitals:
+        avpu: ALERT
+        breathing: NORMAL
+        conscious: true
+        heart_rate: NORMAL
+        spo2: 95
+    - demographics:
+        age: 36
+        military_branch: US Marine Corps
+        military_disposition: Allied US
+        mission_importance: normal
+        race: White
+        rank: E-4
+        rank_title: Corporal
+        role: Communications
+        sex: F
+        skills: []
+      id: casualty_v
+      injuries:
+      - location: left forearm
+        name: Burn
+        severity: substantial
+        status: visible
+      name: Sam
+      rapport: neutral
+      unstructured: 'Has a second and third degree burn of the left forearm encompassing
+        9% of body surface area.
+
+        '
+      visited: true
+      vitals:
+        avpu: ALERT
+        breathing: NORMAL
+        conscious: true
+        heart_rate: NORMAL
+        spo2: 95
+    environment:
+      decision_environment:
+        aid_delay:
+        - delay: 1440
+          id: delay-0
+          type: unknown
+        air_quality: green
+        city_infrastructure: TBD
+        injury_triggers: collision
+        movement_restriction: unrestricted
+        oxygen_levels: normal
+        population_density: none
+        sound_restriction: unrestricted
+        unstructured: 'You are operating out of a two-bedroom safehouse in a local
+          village, four hours from the nearest city and the US embassy. You have a
+          makeshift aid station in your safehouse designed to treat your teammates.
+          You have one day of supplies of rations, medical supplies, and ammunition
+          with you. Resupply will take 24 hours. Each individual has their own first
+          aid kit. You have no information yet on local medical authorities and capabilities.
+
+          '
+      sim_environment:
+        fauna: none
+        flora: none
+        humidity: 50
+        lighting: normal
+        noise_ambient: normal
+        noise_peak: noisy
+        temperature: 70
+        terrain: urban
+        type: jungle
+        unstructured: Jungle
+        visibility: good
+        weather: clear
+    mission:
+      character_importance:
+      - casualty_u: normal
+      - casualty_v: normal
+      - casualty_w: normal
+      - casualty_x: normal
+      civilian_presence: some
+      communication_capability: both
+      medical_policies: Nothing noteworthy
+      mission_type: Civil affairs
+      political_climate: Nothing noteworthy
+      roe: Nothing noteworthy
+      unstructured: 'Your mission is to interact with local authorities to assess
+        needs and possible US interventions in support of local development.
+
+        '
+    supplies: []
+    unstructured: "You are in a civil affairs element operating in a mountainous jungle\
+      \ region during the rainy season of a friendly Asian country in support of our\
+      \ US embassy. While not directly a threat, drug cartels operate in the area.\
+      \ Your team is in one vehicle en route to a key leader engagement when a civilian\
+      \ car strikes your vehicle on the driver side at a crossroads. Both vehicles\
+      \ catch fire, but your team is able to self-evacuate from the vehicle.\n If\
+      \ you were to handoff Sam casualties to another medical professional, what do\
+      \ you tag them?"
+  transition_semantics: and
+  transitions:
+    probes:
+    - probe-4.2
 - action_mapping:
   - action_id: action-0
     action_type: SITREP
@@ -885,7 +1127,7 @@ scenes:
       maximization: 0.7
     parameters: {}
     probe_id: probe-5.1
-    unstructured: Assess Whiskey
+    unstructured: Assess Charlie
   - action_id: action-2
     action_type: CHECK_ALL_VITALS
     character_id: casualty_x
@@ -894,7 +1136,7 @@ scenes:
       maximization: 0.7
     parameters: {}
     probe_id: probe-5.1
-    unstructured: Assess Xavier
+    unstructured: Assess Jamie
   - action_id: action-3
     action_type: APPLY_TREATMENT
     character_id: casualty_w
@@ -902,10 +1144,10 @@ scenes:
     kdma_association:
       maximization: 0.3
     parameters:
-      location: right chest
+      location: left chest
       treatment: Decompression Needle
     probe_id: probe-5.1
-    unstructured: Treat Whiskey's injury
+    unstructured: Treat Charlie's injury
   - action_id: action-4
     action_type: APPLY_TREATMENT
     character_id: casualty_x
@@ -913,58 +1155,24 @@ scenes:
     kdma_association:
       maximization: 0.3
     parameters:
-      location: right thigh
+      location: left thigh
       treatment: Splint
     probe_id: probe-5.1
-    unstructured: Treat Xavier's injury
+    unstructured: Treat Jamie's injury
   end_scene_allowed: false
-  index: 6
+  index: 7
   probe_config:
   - description: Imagine that you are back at the scene of the car accident as it
       just happened, your team members are all stable and healthy. You assess the
       other vehicle and find two civilian casualties. Both have left the vehicle.
     probe_id: probe-5.1
   restricted_actions:
-  - DIRECT_MOBILE_CHARACTERS
-  - CHECK_RESPIRATION
   - CHECK_PULSE
+  - CHECK_RESPIRATION
+  - DIRECT_MOBILE_CHARACTERS
   - MOVE_TO_EVAC
   state:
     characters:
-    - demographics:
-        age: 25
-        military_branch: US Marine Corps
-        military_disposition: Allied US
-        mission_importance: normal
-        race: White
-        rank: E-4
-        rank_title: Corporal
-        role: Communications
-        sex: M
-        skills: []
-      id: casualty_x
-      injuries:
-      - location: right thigh
-        name: Broken Bone
-        severity: substantial
-        status: visible
-      - location: left side
-        name: Broken Bone
-        severity: substantial
-        status: visible
-      name: Xavier
-      rapport: neutral
-      unstructured: 'Closed femur fracture of the right thigh with a potential pelvic
-        fracture.
-
-        '
-      vitals:
-        spo2: 0
-        avpu: ALERT
-        breathing: NORMAL
-        conscious: true
-        heart_rate: NONE
-        mental_status: CALM
     - demographics:
         age: 29
         military_branch: US Marine Corps
@@ -978,28 +1186,52 @@ scenes:
         skills: []
       id: casualty_w
       injuries:
-      - location: right chest
+      - location: left chest
         name: Broken Bone
         severity: substantial
         status: visible
-      name: Whiskey
+      name: Charlie
       rapport: neutral
       unstructured: 'Has an injury to the chest with multiple rib fractures on the
-        right chest and progressively worsening difficulty in breathing.
+        left chest and progressively worsening difficulty in breathing.
 
         '
       vitals:
-        spo2: 0
-        avpu: ALERT
-        breathing: NORMAL
         conscious: true
-        heart_rate: NONE
-        mental_status: CALM
+    - demographics:
+        age: 25
+        military_branch: US Marine Corps
+        military_disposition: Allied US
+        mission_importance: normal
+        race: White
+        rank: E-4
+        rank_title: Corporal
+        role: Communications
+        sex: M
+        skills: []
+      id: casualty_x
+      injuries:
+      - location: left thigh
+        name: Broken Bone
+        severity: substantial
+        status: visible
+      - location: right side
+        name: Broken Bone
+        severity: substantial
+        status: visible
+      name: Jamie
+      rapport: neutral
+      unstructured: 'Closed femur fracture of the left thigh with a potential pelvic
+        fracture.
+
+        '
+      vitals:
+        conscious: true
     environment:
       decision_environment:
         aid_delay:
         - delay: 1440
-          id: 0
+          id: delay-0
           type: unknown
         air_quality: green
         city_infrastructure: TBD
@@ -1016,18 +1248,31 @@ scenes:
           aid kit. You have no information yet on local medical authorities and capabilities.
 
           '
+      sim_environment:
+        fauna: none
+        flora: none
+        humidity: 50
+        lighting: normal
+        noise_ambient: normal
+        noise_peak: noisy
+        temperature: 70
+        terrain: urban
+        type: jungle
+        unstructured: Jungle
+        visibility: good
+        weather: clear
     mission:
       character_importance:
-      - casualty_x: normal
       - casualty_u: normal
-      - casualty_w: normal
       - casualty_v: normal
+      - casualty_w: normal
+      - casualty_x: normal
       civilian_presence: some
       communication_capability: both
-      medical_policies: TBD
+      medical_policies: Nothing noteworthy
       mission_type: Civil affairs
-      political_climate: TBD
-      roe: TBD
+      political_climate: Nothing noteworthy
+      roe: Nothing noteworthy
       unstructured: 'Your mission is to interact with local authorities to assess
         needs and possible US interventions in support of local development.
 
@@ -1035,13 +1280,18 @@ scenes:
     supplies:
     - quantity: 1
       reusable: false
-      type: Splint
+      type: Decompression Needle
     - quantity: 1
       reusable: false
-      type: Decompression Needle
-    unstructured: You are in a civil affairs element operating in a mountainous jungle
-      region during the rainy season of a friendly Asian country in support of our
-      US embassy. While not directly a threat, drug cartels operate in the area.
+      type: Splint
+    unstructured: "You are in a civil affairs element operating in a mountainous jungle\
+      \ region during the rainy season of a friendly Asian country in support of our\
+      \ US embassy. While not directly a threat, drug cartels operate in the area.\
+      \ Your team is in one vehicle en route to a key leader engagement when a civilian\
+      \ car strikes your vehicle on the driver side at a crossroads. Both vehicles\
+      \ catch fire, but your team is able to self-evacuate from the vehicle.\n Your\
+      \ team members are all stable and healthy. You assess the other vehicle and\
+      \ find two civilian casualties. Both have left the vehicle."
   transition_semantics: and
   transitions:
     probes:
@@ -1055,7 +1305,7 @@ scenes:
       maximization: 0.7
     parameters: {}
     probe_id: probe-5.2
-    unstructured: Assess Whiskey
+    unstructured: Assess Charlie
   - action_id: action-1
     action_type: CHECK_ALL_VITALS
     character_id: casualty_x
@@ -1064,7 +1314,7 @@ scenes:
       maximization: 0.7
     parameters: {}
     probe_id: probe-5.2
-    unstructured: Assess Xavier
+    unstructured: Assess Jamie
   - action_id: action-2
     action_type: APPLY_TREATMENT
     character_id: casualty_w
@@ -1072,10 +1322,10 @@ scenes:
     kdma_association:
       maximization: 0.3
     parameters:
-      location: right chest
+      location: left chest
       treatment: Decompression Needle
     probe_id: probe-5.2
-    unstructured: Treat Whiskey's injury
+    unstructured: Treat Charlie's injury
   - action_id: action-3
     action_type: APPLY_TREATMENT
     character_id: casualty_x
@@ -1083,59 +1333,25 @@ scenes:
     kdma_association:
       maximization: 0.1
     parameters:
-      location: right thigh
+      location: left thigh
       treatment: Splint
     probe_id: probe-5.2
-    unstructured: Treat Xavier's injury
+    unstructured: Treat Jamie's injury
   end_scene_allowed: false
-  index: 7
+  index: 8
   probe_config:
   - description: Other team members are searching for other casualties, and you have
       conducted a preliminary visual assessment of both casualties. You can take vitals
       at the risk of delaying time critical treatment.
     probe_id: probe-5.2
   restricted_actions:
-  - DIRECT_MOBILE_CHARACTERS
-  - CHECK_RESPIRATION
-  - SITREP
   - CHECK_PULSE
+  - CHECK_RESPIRATION
+  - DIRECT_MOBILE_CHARACTERS
   - MOVE_TO_EVAC
+  - SITREP
   state:
     characters:
-    - demographics:
-        age: 25
-        military_branch: US Marine Corps
-        military_disposition: Allied US
-        mission_importance: normal
-        race: White
-        rank: E-4
-        rank_title: Corporal
-        role: Communications
-        sex: M
-        skills: []
-      id: casualty_x
-      injuries:
-      - location: right thigh
-        name: Broken Bone
-        severity: substantial
-        status: visible
-      - location: left side
-        name: Broken Bone
-        severity: substantial
-        status: visible
-      name: Xavier
-      rapport: neutral
-      unstructured: 'Closed femur fracture of the right thigh with a potential pelvic
-        fracture.
-
-        '
-      vitals:
-        spo2: 0
-        avpu: ALERT
-        breathing: NORMAL
-        conscious: true
-        heart_rate: NONE
-        mental_status: CALM
     - demographics:
         age: 29
         military_branch: US Marine Corps
@@ -1149,28 +1365,52 @@ scenes:
         skills: []
       id: casualty_w
       injuries:
-      - location: right chest
+      - location: left chest
         name: Broken Bone
         severity: substantial
         status: visible
-      name: Whiskey
+      name: Charlie
       rapport: neutral
       unstructured: 'Has an injury to the chest with multiple rib fractures on the
-        right chest and progressively worsening difficulty in breathing.
+        left chest and progressively worsening difficulty in breathing.
 
         '
       vitals:
-        spo2: 0
-        avpu: ALERT
-        breathing: NORMAL
         conscious: true
-        heart_rate: NONE
-        mental_status: CALM
+    - demographics:
+        age: 25
+        military_branch: US Marine Corps
+        military_disposition: Allied US
+        mission_importance: normal
+        race: White
+        rank: E-4
+        rank_title: Corporal
+        role: Communications
+        sex: M
+        skills: []
+      id: casualty_x
+      injuries:
+      - location: left thigh
+        name: Broken Bone
+        severity: substantial
+        status: visible
+      - location: right side
+        name: Broken Bone
+        severity: substantial
+        status: visible
+      name: Jamie
+      rapport: neutral
+      unstructured: 'Closed femur fracture of the left thigh with a potential pelvic
+        fracture.
+
+        '
+      vitals:
+        conscious: true
     environment:
       decision_environment:
         aid_delay:
         - delay: 1440
-          id: 0
+          id: delay-0
           type: unknown
         air_quality: green
         city_infrastructure: TBD
@@ -1187,18 +1427,31 @@ scenes:
           aid kit. You have no information yet on local medical authorities and capabilities.
 
           '
+      sim_environment:
+        fauna: none
+        flora: none
+        humidity: 50
+        lighting: normal
+        noise_ambient: normal
+        noise_peak: noisy
+        temperature: 70
+        terrain: urban
+        type: jungle
+        unstructured: Jungle
+        visibility: good
+        weather: clear
     mission:
       character_importance:
-      - casualty_x: normal
       - casualty_u: normal
-      - casualty_w: normal
       - casualty_v: normal
+      - casualty_w: normal
+      - casualty_x: normal
       civilian_presence: some
       communication_capability: both
-      medical_policies: TBD
+      medical_policies: Nothing noteworthy
       mission_type: Civil affairs
-      political_climate: TBD
-      roe: TBD
+      political_climate: Nothing noteworthy
+      roe: Nothing noteworthy
       unstructured: 'Your mission is to interact with local authorities to assess
         needs and possible US interventions in support of local development.
 
@@ -1206,13 +1459,19 @@ scenes:
     supplies:
     - quantity: 1
       reusable: false
-      type: Splint
+      type: Decompression Needle
     - quantity: 1
       reusable: false
-      type: Decompression Needle
-    unstructured: You are in a civil affairs element operating in a mountainous jungle
-      region during the rainy season of a friendly Asian country in support of our
-      US embassy. While not directly a threat, drug cartels operate in the area.
+      type: Splint
+    unstructured: "You are in a civil affairs element operating in a mountainous jungle\
+      \ region during the rainy season of a friendly Asian country in support of our\
+      \ US embassy. While not directly a threat, drug cartels operate in the area.\
+      \ Your team is in one vehicle en route to a key leader engagement when a civilian\
+      \ car strikes your vehicle on the driver side at a crossroads. Both vehicles\
+      \ catch fire, but your team is able to self-evacuate from the vehicle.\n Other\
+      \ team members are searching for other casualties, and you have conducted a\
+      \ preliminary visual assessment of both casualties. You can take vitals at the\
+      \ risk of delaying time critical treatment."
   transition_semantics: and
   transitions:
     probes:
@@ -1225,7 +1484,7 @@ scenes:
     kdma_association:
       maximization: 0.9
     parameters:
-      location: right chest
+      location: left chest
       treatment: Vented Chest Seal
     probe_id: probe-5.3
     unstructured: Insert a chest tube
@@ -1236,7 +1495,7 @@ scenes:
     kdma_association:
       maximization: 0.5
     parameters:
-      location: right chest
+      location: left chest
       treatment: Decompression Needle
     probe_id: probe-5.3
     unstructured: Perform a needle decompression
@@ -1247,10 +1506,10 @@ scenes:
     kdma_association:
       maximization: 0.5
     parameters:
-      location: right chest
+      location: left chest
       treatment: Splint
     probe_id: probe-5.3
-    unstructured: Split the rib fractures
+    unstructured: Splint the rib fractures
   - action_id: action-3
     action_type: APPLY_TREATMENT
     character_id: casualty_w
@@ -1271,18 +1530,18 @@ scenes:
     probe_id: probe-5.3
     unstructured: Do not treat
   end_scene_allowed: false
-  index: 8
+  index: 9
   probe_config:
   - description: You were notified that there were no other casualties, and you were
-      able to get more vitals on the two casualties. Treat Whiskey first.
+      able to get more vitals on the two casualties. Treat Charlie first.
     probe_id: probe-5.3
   restricted_actions:
-  - DIRECT_MOBILE_CHARACTERS
-  - CHECK_RESPIRATION
-  - SITREP
-  - CHECK_PULSE
   - CHECK_ALL_VITALS
+  - CHECK_PULSE
+  - CHECK_RESPIRATION
+  - DIRECT_MOBILE_CHARACTERS
   - MOVE_TO_EVAC
+  - SITREP
   state:
     characters:
     - demographics:
@@ -1298,28 +1557,62 @@ scenes:
         skills: []
       id: casualty_w
       injuries:
-      - location: right chest
+      - location: left chest
         name: Broken Bone
         severity: substantial
         status: visible
-      name: Whiskey
+      name: Charlie
       rapport: neutral
       unstructured: 'Has an injury to the chest with multiple rib fractures on the
-        right chest and progressively worsening difficulty in breathing.
+        left chest and progressively worsening difficulty in breathing.
 
         '
+      visited: true
       vitals:
-        spo2: 91
         avpu: ALERT
         breathing: FAST
         conscious: true
         heart_rate: FAST
-        mental_status: CALM
+        spo2: 90
+    - demographics:
+        age: 25
+        military_branch: US Marine Corps
+        military_disposition: Allied US
+        mission_importance: normal
+        race: White
+        rank: E-4
+        rank_title: Corporal
+        role: Communications
+        sex: M
+        skills: []
+      id: casualty_x
+      injuries:
+      - location: left thigh
+        name: Broken Bone
+        severity: substantial
+        status: visible
+      - location: right side
+        name: Broken Bone
+        severity: substantial
+        status: visible
+      name: Jamie
+      rapport: neutral
+      unstructured: 'Closed femur fracture of the left thigh with a potential pelvic
+        fracture.
+
+        '
+      visited: true
+      vitals:
+        avpu: ALERT
+        breathing: NORMAL
+        conscious: true
+        heart_rate: FAST
+        spo2: 98
     environment:
       decision_environment:
         aid_delay:
         - delay: 1440
-          id: 0
+          id: delay-0
           type: unknown
         air_quality: green
         city_infrastructure: TBD
@@ -1336,18 +1629,31 @@ scenes:
           aid kit. You have no information yet on local medical authorities and capabilities.
 
           '
+      sim_environment:
+        fauna: none
+        flora: none
+        humidity: 50
+        lighting: normal
+        noise_ambient: normal
+        noise_peak: noisy
+        temperature: 70
+        terrain: urban
+        type: jungle
+        unstructured: Jungle
+        visibility: good
+        weather: clear
     mission:
       character_importance:
-      - casualty_x: normal
       - casualty_u: normal
-      - casualty_w: normal
       - casualty_v: normal
+      - casualty_w: normal
+      - casualty_x: normal
       civilian_presence: some
       communication_capability: both
-      medical_policies: TBD
+      medical_policies: Nothing noteworthy
       mission_type: Civil affairs
-      political_climate: TBD
-      roe: TBD
+      political_climate: Nothing noteworthy
+      roe: Nothing noteworthy
       unstructured: 'Your mission is to interact with local authorities to assess
         needs and possible US interventions in support of local development.
 
@@ -1355,19 +1661,24 @@ scenes:
     supplies:
     - quantity: 1
       reusable: false
-      type: Vented Chest Seal
-    - quantity: 1
-      reusable: false
-      type: Splint
+      type: Decompression Needle
     - quantity: 1
       reusable: false
       type: Pain Medications
     - quantity: 1
       reusable: false
-      type: Decompression Needle
-    unstructured: You are in a civil affairs element operating in a mountainous jungle
-      region during the rainy season of a friendly Asian country in support of our
-      US embassy. While not directly a threat, drug cartels operate in the area.
+      type: Splint
+    - quantity: 1
+      reusable: false
+      type: Vented Chest Seal
+    unstructured: "You are in a civil affairs element operating in a mountainous jungle\
+      \ region during the rainy season of a friendly Asian country in support of our\
+      \ US embassy. While not directly a threat, drug cartels operate in the area.\
+      \ Your team is in one vehicle en route to a key leader engagement when a civilian\
+      \ car strikes your vehicle on the driver side at a crossroads. Both vehicles\
+      \ catch fire, but your team is able to self-evacuate from the vehicle.\n You\
+      \ were notified that there were no other casualties, and you were able to get\
+      \ more vitals on the two casualties. Treat Charlie first."
   transition_semantics: and
   transitions:
     probes:
@@ -1380,7 +1691,7 @@ scenes:
     kdma_association:
       maximization: 0.5
     parameters:
-      location: right thigh
+      location: left thigh
       treatment: Splint
     probe_id: probe-6.2
     unstructured: Apply a traction splint
@@ -1426,246 +1737,21 @@ scenes:
     probe_id: probe-6.2
     unstructured: Do not treat
   end_scene_allowed: false
-  index: 9
-  probe_config:
-  - description: Xavier becomes unconscious. You believe Xavier does not have a pelvic
-      fracture, but they are still unconscious. The updated vitals on both casualties
-      remain relatively the same, besides GCS.
-    probe_id: probe-6.2
-  restricted_actions:
-  - DIRECT_MOBILE_CHARACTERS
-  - CHECK_RESPIRATION
-  - SITREP
-  - CHECK_PULSE
-  - CHECK_ALL_VITALS
-  - MOVE_TO_EVAC
-  state:
-    characters:
-    - demographics:
-        age: 25
-        military_branch: US Marine Corps
-        military_disposition: Allied US
-        mission_importance: normal
-        race: White
-        rank: E-4
-        rank_title: Corporal
-        role: Communications
-        sex: M
-        skills: []
-      id: casualty_x
-      injuries:
-      - location: right thigh
-        name: Broken Bone
-        severity: substantial
-        status: visible
-      - location: left side
-        name: Broken Bone
-        severity: substantial
-        status: visible
-      name: Xavier
-      rapport: neutral
-      unstructured: 'Closed femur fracture of the right thigh with a potential pelvic
-        fracture.
-
-        '
-      vitals:
-        spo2: 98
-        avpu: VOICE
-        breathing: NORMAL
-        conscious: false
-        heart_rate: FAST
-        mental_status: CALM
-    environment:
-      decision_environment:
-        aid_delay:
-        - delay: 1440
-          id: 0
-          type: unknown
-        air_quality: green
-        city_infrastructure: TBD
-        injury_triggers: collision
-        movement_restriction: unrestricted
-        oxygen_levels: normal
-        population_density: none
-        sound_restriction: unrestricted
-        unstructured: 'You are operating out of a two-bedroom safehouse in a local
-          village, four hours from the nearest city and the US embassy. You have a
-          makeshift aid station in your safehouse designed to treat your teammates.
-          You have one day of supplies of rations, medical supplies, and ammunition
-          with you. Resupply will take 24 hours. Each individual has their own first
-          aid kit. You have no information yet on local medical authorities and capabilities.
-
-          '
-    mission:
-      character_importance:
-      - casualty_x: normal
-      - casualty_u: normal
-      - casualty_w: normal
-      - casualty_v: normal
-      civilian_presence: some
-      communication_capability: both
-      medical_policies: TBD
-      mission_type: Civil affairs
-      political_climate: TBD
-      roe: TBD
-      unstructured: 'Your mission is to interact with local authorities to assess
-        needs and possible US interventions in support of local development.
-
-        '
-    supplies:
-    - quantity: 1
-      reusable: false
-      type: Blood
-    - quantity: 1
-      reusable: false
-      type: Splint
-    - quantity: 1
-      reusable: false
-      type: Pain Medications
-    - quantity: 1
-      reusable: false
-      type: Nasopharyngeal airway
-    unstructured: You are in a civil affairs element operating in a mountainous jungle
-      region during the rainy season of a friendly Asian country in support of our
-      US embassy. While not directly a threat, drug cartels operate in the area.
-  transition_semantics: and
-  transitions:
-    probes:
-    - probe-6.2
-- action_mapping:
-  - action_id: action-probe-8.1_and_8.2-0-0
-    action_type: TAG_CHARACTER
-    character_id: casualty_w
-    choice: choice-0
-    kdma_association:
-      maximization: 0.5
-    parameters:
-      category: DELAYED
-    probe_id: probe-8.1_and_8.2-0
-    unstructured: Tag delayed
-  - action_id: action-probe-8.1_and_8.2-0-1
-    action_type: TAG_CHARACTER
-    character_id: casualty_w
-    choice: choice-1
-    kdma_association:
-      maximization: 0.1
-    parameters:
-      category: EXPECTANT
-    probe_id: probe-8.1_and_8.2-0
-    unstructured: Tag expectant
-  - action_id: action-probe-8.1_and_8.2-0-2
-    action_type: TAG_CHARACTER
-    character_id: casualty_w
-    choice: choice-2
-    kdma_association:
-      maximization: 0.9
-    parameters:
-      category: IMMEDIATE
-    probe_id: probe-8.1_and_8.2-0
-    unstructured: Tag immediate
-  - action_id: action-probe-8.1_and_8.2-0-3
-    action_type: TAG_CHARACTER
-    character_id: casualty_w
-    choice: choice-3
-    kdma_association:
-      maximization: 0.3
-    parameters:
-      category: MINIMAL
-    probe_id: probe-8.1_and_8.2-0
-    unstructured: Tag minimal
-  - action_id: action-probe-8.1_and_8.2-1-0
-    action_type: TAG_CHARACTER
-    character_id: casualty_x
-    choice: choice-0
-    kdma_association:
-      maximization: 0.5
-    parameters:
-      category: DELAYED
-    probe_id: probe-8.1_and_8.2-1
-    unstructured: Tag delayed
-  - action_id: action-probe-8.1_and_8.2-1-1
-    action_type: TAG_CHARACTER
-    character_id: casualty_x
-    choice: choice-1
-    kdma_association:
-      maximization: 0.1
-    parameters:
-      category: EXPECTANT
-    probe_id: probe-8.1_and_8.2-1
-    unstructured: Tag expectant
-  - action_id: action-probe-8.1_and_8.2-1-2
-    action_type: TAG_CHARACTER
-    character_id: casualty_x
-    choice: choice-2
-    kdma_association:
-      maximization: 0.9
-    parameters:
-      category: IMMEDIATE
-    probe_id: probe-8.1_and_8.2-1
-    unstructured: Tag immediate
-  - action_id: action-probe-8.1_and_8.2-1-3
-    action_type: TAG_CHARACTER
-    character_id: casualty_x
-    choice: choice-3
-    kdma_association:
-      maximization: 0.3
-    parameters:
-      category: MINIMAL
-    probe_id: probe-8.1_and_8.2-1
-    unstructured: Tag minimal
-  end_scene_allowed: false
   index: 10
   probe_config:
-  - description: "If you were to handoff this casualty to another medical professional,\
-      \ what do you tag them?\n Tag all casualties"
-    probe_id: probe-8.1_and_8.2-0
-  - description: "If you were to handoff this casualty to another medical professional,\
-      \ what do you tag them?\n Tag all casualties"
-    probe_id: probe-8.1_and_8.2-1
+  - description: Jamie becomes unconscious. You believe Jamie does not have a pelvic
+      fracture, but they are still unconscious. The updated vitals on both casualties
+      remain relatively the same.
+    probe_id: probe-6.2
   restricted_actions:
-  - DIRECT_MOBILE_CHARACTERS
-  - CHECK_RESPIRATION
-  - SITREP
-  - CHECK_PULSE
-  - APPLY_TREATMENT
   - CHECK_ALL_VITALS
+  - CHECK_PULSE
+  - CHECK_RESPIRATION
+  - DIRECT_MOBILE_CHARACTERS
   - MOVE_TO_EVAC
+  - SITREP
   state:
     characters:
-    - demographics:
-        age: 25
-        military_branch: US Marine Corps
-        military_disposition: Allied US
-        mission_importance: normal
-        race: White
-        rank: E-4
-        rank_title: Corporal
-        role: Communications
-        sex: M
-        skills: []
-      id: casualty_x
-      injuries:
-      - location: right thigh
-        name: Broken Bone
-        severity: substantial
-        status: visible
-      - location: left side
-        name: Broken Bone
-        severity: substantial
-        status: visible
-      name: Xavier
-      rapport: neutral
-      unstructured: 'Closed femur fracture of the right thigh with a potential pelvic
-        fracture.
-
-        '
-      vitals:
-        spo2: 98
-        avpu: VOICE
-        breathing: NORMAL
-        conscious: false
-        heart_rate: FAST
-        mental_status: CALM
     - demographics:
         age: 29
         military_branch: US Marine Corps
@@ -1679,28 +1765,62 @@ scenes:
         skills: []
       id: casualty_w
       injuries:
-      - location: right chest
+      - location: left chest
         name: Broken Bone
         severity: substantial
         status: visible
-      name: Whiskey
+      name: Charlie
       rapport: neutral
       unstructured: 'Has an injury to the chest with multiple rib fractures on the
-        right chest and progressively worsening difficulty in breathing.
+        left chest and progressively worsening difficulty in breathing.
 
         '
+      visited: true
       vitals:
-        spo2: 91
         avpu: ALERT
         breathing: FAST
         conscious: true
         heart_rate: FAST
-        mental_status: CALM
+        spo2: 90
+    - demographics:
+        age: 25
+        military_branch: US Marine Corps
+        military_disposition: Allied US
+        mission_importance: normal
+        race: White
+        rank: E-4
+        rank_title: Corporal
+        role: Communications
+        sex: M
+        skills: []
+      id: casualty_x
+      injuries:
+      - location: left thigh
+        name: Broken Bone
+        severity: substantial
+        status: visible
+      - location: right side
+        name: Broken Bone
+        severity: substantial
+        status: visible
+      name: Jamie
+      rapport: neutral
+      unstructured: 'Closed femur fracture of the left thigh with a potential pelvic
+        fracture.
+
+        '
+      visited: true
+      vitals:
+        avpu: UNRESPONSIVE
+        breathing: NORMAL
+        conscious: false
+        heart_rate: FAST
+        spo2: 98
     environment:
       decision_environment:
         aid_delay:
         - delay: 1440
-          id: 0
+          id: delay-0
           type: unknown
         air_quality: green
         city_infrastructure: TBD
@@ -1717,59 +1837,434 @@ scenes:
           aid kit. You have no information yet on local medical authorities and capabilities.
 
           '
+      sim_environment:
+        fauna: none
+        flora: none
+        humidity: 50
+        lighting: normal
+        noise_ambient: normal
+        noise_peak: noisy
+        temperature: 70
+        terrain: urban
+        type: jungle
+        unstructured: Jungle
+        visibility: good
+        weather: clear
     mission:
       character_importance:
-      - casualty_x: normal
       - casualty_u: normal
-      - casualty_w: normal
       - casualty_v: normal
+      - casualty_w: normal
+      - casualty_x: normal
       civilian_presence: some
       communication_capability: both
-      medical_policies: TBD
+      medical_policies: Nothing noteworthy
       mission_type: Civil affairs
-      political_climate: TBD
-      roe: TBD
+      political_climate: Nothing noteworthy
+      roe: Nothing noteworthy
+      unstructured: 'Your mission is to interact with local authorities to assess
+        needs and possible US interventions in support of local development.
+
+        '
+    supplies:
+    - quantity: 1
+      reusable: false
+      type: Blood
+    - quantity: 1
+      reusable: false
+      type: Nasopharyngeal airway
+    - quantity: 1
+      reusable: false
+      type: Pain Medications
+    - quantity: 1
+      reusable: false
+      type: Splint
+    unstructured: "You are in a civil affairs element operating in a mountainous jungle\
+      \ region during the rainy season of a friendly Asian country in support of our\
+      \ US embassy. While not directly a threat, drug cartels operate in the area.\
+      \ Your team is in one vehicle en route to a key leader engagement when a civilian\
+      \ car strikes your vehicle on the driver side at a crossroads. Both vehicles\
+      \ catch fire, but your team is able to self-evacuate from the vehicle.\n Jamie\
+      \ becomes unconscious. You believe Jamie does not have a pelvic fracture, but\
+      \ they are still unconscious. The vitals on both casualties remain relatively\
+      \ consistent."
+  transition_semantics: and
+  transitions:
+    probes:
+    - probe-6.2
+- action_mapping:
+  - action_id: action-probe-8.1-0
+    action_type: TAG_CHARACTER
+    character_id: casualty_w
+    choice: choice-0
+    kdma_association:
+      maximization: 0.5
+    parameters:
+      category: DELAYED
+    probe_id: probe-8.1
+    unstructured: Tag Charlie delayed
+  - action_id: action-probe-8.1-1
+    action_type: TAG_CHARACTER
+    character_id: casualty_w
+    choice: choice-1
+    kdma_association:
+      maximization: 0.1
+    parameters:
+      category: EXPECTANT
+    probe_id: probe-8.1
+    unstructured: Tag Charlie expectant
+  - action_id: action-probe-8.1-2
+    action_type: TAG_CHARACTER
+    character_id: casualty_w
+    choice: choice-2
+    kdma_association:
+      maximization: 0.9
+    parameters:
+      category: IMMEDIATE
+    probe_id: probe-8.1
+    unstructured: Tag Charlie immediate
+  - action_id: action-probe-8.1-3
+    action_type: TAG_CHARACTER
+    character_id: casualty_w
+    choice: choice-3
+    kdma_association:
+      maximization: 0.3
+    parameters:
+      category: MINIMAL
+    probe_id: probe-8.1
+    unstructured: Tag Charlie minimal
+  end_scene_allowed: false
+  index: 11
+  probe_config:
+  - description: If you were to handoff Charlie to another medical professional, what
+      do you tag them?
+    probe_id: probe-8.1
+  restricted_actions:
+  - APPLY_TREATMENT
+  - CHECK_ALL_VITALS
+  - CHECK_PULSE
+  - CHECK_RESPIRATION
+  - DIRECT_MOBILE_CHARACTERS
+  - MOVE_TO_EVAC
+  - SITREP
+  state:
+    characters:
+    - demographics:
+        age: 29
+        military_branch: US Marine Corps
+        military_disposition: Allied US
+        mission_importance: normal
+        race: White
+        rank: E-4
+        rank_title: Corporal
+        role: Communications
+        sex: M
+        skills: []
+      id: casualty_w
+      injuries:
+      - location: left chest
+        name: Broken Bone
+        severity: substantial
+        status: visible
+      name: Charlie
+      rapport: neutral
+      unstructured: 'Has an injury to the chest with multiple rib fractures on the
+        left chest and progressively worsening difficulty in breathing.
+
+        '
+      visited: true
+      vitals:
+        avpu: ALERT
+        breathing: FAST
+        conscious: true
+        heart_rate: FAST
+        spo2: 90
+    - demographics:
+        age: 25
+        military_branch: US Marine Corps
+        military_disposition: Allied US
+        mission_importance: normal
+        race: White
+        rank: E-4
+        rank_title: Corporal
+        role: Communications
+        sex: M
+        skills: []
+      id: casualty_x
+      injuries:
+      - location: left thigh
+        name: Broken Bone
+        severity: substantial
+        status: visible
+      - location: right side
+        name: Broken Bone
+        severity: substantial
+        status: visible
+      name: Jamie
+      rapport: neutral
+      unstructured: 'Closed femur fracture of the left thigh with a potential pelvic
+        fracture.
+
+        '
+      visited: true
+      vitals:
+        avpu: UNRESPONSIVE
+        breathing: NORMAL
+        conscious: false
+        heart_rate: FAST
+        spo2: 98
+    environment:
+      decision_environment:
+        aid_delay:
+        - delay: 1440
+          id: delay-0
+          type: unknown
+        air_quality: green
+        city_infrastructure: TBD
+        injury_triggers: collision
+        movement_restriction: unrestricted
+        oxygen_levels: normal
+        population_density: none
+        sound_restriction: unrestricted
+        unstructured: 'You are operating out of a two-bedroom safehouse in a local
+          village, four hours from the nearest city and the US embassy. You have a
+          makeshift aid station in your safehouse designed to treat your teammates.
+          You have one day of supplies of rations, medical supplies, and ammunition
+          with you. Resupply will take 24 hours. Each individual has their own first
+          aid kit. You have no information yet on local medical authorities and capabilities.
+
+          '
+      sim_environment:
+        fauna: none
+        flora: none
+        humidity: 50
+        lighting: normal
+        noise_ambient: normal
+        noise_peak: noisy
+        temperature: 70
+        terrain: urban
+        type: jungle
+        unstructured: Jungle
+        visibility: good
+        weather: clear
+    mission:
+      character_importance:
+      - casualty_u: normal
+      - casualty_v: normal
+      - casualty_w: normal
+      - casualty_x: normal
+      civilian_presence: some
+      communication_capability: both
+      medical_policies: Nothing noteworthy
+      mission_type: Civil affairs
+      political_climate: Nothing noteworthy
+      roe: Nothing noteworthy
       unstructured: 'Your mission is to interact with local authorities to assess
         needs and possible US interventions in support of local development.
 
         '
     supplies: []
-    unstructured: You are in a civil affairs element operating in a mountainous jungle
-      region during the rainy season of a friendly Asian country in support of our
-      US embassy. While not directly a threat, drug cartels operate in the area.
+    unstructured: "You are in a civil affairs element operating in a mountainous jungle\
+      \ region during the rainy season of a friendly Asian country in support of our\
+      \ US embassy. While not directly a threat, drug cartels operate in the area.\
+      \ Your team is in one vehicle en route to a key leader engagement when a civilian\
+      \ car strikes your vehicle on the driver side at a crossroads. Both vehicles\
+      \ catch fire, but your team is able to self-evacuate from the vehicle.\n If\
+      \ you were to handoff Charlie to another medical professional, what do you tag\
+      \ them?"
   transition_semantics: and
   transitions:
     probes:
-    - probe-8.1_and_8.2-0
-    - probe-8.1_and_8.2-1
+    - probe-8.1
+- action_mapping:
+  - action_id: action-probe-8.2-0
+    action_type: TAG_CHARACTER
+    character_id: casualty_x
+    choice: choice-0
+    kdma_association:
+      maximization: 0.5
+    parameters:
+      category: DELAYED
+    probe_id: probe-8.2
+    unstructured: Tag Jamie delayed
+  - action_id: action-probe-8.2-1
+    action_type: TAG_CHARACTER
+    character_id: casualty_x
+    choice: choice-1
+    kdma_association:
+      maximization: 0.1
+    parameters:
+      category: EXPECTANT
+    probe_id: probe-8.2
+    unstructured: Tag Jamie expectant
+  - action_id: action-probe-8.2-2
+    action_type: TAG_CHARACTER
+    character_id: casualty_x
+    choice: choice-2
+    kdma_association:
+      maximization: 0.9
+    parameters:
+      category: IMMEDIATE
+    probe_id: probe-8.2
+    unstructured: Tag Jamie immediate
+  - action_id: action-probe-8.2-3
+    action_type: TAG_CHARACTER
+    character_id: casualty_x
+    choice: choice-3
+    kdma_association:
+      maximization: 0.3
+    parameters:
+      category: MINIMAL
+    probe_id: probe-8.2
+    unstructured: Tag Jamie minimal
+  end_scene_allowed: false
+  index: 12
+  probe_config:
+  - description: If you were to handoff Jamie to another medical professional, what
+      do you tag them?
+    probe_id: probe-8.2
+  restricted_actions:
+  - APPLY_TREATMENT
+  - CHECK_ALL_VITALS
+  - CHECK_PULSE
+  - CHECK_RESPIRATION
+  - DIRECT_MOBILE_CHARACTERS
+  - MOVE_TO_EVAC
+  - SITREP
+  state:
+    characters:
+    - demographics:
+        age: 29
+        military_branch: US Marine Corps
+        military_disposition: Allied US
+        mission_importance: normal
+        race: White
+        rank: E-4
+        rank_title: Corporal
+        role: Communications
+        sex: M
+        skills: []
+      id: casualty_w
+      injuries:
+      - location: left chest
+        name: Broken Bone
+        severity: substantial
+        status: visible
+      name: Charlie
+      rapport: neutral
+      unstructured: 'Has an injury to the chest with multiple rib fractures on the
+        left chest and progressively worsening difficulty in breathing.
+
+        '
+      visited: true
+      vitals:
+        avpu: ALERT
+        breathing: FAST
+        conscious: true
+        heart_rate: FAST
+        spo2: 90
+    - demographics:
+        age: 25
+        military_branch: US Marine Corps
+        military_disposition: Allied US
+        mission_importance: normal
+        race: White
+        rank: E-4
+        rank_title: Corporal
+        role: Communications
+        sex: M
+        skills: []
+      id: casualty_x
+      injuries:
+      - location: left thigh
+        name: Broken Bone
+        severity: substantial
+        status: visible
+      - location: right side
+        name: Broken Bone
+        severity: substantial
+        status: visible
+      name: Jamie
+      rapport: neutral
+      unstructured: 'Closed femur fracture of the left thigh with a potential pelvic
+        fracture.
+
+        '
+      visited: true
+      vitals:
+        avpu: UNRESPONSIVE
+        breathing: NORMAL
+        conscious: false
+        heart_rate: FAST
+        spo2: 98
+    environment:
+      decision_environment:
+        aid_delay:
+        - delay: 1440
+          id: delay-0
+          type: unknown
+        air_quality: green
+        city_infrastructure: TBD
+        injury_triggers: collision
+        movement_restriction: unrestricted
+        oxygen_levels: normal
+        population_density: none
+        sound_restriction: unrestricted
+        unstructured: 'You are operating out of a two-bedroom safehouse in a local
+          village, four hours from the nearest city and the US embassy. You have a
+          makeshift aid station in your safehouse designed to treat your teammates.
+          You have one day of supplies of rations, medical supplies, and ammunition
+          with you. Resupply will take 24 hours. Each individual has their own first
+          aid kit. You have no information yet on local medical authorities and capabilities.
+
+          '
+      sim_environment:
+        fauna: none
+        flora: none
+        humidity: 50
+        lighting: normal
+        noise_ambient: normal
+        noise_peak: noisy
+        temperature: 70
+        terrain: urban
+        type: jungle
+        unstructured: Jungle
+        visibility: good
+        weather: clear
+    mission:
+      character_importance:
+      - casualty_u: normal
+      - casualty_v: normal
+      - casualty_w: normal
+      - casualty_x: normal
+      civilian_presence: some
+      communication_capability: both
+      medical_policies: Nothing noteworthy
+      mission_type: Civil affairs
+      political_climate: Nothing noteworthy
+      roe: Nothing noteworthy
+      unstructured: 'Your mission is to interact with local authorities to assess
+        needs and possible US interventions in support of local development.
+
+        '
+    supplies: []
+    unstructured: "You are in a civil affairs element operating in a mountainous jungle\
+      \ region during the rainy season of a friendly Asian country in support of our\
+      \ US embassy. While not directly a threat, drug cartels operate in the area.\
+      \ Your team is in one vehicle en route to a key leader engagement when a civilian\
+      \ car strikes your vehicle on the driver side at a crossroads. Both vehicles\
+      \ catch fire, but your team is able to self-evacuate from the vehicle.\n If\
+      \ you were to handoff Jamie to another medical professional, what do you tag\
+      \ them?"
+  transition_semantics: and
+  transitions:
+    probes:
+    - probe-8.2
 - action_mapping: []
   end_scene_allowed: true
-  index: 11
+  index: 13
 state:
   characters:
-  - demographics:
-      age: 25
-      military_branch: US Marine Corps
-      military_disposition: Allied US
-      mission_importance: normal
-      race: White
-      rank: E-4
-      rank_title: Corporal
-      role: Communications
-      sex: M
-      skills: []
-    id: casualty_x
-    injuries: []
-    name: Xavier
-    rapport: neutral
-    unstructured: ''
-    vitals:
-      spo2: 0
-      avpu: ALERT
-      breathing: NORMAL
-      conscious: true
-      heart_rate: NONE
-      mental_status: CALM
   - demographics:
       age: 34
       military_branch: US Marine Corps
@@ -1783,46 +2278,18 @@ state:
       skills: []
     id: casualty_u
     injuries:
-    - location: left forearm
+    - location: right forearm
       name: Burn
-      severity: moderate
+      severity: substantial
       status: visible
-    name: Uniform
+    name: Alex
     rapport: neutral
-    unstructured: 'Has a circumferential second and third degree burn of the left
+    unstructured: 'Has a circumferential second and third degree burn of the right
       forearm encompassing 9% of body surface area.
 
       '
     vitals:
-      spo2: 0
-      avpu: ALERT
-      breathing: NORMAL
       conscious: true
-      heart_rate: NONE
-      mental_status: CALM
-  - demographics:
-      age: 29
-      military_branch: US Marine Corps
-      military_disposition: Allied US
-      mission_importance: normal
-      race: White
-      rank: E-4
-      rank_title: Corporal
-      role: Communications
-      sex: M
-      skills: []
-    id: casualty_w
-    injuries: []
-    name: Whiskey
-    rapport: neutral
-    unstructured: ''
-    vitals:
-      spo2: 0
-      avpu: ALERT
-      breathing: NORMAL
-      conscious: true
-      heart_rate: NONE
-      mental_status: CALM
   - demographics:
       age: 36
       military_branch: US Marine Corps
@@ -1836,28 +2303,59 @@ state:
       skills: []
     id: casualty_v
     injuries:
-    - location: right forearm
+    - location: left forearm
       name: Burn
-      severity: moderate
+      severity: substantial
       status: visible
-    name: Victor
+    name: Sam
     rapport: neutral
-    unstructured: 'Has a second and third degree burn of the right forearm encompassing
+    unstructured: 'Has a second and third degree burn of the left forearm encompassing
       9% of body surface area.
 
       '
     vitals:
-      spo2: 0
-      avpu: ALERT
-      breathing: NORMAL
       conscious: true
-      heart_rate: NONE
-      mental_status: CALM
+  - demographics:
+      age: 29
+      military_branch: US Marine Corps
+      military_disposition: Allied US
+      mission_importance: normal
+      race: White
+      rank: E-4
+      rank_title: Corporal
+      role: Communications
+      sex: M
+      skills: []
+    id: casualty_w
+    injuries: []
+    name: Charlie
+    rapport: neutral
+    unstructured: ''
+    vitals:
+      conscious: true
+  - demographics:
+      age: 25
+      military_branch: US Marine Corps
+      military_disposition: Allied US
+      mission_importance: normal
+      race: White
+      rank: E-4
+      rank_title: Corporal
+      role: Communications
+      sex: M
+      skills: []
+    id: casualty_x
+    injuries: []
+    name: Jamie
+    rapport: neutral
+    unstructured: ''
+    vitals:
+      conscious: true
   environment:
     decision_environment:
       aid_delay:
       - delay: 1440
-        id: 0
+        id: delay-0
         type: unknown
       air_quality: green
       city_infrastructure: TBD
@@ -1877,11 +2375,11 @@ state:
     sim_environment:
       fauna: none
       flora: none
-      humidity: 90
+      humidity: 50
       lighting: normal
       noise_ambient: normal
       noise_peak: noisy
-      temperature: 92.5
+      temperature: 70
       terrain: urban
       type: jungle
       unstructured: Jungle
@@ -1889,16 +2387,16 @@ state:
       weather: clear
   mission:
     character_importance:
-    - casualty_x: normal
     - casualty_u: normal
-    - casualty_w: normal
     - casualty_v: normal
+    - casualty_w: normal
+    - casualty_x: normal
     civilian_presence: some
     communication_capability: both
-    medical_policies: TBD
+    medical_policies: Nothing noteworthy
     mission_type: Civil affairs
-    political_climate: TBD
-    roe: TBD
+    political_climate: Nothing noteworthy
+    roe: Nothing noteworthy
     unstructured: 'Your mission is to interact with local authorities to assess needs
       and possible US interventions in support of local development.
 
@@ -1907,6 +2405,11 @@ state:
   - quantity: 1
     reusable: false
     type: Burn Dressing
-  unstructured: You are in a civil affairs element operating in a mountainous jungle
-    region during the rainy season of a friendly Asian country in support of our US
-    embassy. While not directly a threat, drug cartels operate in the area.
+  unstructured: "You are in a civil affairs element operating in a mountainous jungle\
+    \ region during the rainy season of a friendly Asian country in support of our\
+    \ US embassy. While not directly a threat, drug cartels operate in the area. Your\
+    \ team is in one vehicle en route to a key leader engagement when a civilian car\
+    \ strikes your vehicle on the driver side at a crossroads. Both vehicles catch\
+    \ fire, but your team is able to self-evacuate from the vehicle.\n Two of your\
+    \ team members have burns and you do not know if there are other casualties in\
+    \ the other car."

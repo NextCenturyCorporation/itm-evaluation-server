@@ -2,11 +2,10 @@ from typing import List
 from dataclasses import dataclass
 from copy import deepcopy
 from swagger_server.models import (
-    Action, InjuryStatusEnum, ProbeResponse, State, Vitals
+    Action, AlignmentTarget, InjuryStatusEnum, ProbeResponse, State, Vitals
 )
 from .itm_scenario_reader import ITMScenarioReader
 from .itm_scene import ITMScene
-from .itm_alignment_target_reader import ITMAlignmentTargetReader
 from .itm_ta1_controller import ITMTa1Controller
 
 @dataclass
@@ -21,7 +20,7 @@ class ITMScenario:
         self.yaml_path = yaml_path
         self.scene_type = 'adept' if 'adept' in self.yaml_path else 'soartech'
         self.training = training
-        self.alignment_target_reader: ITMAlignmentTargetReader = None
+        self.alignment_target: AlignmentTarget = None
         self.ta1_controller: ITMTa1Controller = None
         self.probes_sent = []
         from.itm_session import ITMSession
@@ -46,7 +45,7 @@ class ITMScenario:
         # isd is short for ITM Scenario Data
         isd = ITMScenarioData()
 
-        scenario_reader = ITMScenarioReader(self.yaml_path + "scenario.yaml")
+        scenario_reader = ITMScenarioReader(self.yaml_path)
         (scenario, isd.scenes) = \
             scenario_reader.read_scenario_from_yaml()
         isd.current_scene_index = 0
@@ -58,14 +57,9 @@ class ITMScenario:
         self.id = scenario.id
         self.name = scenario.name
 
-        if not self.training:
-            self.alignment_target_reader = ITMAlignmentTargetReader(self.yaml_path + "alignment_target.yaml")
-
-        if self.session.ta1_integration:
-            self.ta1_controller = ITMTa1Controller(
-                self.alignment_target_reader.alignment_target.id if not self.training else None,
-                self.scene_type
-            )
+    def set_controller(self, controller :ITMTa1Controller):
+        self.ta1_controller = controller
+        self.alignment_target = controller.alignment_target
 
     # Pass-through to ITMScene
     def get_available_actions(self) -> List[Action]:
