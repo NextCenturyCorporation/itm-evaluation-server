@@ -6,7 +6,7 @@ import os
 from swagger_server import encoder
 
 PORT = os.getenv("TA3_PORT")
-if (PORT == None or PORT == ""):
+if (PORT is None or PORT == ""):
     PORT = 8080
 
 def main():

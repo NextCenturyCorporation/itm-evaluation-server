@@ -6,8 +6,10 @@ from datetime import date, datetime  # noqa: F401
 from typing import List, Dict  # noqa: F401
 
 from swagger_server.models.base_model_ import Model
-from swagger_server.models.injury_location import InjuryLocation  # noqa: F401,E501
-from swagger_server.models.injury_type import InjuryType  # noqa: F401,E501
+from swagger_server.models.injury_location_enum import InjuryLocationEnum  # noqa: F401,E501
+from swagger_server.models.injury_severity_enum import InjurySeverityEnum  # noqa: F401,E501
+from swagger_server.models.injury_status_enum import InjuryStatusEnum  # noqa: F401,E501
+from swagger_server.models.injury_type_enum import InjuryTypeEnum  # noqa: F401,E501
 from swagger_server import util
 
 
@@ -16,30 +18,40 @@ class Injury(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, name: InjuryType=None, location: InjuryLocation=None, severity: float=None):  # noqa: E501
+    def __init__(self, name: InjuryTypeEnum=None, location: InjuryLocationEnum=None, severity: InjurySeverityEnum=None, status: InjuryStatusEnum=None, source_character: str=None):  # noqa: E501
         """Injury - a model defined in Swagger
 
         :param name: The name of this Injury.  # noqa: E501
-        :type name: InjuryType
+        :type name: InjuryTypeEnum
         :param location: The location of this Injury.  # noqa: E501
-        :type location: InjuryLocation
+        :type location: InjuryLocationEnum
         :param severity: The severity of this Injury.  # noqa: E501
-        :type severity: float
+        :type severity: InjurySeverityEnum
+        :param status: The status of this Injury.  # noqa: E501
+        :type status: InjuryStatusEnum
+        :param source_character: The source_character of this Injury.  # noqa: E501
+        :type source_character: str
         """
         self.swagger_types = {
-            'name': InjuryType,
-            'location': InjuryLocation,
-            'severity': float
+            'name': InjuryTypeEnum,
+            'location': InjuryLocationEnum,
+            'severity': InjurySeverityEnum,
+            'status': InjuryStatusEnum,
+            'source_character': str
         }
 
         self.attribute_map = {
             'name': 'name',
             'location': 'location',
-            'severity': 'severity'
+            'severity': 'severity',
+            'status': 'status',
+            'source_character': 'source_character'
         }
         self._name = name
         self._location = location
         self._severity = severity
+        self._status = status
+        self._source_character = source_character
 
     @classmethod
     def from_dict(cls, dikt) -> 'Injury':
@@ -53,22 +65,22 @@ class Injury(Model):
         return util.deserialize_model(dikt, cls)
 
     @property
-    def name(self) -> InjuryType:
+    def name(self) -> InjuryTypeEnum:
         """Gets the name of this Injury.
 
 
         :return: The name of this Injury.
-        :rtype: InjuryType
+        :rtype: InjuryTypeEnum
         """
         return self._name
 
     @name.setter
-    def name(self, name: InjuryType):
+    def name(self, name: InjuryTypeEnum):
         """Sets the name of this Injury.
 
 
         :param name: The name of this Injury.
-        :type name: InjuryType
+        :type name: InjuryTypeEnum
         """
         if name is None:
             raise ValueError("Invalid value for `name`, must not be `None`")  # noqa: E501
@@ -76,22 +88,22 @@ class Injury(Model):
         self._name = name
 
     @property
-    def location(self) -> InjuryLocation:
+    def location(self) -> InjuryLocationEnum:
         """Gets the location of this Injury.
 
 
         :return: The location of this Injury.
-        :rtype: InjuryLocation
+        :rtype: InjuryLocationEnum
         """
         return self._location
 
     @location.setter
-    def location(self, location: InjuryLocation):
+    def location(self, location: InjuryLocationEnum):
         """Sets the location of this Injury.
 
 
         :param location: The location of this Injury.
-        :type location: InjuryLocation
+        :type location: InjuryLocationEnum
         """
         if location is None:
             raise ValueError("Invalid value for `location`, must not be `None`")  # noqa: E501
@@ -99,24 +111,68 @@ class Injury(Model):
         self._location = location
 
     @property
-    def severity(self) -> float:
+    def severity(self) -> InjurySeverityEnum:
         """Gets the severity of this Injury.
 
-        the apparent severity of the injury from 0 (low) to 1.0 (high)  # noqa: E501
 
         :return: The severity of this Injury.
-        :rtype: float
+        :rtype: InjurySeverityEnum
         """
         return self._severity
 
     @severity.setter
-    def severity(self, severity: float):
+    def severity(self, severity: InjurySeverityEnum):
         """Sets the severity of this Injury.
 
-        the apparent severity of the injury from 0 (low) to 1.0 (high)  # noqa: E501
 
         :param severity: The severity of this Injury.
-        :type severity: float
+        :type severity: InjurySeverityEnum
         """
 
         self._severity = severity
+
+    @property
+    def status(self) -> InjuryStatusEnum:
+        """Gets the status of this Injury.
+
+
+        :return: The status of this Injury.
+        :rtype: InjuryStatusEnum
+        """
+        return self._status
+
+    @status.setter
+    def status(self, status: InjuryStatusEnum):
+        """Sets the status of this Injury.
+
+
+        :param status: The status of this Injury.
+        :type status: InjuryStatusEnum
+        """
+        if status is None:
+            raise ValueError("Invalid value for `status`, must not be `None`")  # noqa: E501
+
+        self._status = status
+
+    @property
+    def source_character(self) -> str:
+        """Gets the source_character of this Injury.
+
+        The character id of the person responsible for the injury, subject to the character's `directness_of_causality`  # noqa: E501
+
+        :return: The source_character of this Injury.
+        :rtype: str
+        """
+        return self._source_character
+
+    @source_character.setter
+    def source_character(self, source_character: str):
+        """Sets the source_character of this Injury.
+
+        The character id of the person responsible for the injury, subject to the character's `directness_of_causality`  # noqa: E501
+
+        :param source_character: The source_character of this Injury.
+        :type source_character: str
+        """
+
+        self._source_character = source_character

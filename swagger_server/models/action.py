@@ -6,7 +6,7 @@ from datetime import date, datetime  # noqa: F401
 from typing import List, Dict  # noqa: F401
 
 from swagger_server.models.base_model_ import Model
-from swagger_server.models.action_type import ActionType  # noqa: F401,E501
+from swagger_server.models.action_type_enum import ActionTypeEnum  # noqa: F401,E501
 from swagger_server import util
 
 
@@ -15,50 +15,50 @@ class Action(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, action_id: str=None, action_type: ActionType=None, character_id: str=None, unstructured: str=None, justification: str=None, kdma_association: Dict[str, str]=None, parameters: Dict[str, str]=None):  # noqa: E501
+    def __init__(self, action_id: str=None, action_type: ActionTypeEnum=None, unstructured: str=None, character_id: str=None, parameters: Dict[str, str]=None, justification: str=None, kdma_association: Dict[str, float]=None):  # noqa: E501
         """Action - a model defined in Swagger
 
         :param action_id: The action_id of this Action.  # noqa: E501
         :type action_id: str
         :param action_type: The action_type of this Action.  # noqa: E501
-        :type action_type: ActionType
-        :param character_id: The character_id of this Action.  # noqa: E501
-        :type character_id: str
+        :type action_type: ActionTypeEnum
         :param unstructured: The unstructured of this Action.  # noqa: E501
         :type unstructured: str
+        :param character_id: The character_id of this Action.  # noqa: E501
+        :type character_id: str
+        :param parameters: The parameters of this Action.  # noqa: E501
+        :type parameters: Dict[str, str]
         :param justification: The justification of this Action.  # noqa: E501
         :type justification: str
         :param kdma_association: The kdma_association of this Action.  # noqa: E501
-        :type kdma_association: Dict[str, str]
-        :param parameters: The parameters of this Action.  # noqa: E501
-        :type parameters: Dict[str, str]
+        :type kdma_association: Dict[str, float]
         """
         self.swagger_types = {
             'action_id': str,
-            'action_type': ActionType,
-            'character_id': str,
+            'action_type': ActionTypeEnum,
             'unstructured': str,
+            'character_id': str,
+            'parameters': Dict[str, str],
             'justification': str,
-            'kdma_association': Dict[str, str],
-            'parameters': Dict[str, str]
+            'kdma_association': Dict[str, float]
         }
 
         self.attribute_map = {
             'action_id': 'action_id',
             'action_type': 'action_type',
-            'character_id': 'character_id',
             'unstructured': 'unstructured',
+            'character_id': 'character_id',
+            'parameters': 'parameters',
             'justification': 'justification',
-            'kdma_association': 'kdma_association',
-            'parameters': 'parameters'
+            'kdma_association': 'kdma_association'
         }
         self._action_id = action_id
         self._action_type = action_type
-        self._character_id = character_id
         self._unstructured = unstructured
+        self._character_id = character_id
+        self._parameters = parameters
         self._justification = justification
         self._kdma_association = kdma_association
-        self._parameters = parameters
 
     @classmethod
     def from_dict(cls, dikt) -> 'Action':
@@ -75,7 +75,7 @@ class Action(Model):
     def action_id(self) -> str:
         """Gets the action_id of this Action.
 
-        action ID  # noqa: E501
+        A unique action ID within the scenario  # noqa: E501
 
         :return: The action_id of this Action.
         :rtype: str
@@ -86,7 +86,7 @@ class Action(Model):
     def action_id(self, action_id: str):
         """Sets the action_id of this Action.
 
-        action ID  # noqa: E501
+        A unique action ID within the scenario  # noqa: E501
 
         :param action_id: The action_id of this Action.
         :type action_id: str
@@ -97,27 +97,50 @@ class Action(Model):
         self._action_id = action_id
 
     @property
-    def action_type(self) -> ActionType:
+    def action_type(self) -> ActionTypeEnum:
         """Gets the action_type of this Action.
 
 
         :return: The action_type of this Action.
-        :rtype: ActionType
+        :rtype: ActionTypeEnum
         """
         return self._action_type
 
     @action_type.setter
-    def action_type(self, action_type: ActionType):
+    def action_type(self, action_type: ActionTypeEnum):
         """Sets the action_type of this Action.
 
 
         :param action_type: The action_type of this Action.
-        :type action_type: ActionType
+        :type action_type: ActionTypeEnum
         """
         if action_type is None:
             raise ValueError("Invalid value for `action_type`, must not be `None`")  # noqa: E501
 
         self._action_type = action_type
+
+    @property
+    def unstructured(self) -> str:
+        """Gets the unstructured of this Action.
+
+        Natural language, plain text description of the action  # noqa: E501
+
+        :return: The unstructured of this Action.
+        :rtype: str
+        """
+        return self._unstructured
+
+    @unstructured.setter
+    def unstructured(self, unstructured: str):
+        """Sets the unstructured of this Action.
+
+        Natural language, plain text description of the action  # noqa: E501
+
+        :param unstructured: The unstructured of this Action.
+        :type unstructured: str
+        """
+
+        self._unstructured = unstructured
 
     @property
     def character_id(self) -> str:
@@ -143,27 +166,27 @@ class Action(Model):
         self._character_id = character_id
 
     @property
-    def unstructured(self) -> str:
-        """Gets the unstructured of this Action.
+    def parameters(self) -> Dict[str, str]:
+        """Gets the parameters of this Action.
 
-        a plain text unstructured description of the action  # noqa: E501
+        key-value pairs containing additional [action-specific parameters](https://github.com/NextCenturyCorporation/itm-evaluation-client?tab=readme-ov-file#available-actions)  # noqa: E501
 
-        :return: The unstructured of this Action.
-        :rtype: str
+        :return: The parameters of this Action.
+        :rtype: Dict[str, str]
         """
-        return self._unstructured
+        return self._parameters
 
-    @unstructured.setter
-    def unstructured(self, unstructured: str):
-        """Sets the unstructured of this Action.
+    @parameters.setter
+    def parameters(self, parameters: Dict[str, str]):
+        """Sets the parameters of this Action.
 
-        a plain text unstructured description of the action  # noqa: E501
+        key-value pairs containing additional [action-specific parameters](https://github.com/NextCenturyCorporation/itm-evaluation-client?tab=readme-ov-file#available-actions)  # noqa: E501
 
-        :param unstructured: The unstructured of this Action.
-        :type unstructured: str
+        :param parameters: The parameters of this Action.
+        :type parameters: Dict[str, str]
         """
 
-        self._unstructured = unstructured
+        self._parameters = parameters
 
     @property
     def justification(self) -> str:
@@ -189,47 +212,24 @@ class Action(Model):
         self._justification = justification
 
     @property
-    def kdma_association(self) -> Dict[str, str]:
+    def kdma_association(self) -> Dict[str, float]:
         """Gets the kdma_association of this Action.
 
-        KDMA associations with this action used in training  # noqa: E501
+        KDMA associations for this choice, if provided by TA1  # noqa: E501
 
         :return: The kdma_association of this Action.
-        :rtype: Dict[str, str]
+        :rtype: Dict[str, float]
         """
         return self._kdma_association
 
     @kdma_association.setter
-    def kdma_association(self, kdma_association: Dict[str, str]):
+    def kdma_association(self, kdma_association: Dict[str, float]):
         """Sets the kdma_association of this Action.
 
-        KDMA associations with this action used in training  # noqa: E501
+        KDMA associations for this choice, if provided by TA1  # noqa: E501
 
         :param kdma_association: The kdma_association of this Action.
-        :type kdma_association: Dict[str, str]
+        :type kdma_association: Dict[str, float]
         """
 
         self._kdma_association = kdma_association
-
-    @property
-    def parameters(self) -> Dict[str, str]:
-        """Gets the parameters of this Action.
-
-        key-value pairs containing additional action-specific parameters  # noqa: E501
-
-        :return: The parameters of this Action.
-        :rtype: Dict[str, str]
-        """
-        return self._parameters
-
-    @parameters.setter
-    def parameters(self, parameters: Dict[str, str]):
-        """Sets the parameters of this Action.
-
-        key-value pairs containing additional action-specific parameters  # noqa: E501
-
-        :param parameters: The parameters of this Action.
-        :type parameters: Dict[str, str]
-        """
-
-        self._parameters = parameters

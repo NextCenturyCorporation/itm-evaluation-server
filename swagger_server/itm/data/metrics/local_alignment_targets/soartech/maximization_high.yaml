@@ -1,0 +1,4 @@
+id: maximization_high
+kdma_values:
+  - kdma: maximization
+    value: 0.9

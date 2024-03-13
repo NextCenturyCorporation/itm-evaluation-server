@@ -2,17 +2,19 @@ import connexion
 import time
 
 from swagger_server.models.action import Action  # noqa: E501
-from ..itm import ITMScenarioSession
+from ..itm import ITMSession
 
-MAX_SESSIONS = 5     # Hard limit on simultaneously active sessions
+MAX_SESSIONS = 50     # Hard limit on simultaneously active sessions
 SESSION_TIMEOUT = 60 * 60 * 24  # 24 hour timeout in seconds
 itm_sessions = {}     # one for each active adm_name
 session_mapping = {}  # maps session_id to adm_name and last active time
+ITMSession.initialize()
+
 """
 The internal controller for ITM Server.
 """
 
-def _get_session(session_id: str) -> ITMScenarioSession:
+def _get_session(session_id: str) -> ITMSession:
     session_dict = session_mapping.get(session_id)
     adm_name = session_dict.get("adm_name") if session_dict else None
     if not adm_name:
@@ -90,7 +92,7 @@ def start_scenario(session_id, scenario_id=None):  # noqa: E501
 
     :param session_id: a unique session_id, as returned by /ta2/startSession
     :type session_id: str
-    :param scenario_id: a scenario id to start, used internally by TA3
+    :param scenario_id: the scenario id to run; incompatible with /ta2/startSession's max_scenarios parameter
     :type scenario_id: str
 
     :rtype: Scenario
@@ -104,7 +106,7 @@ def _reclaim_old_session():
         if time.time() - session_dict["last_accessed"] > SESSION_TIMEOUT:
             itm_sessions.pop(session_dict["adm_name"])  # Clear out old unused session
             session_mapping.pop(session_id)             # From both places
-            return ITMScenarioSession()
+            return ITMSession()
 
 def start_session(adm_name, session_type, kdma_training=None, max_scenarios=None):  # noqa: E501
     """Start a new session
@@ -130,7 +132,7 @@ def start_session(adm_name, session_type, kdma_training=None, max_scenarios=None
             if not session: # couldn't clear out an old session
                 return 'System Overload', 503
         else:
-            session = ITMScenarioSession()
+            session = ITMSession()
         itm_sessions[adm_name] = session
     else:
         # Iterate through session_mappings, looking for the one whose dict contains the specified adm_name.

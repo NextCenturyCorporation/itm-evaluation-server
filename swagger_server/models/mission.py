@@ -6,7 +6,10 @@ from datetime import date, datetime  # noqa: F401
 from typing import List, Dict  # noqa: F401
 
 from swagger_server.models.base_model_ import Model
-from swagger_server.models.mission_type import MissionType  # noqa: F401,E501
+from swagger_server.models.civilian_presence_enum import CivilianPresenceEnum  # noqa: F401,E501
+from swagger_server.models.communication_capability_enum import CommunicationCapabilityEnum  # noqa: F401,E501
+from swagger_server.models.mission_importance_enum import MissionImportanceEnum  # noqa: F401,E501
+from swagger_server.models.mission_type_enum import MissionTypeEnum  # noqa: F401,E501
 from swagger_server import util
 
 
@@ -15,25 +18,55 @@ class Mission(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, unstructured: str=None, mission_type: MissionType=None):  # noqa: E501
+    def __init__(self, unstructured: str=None, mission_type: MissionTypeEnum=None, character_importance: List[Dict[str, MissionImportanceEnum]]=None, civilian_presence: CivilianPresenceEnum=None, communication_capability: CommunicationCapabilityEnum=None, roe: str=None, political_climate: str=None, medical_policies: str=None):  # noqa: E501
         """Mission - a model defined in Swagger
 
         :param unstructured: The unstructured of this Mission.  # noqa: E501
         :type unstructured: str
         :param mission_type: The mission_type of this Mission.  # noqa: E501
-        :type mission_type: MissionType
+        :type mission_type: MissionTypeEnum
+        :param character_importance: The character_importance of this Mission.  # noqa: E501
+        :type character_importance: List[Dict[str, MissionImportanceEnum]]
+        :param civilian_presence: The civilian_presence of this Mission.  # noqa: E501
+        :type civilian_presence: CivilianPresenceEnum
+        :param communication_capability: The communication_capability of this Mission.  # noqa: E501
+        :type communication_capability: CommunicationCapabilityEnum
+        :param roe: The roe of this Mission.  # noqa: E501
+        :type roe: str
+        :param political_climate: The political_climate of this Mission.  # noqa: E501
+        :type political_climate: str
+        :param medical_policies: The medical_policies of this Mission.  # noqa: E501
+        :type medical_policies: str
         """
         self.swagger_types = {
             'unstructured': str,
-            'mission_type': MissionType
+            'mission_type': MissionTypeEnum,
+            'character_importance': List[Dict[str, MissionImportanceEnum]],
+            'civilian_presence': CivilianPresenceEnum,
+            'communication_capability': CommunicationCapabilityEnum,
+            'roe': str,
+            'political_climate': str,
+            'medical_policies': str
         }
 
         self.attribute_map = {
             'unstructured': 'unstructured',
-            'mission_type': 'mission_type'
+            'mission_type': 'mission_type',
+            'character_importance': 'character_importance',
+            'civilian_presence': 'civilian_presence',
+            'communication_capability': 'communication_capability',
+            'roe': 'roe',
+            'political_climate': 'political_climate',
+            'medical_policies': 'medical_policies'
         }
         self._unstructured = unstructured
         self._mission_type = mission_type
+        self._character_importance = character_importance
+        self._civilian_presence = civilian_presence
+        self._communication_capability = communication_capability
+        self._roe = roe
+        self._political_climate = political_climate
+        self._medical_policies = medical_policies
 
     @classmethod
     def from_dict(cls, dikt) -> 'Mission':
@@ -72,24 +105,158 @@ class Mission(Model):
         self._unstructured = unstructured
 
     @property
-    def mission_type(self) -> MissionType:
+    def mission_type(self) -> MissionTypeEnum:
         """Gets the mission_type of this Mission.
 
 
         :return: The mission_type of this Mission.
-        :rtype: MissionType
+        :rtype: MissionTypeEnum
         """
         return self._mission_type
 
     @mission_type.setter
-    def mission_type(self, mission_type: MissionType):
+    def mission_type(self, mission_type: MissionTypeEnum):
         """Sets the mission_type of this Mission.
 
 
         :param mission_type: The mission_type of this Mission.
-        :type mission_type: MissionType
+        :type mission_type: MissionTypeEnum
         """
         if mission_type is None:
             raise ValueError("Invalid value for `mission_type`, must not be `None`")  # noqa: E501
 
         self._mission_type = mission_type
+
+    @property
+    def character_importance(self) -> List[Dict[str, MissionImportanceEnum]]:
+        """Gets the character_importance of this Mission.
+
+        A list of pairs of character ids with an indicator of how mission-critical the character is  # noqa: E501
+
+        :return: The character_importance of this Mission.
+        :rtype: List[Dict[str, MissionImportanceEnum]]
+        """
+        return self._character_importance
+
+    @character_importance.setter
+    def character_importance(self, character_importance: List[Dict[str, MissionImportanceEnum]]):
+        """Sets the character_importance of this Mission.
+
+        A list of pairs of character ids with an indicator of how mission-critical the character is  # noqa: E501
+
+        :param character_importance: The character_importance of this Mission.
+        :type character_importance: List[Dict[str, MissionImportanceEnum]]
+        """
+
+        self._character_importance = character_importance
+
+    @property
+    def civilian_presence(self) -> CivilianPresenceEnum:
+        """Gets the civilian_presence of this Mission.
+
+
+        :return: The civilian_presence of this Mission.
+        :rtype: CivilianPresenceEnum
+        """
+        return self._civilian_presence
+
+    @civilian_presence.setter
+    def civilian_presence(self, civilian_presence: CivilianPresenceEnum):
+        """Sets the civilian_presence of this Mission.
+
+
+        :param civilian_presence: The civilian_presence of this Mission.
+        :type civilian_presence: CivilianPresenceEnum
+        """
+
+        self._civilian_presence = civilian_presence
+
+    @property
+    def communication_capability(self) -> CommunicationCapabilityEnum:
+        """Gets the communication_capability of this Mission.
+
+
+        :return: The communication_capability of this Mission.
+        :rtype: CommunicationCapabilityEnum
+        """
+        return self._communication_capability
+
+    @communication_capability.setter
+    def communication_capability(self, communication_capability: CommunicationCapabilityEnum):
+        """Sets the communication_capability of this Mission.
+
+
+        :param communication_capability: The communication_capability of this Mission.
+        :type communication_capability: CommunicationCapabilityEnum
+        """
+
+        self._communication_capability = communication_capability
+
+    @property
+    def roe(self) -> str:
+        """Gets the roe of this Mission.
+
+        rules of engagement to inform decision-making, but not to restrict decision space  # noqa: E501
+
+        :return: The roe of this Mission.
+        :rtype: str
+        """
+        return self._roe
+
+    @roe.setter
+    def roe(self, roe: str):
+        """Sets the roe of this Mission.
+
+        rules of engagement to inform decision-making, but not to restrict decision space  # noqa: E501
+
+        :param roe: The roe of this Mission.
+        :type roe: str
+        """
+
+        self._roe = roe
+
+    @property
+    def political_climate(self) -> str:
+        """Gets the political_climate of this Mission.
+
+        The political climate in a mission to inform decision-making  # noqa: E501
+
+        :return: The political_climate of this Mission.
+        :rtype: str
+        """
+        return self._political_climate
+
+    @political_climate.setter
+    def political_climate(self, political_climate: str):
+        """Sets the political_climate of this Mission.
+
+        The political climate in a mission to inform decision-making  # noqa: E501
+
+        :param political_climate: The political_climate of this Mission.
+        :type political_climate: str
+        """
+
+        self._political_climate = political_climate
+
+    @property
+    def medical_policies(self) -> str:
+        """Gets the medical_policies of this Mission.
+
+        Medical policies in effect in a mission, to inform decision-making  # noqa: E501
+
+        :return: The medical_policies of this Mission.
+        :rtype: str
+        """
+        return self._medical_policies
+
+    @medical_policies.setter
+    def medical_policies(self, medical_policies: str):
+        """Sets the medical_policies of this Mission.
+
+        Medical policies in effect in a mission, to inform decision-making  # noqa: E501
+
+        :param medical_policies: The medical_policies of this Mission.
+        :type medical_policies: str
+        """
+
+        self._medical_policies = medical_policies

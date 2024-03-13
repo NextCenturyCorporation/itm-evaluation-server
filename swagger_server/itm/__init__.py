@@ -1,1 +1,1 @@
-from .itm_scenario_session import ITMScenarioSession
+from .itm_session import ITMSession

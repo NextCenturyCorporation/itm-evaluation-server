@@ -23,58 +23,6 @@ paths:
                 x-content-type: text/plain
 components:
   schemas:
-    Probe:
-      required:
-      - id
-      - prompt
-      - scenario_id
-      - type
-      type: object
-      properties:
-        id:
-          type: string
-          description: globally unique probe ID
-        scenario_id:
-          type: string
-          description: scenario ID this probe is for
-        type:
-          type: string
-          description: TAs will need to agree on the types of questions being asked
-          enum:
-          - MultipleChoice
-          - FreeResponse
-          - PatientOrdering
-        prompt:
-          type: string
-          description: a plain text natural language question for the DM
-          example: Which character do you treat first?
-        state:
-          $ref: 'swagger.yaml#/components/schemas/State'
-        options:
-          type: array
-          description: the list of valid choices for the DM to choose among
-          items:
-            $ref: '#/components/schemas/ProbeOption'
-      description: a question for the DM regarding course of action within the scenario.
-    ProbeOption:
-      required:
-      - id
-      - value
-      type: object
-      properties:
-        id:
-          type: string
-          description: "the choice id, having scenario scope"
-        value:
-          type: string
-          description: a label for the choice
-          example: Choice 5
-        kdma_association:
-          type: object
-          additionalProperties:
-            type: string
-          description: positive or negative association with specific KDMA values
-      description: an option associated with a probe.
     ProbeResponse:
       required:
       - choice
@@ -90,7 +38,7 @@ components:
           description: globally unique probe ID
         choice:
           type: string
-          description: id of choice made (from ProbeOption)
+          description: id of choice made
         justification:
           type: string
           description: A justification of the response to the probe
