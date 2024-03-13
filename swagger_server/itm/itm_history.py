@@ -65,7 +65,8 @@ class ITMHistory:
         with open(full_filepath, 'w') as file:
             # Convert Python dictionary to JSON and write to file
             json.dump({'history': self.history}, file, indent=2)
-        self.save_json_to_s3(os.getcwd() + os.path.sep + full_filepath, file_name)
+        self.save_json_to_s3(os.getcwd() + os.path.sep + full_filepath, filebasename)
+
     def save_json_to_s3(self, full_filepath, file_name) -> bool:
         """
         Copy file to S3
