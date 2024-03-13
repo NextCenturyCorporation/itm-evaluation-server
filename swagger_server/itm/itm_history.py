@@ -45,7 +45,7 @@ class ITMHistory:
         self.history.append(history_to_add)
 
 
-    def write_to_json_file(self) -> None:
+    def write_to_json_file(self, filebasename) -> None:
         """
         Write data to a JSON file.
 
@@ -58,14 +58,9 @@ class ITMHistory:
 
         # Make directory if it doesn't exist
         os.makedirs(self.filepath, exist_ok=True)
-
-        # Get the list of all json files in directory
-        file_list = [f for f in os.listdir(self.filepath) if os.path.isfile(os.path.join(self.filepath, f)) and f.endswith('.json')]
-
-        # Calculate file_number based on the number of files
-        file_number = len(file_list) + 1
-        file_name = f'itm_history_{file_number}.json'
-        full_filepath = self.filepath + file_name
+        filespec = self.filepath + filebasename
+        full_filepath = filespec + '.json'
+        print(f'--> Saving history to {full_filepath}')
 
         with open(full_filepath, 'w') as file:
             # Convert Python dictionary to JSON and write to file
