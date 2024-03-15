@@ -45,7 +45,7 @@ class ITMHistory:
         self.history.append(history_to_add)
 
 
-    def write_to_json_file(self, filebasename) -> None:
+    def write_to_json_file(self, filebasename, save_to_s3) -> None:
         """
         Write data to a JSON file.
 
@@ -66,7 +66,8 @@ class ITMHistory:
             # Convert Python dictionary to JSON and write to file
             json.dump({'history': self.history}, file, indent=2)
 
-        self.save_json_to_s3(os.getcwd() + os.path.sep + full_filepath, filebasename  + '.json')
+        if (save_to_s3):
+            self.save_json_to_s3(os.getcwd() + os.path.sep + full_filepath, filebasename  + '.json')
 
     def save_json_to_s3(self, full_filepath, file_name) -> bool:
         """

@@ -55,7 +55,9 @@ class ITMSession:
         # This determines whether the server makes calls to TA1
         self.ta1_integration = False # Default here applies to non-training, non-eval sessions
         # This determines whether the server saves history to JSON
-        self.save_history = False
+        self.save_history = True
+        # save_history must also be True
+        self.save_history_to_s3 = True
 
     def __deepcopy__(self, memo):
         return self # Allows us to deepcopy ITMScenarios
@@ -160,7 +162,7 @@ class ITMSession:
             alignment_type = 'high' if 'high' in self.itm_scenario.alignment_target.id.lower() else 'low'
             timestamp = f"{datetime.now():%b%d-%H.%M.%S}" # e.g., "jungle-1-soartech-high-Mar13-11.44.44"
             filename = f"{self.itm_scenario.id.replace(' ', '_')}-{self.itm_scenario.scene_type}-{alignment_type}-{timestamp}"
-            self.history.write_to_json_file(filename)
+            self.history.write_to_json_file(filename, self.save_history_to_s3)
         self.history.clear_history()
 
 
