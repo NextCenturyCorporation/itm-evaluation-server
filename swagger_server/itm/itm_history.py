@@ -67,7 +67,9 @@ class ITMHistory:
             json.dump({'history': self.history}, file, indent=2)
 
         if (save_to_s3):
-            self.save_json_to_s3(os.getcwd() + os.path.sep + full_filepath, filebasename  + '.json')
+            print(f'--> Saving history to S3')
+            if not self.save_json_to_s3(os.getcwd() + os.path.sep + full_filepath, filebasename  + '.json'):
+                print(f'\033[92mWARNING: Unable to save history to S3\033[00m')
 
     def save_json_to_s3(self, full_filepath, file_name) -> bool:
         """
@@ -89,7 +91,7 @@ class ITMHistory:
         s3_client = boto3.client('s3')
         try:
             response = s3_client.upload_file(full_filepath, self.save_history_bucket, object_name)
-        except ClientError as e:
+        except Exception as e:
             # TODO: Add logging: logging.error(e)
             print(e)
             return False

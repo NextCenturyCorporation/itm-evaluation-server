@@ -55,7 +55,7 @@ class ITMSession:
         # This determines whether the server makes calls to TA1
         self.ta1_integration = False # Default here applies to non-training, non-eval sessions
         # This determines whether the server saves history to JSON
-        self.save_history = True
+        self.save_history = False
         # save_history must also be True
         self.save_history_to_s3 = True
 
@@ -399,6 +399,7 @@ class ITMSession:
         ta1_names = []
         if self.session_type == 'eval':
             self.save_history = True
+            self.save_history_to_s3 = True
             self.ta1_integration = True
             max_scenarios = None
             ta1_names = ['soartech', 'adept']
