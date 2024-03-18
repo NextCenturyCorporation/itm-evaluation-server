@@ -87,6 +87,7 @@ class ITMScenarioReader:
             index=scene_data['index'],
             state=state,
             end_scene_allowed=scene_data['end_scene_allowed'],
+            persist_characters=scene_data.get('pesist_characters', False),
             probe_config=None, # Not used by TA3
             tagging=self._generate_tagging(scene_data),
             action_mapping=action_mapping,

@@ -137,7 +137,7 @@ class ITMScenario:
         '''
         Merge state from new scene into session.state.  Approach:
         0. Abort if no state to merge
-        1. Always replace entire `characters` structure.
+        1. Replace or supplement `characters` structure based on configuration.
         2. For `supplies`, add or update any specified supplies.
         3. For everything else, replace any specified (non-None) values
            3a. Lists are copied whole (e.g., `character_importance`, `aid_delay`, `threats`).
@@ -148,8 +148,16 @@ class ITMScenario:
             current_state.characters = []
             return
 
-        # Rule 1: Always replace entire `characters` structure.
-        current_state.characters = deepcopy(target_state.characters)
+        # Rule 1: Replace or supplement `characters` structure based on configuration.
+        if self.isd.current_scene.persist_characters:
+            if target_state.characters:
+                # Remove old versions of target characters
+                current_state.characters = [character for character in current_state.characters \
+                                            if character.id != target_character.id for target_character in target_state.characters]
+                # Replace them with the new versions, plus add new characters
+                current_state.characters.append(deepcopy(target_state.characters))
+        else:
+            current_state.characters = deepcopy(target_state.characters)
 
         # Rule 2: For `supplies`, add or update any specified supplies.
         if target_state.supplies:
