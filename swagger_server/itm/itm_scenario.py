@@ -113,6 +113,7 @@ class ITMScenario:
                 #TODO: Address this and/or End the scenario
                 print("--> WARNING: scene configuration issue; final scene should have no transitions to the next scene")
             return
+        previous_scene_characters = self.isd.current_scene.state.characters
         self.isd.current_scene_index = next_scene
         self.isd.current_scene = self.isd.scenes[next_scene]
         self.session.action_handler.set_scene(self.isd.current_scene)
@@ -148,14 +149,28 @@ class ITMScenario:
             current_state.characters = []
             return
 
-        # Rule 1: Replace or supplement `characters` structure based on configuration.
+        # Rule 1: Replace or supplement state and scene `characters` structure based on configuration.
         if self.isd.current_scene.persist_characters:
             if target_state.characters:
-                # Remove old versions of target characters
-                current_state.characters = [character for character in current_state.characters \
-                                            if character.id != target_character.id for target_character in target_state.characters]
-                # Replace them with the new versions, plus add new characters
-                current_state.characters.append(deepcopy(target_state.characters))
+                replaced_character_ids = []
+                persisted_characters = []
+                target_character_ids = [character.id for character in target_state.characters]
+                # Determine who needs to be persisted and who needs to be replaced.
+                for character in previous_scene_characters:
+                    if character.id in target_character_ids:
+                        replaced_character_ids.append(character.id)
+                    else:
+                        persisted_characters.append(character)
+                # Remove old versions of target characters from state.
+                current_state.characters = \
+                    [character for character in current_state.characters if character.id not in replaced_character_ids]
+                # Replace them with the new versions, plus add new characters.
+                current_state.characters.extend(deepcopy(target_state.characters))
+                # Copy persisted characters (that weren't replaced) into the scene.
+                target_state.characters.extend(persisted_characters)
+            else:
+                # No characters were specified in the scene, so inherit characters from previous scene.
+                target_state.characters = previous_scene_characters
         else:
             current_state.characters = deepcopy(target_state.characters)
 

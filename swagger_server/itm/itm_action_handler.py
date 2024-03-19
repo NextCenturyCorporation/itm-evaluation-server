@@ -2,6 +2,7 @@ import json
 from swagger_server.models import (
     Action,
     ActionTypeEnum,
+    AvpuLevelEnum,
     Character,
     CharacterTag,
     InjuryLocation,
@@ -304,7 +305,8 @@ class ITMActionHandler:
         for character in self.session.state.characters:
             for isd_character in self.current_scene.state.characters:
                 if isd_character.id == character.id:
-                    if isd_character.vitals.ambulatory and \
+                    if isd_character.vitals.ambulatory and isd_character.vitals.conscious and \
+                    isd_character.vitals.avpu == AvpuLevelEnum.ALERT and \
                     isd_character.vitals.mental_status in [MentalStatusEnum.CALM, MentalStatusEnum.UPSET]:
                         character.vitals.ambulatory = True
                         character.vitals.conscious = True
