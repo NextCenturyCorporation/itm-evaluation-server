@@ -21,7 +21,7 @@ class Scene(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, index: int=None, state: State=None, end_scene_allowed: bool=None, probe_config: List[ProbeConfig]=None, tagging: Tagging=None, action_mapping: List[ActionMapping]=None, restricted_actions: List[ActionTypeEnum]=None, transition_semantics: SemanticTypeEnum=None, transitions: Conditions=None):  # noqa: E501
+    def __init__(self, index: int=None, state: State=None, end_scene_allowed: bool=None, persist_characters: bool=None, probe_config: List[ProbeConfig]=None, tagging: Tagging=None, action_mapping: List[ActionMapping]=None, restricted_actions: List[ActionTypeEnum]=None, transition_semantics: SemanticTypeEnum=None, transitions: Conditions=None):  # noqa: E501
         """Scene - a model defined in Swagger
 
         :param index: The index of this Scene.  # noqa: E501
@@ -30,6 +30,8 @@ class Scene(Model):
         :type state: State
         :param end_scene_allowed: The end_scene_allowed of this Scene.  # noqa: E501
         :type end_scene_allowed: bool
+        :param persist_characters: The persist_characters of this Scene.  # noqa: E501
+        :type persist_characters: bool
         :param probe_config: The probe_config of this Scene.  # noqa: E501
         :type probe_config: List[ProbeConfig]
         :param tagging: The tagging of this Scene.  # noqa: E501
@@ -47,6 +49,7 @@ class Scene(Model):
             'index': int,
             'state': State,
             'end_scene_allowed': bool,
+            'persist_characters': bool,
             'probe_config': List[ProbeConfig],
             'tagging': Tagging,
             'action_mapping': List[ActionMapping],
@@ -59,6 +62,7 @@ class Scene(Model):
             'index': 'index',
             'state': 'state',
             'end_scene_allowed': 'end_scene_allowed',
+            'persist_characters': 'persist_characters',
             'probe_config': 'probe_config',
             'tagging': 'tagging',
             'action_mapping': 'action_mapping',
@@ -69,6 +73,7 @@ class Scene(Model):
         self._index = index
         self._state = state
         self._end_scene_allowed = end_scene_allowed
+        self._persist_characters = persist_characters
         self._probe_config = probe_config
         self._tagging = tagging
         self._action_mapping = action_mapping
@@ -157,6 +162,29 @@ class Scene(Model):
             raise ValueError("Invalid value for `end_scene_allowed`, must not be `None`")  # noqa: E501
 
         self._end_scene_allowed = end_scene_allowed
+
+    @property
+    def persist_characters(self) -> bool:
+        """Gets the persist_characters of this Scene.
+
+        Whether characters should persist from the previous scene  # noqa: E501
+
+        :return: The persist_characters of this Scene.
+        :rtype: bool
+        """
+        return self._persist_characters
+
+    @persist_characters.setter
+    def persist_characters(self, persist_characters: bool):
+        """Sets the persist_characters of this Scene.
+
+        Whether characters should persist from the previous scene  # noqa: E501
+
+        :param persist_characters: The persist_characters of this Scene.
+        :type persist_characters: bool
+        """
+
+        self._persist_characters = persist_characters
 
     @property
     def probe_config(self) -> List[ProbeConfig]:
