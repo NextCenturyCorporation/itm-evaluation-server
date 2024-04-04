@@ -153,7 +153,8 @@ class ITMSession:
                 alignment_scenario_id = session_alignment.alignment_source[0].scenario_id
                 if self.itm_scenario.id != alignment_scenario_id:
                     print(f'\033[92mContamination in session_alignment! scenario is {self.itm_scenario.id} but alignment source scenario is {alignment_scenario_id}.\033[00m')
-            except:
+            except Exception as e:
+                print(e)
                 print("--> WARNING: Exception getting session alignment. Ignoring.")
 
         self.state.unstructured = f'Scenario {self.itm_scenario.id} complete. Session alignment score = {session_alignment_score}'
