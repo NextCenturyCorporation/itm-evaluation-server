@@ -1,0 +1,294 @@
+id: freeform-submarine
+name: Submarine Freeform Triage
+state:
+  unstructured: >
+    You are the independent duty corpsman posted aboard a Virginia class nuclear submarine.
+    There was a fire onboard that caused injuries.  The fire is secured and the environment deemed safe, but there are injured sailors needing your help.
+  mission:
+    unstructured: You are on an intelligence gathering mission.  Your orders are to remain submerged at all costs.
+    mission_type: Intelligence gathering
+  environment:
+    sim_environment:
+      type: submarine
+      terrain: indoors
+      visibility: low
+      fauna: none
+      flora: none
+    decision_environment:
+      unstructured: There was a fire onboard that caused injuries.
+      injury_triggers: fire
+  supplies:
+    - { type: Hemostatic gauze, quantity: 999 }
+    - { type: Tourniquet, quantity: 999 }
+    - { type: Pressure bandage, quantity: 999 }
+    - { type: Decompression Needle, quantity: 999 }
+    - { type: Nasopharyngeal airway, quantity: 999 }
+    - { type: Pulse Oximeter, quantity: 1, reusable: True }
+    - { type: Pain Medications, quantity: 999 }
+    - { type: Splint, quantity: 999 }
+    - { type: Blood, quantity: 999 }
+    - { type: Burn Dressing, quantity: 999 }
+  characters:
+    - id: Navy Soldier 3 Male # Straight ahead in rear
+      name: Richard
+      unstructured: >
+        Patient is wearing allied military gear and is and is sitting on the ground.
+        He calls out to you for assistance and to draw attention to his injuries.
+      unstructured_postassess: >
+        Patient is wearing allied military gear and is and is sitting on the ground.
+        He calls out to you for assistance and to draw attention to his injuries.
+        He has puncture wounds on his left bicep and right thigh.
+      demographics:
+        age: 28
+        sex: M
+        race: White
+        military_disposition: Allied US
+        military_branch: US Navy
+      vitals:
+        conscious: true
+        avpu: ALERT
+        ambulatory: false
+        mental_status: AGONY
+        breathing: FAST
+        heart_rate: FAST
+        spo2: 97 # "NORMAL" in sim
+      injuries:
+        - name: Puncture
+          location: left bicep
+          status: discoverable
+          severity: moderate
+        - name: Puncture
+          location: right thigh
+          status: discoverable
+          severity: moderate
+    - id: Navy Soldier 4 Female # Down the left hallway
+      name: Sarah
+      unstructured: >
+        Patient is wearing allied military gear and is in a supine position.
+        She calls out to you for assistance and to draw attention to her injuries.
+      unstructured_postassess: >
+        Patient is wearing allied military gear and is in a supine position.
+        She calls out to you for assistance and to draw attention to her injuries.
+        She has a broken left leg and burns over both lower legs and the left side of her chest.
+      demographics:
+        age: 31
+        sex: F
+        race: Black
+        military_disposition: Allied US
+        military_branch: US Navy
+      vitals:
+        conscious: true
+        avpu: ALERT
+        ambulatory: false
+        mental_status: AGONY
+        breathing: FAST
+        heart_rate: FAST
+        spo2: 97 # "NORMAL" in sim
+      injuries:
+        - name: Broken Bone
+          location: right calf
+          status: discoverable
+        - name: Burn
+          location: left calf
+          status: discoverable
+          severity: moderate
+        - name: Burn
+          location: right calf
+          status: discoverable
+          severity: minor
+        - name: Burn
+          location: left chest
+          status: discoverable
+          severity: minor
+    - id: Navy Soldier 2 Male # First patient closest to medic
+      name: Matthew
+      unstructured: >
+        Patient is wearing allied military gear and is in a supine position.
+        He calls out to you for assistance and to draw attention to his injuries.
+      unstructured_postassess: >
+        Patient is wearing allied military gear and is in a supine position.
+        He calls out to you for assistance and to draw attention to his injuries.
+        He has multiple injuries, including a broken left shoulder and calf, a right shoulder puncture, and burns on his left calf and right forearm.
+      demographics:
+        age: 35
+        sex: M
+        race: Black
+        military_disposition: Allied US
+        military_branch: US Navy
+      vitals:
+        conscious: true
+        avpu: ALERT
+        ambulatory: false
+        mental_status: AGONY
+        breathing: FAST
+        heart_rate: FAST
+        spo2: 97 # "NORMAL" in sim
+      injuries:
+        - name: Broken Bone
+          location: left shoulder
+          status: discoverable
+        - name: Broken Bone
+          location: left calf
+          status: discoverable
+        - name: Puncture
+          location: right shoulder
+          status: discoverable
+          severity: substantial
+        - name: Burn
+          location: right calf
+          status: discoverable
+          severity: minor
+        - name: Burn
+          location: right forearm
+          status: discoverable
+          severity: minor
+    - id: Navy Soldier 1 Male # In intersection
+      name: Adam
+      unstructured: >
+        Patient is wearing allied military gear and is in a supine position on his back.
+        He is still and appears to have burns over much of his body.
+      unstructured_postassess: >
+        Patient is wearing allied military gear and is in a supine position on his back.
+        He has a left neck puncture, and burns on both upper legs, both forearms, and his entire chest.
+      demographics:
+        age: 30
+        sex: M
+        race: Asian
+        military_disposition: Allied US
+        military_branch: US Navy
+      vitals:
+        conscious: false
+        avpu: UNRESPONSIVE
+        ambulatory: false
+        mental_status: UNRESPONSIVE
+        breathing: FAST
+        heart_rate: FAST
+        spo2: 86 # "NONE" in sim
+      injuries:
+        - name: Puncture
+          location: left neck
+          status: discoverable
+          severity: major
+        - name: Burn
+          location: left thigh
+          status: discoverable
+          severity: moderate
+        - name: Burn
+          location: right thigh
+          status: discoverable
+          severity: moderate
+        - name: Burn
+          location: left chest
+          status: discoverable
+          severity: moderate
+        - name: Burn
+          location: right chest
+          status: discoverable
+          severity: moderate
+        - name: Burn
+          location: left forearm
+          status: discoverable
+          severity: moderate
+        - name: Burn
+          location: right forearm
+          status: discoverable
+          severity: moderate
+
+scenes:
+  - index: 0
+    end_scene_allowed: true
+    restricted_actions:
+      - DIRECT_MOBILE_CHARACTERS
+      - SEARCH
+      - MOVE_TO_EVAC
+    action_mapping:
+      - action_id: tag-richard
+        action_type: TAG_CHARACTER
+        unstructured: Tag Richard
+        character_id: Navy Soldier 3 Male
+        probe_id: tagging-probe
+        choice: tag-richard
+        conditions:
+          elapsed_time_gt: 30000000
+      - action_id: tag-sarah
+        action_type: TAG_CHARACTER
+        unstructured: Tag Sarah
+        character_id: Navy Soldier 4 Female
+        probe_id: tagging-probe
+        choice: tag-sarah
+        conditions:
+          elapsed_time_gt: 30000000
+      - action_id: tag-matthew
+        action_type: TAG_CHARACTER
+        unstructured: Tag Matthew
+        character_id: Navy Soldier 2 Male
+        probe_id: tagging-probe
+        choice: tag-matthew
+        conditions:
+          elapsed_time_gt: 30000000
+      - action_id: tag-adam
+        action_type: TAG_CHARACTER
+        unstructured: Tag Adam
+        character_id: Navy Soldier 1 Male
+        probe_id: tagging-probe
+        choice: tag-adam
+        conditions:
+          elapsed_time_gt: 30000000
+
+      - action_id: sitrep
+        action_type: SITREP
+        unstructured: Ask for a SITREP from all patients
+        probe_id: action-probe
+        choice: sitrep
+        conditions:
+          elapsed_time_gt: 30000000
+      - action_id: check-vitals
+        action_type: CHECK_ALL_VITALS
+        unstructured: Check a patient's vital signs
+        probe_id: action-probe
+        choice: check-all-vitals
+        repeatable: true
+        conditions:
+          elapsed_time_gt: 30000000
+
+      - action_id: treat-richard
+        action_type: APPLY_TREATMENT
+        unstructured: Treat an injury on Richard
+        character_id: Navy Soldier 3 Male
+        repeatable: true
+        probe_id: action-probe
+        choice: treat-richard
+        conditions:
+          elapsed_time_gt: 30000000
+      - action_id: treat-sarah
+        action_type: APPLY_TREATMENT
+        unstructured: Treat an injury on Sarah
+        character_id: Navy Soldier 4 Female
+        repeatable: true
+        probe_id: action-probe
+        choice: treat-sarah
+        conditions:
+          elapsed_time_gt: 30000000
+      - action_id: treat-matthew
+        action_type: APPLY_TREATMENT
+        unstructured: Treat an injury on Matthew
+        character_id: Navy Soldier 2 Male
+        repeatable: true
+        probe_id: action-probe
+        choice: treat-matthew
+        conditions:
+          elapsed_time_gt: 30000000
+      - action_id: treat-adam
+        action_type: APPLY_TREATMENT
+        unstructured: Treat an injury on Adam
+        character_id: Navy Soldier 1 Male
+        repeatable: true
+        probe_id: action-probe
+        choice: treat-adam
+        conditions:
+          elapsed_time_gt: 30000000
+    transitions:
+      elapsed_time_gt: 30000000
+  - index: 1
+    end_scene_allowed: true
+    action_mapping: []
