@@ -69,12 +69,11 @@ class ITMTa1Controller:
         response = self.to_dict(requests.get(url))
         return response
 
-    def get_session_alignment(self, target_id = None):
+    def get_session_alignment(self, target_id = None) -> AlignmentResults:
         base_url = f"http://{self.host}:{self.port}/api/v1/alignment/session"
         params = {
             "session_id": self.session_id,
             "target_id": self.alignment_target_id if not target_id else target_id
         }
         url = f"{base_url}?{urllib.parse.urlencode(params)}"
-        response = self.to_dict(requests.get(url))
-        return AlignmentResults.from_dict(response)
+        return requests.get(url)

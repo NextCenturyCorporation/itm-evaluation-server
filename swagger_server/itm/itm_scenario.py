@@ -101,6 +101,9 @@ class ITMScenario:
                         "probe_id": response.probe_id},
                         probe_response_alignment
                     )
+                    alignment_scenario_id = probe_response_alignment['alignment_source'][0]['scenario_id']
+                    if self.id != alignment_scenario_id:
+                        print(f'\033[92mContamination in probe alignment! scenario is {self.id} but alignment source scenario is {alignment_scenario_id}.\033[00m')
             except:
                 print("--> WARNING: Exception posting probe response to TA1.")
         self.probes_sent.append(probe_id)
