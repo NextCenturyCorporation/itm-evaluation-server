@@ -108,11 +108,17 @@ class ITMScenario:
 
 
     def change_scene(self, next_scene, had_transitions):
+        if self.isd.current_scene.final_scene:
+            self.isd.current_scene.state = None # Supports single-scenario sessions
+            self.session.end_scenario()
+            return
+
         if (next_scene >= len(self.isd.scenes)):
             if had_transitions:
-                #TODO: Address this and/or End the scenario
-                print("--> WARNING: scene configuration issue; final scene should have no transitions to the next scene")
+                print("--> WARNING: scene configuration issue: invalid scene index; ending session.")
+                self.session.end_scenario()
             return
+
         previous_scene_characters = self.isd.current_scene.state.characters
         self.isd.current_scene_index = next_scene
         self.isd.current_scene = self.isd.scenes[next_scene]
