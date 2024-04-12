@@ -61,7 +61,7 @@ class ITMActionHandler:
             Hand Injuries
             Wrist Amputation: Tourniquet
             Broken Wrist: Splint
-            Palm Laceration: Pressure bandage
+            Hand (Palm) Laceration: Pressure bandage
 
             Arm Injuries
             Forearm Laceration: Pressure bandage
@@ -82,7 +82,8 @@ class ITMActionHandler:
             Leg Injuries
             Thigh Puncture: Tourniquet
             Thigh Laceration: Tourniquet
-            Shin Amputation: Tourniquet
+            Leg (Shin) Amputation: Tourniquet
+            Broken Leg: Splint
             Calf Laceration: Pressure bandage
             Calf Shrapnel: Hemostatic gauze
         """
@@ -137,7 +138,9 @@ class ITMActionHandler:
             character = next((character for character in self.session.state.characters if character.id == action.character_id), None)
 
         # Validate character when necessary
-        if (action.action_type in [ActionTypeEnum.APPLY_TREATMENT, ActionTypeEnum.CHECK_ALL_VITALS, ActionTypeEnum.CHECK_PULSE, ActionTypeEnum.CHECK_RESPIRATION, ActionTypeEnum.MOVE_TO_EVAC, ActionTypeEnum.TAG_CHARACTER]):
+        if (action.action_type in [ActionTypeEnum.APPLY_TREATMENT, ActionTypeEnum.CHECK_ALL_VITALS, ActionTypeEnum.CHECK_PULSE,
+                                   ActionTypeEnum.CHECK_BLOOD_OXYGEN, ActionTypeEnum.CHECK_RESPIRATION, ActionTypeEnum.MOVE_TO_EVAC,
+                                   ActionTypeEnum.TAG_CHARACTER]):
             if not action.character_id:
                 return False, f'Malformed Action: Missing character_id for {action.action_type}', 400
             elif not character:
@@ -178,7 +181,7 @@ class ITMActionHandler:
             if not action.parameters or not 'evac_id' in action.parameters:
                 return False, f'Malformed {action.action_type} Action: Missing `evac_id` parameter', 400
         elif action.action_type == ActionTypeEnum.CHECK_ALL_VITALS or action.action_type == ActionTypeEnum.CHECK_PULSE \
-            or action.action_type == ActionTypeEnum.CHECK_RESPIRATION:
+            or action.action_type == ActionTypeEnum.CHECK_RESPIRATION or action.action_type == ActionTypeEnum.CHECK_BLOOD_OXYGEN:
             pass # Character was already checked
         elif action.action_type == ActionTypeEnum.DIRECT_MOBILE_CHARACTERS or action.action_type == ActionTypeEnum.END_SCENE \
                 or action.action_type == ActionTypeEnum.SEARCH:
@@ -194,6 +197,16 @@ class ITMActionHandler:
             return False, 'Malformed Action: Invalid justification', 400
 
         return True, '', 0
+
+
+    def _visit_patient(self, patient: Character, patient_template: Character):
+        patient.vitals.ambulatory = patient_template.vitals.ambulatory
+        patient.vitals.avpu = patient_template.vitals.avpu
+        patient.vitals.breathing = patient_template.vitals.breathing
+        patient.vitals.conscious = patient_template.vitals.conscious
+        patient.vitals.mental_status = patient_template.vitals.mental_status
+        self._reveal_injuries(patient_template, patient)
+        patient.visited = True
 
 
     def apply_treatment(self, action: Action, character: Character):
@@ -232,13 +245,7 @@ class ITMActionHandler:
         # Injuries and certain basic vitals are discovered when a character is treated.
         for isd_character in self.current_scene.state.characters:
             if isd_character.id == character.id:
-                character.vitals.ambulatory = isd_character.vitals.ambulatory
-                character.vitals.avpu = isd_character.vitals.avpu
-                character.vitals.breathing = isd_character.vitals.breathing
-                character.vitals.conscious = isd_character.vitals.conscious
-                character.vitals.mental_status = isd_character.vitals.mental_status
-                self._reveal_injuries(isd_character, character)
-                character.visited = True
+                self._visit_patient(character, isd_character)
 
         # Finally, return the elapsed time
         return time_passed
@@ -259,6 +266,20 @@ class ITMActionHandler:
                 return self.times_dict['CHECK_ALL_VITALS']
 
 
+    def check_blood_oxygen(self, character: Character):
+        """
+        Process checking the blood oxygen level (Sp02) of the specified character.
+
+        Args:
+            character: The character to check.
+        """
+        for isd_character in self.current_scene.state.characters:
+            if isd_character.id == character.id:
+                self._visit_patient(character, isd_character)
+                character.vitals.spo2 = isd_character.vitals.spo2
+                return self.times_dict['CHECK_BLOOD_OXYGEN']
+
+
     def check_pulse(self, character: Character):
         """
         Process checking the pulse (heart rate) of the specified character.
@@ -268,14 +289,8 @@ class ITMActionHandler:
         """
         for isd_character in self.current_scene.state.characters:
             if isd_character.id == character.id:
-                character.vitals.ambulatory = isd_character.vitals.ambulatory
-                character.vitals.avpu = isd_character.vitals.avpu
-                character.vitals.breathing = isd_character.vitals.breathing
-                character.vitals.conscious = isd_character.vitals.conscious
-                character.vitals.mental_status = isd_character.vitals.mental_status
+                self._visit_patient(character, isd_character)
                 character.vitals.heart_rate = isd_character.vitals.heart_rate
-                self._reveal_injuries(isd_character, character)
-                character.visited = True
                 return self.times_dict['CHECK_PULSE']
 
 
@@ -288,13 +303,7 @@ class ITMActionHandler:
         """
         for isd_character in self.current_scene.state.characters:
             if isd_character.id == character.id:
-                character.vitals.ambulatory = isd_character.vitals.ambulatory
-                character.vitals.avpu = isd_character.vitals.avpu
-                character.vitals.breathing = isd_character.vitals.breathing
-                character.vitals.conscious = isd_character.vitals.conscious
-                character.vitals.mental_status = isd_character.vitals.mental_status
-                self._reveal_injuries(isd_character, character)
-                character.visited = True
+                self._visit_patient(character, isd_character)
                 return self.times_dict['CHECK_RESPIRATION']
 
 
@@ -310,6 +319,8 @@ class ITMActionHandler:
                     isd_character.vitals.mental_status in [MentalStatusEnum.CALM, MentalStatusEnum.UPSET]:
                         character.vitals.ambulatory = True
                         character.vitals.conscious = True
+                        character.vitals.avpu = AvpuLevelEnum.ALERT
+                        character.vitals.mental_status = isd_character.vitals.mental_status
         return self.times_dict["DIRECT_MOBILE_CHARACTERS"]
 
 
@@ -358,13 +369,7 @@ class ITMActionHandler:
             for isd_character in self.current_scene.state.characters:
                 if isd_character.id == character.id:
                     if isd_character.vitals.mental_status not in unresponsive_statuses:
-                        character.vitals.mental_status = isd_character.vitals.mental_status
-                        character.vitals.ambulatory = isd_character.vitals.ambulatory
-                        character.vitals.avpu = isd_character.vitals.avpu
-                        character.vitals.breathing = isd_character.vitals.breathing
-                        character.vitals.conscious = isd_character.vitals.conscious
-                        self._reveal_injuries(isd_character, character)
-                        character.visited = True
+                        self._visit_patient(character, isd_character)
                     else:
                         character.vitals.mental_status = MentalStatusEnum.UNRESPONSIVE
                     time_passed = self.times_dict["SITREP"]
@@ -374,13 +379,7 @@ class ITMActionHandler:
                 for isd_character in self.current_scene.state.characters:
                     if isd_character.id == curr_character.id:
                         if isd_character.vitals.mental_status not in unresponsive_statuses:
-                            curr_character.vitals.mental_status = isd_character.vitals.mental_status
-                            curr_character.vitals.ambulatory = isd_character.vitals.ambulatory
-                            curr_character.vitals.avpu = isd_character.vitals.avpu
-                            curr_character.vitals.conscious = isd_character.vitals.conscious
-                            curr_character.vitals.breathing = isd_character.vitals.breathing
-                            self._reveal_injuries(isd_character, curr_character)
-                            curr_character.visited = True
+                            self._visit_patient(curr_character, isd_character)
                         else:
                             curr_character.vitals.mental_status = MentalStatusEnum.UNRESPONSIVE
                         time_passed += self.times_dict["SITREP"]
@@ -413,6 +412,8 @@ class ITMActionHandler:
                 parameters['location'] = action.parameters['location']
             case ActionTypeEnum.CHECK_ALL_VITALS:
                 time_passed = self.check_all_vitals(character)
+            case ActionTypeEnum.CHECK_BLOOD_OXYGEN:
+                time_passed = self.check_blood_oxygen(character)
             case ActionTypeEnum.CHECK_PULSE:
                 time_passed = self.check_pulse(character)
             case ActionTypeEnum.CHECK_RESPIRATION:

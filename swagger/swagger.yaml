@@ -1599,6 +1599,10 @@ components:
       enum:
         - right forearm
         - left forearm
+        - right hand
+        - left hand
+        - right leg
+        - left leg
         - right calf
         - left calf
         - right thigh
@@ -1688,6 +1692,7 @@ components:
       enum:
         - APPLY_TREATMENT
         - CHECK_ALL_VITALS
+        - CHECK_BLOOD_OXYGEN
         - CHECK_PULSE
         - CHECK_RESPIRATION
         - DIRECT_MOBILE_CHARACTERS
