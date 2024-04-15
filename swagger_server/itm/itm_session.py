@@ -35,6 +35,7 @@ class ITMSession:
         """
         self.session_id = None
         self.adm_name = ''
+        self.adm_profile = ''
         self.time_started = 0
         self.time_elapsed_realtime = 0
 
@@ -244,8 +245,8 @@ class ITMSession:
         if self.kdma_training:
             return 'No alignment target in training sessions', 400
 
-        if self.session_type == 'eval' and 'base' in self.adm_name:
-            print('\033[92mWARNING!  An ADM with "base" in the name is requesting an alignment target during evaluation.\033[00m')
+        if self.session_type == 'eval' and 'base' in self.adm_profile:
+            print('\033[92mWARNING!  An ADM with "base" in the ADM profile is requesting an alignment target during evaluation.\033[00m')
 
         return self.itm_scenario.alignment_target
 
@@ -321,7 +322,7 @@ class ITMSession:
 
             self.history.add_history(
                 "Start Scenario",
-                {"session_id": self.session_id, "adm_name": self.adm_name},
+                {"session_id": self.session_id, "adm_name": self.adm_name, "adm_profile" : self.adm_profile},
                 scenario.to_dict())
             print(f"--> Scenario '{self.itm_scenario.id}' starting.")
 
@@ -360,13 +361,15 @@ class ITMSession:
         return Scenario(session_complete=True, id='', name='',
                         scenes=None, state=None)
 
-    def start_session(self, adm_name: str, session_type: str, kdma_training: bool, max_scenarios=None) -> str:
+    def start_session(self, adm_name: str, session_type: str, adm_profile: str, kdma_training: bool, max_scenarios=None) -> str:
         """
         Start a new session.
 
         Args:
-            adm_name: The adm name associated with the scenario.
+            adm_name: The ADM name associated with the session.
             session_type: The type of scenarios either soartech, adept, or eval
+            adm_profile: a profile of the ADM in terms of its alignment strategy
+            kdma_training: whether or not this is a training session with TA2
             max_scenarios: The max number of scenarios presented during the session
 
         Returns:
@@ -392,6 +395,7 @@ class ITMSession:
 
         self.kdma_training = kdma_training
         self.adm_name = adm_name
+        self.adm_profile = adm_profile if adm_profile else 'Unspecified'
         self.itm_scenarios = []
         self.session_type = session_type
         self.history.clear_history()
@@ -412,6 +416,7 @@ class ITMSession:
                 "Start Session",
                 {"session_id": self.session_id,
                 "adm_name": self.adm_name,
+                "adm_profile": self.adm_profile,
                 "session_type": session_type},
                 self.session_id)
 

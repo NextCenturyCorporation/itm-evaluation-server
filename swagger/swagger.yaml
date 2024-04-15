@@ -24,8 +24,16 @@ paths:
       parameters:
         - name: adm_name
           in: query
-          description: A self-assigned ADM name.  Can add authentication later.
+          description: A self-assigned ADM name.
           required: true
+          style: form
+          explode: true
+          schema:
+            type: string
+        - name: adm_profile
+          in: query
+          description: a profile of the ADM in terms of its alignment strategy
+          required: false
           style: form
           explode: true
           schema:
