@@ -86,6 +86,7 @@ class ITMScenarioReader:
         scene = Scene(
             index=scene_data['index'],
             state=state,
+            final_scene=scene_data.get('final_scene', False),
             end_scene_allowed=scene_data['end_scene_allowed'],
             persist_characters=scene_data.get('persist_characters', False),
             probe_config=None, # Not used by TA3
