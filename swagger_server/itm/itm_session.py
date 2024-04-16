@@ -57,7 +57,7 @@ class ITMSession:
         # This determines whether the server saves history to JSON
         self.save_history = False
         # save_history must also be True
-        self.save_history_to_s3 = True
+        self.save_history_to_s3 = False
 
     def __deepcopy__(self, memo):
         return self # Allows us to deepcopy ITMScenarios
@@ -150,7 +150,11 @@ class ITMSession:
                     session_alignment.to_dict()
                 )
                 print(f"--> Got session alignment score {session_alignment_score} from TA1.")
-            except:
+                alignment_scenario_id = session_alignment.alignment_source[0].scenario_id
+                if self.itm_scenario.id != alignment_scenario_id:
+                    print(f'\033[92mContamination in session_alignment! scenario is {self.itm_scenario.id} but alignment source scenario is {alignment_scenario_id}.\033[00m')
+            except Exception as e:
+                print(e)
                 print("--> WARNING: Exception getting session alignment. Ignoring.")
 
         self.state.unstructured = f'Scenario {self.itm_scenario.id} complete. Session alignment score = {session_alignment_score}'
@@ -447,7 +451,7 @@ class ITMSession:
             if self.ta1_integration:
                 controllers = ITMSession.ta1_controllers[ta1_name]
                 for scenario_ctr in range(len(ta1_scenarios)):
-                    ta1_scenarios[scenario_ctr].set_controller(controllers[scenario_ctr % (len(controllers))])
+                    ta1_scenarios[scenario_ctr].set_controller(deepcopy(controllers[scenario_ctr % (len(controllers))]))
             else:
                 for scenario_ctr in range(len(ta1_scenarios)):
                     ta1_scenarios[scenario_ctr].alignment_target = alignment_targets[scenario_ctr % (len(alignment_targets))]
