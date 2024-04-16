@@ -852,6 +852,9 @@ components:
           minimum: 0
         state:
           $ref: "#/components/schemas/State"
+        final_scene:
+          type: boolean
+          description: Whether this is the final scene in the scenario
         end_scene_allowed:
           type: boolean
           description: Whether ADMs can explicitly end the scene
@@ -1599,6 +1602,10 @@ components:
       enum:
         - right forearm
         - left forearm
+        - right hand
+        - left hand
+        - right leg
+        - left leg
         - right calf
         - left calf
         - right thigh
@@ -1688,6 +1695,7 @@ components:
       enum:
         - APPLY_TREATMENT
         - CHECK_ALL_VITALS
+        - CHECK_BLOOD_OXYGEN
         - CHECK_PULSE
         - CHECK_RESPIRATION
         - DIRECT_MOBILE_CHARACTERS

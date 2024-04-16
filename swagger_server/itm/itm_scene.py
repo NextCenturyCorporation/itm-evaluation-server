@@ -20,6 +20,7 @@ class ITMScene:
         self.index = scene.index
         self.state :State = scene.state # State updates for the scene, including a new cast of characters
         self.end_scene_allowed = scene.end_scene_allowed
+        self.final_scene = scene.final_scene
         self.persist_characters = scene.persist_characters
         self.action_mappings :List[ActionMapping] = scene.action_mapping
         for mapping in self.action_mappings:

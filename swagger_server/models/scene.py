@@ -21,13 +21,15 @@ class Scene(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, index: int=None, state: State=None, end_scene_allowed: bool=None, persist_characters: bool=None, probe_config: List[ProbeConfig]=None, tagging: Tagging=None, action_mapping: List[ActionMapping]=None, restricted_actions: List[ActionTypeEnum]=None, transition_semantics: SemanticTypeEnum=None, transitions: Conditions=None):  # noqa: E501
+    def __init__(self, index: int=None, state: State=None, final_scene: bool=None, end_scene_allowed: bool=None, persist_characters: bool=None, probe_config: List[ProbeConfig]=None, tagging: Tagging=None, action_mapping: List[ActionMapping]=None, restricted_actions: List[ActionTypeEnum]=None, transition_semantics: SemanticTypeEnum=None, transitions: Conditions=None):  # noqa: E501
         """Scene - a model defined in Swagger
 
         :param index: The index of this Scene.  # noqa: E501
         :type index: int
         :param state: The state of this Scene.  # noqa: E501
         :type state: State
+        :param final_scene: The final_scene of this Scene.  # noqa: E501
+        :type final_scene: bool
         :param end_scene_allowed: The end_scene_allowed of this Scene.  # noqa: E501
         :type end_scene_allowed: bool
         :param persist_characters: The persist_characters of this Scene.  # noqa: E501
@@ -48,6 +50,7 @@ class Scene(Model):
         self.swagger_types = {
             'index': int,
             'state': State,
+            'final_scene': bool,
             'end_scene_allowed': bool,
             'persist_characters': bool,
             'probe_config': List[ProbeConfig],
@@ -61,6 +64,7 @@ class Scene(Model):
         self.attribute_map = {
             'index': 'index',
             'state': 'state',
+            'final_scene': 'final_scene',
             'end_scene_allowed': 'end_scene_allowed',
             'persist_characters': 'persist_characters',
             'probe_config': 'probe_config',
@@ -72,6 +76,7 @@ class Scene(Model):
         }
         self._index = index
         self._state = state
+        self._final_scene = final_scene
         self._end_scene_allowed = end_scene_allowed
         self._persist_characters = persist_characters
         self._probe_config = probe_config
@@ -137,6 +142,29 @@ class Scene(Model):
         """
 
         self._state = state
+
+    @property
+    def final_scene(self) -> bool:
+        """Gets the final_scene of this Scene.
+
+        Whether this is the final scene in the scenario  # noqa: E501
+
+        :return: The final_scene of this Scene.
+        :rtype: bool
+        """
+        return self._final_scene
+
+    @final_scene.setter
+    def final_scene(self, final_scene: bool):
+        """Sets the final_scene of this Scene.
+
+        Whether this is the final scene in the scenario  # noqa: E501
+
+        :param final_scene: The final_scene of this Scene.
+        :type final_scene: bool
+        """
+
+        self._final_scene = final_scene
 
     @property
     def end_scene_allowed(self) -> bool:
