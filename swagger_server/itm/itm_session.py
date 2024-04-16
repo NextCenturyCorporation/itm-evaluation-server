@@ -53,9 +53,9 @@ class ITMSession:
         # ADM History
         self.history: ITMHistory = ITMHistory()
         # This determines whether the server makes calls to TA1
-        self.ta1_integration = True # Default here applies to non-training, non-eval sessions
+        self.ta1_integration = False # Default here applies to non-training, non-eval sessions
         # This determines whether the server saves history to JSON
-        self.save_history = True
+        self.save_history = False
         # save_history must also be True
         self.save_history_to_s3 = False
 
