@@ -115,7 +115,7 @@ def start_session(adm_name, session_type, adm_profile=None, kdma_training=False,
 
     :param adm_name: A self-assigned ADM name.
     :type adm_name: str
-    :param session_type: the type of session to start `test`, `eval`, or a TA1 name)
+    :param session_type: the type of session to start (`test`, `eval`, or a TA1 name)
     :type session_type: str
     :param adm_profile: a profile of the ADM in terms of its alignment strategy
     :type adm_profile: str
