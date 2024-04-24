@@ -266,11 +266,11 @@ class ITMScene:
         if short_circuit:
             return probe_response_condition_met
         (short_circuit, elapsed_gt_condition_met) = \
-             self._evaluate_condition(conditions.elapsed_time_gt, self._elapsed_gt_condition_met, semantics)
+             self._evaluate_condition(conditions.elapsed_time_gt, self._elapsed_gt_condition_met, semantics, session_state)
         if short_circuit:
             return elapsed_gt_condition_met
         (short_circuit, elapsed_lt_condition_met) = \
-             self._evaluate_condition(conditions.elapsed_time_lt, self._elapsed_lt_condition_met, semantics)
+             self._evaluate_condition(conditions.elapsed_time_lt, self._elapsed_lt_condition_met, semantics, session_state)
         if short_circuit:
             return elapsed_lt_condition_met
         (short_circuit, actions_condition_met) = \
