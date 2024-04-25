@@ -122,7 +122,7 @@ class Conditions(Model):
     def actions(self) -> List[List[str]]:
         """Gets the actions of this Conditions.
 
-        True if the any of the specified lists of actions have been taken; multiple action ID lists have \"or\" semantics; multiple action IDs within a list have \"and\" semantics  # noqa: E501
+        True if any of the specified lists of actions have been taken; multiple action ID lists have \"or\" semantics; multiple action IDs within a list have \"and\" semantics  # noqa: E501
 
         :return: The actions of this Conditions.
         :rtype: List[List[str]]
@@ -133,7 +133,7 @@ class Conditions(Model):
     def actions(self, actions: List[List[str]]):
         """Sets the actions of this Conditions.
 
-        True if the any of the specified lists of actions have been taken; multiple action ID lists have \"or\" semantics; multiple action IDs within a list have \"and\" semantics  # noqa: E501
+        True if any of the specified lists of actions have been taken; multiple action ID lists have \"or\" semantics; multiple action IDs within a list have \"and\" semantics  # noqa: E501
 
         :param actions: The actions of this Conditions.
         :type actions: List[List[str]]
@@ -191,7 +191,7 @@ class Conditions(Model):
     def character_vitals(self) -> List[ConditionsCharacterVitals]:
         """Gets the character_vitals of this Conditions.
 
-        True if the specified list of vitals values have been met for the specified character_id  # noqa: E501
+        True if the any of the specified collection of vital values have been met for the specified character_id  # noqa: E501
 
         :return: The character_vitals of this Conditions.
         :rtype: List[ConditionsCharacterVitals]
@@ -202,7 +202,7 @@ class Conditions(Model):
     def character_vitals(self, character_vitals: List[ConditionsCharacterVitals]):
         """Sets the character_vitals of this Conditions.
 
-        True if the specified list of vitals values have been met for the specified character_id  # noqa: E501
+        True if the any of the specified collection of vital values have been met for the specified character_id  # noqa: E501
 
         :param character_vitals: The character_vitals of this Conditions.
         :type character_vitals: List[ConditionsCharacterVitals]
@@ -214,7 +214,7 @@ class Conditions(Model):
     def supplies(self) -> List[Supplies]:
         """Gets the supplies of this Conditions.
 
-        True if there are at least the specified quantity of the specified supply types remaining  # noqa: E501
+        True if any of the specified supplies reach or go below the specified quantity  # noqa: E501
 
         :return: The supplies of this Conditions.
         :rtype: List[Supplies]
@@ -225,7 +225,7 @@ class Conditions(Model):
     def supplies(self, supplies: List[Supplies]):
         """Sets the supplies of this Conditions.
 
-        True if there are at least the specified quantity of the specified supply types remaining  # noqa: E501
+        True if any of the specified supplies reach or go below the specified quantity  # noqa: E501
 
         :param supplies: The supplies of this Conditions.
         :type supplies: List[Supplies]

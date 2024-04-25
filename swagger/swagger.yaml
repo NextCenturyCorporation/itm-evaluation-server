@@ -1006,7 +1006,7 @@ components:
           description: True if the scenario elapsed time (in seconds) is greater than the specified value
           minimum: 5
         actions:
-          description: True if the any of the specified lists of actions have been taken; multiple action ID lists have "or" semantics; multiple action IDs within a list have "and" semantics
+          description: True if any of the specified lists of actions have been taken; multiple action ID lists have "or" semantics; multiple action IDs within a list have "and" semantics
           type: array
           items:
             type: array
