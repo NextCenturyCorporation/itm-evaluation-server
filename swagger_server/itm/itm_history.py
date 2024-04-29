@@ -90,7 +90,7 @@ class ITMHistory:
         s3_client = boto3.client('s3')
         try:
             s3_client.upload_file(full_filepath, self.save_history_bucket, object_name)
-        except Exception as e:
-            logging.error("Could not save JSON to S3", exc_info=True)
+        except Exception:
+            logging.exception("Could not save JSON to S3")
             return False
         return True

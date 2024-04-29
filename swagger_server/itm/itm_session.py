@@ -155,10 +155,10 @@ class ITMSession:
                 self.itm_scenario.id(f"Got session alignment score %s from TA1.", session_alignment_score)
                 alignment_scenario_id = session_alignment.alignment_source[0].scenario_id
                 if self.itm_scenario.id != alignment_scenario_id:
-                    logging.warning("\033[92mContamination in session_alignment! scenario is %s but alignment source scenario is %s.\033[00m",
+                    logging.error("\033[92mContamination in session_alignment! scenario is %s but alignment source scenario is %s.\033[00m",
                                     self.itm_scenario.id, alignment_scenario_id)
-            except Exception as e:
-                logging.warning("Exception getting session alignment. Ignoring.", exc_info=True)
+            except Exception:
+                logging.exception("Exception getting session alignment. Ignoring.")
 
         self.state.unstructured = f'Scenario {self.itm_scenario.id} complete. Session alignment score = {session_alignment_score}'
         self._cleanup()
@@ -325,7 +325,6 @@ class ITMSession:
             )
             self.action_handler.set_scenario(self.itm_scenario)
             self.current_scenario_index += 1
-
             self.history.add_history(
                 "Start Scenario",
                 {"session_id": self.session_id, "adm_name": self.adm_name, "adm_profile" : self.adm_profile},
@@ -340,7 +339,7 @@ class ITMSession:
                     )
                     logging.info("Got new session_id from TA1.", ta1_session_id)
                 except:
-                    logging.error("Exception communicating with TA1; is the TA1 server running?  Ending session.")
+                    logging.exception("Exception communicating with TA1; is the TA1 server running?  Ending session.")
                     self._end_session() # Exception here ends the session
                     return 'Exception communicating with TA1; is the TA1 server running?  Ending session.', 503
 
@@ -357,8 +356,9 @@ class ITMSession:
 
             return scenario
         except:
-            logging.error("Exception getting next scenario; ending session.", exc_info=True)
-            return self._end_session() # Exception here ends the session
+            logging.exception("Exception getting next scenario; ending session.")
+            self._end_session() # Exception here ends the session
+            return 'Exception getting next scenario; ending session.', 503
 
     def _end_session(self) -> Scenario:
         self.__init__()
@@ -431,7 +431,7 @@ class ITMSession:
                 ITMSession.init_ta1_data(ta1_names)
                 ITMSession.ta1_connected = True
             except:
-                logging.error("Exception communicating with TA1; is the TA1 server running?  Ending session.")
+                logging.exception("Exception communicating with TA1; is the TA1 server running?  Ending session.")
                 self._end_session() # Exception here ends the session
                 return 'Exception communicating with TA1; is the TA1 server running?  Ending session.', 503
 
@@ -520,7 +520,7 @@ class ITMSession:
                     session_alignment = AlignmentResults(alignment_source=[], alignment_target_id=target_id, score=0.5, kdma_values=[])
 
             except:
-                logging.error("Exception getting session alignment; is a TA1 server running?")
+                logging.exception("Exception getting session alignment; is a TA1 server running?")
                 return 'Could not get session alignment; is a TA1 server running?', 503
         else:
             session_alignment = AlignmentResults(alignment_source=[], alignment_target_id=target_id, score=0.5, kdma_values=[])

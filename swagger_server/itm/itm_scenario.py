@@ -107,10 +107,11 @@ class ITMScenario:
                     if self.id != alignment_scenario_id:
                         logging.warning("\033[92mContamination in probe alignment! scenario is %s but alignment source scenario is %s.\033[00m", self.id, alignment_scenario_id)
             except:
-                print("--> WARNING: Exception posting probe response to TA1.")
+                logging.exception("Exception posting probe response to TA1.")
         self.probes_sent.append(probe_id)
         self.probe_responses_sent.append(choice_id)
-        print(f"--> Responding to probe {response.probe_id} from scenario {response.scenario_id} with choice {response.choice}.")
+        logging.info("Responding to probe %s from scenario %s with choice %s.",
+                     response.probe_id, response.scenario_id, response.choice)
 
 
     def change_scene(self, next_scene, had_transitions):
