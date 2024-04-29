@@ -166,18 +166,16 @@ class ITMScene:
     def _supply_condition_met(self, supply_conditions :List[Supplies], session_state :State) -> bool:
         if not supply_conditions:
             return True
-        for supply_condition in supply_conditions:
-            for state_supply in session_state.supplies:
-                if supply_condition.type == state_supply.type:
-                    if state_supply.quantity <= supply_condition.quantity:
-                        print(f'_supply_condition_met: supply {supply_condition.type} met ({state_supply.quantity} <= {supply_condition.quantity}); returning true')
-                        return True
-        print(f'_supply_condition_met: did not find a supply meeting criteria; returning false')
-        return False
+        supply_conditions_met = any(
+            state_supply.quantity <= supply_condition.quantity
+            for supply_condition in supply_conditions
+            for state_supply in session_state.supplies
+            if supply_condition.type == state_supply.type
+        )
+        return supply_conditions_met
 
     # True if all vitals values of the source are equal to the target
     def _vital_condition_met(self, source_vitals, target_vitals) -> bool:
-        print(f'_vital_condition_met: comparing source {source_vitals} to target {target_vitals}')
         for attr in source_vitals.attribute_map.keys():
             target_value = getattr(target_vitals, attr)
             if target_value is not None:
@@ -185,15 +183,12 @@ class ITMScene:
                 numeric_vital = isinstance(target_value, (float, int))
                 if (not numeric_vital) and (target_value != source_value) or \
                     numeric_vital and (target_value < source_value):
-                    print(f'_vital_condition_met: vital condition "{attr}" not met; returning false because they cannot all be true')
                     return False
-        print(f'_vital_condition_met: all conditions met; returning true')
         return True
 
     # True if the any of the specified collection of vital values have been met for the specified character_id
     # Each list entry is true if all vitals values have been met by the specified character_id
     def _vitals_condition_met(self, vital_conditions :List, session_state :State) -> bool:
-        print(f'vital_conditions = {vital_conditions}')
         if not vital_conditions:
             return True
         for vital_condition in vital_conditions:
@@ -222,9 +217,7 @@ class ITMScene:
                     setattr(source_vitals, attr, getattr(scene_character.vitals, attr))
             # If a vital_condition evaluates to true, then entire character_vitals condition is true
             if self._vital_condition_met(source_vitals, vital_condition.vitals):
-                print(f'_vitals_condition_met: found a vital_condition for {session_character.id} that evaluates to true, so entire character_vitals condition is true')
                 return True
-        print(f'_vitals_condition_met: did not find a vital_condition that evaluates to true, so entire character_vitals condition is false')
         return False
 
     # First returned value is whether to short-circuit conditions checking;
