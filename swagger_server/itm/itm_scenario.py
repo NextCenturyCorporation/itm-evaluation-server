@@ -24,6 +24,7 @@ class ITMScenario:
         self.alignment_target: AlignmentTarget = None
         self.ta1_controller: ITMTa1Controller = None
         self.probes_sent = []
+        self.probe_responses_sent = []
         from.itm_session import ITMSession
         self.session :ITMSession = session
         self.isd :ITMScenarioData
@@ -108,6 +109,7 @@ class ITMScenario:
             except:
                 print("--> WARNING: Exception posting probe response to TA1.")
         self.probes_sent.append(probe_id)
+        self.probe_responses_sent.append(choice_id)
         print(f"--> Responding to probe {response.probe_id} from scenario {response.scenario_id} with choice {response.choice}.")
 
 
