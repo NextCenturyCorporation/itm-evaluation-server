@@ -4,7 +4,7 @@ from random import shuffle
 from inspect import signature
 from typing import List
 from swagger_server.models import (
-    Scene, Action, ActionMapping, ActionTypeEnum, Conditions, SemanticTypeEnum, State
+    Action, ActionMapping, ActionTypeEnum, Conditions, Scene, SemanticTypeEnum, State, Supplies
 )
 from swagger_server.util import get_swagger_class_enum_values
 
@@ -136,6 +136,11 @@ class ITMScene:
             return True
         return all(probe in self.parent_scenario.probes_sent for probe in probe_conditions)
 
+    def _probe_response_condition_met(self, probe_response_conditions :List[str]) -> bool:
+        if not probe_response_conditions:
+            return True
+        return all(probe in self.parent_scenario.probe_responses_sent for probe in probe_response_conditions)
+
     def _elapsed_gt_condition_met(self, elapsed_gt, session_state :State) -> bool:
         if elapsed_gt is None:
             return True
@@ -157,11 +162,68 @@ class ITMScene:
                 return True
         return False
 
+    # True if any of the specified supplies is <= the specified quantity
+    def _supply_condition_met(self, supply_conditions :List[Supplies], session_state :State) -> bool:
+        if not supply_conditions:
+            return True
+        supply_conditions_met = any(
+            state_supply.quantity <= supply_condition.quantity
+            for supply_condition in supply_conditions
+            for state_supply in session_state.supplies
+            if supply_condition.type == state_supply.type
+        )
+        return supply_conditions_met
+
+    # True if all vitals values of the source are equal to the target
+    def _vital_condition_met(self, source_vitals, target_vitals) -> bool:
+        for attr in source_vitals.attribute_map.keys():
+            target_value = getattr(target_vitals, attr)
+            if target_value is not None:
+                source_value = getattr(source_vitals, attr)
+                numeric_vital = isinstance(target_value, (float, int))
+                if (not numeric_vital) and (target_value != source_value) or \
+                    numeric_vital and (target_value < source_value):
+                    return False
+        return True
+
+    # True if the any of the specified collection of vital values have been met for the specified character_id
+    # Each list entry is true if all vitals values have been met by the specified character_id
+    def _vitals_condition_met(self, vital_conditions :List, session_state :State) -> bool:
+        if not vital_conditions:
+            return True
+        for vital_condition in vital_conditions:
+            # Find the character in both the session state and scene (template) state
+            session_character = None
+            for session_character_lcv in session_state.characters:
+                if session_character_lcv.id == vital_condition.character_id:
+                    session_character = session_character_lcv
+                    break
+            scene_character = None
+            for scene_character_lcv in self.state.characters:
+                if scene_character_lcv.id == vital_condition.character_id:
+                    scene_character = scene_character_lcv
+                    break
+            if not session_character:
+                print(f'--> WARNING: character_vitals condition specified character {vital_condition.character_id} that is not in the State')
+                return False
+            if not scene_character:
+                print(f'--> WARNING: character_vitals condition specified character {vital_condition.character_id} that is not in the Scene')
+                return False
+
+            # Copy any undiscovered vitals from the scene (template) character's vitals
+            source_vitals = copy.copy(session_character.vitals)
+            for attr in source_vitals.attribute_map.keys():
+                if getattr(source_vitals, attr) is None:
+                    setattr(source_vitals, attr, getattr(scene_character.vitals, attr))
+            # If a vital_condition evaluates to true, then entire character_vitals condition is true
+            if self._vital_condition_met(source_vitals, vital_condition.vitals):
+                return True
+        return False
 
     # First returned value is whether to short-circuit conditions checking;
     # Second returned value is whether the condition was met
     # "not" semantics means that the overall condition is true if all of the conditions are false
-    def _evaluate_condition(self, property, eval_function, session_state, semantics):
+    def _evaluate_condition(self, property, eval_function, semantics, session_state=None):
         if property:
             condition_met = \
                 eval_function(property) if len(signature(eval_function).parameters) == 1 \
@@ -185,32 +247,41 @@ class ITMScene:
         return False, semantics == SemanticTypeEnum.AND
 
 
-    # TODO: implement based on all configurable conditions
     def conditions_met(self, conditions :Conditions, session_state: State, semantics) -> bool:
         if not conditions:
             return True
-
         (short_circuit, probe_condition_met) = \
-             self._evaluate_condition(conditions.probes, self._probe_condition_met, session_state, semantics)
+             self._evaluate_condition(conditions.probes, self._probe_condition_met, semantics)
         if short_circuit:
             return probe_condition_met
+        (short_circuit, probe_response_condition_met) = \
+             self._evaluate_condition(conditions.probe_responses, self._probe_response_condition_met, semantics)
+        if short_circuit:
+            return probe_response_condition_met
         (short_circuit, elapsed_gt_condition_met) = \
-             self._evaluate_condition(conditions.elapsed_time_gt, self._elapsed_gt_condition_met, session_state, semantics)
+             self._evaluate_condition(conditions.elapsed_time_gt, self._elapsed_gt_condition_met, semantics, session_state)
         if short_circuit:
             return elapsed_gt_condition_met
         (short_circuit, elapsed_lt_condition_met) = \
-             self._evaluate_condition(conditions.elapsed_time_lt, self._elapsed_lt_condition_met, session_state, semantics)
+             self._evaluate_condition(conditions.elapsed_time_lt, self._elapsed_lt_condition_met, semantics, session_state)
         if short_circuit:
             return elapsed_lt_condition_met
         (short_circuit, actions_condition_met) = \
-             self._evaluate_condition(conditions.actions, self._actions_condition_met, session_state, semantics)
+             self._evaluate_condition(conditions.actions, self._actions_condition_met, semantics)
         if short_circuit:
             return actions_condition_met
+        (short_circuit, supply_condition_met) = \
+             self._evaluate_condition(conditions.supplies, self._supply_condition_met, semantics, session_state)
+        if short_circuit:
+            return supply_condition_met
+        (short_circuit, vitals_condition_met) = \
+             self._evaluate_condition(conditions.character_vitals, self._vitals_condition_met, semantics, session_state)
+        if short_circuit:
+            return vitals_condition_met
 
         if (semantics == SemanticTypeEnum.AND):
-            conditions_met = probe_condition_met and elapsed_gt_condition_met and elapsed_lt_condition_met and actions_condition_met
+            return True # if we didn't short-circuit, then all supplied conditions are True
         elif (semantics == SemanticTypeEnum.OR):
-            conditions_met = probe_condition_met  or elapsed_gt_condition_met  or elapsed_lt_condition_met  or actions_condition_met
+            return False # if we didn't short-circuit, then all supplied conditions are False
         else: # "not" semantics means that the overall condition is true if all of the conditions are false
-            conditions_met = not (probe_condition_met or elapsed_gt_condition_met or elapsed_lt_condition_met or actions_condition_met)
-        return conditions_met
+            return True # if we didn't short-circuit, then all supplied conditions are False, so return True
