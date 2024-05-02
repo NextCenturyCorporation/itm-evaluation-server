@@ -7,7 +7,8 @@ from swagger_server.models import (
     CharacterTag,
     InjuryLocation,
     InjuryStatusEnum,
-    MentalStatusEnum
+    MentalStatusEnum,
+    SupplyTypeEnum
 )
 from swagger_server.util import get_swagger_class_enum_values
 from .itm_scenario import ITMScenario
@@ -73,6 +74,7 @@ class ITMActionHandler:
             Chest Injuries
             Asthmatic: None
             Chest Collapse: Decompression Needle
+            Chest Puncture: Vented Chest Seal
 
             Stomach Injuries
             Stomach Laceration: Pressure bandage
@@ -85,32 +87,34 @@ class ITMActionHandler:
             Leg (Shin) Amputation: Tourniquet
             Broken Leg: Splint
             Calf Laceration: Pressure bandage
-            Calf Shrapnel: Hemostatic gauze
+            Calf Shrapnel: Pressure bandage
         """
         match injury_name:
             case 'Amputation':
-                return treatment == 'Tourniquet'
+                return treatment == SupplyTypeEnum.TOURNIQUET
             case 'Burn':
-                return treatment == 'Burn Dressing'
+                return treatment == SupplyTypeEnum.BURN_DRESSING
             case 'Broken Bone':
-                return treatment == 'Splint'
+                return treatment == SupplyTypeEnum.SPLINT
             case 'Chest Collapse':
-                return treatment == 'Decompression Needle'
+                return treatment == SupplyTypeEnum.DECOMPRESSION_NEEDLE
             case 'Laceration':
                 if 'thigh' in location:
-                    return treatment == 'Tourniquet'
+                    return treatment == SupplyTypeEnum.TOURNIQUET
                 else:
-                    return treatment == 'Pressure bandage'
+                    return treatment == SupplyTypeEnum.PRESSURE_BANDAGE
             case 'Puncture':
                 if 'bicep' in location or 'thigh' in location:
-                    return treatment == 'Tourniquet'
+                    return treatment == SupplyTypeEnum.TOURNIQUET
+                elif 'chest' in location:
+                    return treatment == SupplyTypeEnum.VENTED_CHEST_SEAL
                 else:
-                    return treatment == 'Hemostatic gauze'
+                    return treatment == SupplyTypeEnum.HEMOSTATIC_GAUZE
             case 'Shrapnel':
                 if 'face' in location:
-                    return treatment == 'Nasopharyngeal airway'
+                    return treatment == SupplyTypeEnum.NASOPHARYNGEAL_AIRWAY
                 else:
-                    return treatment == 'Hemostatic gauze'
+                    return treatment == SupplyTypeEnum.PRESSURE_BANDAGE
             case _:
                 return False
 
