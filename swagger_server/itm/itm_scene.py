@@ -1,5 +1,6 @@
 import copy
 import json
+import logging
 from random import shuffle
 from inspect import signature
 from typing import List
@@ -41,12 +42,14 @@ class ITMScene:
             "action_id": x.action_id,
             "action_type": x.action_type,
             "unstructured": x.unstructured,
+            "repeatable": x.repeatable,
             "character_id": x.character_id,
             "probe_id": x.probe_id,
             "choice": x.choice,
             "parameters": x.parameters,
             "kdma_association": x.kdma_association,
             "conditions": json.loads(str(x.conditions).replace("'", '"').replace("None", '"None"')),
+            "condition_semantics": x.condition_semantics,
             "next_scene": x.next_scene
         }
         return to_obj
@@ -68,8 +71,13 @@ class ITMScene:
             "index": self.index,
             "state": state_copy,
             "end_scene_allowed": self.end_scene_allowed,
+            "final_scene": self.final_scene,
+            "persist_characters": self.persist_characters,
+            "actions_taken": self.actions_taken,
             "action_mappings": action_mappings,
             "restricted_actions": self.restricted_actions,
+            "parent_scenario": self.parent_scenario.id,
+            "training": self.training,
             "transition_semantics": self.transition_semantics,
             "transitions": json.loads(str(self.transitions).replace('"', '').replace("'", '"').replace("None", '"None"').replace("False", "false").replace("True", "true"))
         }
@@ -204,10 +212,10 @@ class ITMScene:
                     scene_character = scene_character_lcv
                     break
             if not session_character:
-                print(f'--> WARNING: character_vitals condition specified character {vital_condition.character_id} that is not in the State')
+                logging.warning("character_vitals condition specified character %s that is not in the State", vital_condition.character_id)
                 return False
             if not scene_character:
-                print(f'--> WARNING: character_vitals condition specified character {vital_condition.character_id} that is not in the Scene')
+                logging.warning("character_vitals condition specified character %s that is not in the Scene", vital_condition.character_id)
                 return False
 
             # Copy any undiscovered vitals from the scene (template) character's vitals

@@ -1,3 +1,4 @@
+import logging
 from typing import List
 from dataclasses import dataclass
 from copy import deepcopy
@@ -104,12 +105,13 @@ class ITMScenario:
                     )
                     alignment_scenario_id = probe_response_alignment['alignment_source'][0]['scenario_id']
                     if self.id != alignment_scenario_id:
-                        print(f'\033[92mContamination in probe alignment! scenario is {self.id} but alignment source scenario is {alignment_scenario_id}.\033[00m')
+                        logging.warning("\033[92mContamination in probe alignment! scenario is %s but alignment source scenario is %s.\033[00m", self.id, alignment_scenario_id)
             except:
-                print("--> WARNING: Exception posting probe response to TA1.")
+                logging.exception("Exception posting probe response to TA1.")
         self.probes_sent.append(probe_id)
         self.probe_responses_sent.append(choice_id)
-        print(f"--> Responding to probe {response.probe_id} from scenario {response.scenario_id} with choice {response.choice}.")
+        logging.info("Responding to probe %s from scenario %s with choice %s.",
+                     response.probe_id, response.scenario_id, response.choice)
 
 
     def change_scene(self, next_scene, had_transitions):
@@ -120,7 +122,7 @@ class ITMScenario:
 
         if (next_scene >= len(self.isd.scenes)):
             if had_transitions:
-                print("--> WARNING: scene configuration issue: invalid scene index; ending session.")
+                logging.error("Scene configuration issue: invalid scene index; ending session.")
                 self.session.end_scenario()
             return
 
@@ -137,7 +139,7 @@ class ITMScenario:
             return
 
         # Log the scene change
-        print(f"--> Changing to scene index {self.isd.current_scene_index}.")
+        logging.info("Changing to scene index %d.", self.isd.current_scene_index)
         self.session.history.add_history(
             "Change scene",
             {"session_id": self.session.session_id,
