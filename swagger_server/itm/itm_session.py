@@ -6,6 +6,7 @@ import logging
 from datetime import datetime
 from typing import List
 from copy import deepcopy
+from json import dumps
 from swagger_server.models import (
     Action,
     AlignmentTarget,
@@ -56,6 +57,8 @@ class ITMSession:
         self.history: ITMHistory = ITMHistory()
         # This determines whether the server makes calls to TA1
         self.ta1_integration = False # Default here applies to non-training, non-eval sessions
+        # This determines whether the server returns history in final State after each scenario completes
+        self.return_scenario_history = False
         # This determines whether the server saves history to JSON
         self.save_history = False
         # save_history must also be True
@@ -170,6 +173,8 @@ class ITMSession:
             timestamp = f"{datetime.now():%b%d-%H.%M.%S}" # e.g., "jungle-1-soartech-high-Mar13-11.44.44"
             filename = f"{self.itm_scenario.id.replace(' ', '_')}-{self.itm_scenario.scene_type}-{alignment_type}-{timestamp}"
             self.history.write_to_json_file(filename, self.save_history_to_s3)
+        if self.return_scenario_history:
+            self.state.unstructured = dumps({'history': self.history.history}, indent=2) + os.linesep + self.state.unstructured
         self.history.clear_history()
 
 
@@ -415,6 +420,7 @@ class ITMSession:
             ta1_names.append(self.session_type)
         if kdma_training:
             self.ta1_integration = True
+            self.return_scenario_history = True
 
         self.history.add_history(
                 "Start Session",
