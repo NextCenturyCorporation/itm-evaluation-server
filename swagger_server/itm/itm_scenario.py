@@ -121,7 +121,12 @@ class ITMScenario:
 
         next_scene = [scene for scene in self.isd.scenes if scene.id == next_scene_id]
         if next_scene == []:
-            logging.error("Scene configuration issue: next scene '%s' not found; ending scenario.", next_scene_id)
+            if isinstance(self.isd.current_scene.id, int) and isinstance(next_scene_id, int) \
+                and self.isd.current_scene.id == next_scene_id - 1:
+                pass # This is expected when scenario ids are simple indices
+            else:
+                logging.error("Scene configuration issue: next scene '%s' not found; ending scenario.", next_scene_id)
+            self.isd.current_scene.state = None # Supports single-scenario sessions
             self.session.end_scenario()
             return
 
@@ -138,7 +143,7 @@ class ITMScenario:
             return
 
         # Log the scene change
-        logging.info("Changing to scene ID %d.", self.isd.current_scene.id)
+        logging.info("Changing to scene ID %s.", self.isd.current_scene.id)
         self.session.history.add_history(
             "Change scene",
             {"session_id": self.session.session_id,

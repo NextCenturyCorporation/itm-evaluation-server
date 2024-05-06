@@ -21,14 +21,8 @@ class ITMScene:
         self.id = scene.id
         self.state :State = scene.state # State updates for the scene, including a new cast of characters
         self.end_scene_allowed = scene.end_scene_allowed
-        self.default_next_scene = scene.next_scene if scene.next_scene != '' else None
         self.persist_characters = scene.persist_characters
         self.action_mappings :List[ActionMapping] = scene.action_mapping
-        for mapping in self.action_mappings:
-            if mapping.next_scene is None:
-                mapping.next_scene = self.default_next_scene # if not specified in action mapping, inherit from scene
-            if mapping.next_scene == '':
-                mapping.next_scene = None # treat empty scene like no next scene, which is end of scenario
         self.actions_taken = []
         self.restricted_actions :List[ActionTypeEnum] = scene.restricted_actions
         self.transition_semantics :SemanticTypeEnum = scene.transition_semantics
@@ -36,6 +30,20 @@ class ITMScene:
         self.training = False
         from .itm_scenario import ITMScenario
         self.parent_scenario :ITMScenario = None
+
+        # Initialize action mapping next scenes, relying on scene-level default if necessary
+        if isinstance(self.id, int) and self.id >= 0: # ids are simple indices
+            self.default_next_scene = self.id + 1
+        else:
+            self.default_next_scene = None
+        if scene.next_scene is not None and scene.next_scene != '':
+            self.default_next_scene = scene.next_scene
+        for mapping in self.action_mappings:
+            if mapping.next_scene is None:
+                mapping.next_scene = self.default_next_scene # if not specified in action mapping, inherit from scene
+            if mapping.next_scene == '':
+                mapping.next_scene = None # treat empty scene like no next scene, which is end of scenario
+
 
     def to_obj(self, x :ActionMapping):
         '''
@@ -64,13 +72,12 @@ class ITMScene:
         action_mappings = []
         for x in self.action_mappings:
             action_mappings.append(self.to_obj(x))
-        state_copy = self.state
-        #state_copy = {}
-        #if self.state:
-        #    state_copy = copy.deepcopy(vars(self.state[0]))
-        #    del state_copy['swagger_types']
-        #    del state_copy['attribute_map']
-        #    state_copy = str(state_copy).encode('utf-8').decode('unicode-escape').replace('"', "'")
+        state_copy = {}
+        if self.state:
+            state_copy = copy.deepcopy(vars(self.state))
+            del state_copy['swagger_types']
+            del state_copy['attribute_map']
+            state_copy = str(state_copy).encode('utf-8').decode('unicode-escape').replace('"', "'")
         to_obj = {
             "id": self.id,
             "state": state_copy,

@@ -1,6 +1,7 @@
 id: MetricsEval.MD18
 # v1.3.1
 name: Multi-Patient Tradeoffs moral/ingroup
+first_scene: 0
 state:
   unstructured: >
     Imagine you are in a remote setting, with limited medical resources.
@@ -84,7 +85,7 @@ state:
           severity: major
 
 scenes:
-  - index: 0
+  - id: 0
     end_scene_allowed: false
     probe_config:
       - probe_id: MetricsEval.MD18.1
@@ -149,7 +150,7 @@ scenes:
     transitions:
       probes:
         - MetricsEval.MD18.1
-  - index: 1
+  - id: 1
     end_scene_allowed: false
     state:
       unstructured: >
@@ -249,7 +250,7 @@ scenes:
     transitions:
       probes:
         - MetricsEval.MD18.2
-  - index: 2
+  - id: 2
     end_scene_allowed: false
     state:
       unstructured: >
@@ -348,7 +349,7 @@ scenes:
     transitions:
       probes:
         - MetricsEval.MD18.3
-  - index: 3
+  - id: 3
     end_scene_allowed: false
     state:
       unstructured: >
@@ -448,7 +449,7 @@ scenes:
     transitions:
       probes:
         - MetricsEval.MD18.4
-  - index: 4
+  - id: 4
     end_scene_allowed: false
     state:
       unstructured: >
@@ -547,7 +548,7 @@ scenes:
     transitions:
       probes:
         - MetricsEval.MD18.5
-  - index: 5
+  - id: 5
     end_scene_allowed: false
     state:
       unstructured: >
@@ -647,7 +648,7 @@ scenes:
     transitions:
       probes:
         - MetricsEval.MD18.6
-  - index: 6
+  - id: 6
     end_scene_allowed: false
     state:
       unstructured: >
@@ -746,7 +747,7 @@ scenes:
     transitions:
       probes:
         - MetricsEval.MD18.7
-  - index: 7
+  - id: 7
     end_scene_allowed: false
     state:
       unstructured: >
@@ -846,7 +847,7 @@ scenes:
     transitions:
       probes:
         - MetricsEval.MD18.8
-  - index: 8
+  - id: 8
     end_scene_allowed: false
     state:
       unstructured: >
@@ -945,6 +946,3 @@ scenes:
     transitions:
       probes:
         - MetricsEval.MD18.9
-  - index: 9
-    end_scene_allowed: true
-    action_mapping: []

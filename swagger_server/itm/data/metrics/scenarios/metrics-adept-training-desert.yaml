@@ -1,6 +1,7 @@
 id: MetricsEval.MD17
 # v1.2.1
 name: Multi-Patient Tradeoffs moral/lives
+first_scene: 0
 state:
   unstructured: >
     Imagine you are in a remote setting, with limited medical resources.
@@ -80,7 +81,7 @@ state:
           severity: major
 
 scenes:
-  - index: 0
+  - id: 0
     end_scene_allowed: false
     probe_config:
       - probe_id: MetricsEval.MD17.1
@@ -107,7 +108,7 @@ scenes:
     transitions:
       probes:
         - MetricsEval.MD17.1
-  - index: 1
+  - id: 1
     end_scene_allowed: false
     state:
       unstructured: >
@@ -202,7 +203,7 @@ scenes:
     transitions:
       probes:
         - MetricsEval.MD17.2
-  - index: 2
+  - id: 2
     end_scene_allowed: false
     state:
       unstructured: >
@@ -300,7 +301,7 @@ scenes:
     transitions:
       probes:
         - MetricsEval.MD17.3
-  - index: 3
+  - id: 3
     end_scene_allowed: false
     state:
       unstructured: >
@@ -395,7 +396,7 @@ scenes:
     transitions:
       probes:
         - MetricsEval.MD17.4
-  - index: 4
+  - id: 4
     end_scene_allowed: false
     state:
       unstructured: >
@@ -493,7 +494,7 @@ scenes:
     transitions:
       probes:
         - MetricsEval.MD17.5
-  - index: 5
+  - id: 5
     end_scene_allowed: false
     state:
       unstructured: >
@@ -595,7 +596,7 @@ scenes:
     transitions:
       probes:
         - MetricsEval.MD17.6
-  - index: 6
+  - id: 6
     end_scene_allowed: false
     state:
       unstructured: >
@@ -701,7 +702,7 @@ scenes:
     transitions:
       probes:
         - MetricsEval.MD17.7
-  - index: 7
+  - id: 7
     end_scene_allowed: false
     state:
       unstructured: >
@@ -804,7 +805,7 @@ scenes:
     transitions:
       probes:
         - MetricsEval.MD17.8
-  - index: 8
+  - id: 8
     end_scene_allowed: false
     state:
       unstructured: >
@@ -904,7 +905,7 @@ scenes:
     transitions:
       probes:
         - MetricsEval.MD17.9
-  - index: 9
+  - id: 9
     end_scene_allowed: false
     state:
       unstructured: >
@@ -1008,7 +1009,7 @@ scenes:
     transitions:
       probes:
         - MetricsEval.MD17.10
-  - index: 10
+  - id: 10
     end_scene_allowed: false
     state:
       unstructured: >
@@ -1116,7 +1117,7 @@ scenes:
     transitions:
       probes:
         - MetricsEval.MD17.11
-  - index: 11
+  - id: 11
     end_scene_allowed: false
     state:
       unstructured: >
@@ -1221,7 +1222,7 @@ scenes:
     transitions:
       probes:
         - MetricsEval.MD17.12
-  - index: 12
+  - id: 12
     end_scene_allowed: false
     state:
       unstructured: >
@@ -1321,7 +1322,7 @@ scenes:
     transitions:
       probes:
         - MetricsEval.MD17.13
-  - index: 13
+  - id: 13
     end_scene_allowed: false
     state:
       unstructured: >
@@ -1425,7 +1426,7 @@ scenes:
     transitions:
       probes:
         - MetricsEval.MD17.14
-  - index: 14
+  - id: 14
     end_scene_allowed: false
     state:
       unstructured: >
@@ -1533,7 +1534,7 @@ scenes:
     transitions:
       probes:
         - MetricsEval.MD17.15
-  - index: 15
+  - id: 15
     end_scene_allowed: false
     state:
       unstructured: >
@@ -1638,7 +1639,7 @@ scenes:
     transitions:
       probes:
         - MetricsEval.MD17.16
-  - index: 16
+  - id: 16
     end_scene_allowed: false
     state:
       unstructured: >
@@ -1738,7 +1739,7 @@ scenes:
     transitions:
       probes:
         - MetricsEval.MD17.17
-  - index: 17
+  - id: 17
     end_scene_allowed: false
     state:
       unstructured: >
@@ -1842,7 +1843,7 @@ scenes:
     transitions:
       probes:
         - MetricsEval.MD17.18
-  - index: 18
+  - id: 18
     end_scene_allowed: false
     state:
       unstructured: >
@@ -1950,7 +1951,7 @@ scenes:
     transitions:
       probes:
         - MetricsEval.MD17.19
-  - index: 19
+  - id: 19
     end_scene_allowed: false
     state:
       unstructured: >
@@ -2055,7 +2056,7 @@ scenes:
     transitions:
       probes:
         - MetricsEval.MD17.20
-  - index: 20
+  - id: 20
     end_scene_allowed: false
     state:
       unstructured: >
@@ -2178,7 +2179,7 @@ scenes:
     transitions:
       probes:
         - MetricsEval.MD17.21
-  - index: 21
+  - id: 21
     end_scene_allowed: false
     state:
       unstructured: >
@@ -2313,6 +2314,3 @@ scenes:
     transitions:
       probes:
         - MetricsEval.MD17.22
-  - index: 22
-    end_scene_allowed: true
-    action_mapping: []
