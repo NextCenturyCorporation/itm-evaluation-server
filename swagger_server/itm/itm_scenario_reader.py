@@ -54,6 +54,7 @@ class ITMScenarioReader:
         scenario = Scenario(
             id=self.yaml_data['id'],
             name=self.yaml_data['name'],
+            first_scene=self.yaml_data['first_scene'],
             scenes=None,
             state=state,
             session_complete=False
@@ -84,9 +85,9 @@ class ITMScenarioReader:
         ]
         state = self._generate_state(scene_data.get('state'))
         scene = Scene(
-            index=scene_data['index'],
+            id=scene_data['id'],
             state=state,
-            final_scene=scene_data.get('final_scene', False),
+            next_scene=scene_data.get('next_scene'),
             end_scene_allowed=scene_data['end_scene_allowed'],
             persist_characters=scene_data.get('persist_characters', False),
             probe_config=None, # Not used by TA3

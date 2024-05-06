@@ -18,14 +18,17 @@ class ITMScene:
         """
         Initialize an instance of ITMScene.
         """
-        self.index = scene.index
+        self.id = scene.id
         self.state :State = scene.state # State updates for the scene, including a new cast of characters
         self.end_scene_allowed = scene.end_scene_allowed
-        self.final_scene = scene.final_scene
+        self.default_next_scene = scene.next_scene if scene.next_scene != '' else None
         self.persist_characters = scene.persist_characters
         self.action_mappings :List[ActionMapping] = scene.action_mapping
         for mapping in self.action_mappings:
-            mapping.next_scene = self.index+1 if mapping.next_scene is None else mapping.next_scene
+            if mapping.next_scene is None:
+                mapping.next_scene = self.default_next_scene # if not specified in action mapping, inherit from scene
+            if mapping.next_scene == '':
+                mapping.next_scene = None # treat empty scene like no next scene, which is end of scenario
         self.actions_taken = []
         self.restricted_actions :List[ActionTypeEnum] = scene.restricted_actions
         self.transition_semantics :SemanticTypeEnum = scene.transition_semantics
@@ -61,17 +64,18 @@ class ITMScene:
         action_mappings = []
         for x in self.action_mappings:
             action_mappings.append(self.to_obj(x))
-        state_copy = {}
-        if self.state:
-            state_copy = copy.deepcopy(vars(self.state[0]))
-            del state_copy['swagger_types']
-            del state_copy['attribute_map']
-            state_copy = str(state_copy).encode('utf-8').decode('unicode-escape').replace('"', "'")
+        state_copy = self.state
+        #state_copy = {}
+        #if self.state:
+        #    state_copy = copy.deepcopy(vars(self.state[0]))
+        #    del state_copy['swagger_types']
+        #    del state_copy['attribute_map']
+        #    state_copy = str(state_copy).encode('utf-8').decode('unicode-escape').replace('"', "'")
         to_obj = {
-            "index": self.index,
+            "id": self.id,
             "state": state_copy,
             "end_scene_allowed": self.end_scene_allowed,
-            "final_scene": self.final_scene,
+            "default_next_scene": self.default_next_scene,
             "persist_characters": self.persist_characters,
             "actions_taken": self.actions_taken,
             "action_mappings": action_mappings,
@@ -125,19 +129,24 @@ class ITMScene:
 
     def action_taken(self, action :Action, session_state :State):
         self.actions_taken.append(action.action_id)
-        next_scene_index = self.index + 1
+        found_mapping = False
+        next_scene_id = None
         for mapping in self.action_mappings:
             if mapping.action_id == action.action_id:
-                next_scene_index = mapping.next_scene
+                found_mapping = True
+                next_scene_id = mapping.next_scene
                 # Respond to probes if conditions are met.
                 if self.conditions_met(mapping.conditions, session_state, mapping.condition_semantics):
                     self.parent_scenario.respond_to_probe(mapping.probe_id, mapping.choice, action.justification)
                 break  # action_id's are unique within a scene
 
+        if not found_mapping: # Handle ADMs ordering something not on the menu
+            next_scene_id = self.default_next_scene
+
         # Determine if we should transition to the next scene.
         if action.action_type == ActionTypeEnum.END_SCENE or \
             self.conditions_met(self.transitions, session_state, self.transition_semantics):
-                self.parent_scenario.change_scene(next_scene_index, self.transitions)
+                self.parent_scenario.change_scene(next_scene_id)
 
     def _probe_condition_met(self, probe_conditions :List[str]) -> bool:
         if not probe_conditions:

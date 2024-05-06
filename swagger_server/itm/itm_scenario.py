@@ -13,7 +13,6 @@ from .itm_ta1_controller import ITMTa1Controller
 class ITMScenarioData:
     scenes: List[ITMScene] = None
     current_scene :ITMScene = None
-    current_scene_index = 0
 
 class ITMScenario:
 
@@ -50,8 +49,8 @@ class ITMScenario:
         scenario_reader = ITMScenarioReader(self.yaml_path)
         (scenario, isd.scenes) = \
             scenario_reader.read_scenario_from_yaml()
-        isd.current_scene_index = 0
-        isd.current_scene = isd.scenes[0]
+        isd.current_scene = [scene for scene in isd.scenes if scene.id == scenario.first_scene][0]
+        logging.info("First scene of scenario '%s' is '%s'.", scenario.id, isd.current_scene.id)
         for scene in isd.scenes:
             scene.training = self.training
             scene.parent_scenario = self
@@ -114,37 +113,37 @@ class ITMScenario:
                      response.probe_id, response.scenario_id, response.choice)
 
 
-    def change_scene(self, next_scene, had_transitions):
-        if self.isd.current_scene.final_scene:
+    def change_scene(self, next_scene_id):
+        if next_scene_id is None: # Indicates end of scenario
             self.isd.current_scene.state = None # Supports single-scenario sessions
             self.session.end_scenario()
             return
 
-        if (next_scene >= len(self.isd.scenes)):
-            if had_transitions:
-                logging.error("Scene configuration issue: invalid scene index; ending session.")
-                self.session.end_scenario()
+        next_scene = [scene for scene in self.isd.scenes if scene.id == next_scene_id]
+        if next_scene == []:
+            logging.error("Scene configuration issue: next scene '%s' not found; ending scenario.", next_scene_id)
+            self.session.end_scenario()
             return
 
         previous_scene_characters = self.isd.current_scene.state.characters
-        self.isd.current_scene_index = next_scene
-        self.isd.current_scene = self.isd.scenes[next_scene]
+        self.isd.current_scene = next_scene[0]
         self.session.action_handler.set_scene(self.isd.current_scene)
         current_state :State = self.session.state
         target_state :State = self.isd.current_scene.state
 
-        # If the scene has no action mappings, then the scenario can end.
+        # If the scene has no action mappings, then the scenario ends.
         if self.isd.current_scene.action_mappings == []:
+            logging.warning("Scene has no action mappings; ending scenario.")
             self.session.end_scenario()
             return
 
         # Log the scene change
-        logging.info("Changing to scene index %d.", self.isd.current_scene_index)
+        logging.info("Changing to scene ID %d.", self.isd.current_scene.id)
         self.session.history.add_history(
             "Change scene",
             {"session_id": self.session.session_id,
             "scenario_id": self.id,
-            "scene_index": self.isd.current_scene_index},
+            "scene_id": self.isd.current_scene.id},
             target_state.to_dict() if target_state else None
         )
 
