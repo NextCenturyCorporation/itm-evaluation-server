@@ -50,7 +50,7 @@ class ITMScenario:
         (scenario, isd.scenes) = \
             scenario_reader.read_scenario_from_yaml()
         isd.current_scene = [scene for scene in isd.scenes if scene.id == scenario.first_scene][0]
-        logging.info("First scene of scenario '%s' is '%s'.", scenario.id, isd.current_scene.id)
+        logging.debug("First scene of scenario '%s' is '%s'.", scenario.id, isd.current_scene.id)
         for scene in isd.scenes:
             scene.training = self.training
             scene.parent_scenario = self

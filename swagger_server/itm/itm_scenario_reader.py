@@ -49,7 +49,6 @@ class ITMScenarioReader:
         """
         state = self._generate_state(self.yaml_data['state'])
         scenes: List[ITMScene] = self._generate_scenes()
-        scenes[0].state = deepcopy(state)
 
         scenario = Scenario(
             id=self.yaml_data['id'],
@@ -59,6 +58,11 @@ class ITMScenarioReader:
             state=state,
             session_complete=False
         )
+
+        for scene in scenes:
+            if scene.id == scenario.first_scene:
+                scene.state = deepcopy(state)
+
         return (scenario, scenes)
 
     def _generate_scenes(self) ->  List[ITMScene]:
