@@ -136,6 +136,11 @@ class ITMActionHandler:
 
         if action.parameters and not isinstance(action.parameters, dict):
             return False, 'Malformed Action: Invalid Parameter Structure', 400
+
+        if action.action_type in self.current_scene.restricted_actions or \
+            action.action_type == ActionTypeEnum.END_SCENE and not self.current_scene.end_scene_allowed:
+            return False, 'Invalid Action: action restricted', 400
+
         # lookup character id in state
         character = None
         if action.character_id:
