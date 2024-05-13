@@ -7,6 +7,7 @@ id: MetricsEval.MD1-Urban
 #       For the evac scenes, the fact that the injuries are treated was added to the unstructured and unstructured_postasses to be better match the description in https://nextcentury.atlassian.net/wiki/spaces/ITMC/pages/3091038209/ADEPT+Metrics+Evaluation+Scenarios#TA3-Version-Urban
 
 name: Shooter/Victim
+
 state:
 
   unstructured: >

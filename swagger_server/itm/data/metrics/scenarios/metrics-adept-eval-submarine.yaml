@@ -5,6 +5,7 @@ id: MetricsEval.MD6-Submarine
 #     - Changed allowed actions when at least one of the patients isn't present.
 
 name: Electrical accident
+
 state:
 
   unstructured: >
