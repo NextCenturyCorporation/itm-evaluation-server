@@ -3,7 +3,6 @@ id: MetricsEval.MD5-Desert
 #   - Changes since previous version
 #     - Updated unstructured text to remove reference to construction site.
 name: Fistfight with ingroup/outgroup
-first_scene: 0
 state:
 
   unstructured: >

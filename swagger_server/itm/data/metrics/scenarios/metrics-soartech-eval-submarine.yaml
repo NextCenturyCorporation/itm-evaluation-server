@@ -1,6 +1,5 @@
 id: submarine-1
 name: Submarine 1
-first_scene: 0
 scenes:
 - action_mapping:
   - action_id: action-0

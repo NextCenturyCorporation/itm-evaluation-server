@@ -1,6 +1,5 @@
 id: freeform-desert
 name: Desert Freeform Triage
-first_scene: 0
 state:
   unstructured: >
     In a rural desert town, you are the medic for a small unit.  A local militia attacked your team and local civilians.

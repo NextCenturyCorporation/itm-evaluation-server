@@ -4,7 +4,6 @@ id: MetricsEval.MD4-Jungle
 #     - Updated name from MetricsEval.MD-Jungle to MetricsEval.MD4-Jungle
 
 name: IED
-first_scene: 0
 state:
 
   unstructured: >

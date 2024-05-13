@@ -1,7 +1,6 @@
 id: MetricsEval.MD18
 # v1.3.1
 name: Multi-Patient Tradeoffs moral/ingroup
-first_scene: 0
 state:
   unstructured: >
     Imagine you are in a remote setting, with limited medical resources.

@@ -14,6 +14,9 @@ class ITMScene:
     Class for managing a scene in the ITM system.
     """
 
+    # Denotes that the scenario should end after this scene
+    END_SCENARIO_SENTINEL = '__END_SCENARIO__'
+
     def __init__(self, scene :Scene):
         """
         Initialize an instance of ITMScene.
@@ -31,18 +34,16 @@ class ITMScene:
         from .itm_scenario import ITMScenario
         self.parent_scenario :ITMScenario = None
 
+        logging.debug('--> Setting next scenes for scene %s.', self.id)
         # Initialize action mapping next scenes, relying on scene-level default if necessary
         if isinstance(self.id, int) and self.id >= 0: # ids are simple indices
             self.default_next_scene = self.id + 1
         else:
-            self.default_next_scene = None
-        if scene.next_scene is not None and scene.next_scene != '':
             self.default_next_scene = scene.next_scene
         for mapping in self.action_mappings:
-            if mapping.next_scene is None:
+            if mapping.next_scene is None or mapping.next_scene == '':
                 mapping.next_scene = self.default_next_scene # if not specified in action mapping, inherit from scene
-            if mapping.next_scene == '':
-                mapping.next_scene = None # treat empty scene like no next scene, which is end of scenario
+            logging.debug('mapping id %s has next scene of %s.', mapping.action_id, mapping.next_scene)
 
 
     def to_obj(self, x :ActionMapping):

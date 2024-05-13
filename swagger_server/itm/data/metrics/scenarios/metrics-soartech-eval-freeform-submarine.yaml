@@ -1,6 +1,5 @@
 id: freeform-submarine
 name: Submarine Freeform Triage
-first_scene: 0
 state:
   unstructured: >
     You are the independent duty corpsman posted aboard a Virginia class nuclear submarine.

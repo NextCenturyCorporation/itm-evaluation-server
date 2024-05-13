@@ -114,7 +114,7 @@ class ITMScenario:
 
 
     def change_scene(self, next_scene_id):
-        if next_scene_id is None: # Indicates end of scenario
+        if next_scene_id == ITMScene.END_SCENARIO_SENTINEL:
             self.isd.current_scene.state = None # Supports single-scenario sessions
             self.session.end_scenario()
             return

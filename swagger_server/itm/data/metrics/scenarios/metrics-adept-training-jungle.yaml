@@ -1,7 +1,6 @@
 id: MetricsEval.MD3
 # v1.2.0
 name: Military Base Fire
-first_scene: 0
 state:
   unstructured: >
     You are a military care provider who is woken up at night by a fire alarm on base.

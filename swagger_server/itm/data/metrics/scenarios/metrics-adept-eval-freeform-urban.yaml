@@ -1,6 +1,5 @@
 id: freeform-urban
 name: Urban Freeform Triage
-first_scene: 0
 state:
   unstructured: >
     While executing your mission, your team came under fire from an adversary group.
