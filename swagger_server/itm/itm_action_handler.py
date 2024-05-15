@@ -230,13 +230,21 @@ class ITMActionHandler:
         # If the treatment treats the injury at the specified location, then change its status to treated.
         supply_used = action.parameters.get('treatment', None)
         attempted_retreatment = False
-        for injury in character.injuries:
-            if injury.location == action.parameters.get('location', None):
-                if injury.status != InjuryStatusEnum.TREATED: # Can't attempt to treat a treated injury
-                    if self._proper_treatment(supply_used, injury.name, injury.location):
-                        injury.status = InjuryStatusEnum.TREATED
-                else:
-                    attempted_retreatment = True
+        doesnt_treat_injuries = [SupplyTypeEnum.BLANKET, SupplyTypeEnum.BLOOD, SupplyTypeEnum.EPI_PEN, \
+                                 SupplyTypeEnum.IV_BAG, SupplyTypeEnum.PAIN_MEDICATIONS, SupplyTypeEnum.PULSE_OXIMETER]
+        if supply_used not in doesnt_treat_injuries:
+            for injury in character.injuries:
+                if injury.location == action.parameters.get('location', None):
+                    if injury.status != InjuryStatusEnum.TREATED: # Can't attempt to treat a treated injury
+                        if self._proper_treatment(supply_used, injury.name, injury.location):
+                            injury.status = InjuryStatusEnum.TREATED
+                    else:
+                        attempted_retreatment = True
+
+        if (supply_used == SupplyTypeEnum.BLANKET):
+            if character.has_blanket:
+                attempted_retreatment = True
+            character.has_blanket = True
 
         if attempted_retreatment: # Realize the injury is already treated, but no vital/injury discovery happens
             return self.times_dict["treatmentTimes"]["ALREADY_TREATED"]
