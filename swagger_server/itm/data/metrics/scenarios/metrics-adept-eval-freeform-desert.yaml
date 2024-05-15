@@ -167,7 +167,7 @@ state:
           severity: moderate
 
 scenes:
-  - index: 0
+  - id: 0
     end_scene_allowed: true
     restricted_actions:
       - DIRECT_MOBILE_CHARACTERS
@@ -265,6 +265,3 @@ scenes:
           elapsed_time_gt: 30000000
     transitions:
       elapsed_time_gt: 30000000
-  - index: 1
-    end_scene_allowed: true
-    action_mapping: []

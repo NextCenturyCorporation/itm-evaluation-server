@@ -133,7 +133,7 @@ state:
           severity: major
       
 scenes:
-  - index: 0
+  - id: 0
     end_scene_allowed: false
     probe_config:
       - probe_id: MetricsEval.MD3.1
@@ -168,6 +168,3 @@ scenes:
     transitions:
       probes:
         - MetricsEval.MD3.1
-  - index: 1
-    end_scene_allowed: true
-    action_mapping: []

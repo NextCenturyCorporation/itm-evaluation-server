@@ -17,7 +17,7 @@ class ActionMapping(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, action_id: str=None, action_type: ActionTypeEnum=None, unstructured: str=None, repeatable: bool=False, character_id: str=None, parameters: Dict[str, str]=None, probe_id: str=None, choice: str=None, next_scene: int=None, kdma_association: Dict[str, float]=None, condition_semantics: SemanticTypeEnum=None, conditions: Conditions=None):  # noqa: E501
+    def __init__(self, action_id: str=None, action_type: ActionTypeEnum=None, unstructured: str=None, repeatable: bool=False, character_id: str=None, parameters: Dict[str, str]=None, probe_id: str=None, choice: str=None, next_scene: str=None, kdma_association: Dict[str, float]=None, condition_semantics: SemanticTypeEnum=None, conditions: Conditions=None):  # noqa: E501
         """ActionMapping - a model defined in Swagger
 
         :param action_id: The action_id of this ActionMapping.  # noqa: E501
@@ -37,7 +37,7 @@ class ActionMapping(Model):
         :param choice: The choice of this ActionMapping.  # noqa: E501
         :type choice: str
         :param next_scene: The next_scene of this ActionMapping.  # noqa: E501
-        :type next_scene: int
+        :type next_scene: str
         :param kdma_association: The kdma_association of this ActionMapping.  # noqa: E501
         :type kdma_association: Dict[str, float]
         :param condition_semantics: The condition_semantics of this ActionMapping.  # noqa: E501
@@ -54,7 +54,7 @@ class ActionMapping(Model):
             'parameters': Dict[str, str],
             'probe_id': str,
             'choice': str,
-            'next_scene': int,
+            'next_scene': str,
             'kdma_association': Dict[str, float],
             'condition_semantics': SemanticTypeEnum,
             'conditions': Conditions
@@ -291,24 +291,24 @@ class ActionMapping(Model):
         self._choice = choice
 
     @property
-    def next_scene(self) -> int:
+    def next_scene(self) -> str:
         """Gets the next_scene of this ActionMapping.
 
-        The next scene in the scenario, by index  # noqa: E501
+        The ID of the next scene in the scenario; overrides Scene.next_scene  # noqa: E501
 
         :return: The next_scene of this ActionMapping.
-        :rtype: int
+        :rtype: str
         """
         return self._next_scene
 
     @next_scene.setter
-    def next_scene(self, next_scene: int):
+    def next_scene(self, next_scene: str):
         """Sets the next_scene of this ActionMapping.
 
-        The next scene in the scenario, by index  # noqa: E501
+        The ID of the next scene in the scenario; overrides Scene.next_scene  # noqa: E501
 
         :param next_scene: The next_scene of this ActionMapping.
-        :type next_scene: int
+        :type next_scene: str
         """
 
         self._next_scene = next_scene

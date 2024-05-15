@@ -374,6 +374,9 @@ components:
           type: string
           description: human-readable scenario name, not necessarily unique
           example: IED Explosion
+        first_scene:
+          type: string
+          description: indicates the first/opening scene ID in the scenario
         session_complete:
           type: boolean
           description: "set to true if the session is complete; that is, there are\
@@ -848,21 +851,20 @@ components:
           type: string
     Scene:
       required:
-        - index
+        - id
         - end_scene_allowed
         - action_mapping
       type: object
       description: the specification for a scene in the scenario
       properties:
-        index:
-          type: integer
-          description: The order the scene appears in the scenario
-          minimum: 0
+        id:
+          type: string
+          description: The scene ID, unique throughout the scenario
         state:
           $ref: "#/components/schemas/State"
-        final_scene:
-          type: boolean
-          description: Whether this is the final scene in the scenario
+        next_scene:
+          type: string
+          description: "The ID of the default next scene in the scenario; if empty or missing, then by default this is the last scene."
         end_scene_allowed:
           type: boolean
           description: Whether ADMs can explicitly end the scene
@@ -976,9 +978,8 @@ components:
           type: string
           description: A valid choice for the specified probe_id
         next_scene:
-          type: integer
-          description: The next scene in the scenario, by index
-          minimum: 0
+          type: string
+          description: The ID of the next scene in the scenario; overrides Scene.next_scene
         kdma_association:
           type: object
           additionalProperties:
