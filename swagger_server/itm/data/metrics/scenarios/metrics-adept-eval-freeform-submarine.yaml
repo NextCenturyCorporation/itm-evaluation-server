@@ -45,7 +45,6 @@ state:
         military_disposition: Allied US
         military_branch: US Navy
       vitals:
-        conscious: true
         avpu: ALERT
         ambulatory: false
         mental_status: AGONY
@@ -77,7 +76,6 @@ state:
         military_disposition: Allied US
         military_branch: US Navy
       vitals:
-        conscious: true
         avpu: ALERT
         ambulatory: false
         mental_status: AGONY
@@ -116,7 +114,6 @@ state:
         military_disposition: Allied US
         military_branch: US Navy
       vitals:
-        conscious: true
         avpu: ALERT
         ambulatory: false
         mental_status: AGONY
@@ -157,7 +154,6 @@ state:
         military_disposition: Allied US
         military_branch: US Navy
       vitals:
-        conscious: false
         avpu: UNRESPONSIVE
         ambulatory: false
         mental_status: UNRESPONSIVE

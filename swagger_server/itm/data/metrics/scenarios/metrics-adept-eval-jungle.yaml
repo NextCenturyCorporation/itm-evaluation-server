@@ -81,7 +81,6 @@ state:
         - {name: Puncture, location: right shoulder, severity: substantial, status: discoverable}
         - {name: Shrapnel, location: right calf, severity: moderate, status: discoverable}
       vitals:
-        conscious: true
         avpu: VOICE
         ambulatory: false
         mental_status: CONFUSED
@@ -104,7 +103,6 @@ state:
       injuries:
         - {name: Broken Bone, location: right thigh, severity: major, status: discoverable}
       vitals:
-        conscious: true
         avpu: VOICE
         ambulatory: false
         mental_status: CONFUSED
@@ -173,7 +171,6 @@ scenes:
             - {name: Puncture, location: right shoulder, severity: substantial, status: discoverable}
             - {name: Shrapnel, location: right calf, severity: moderate, status: discoverable}
           vitals:
-            conscious: true
             avpu: VOICE
             ambulatory: false
             mental_status: CONFUSED
@@ -195,7 +192,6 @@ scenes:
           injuries:
             - {name: Broken Bone, location: right thigh, severity: major, status: discoverable}
           vitals:
-            conscious: true
             avpu: VOICE
             ambulatory: false
             mental_status: CONFUSED
@@ -258,7 +254,6 @@ scenes:
             - {name: Puncture, location: right shoulder, severity: major, status: visible}
             - {name: Shrapnel, location: right calf, severity: moderate, status: discoverable}
           vitals:
-            conscious: true
             avpu: PAIN
             ambulatory: false
             mental_status: AGONY
@@ -280,7 +275,6 @@ scenes:
           injuries:
             - {name: Broken Bone, location: right thigh, severity: major, status: discoverable}
           vitals:
-            conscious: true
             avpu: VOICE
             ambulatory: false
             mental_status: CONFUSED
@@ -351,7 +345,6 @@ scenes:
             - {name: Puncture, location: right shoulder, severity: substantial, status: discoverable}
             - {name: Shrapnel, location: right calf, severity: moderate, status: discoverable}
           vitals:
-            conscious: true
             avpu: VOICE
             ambulatory: false
             mental_status: CONFUSED
@@ -373,7 +366,6 @@ scenes:
           injuries:
             - {name: Broken Bone, location: right thigh, severity: major, status: discoverable}
           vitals:
-            conscious: true
             avpu: VOICE
             ambulatory: false
             mental_status: CONFUSED
@@ -444,7 +436,6 @@ scenes:
             - {name: Puncture, location: right shoulder, severity: major, status: visible}
             - {name: Shrapnel, location: right calf, severity: moderate, status: discoverable}
           vitals:
-            conscious: true
             avpu: PAIN
             ambulatory: false
             mental_status: AGONY
@@ -466,7 +457,6 @@ scenes:
           injuries:
             - {name: Broken Bone, location: right thigh, severity: major, status: discoverable}
           vitals:
-            conscious: true
             avpu: VOICE
             ambulatory: false
             mental_status: CONFUSED

@@ -46,7 +46,6 @@ state:
         sex: M
         race: White
       vitals:
-        conscious: true
         avpu: ALERT
         ambulatory: false # TBD Should be true, with only shoulder injuries?
         mental_status: UPSET
@@ -77,7 +76,6 @@ state:
         military_disposition: Allied US
         military_branch: US Marine Corps
       vitals:
-        conscious: true
         avpu: ALERT
         ambulatory: false
         mental_status: AGONY
@@ -108,7 +106,6 @@ state:
         military_disposition: Allied US
         military_branch: US Marine Corps
       vitals:
-        conscious: true
         avpu: ALERT
         ambulatory: true
         mental_status: UPSET
@@ -137,7 +134,6 @@ state:
         sex: F
         race: White
       vitals:
-        conscious: false
         avpu: PAIN
         ambulatory: false
         mental_status: UNRESPONSIVE

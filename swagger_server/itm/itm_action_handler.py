@@ -212,7 +212,6 @@ class ITMActionHandler:
         patient.vitals.ambulatory = patient_template.vitals.ambulatory
         patient.vitals.avpu = patient_template.vitals.avpu
         patient.vitals.breathing = patient_template.vitals.breathing
-        patient.vitals.conscious = patient_template.vitals.conscious
         patient.vitals.mental_status = patient_template.vitals.mental_status
         self._reveal_injuries(patient_template, patient)
         patient.visited = True
@@ -323,11 +322,10 @@ class ITMActionHandler:
         for character in self.session.state.characters:
             for isd_character in self.current_scene.state.characters:
                 if isd_character.id == character.id:
-                    if isd_character.vitals.ambulatory and isd_character.vitals.conscious and \
+                    if isd_character.vitals.ambulatory and \
                     isd_character.vitals.avpu == AvpuLevelEnum.ALERT and \
                     isd_character.vitals.mental_status in [MentalStatusEnum.CALM, MentalStatusEnum.UPSET]:
                         character.vitals.ambulatory = True
-                        character.vitals.conscious = True
                         character.vitals.avpu = AvpuLevelEnum.ALERT
                         character.vitals.mental_status = isd_character.vitals.mental_status
         return self.times_dict["DIRECT_MOBILE_CHARACTERS"]

@@ -49,7 +49,6 @@ state:
         military_disposition: Allied US
         military_branch: US Marine Corps
       vitals:
-        conscious: true
         avpu: ALERT
         ambulatory: false
         mental_status: UPSET
@@ -83,7 +82,6 @@ state:
         military_disposition: Allied US
         military_branch: US Marine Corps
       vitals:
-        conscious: true
         avpu: ALERT
         ambulatory: false
         mental_status: AGONY
@@ -115,7 +113,6 @@ state:
         military_disposition: Allied US
         military_branch: US Marine Corps
       vitals:
-        conscious: true
         avpu: VOICE
         ambulatory: false
         mental_status: AGONY
@@ -148,7 +145,6 @@ state:
         military_disposition: Allied US
         military_branch: US Marine Corps
       vitals:
-        conscious: false
         avpu: UNRESPONSIVE
         ambulatory: false
         mental_status: UNRESPONSIVE

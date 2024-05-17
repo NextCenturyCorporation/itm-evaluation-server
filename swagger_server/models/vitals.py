@@ -18,11 +18,9 @@ class Vitals(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, conscious: bool=None, avpu: AvpuLevelEnum=None, ambulatory: bool=None, mental_status: MentalStatusEnum=None, breathing: BreathingLevelEnum=None, heart_rate: HeartRateEnum=None, spo2: float=None):  # noqa: E501
+    def __init__(self, avpu: AvpuLevelEnum=None, ambulatory: bool=None, mental_status: MentalStatusEnum=None, breathing: BreathingLevelEnum=None, heart_rate: HeartRateEnum=None, spo2: float=None):  # noqa: E501
         """Vitals - a model defined in Swagger
 
-        :param conscious: The conscious of this Vitals.  # noqa: E501
-        :type conscious: bool
         :param avpu: The avpu of this Vitals.  # noqa: E501
         :type avpu: AvpuLevelEnum
         :param ambulatory: The ambulatory of this Vitals.  # noqa: E501
@@ -37,7 +35,6 @@ class Vitals(Model):
         :type spo2: float
         """
         self.swagger_types = {
-            'conscious': bool,
             'avpu': AvpuLevelEnum,
             'ambulatory': bool,
             'mental_status': MentalStatusEnum,
@@ -47,7 +44,6 @@ class Vitals(Model):
         }
 
         self.attribute_map = {
-            'conscious': 'conscious',
             'avpu': 'avpu',
             'ambulatory': 'ambulatory',
             'mental_status': 'mental_status',
@@ -55,7 +51,6 @@ class Vitals(Model):
             'heart_rate': 'heart_rate',
             'spo2': 'spo2'
         }
-        self._conscious = conscious
         self._avpu = avpu
         self._ambulatory = ambulatory
         self._mental_status = mental_status
@@ -73,29 +68,6 @@ class Vitals(Model):
         :rtype: Vitals
         """
         return util.deserialize_model(dikt, cls)
-
-    @property
-    def conscious(self) -> bool:
-        """Gets the conscious of this Vitals.
-
-        whether or not the character appears to be conscious  # noqa: E501
-
-        :return: The conscious of this Vitals.
-        :rtype: bool
-        """
-        return self._conscious
-
-    @conscious.setter
-    def conscious(self, conscious: bool):
-        """Sets the conscious of this Vitals.
-
-        whether or not the character appears to be conscious  # noqa: E501
-
-        :param conscious: The conscious of this Vitals.
-        :type conscious: bool
-        """
-
-        self._conscious = conscious
 
     @property
     def avpu(self) -> AvpuLevelEnum:

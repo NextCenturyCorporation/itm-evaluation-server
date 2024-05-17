@@ -47,7 +47,6 @@ state:
         military_disposition: Allied US
         military_branch: US Army
       vitals:
-        conscious: false
         avpu: UNRESPONSIVE
         ambulatory: false
         mental_status: UNRESPONSIVE
@@ -70,7 +69,6 @@ state:
         race: White
         military_disposition: Civilian
       vitals:
-        conscious: false
         avpu: UNRESPONSIVE
         ambulatory: false
         mental_status: UNRESPONSIVE
@@ -184,7 +182,6 @@ scenes:
             military_disposition: Allied US
             military_branch: US Army
           vitals:
-            conscious: false
             avpu: UNRESPONSIVE
             ambulatory: false
             mental_status: UNRESPONSIVE
@@ -211,7 +208,6 @@ scenes:
             military_disposition: Allied US
             military_branch: US Army
           vitals:
-            conscious: false
             avpu: UNRESPONSIVE
             ambulatory: false
             mental_status: UNRESPONSIVE
@@ -284,7 +280,6 @@ scenes:
             military_disposition: Allied US
             military_branch: US Army
           vitals:
-            conscious: false
             avpu: UNRESPONSIVE
             ambulatory: false
             mental_status: UNRESPONSIVE
@@ -310,7 +305,6 @@ scenes:
             race: White
             military_disposition: Civilian
           vitals:
-            conscious: false
             avpu: UNRESPONSIVE
             ambulatory: false
             mental_status: UNRESPONSIVE
@@ -383,7 +377,6 @@ scenes:
             military_disposition: Allied US
             military_branch: US Army
           vitals:
-            conscious: false
             avpu: UNRESPONSIVE
             ambulatory: false
             mental_status: UNRESPONSIVE
@@ -410,7 +403,6 @@ scenes:
             military_disposition: Allied US
             military_branch: US Army
           vitals:
-            conscious: false
             avpu: UNRESPONSIVE
             ambulatory: false
             mental_status: UNRESPONSIVE
@@ -483,7 +475,6 @@ scenes:
             military_disposition: Allied US
             military_branch: US Army
           vitals:
-            conscious: false
             avpu: UNRESPONSIVE
             ambulatory: false
             mental_status: UNRESPONSIVE
@@ -509,7 +500,6 @@ scenes:
             race: White
             military_disposition: Civilian
           vitals:
-            conscious: false
             avpu: UNRESPONSIVE
             ambulatory: false
             mental_status: UNRESPONSIVE
@@ -582,7 +572,6 @@ scenes:
             military_disposition: Allied US
             military_branch: US Army
           vitals:
-            conscious: false
             avpu: UNRESPONSIVE
             ambulatory: false
             mental_status: UNRESPONSIVE
@@ -609,7 +598,6 @@ scenes:
             military_disposition: Allied US
             military_branch: US Army
           vitals:
-            conscious: false
             avpu: UNRESPONSIVE
             ambulatory: false
             mental_status: UNRESPONSIVE
@@ -682,7 +670,6 @@ scenes:
             military_disposition: Allied US
             military_branch: US Army
           vitals:
-            conscious: false
             avpu: UNRESPONSIVE
             ambulatory: false
             mental_status: UNRESPONSIVE
@@ -708,7 +695,6 @@ scenes:
             race: White
             military_disposition: Civilian
           vitals:
-            conscious: false
             avpu: UNRESPONSIVE
             ambulatory: false
             mental_status: UNRESPONSIVE
@@ -781,7 +767,6 @@ scenes:
             military_disposition: Allied US
             military_branch: US Army
           vitals:
-            conscious: false
             avpu: UNRESPONSIVE
             ambulatory: false
             mental_status: UNRESPONSIVE
@@ -808,7 +793,6 @@ scenes:
             military_disposition: Allied US
             military_branch: US Army
           vitals:
-            conscious: false
             avpu: UNRESPONSIVE
             ambulatory: false
             mental_status: UNRESPONSIVE
@@ -881,7 +865,6 @@ scenes:
             military_disposition: Allied US
             military_branch: US Army
           vitals:
-            conscious: false
             avpu: UNRESPONSIVE
             ambulatory: false
             mental_status: UNRESPONSIVE
@@ -907,7 +890,6 @@ scenes:
             race: White
             military_disposition: Civilian
           vitals:
-            conscious: false
             avpu: UNRESPONSIVE
             ambulatory: false
             mental_status: UNRESPONSIVE

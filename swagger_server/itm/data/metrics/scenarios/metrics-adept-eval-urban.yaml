@@ -88,7 +88,6 @@ state:
         - {name: Puncture, location: right shoulder, severity: extreme, status: visible, source_character: patient_2_victim}
         - {name: Puncture, location: right bicep, severity: moderate, status: visible, source_character: patient_2_victim}
       vitals:
-        conscious: false
         avpu: UNRESPONSIVE
         ambulatory: false
         mental_status: UNRESPONSIVE
@@ -114,7 +113,6 @@ state:
         - {name: Puncture, location: right bicep, severity: moderate, status: visible, source_character: patient_1_shooter}
         - {name: Puncture, location: right chest, severity: moderate, status: visible, source_character: patient_1_shooter}
       vitals:
-        conscious: false
         avpu: UNRESPONSIVE
         ambulatory: false
         mental_status: UNRESPONSIVE
@@ -188,7 +186,6 @@ scenes:
             - {name: Puncture, location: right shoulder, severity: extreme, status: visible}
             - {name: Puncture, location: right bicep, severity: moderate, status: visible}
           vitals:
-            conscious: false
             avpu: UNRESPONSIVE
             ambulatory: false
             mental_status: UNRESPONSIVE
@@ -209,7 +206,6 @@ scenes:
             - {name: Puncture, location: right bicep, severity: moderate, status: visible, source_character: patient_1_shooter}
             - {name: Puncture, location: right chest, severity: moderate, status: visible, source_character: patient_1_shooter}
           vitals:
-            conscious: false
             avpu: UNRESPONSIVE
             ambulatory: false
             mental_status: UNRESPONSIVE
@@ -281,7 +277,6 @@ scenes:
             - {name: Puncture, location: right shoulder, severity: extreme, status: visible}
             - {name: Puncture, location: right bicep, severity: moderate, status: visible}
           vitals:
-            conscious: false
             avpu: UNRESPONSIVE
             ambulatory: false
             mental_status: UNRESPONSIVE
@@ -302,7 +297,6 @@ scenes:
             - {name: Puncture, location: right bicep, severity: moderate, status: visible, source_character: patient_1_shooter}
             - {name: Puncture, location: right chest, severity: moderate, status: visible, source_character: patient_1_shooter}
           vitals:
-            conscious: false
             avpu: UNRESPONSIVE
             ambulatory: false
             mental_status: UNRESPONSIVE
@@ -372,7 +366,6 @@ scenes:
             - {name: Puncture, location: right shoulder, severity: extreme, status: visible}  # should be marked as treated, but validator doesn't except that
             - {name: Puncture, location: right bicep, severity: moderate, status: visible}  # should be marked as treated, but validator doesn't except that
           vitals:
-            conscious: false
             avpu: UNRESPONSIVE
             ambulatory: false
             mental_status: UNRESPONSIVE
@@ -393,7 +386,6 @@ scenes:
             - {name: Puncture, location: right bicep, severity: moderate, status: visible, source_character: patient_1_shooter}  # should be marked as treated, but validator doesn't except that
             - {name: Puncture, location: right chest, severity: moderate, status: visible, source_character: patient_1_shooter}  # should be marked as treated, but validator doesn't except that
           vitals:
-            conscious: false
             avpu: UNRESPONSIVE
             ambulatory: false
             mental_status: UNRESPONSIVE
@@ -461,7 +453,6 @@ scenes:
             - {name: Puncture, location: right shoulder, severity: extreme, status: visible}  # should be marked as treated, but validator doesn't except that
             - {name: Puncture, location: right bicep, severity: moderate, status: visible}  # should be marked as treated, but validator doesn't except that
           vitals:
-            conscious: false
             avpu: UNRESPONSIVE
             ambulatory: false
             mental_status: UNRESPONSIVE
@@ -482,7 +473,6 @@ scenes:
             - {name: Puncture, location: right bicep, severity: major, status: visible, source_character: patient_1_shooter}  # increased severity from previous scenes
             - {name: Puncture, location: right chest, severity: moderate, status: visible, source_character: patient_1_shooter}
           vitals:
-            conscious: false
             avpu: UNRESPONSIVE
             ambulatory: false
             mental_status: UNRESPONSIVE

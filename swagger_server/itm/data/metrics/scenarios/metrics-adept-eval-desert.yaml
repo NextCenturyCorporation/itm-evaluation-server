@@ -87,7 +87,6 @@ state:
       injuries:
         - {name: Broken Bone, location: right shoulder, severity: major, status: visible}  # this is weird because the injuries are known at a high-level due to report, not by seeing them.  Also not filling in source_character because it is both himself and the local
       vitals:
-        conscious: true
         avpu: PAIN
         ambulatory: false
         mental_status: AGONY
@@ -110,7 +109,6 @@ state:
       injuries:
         - {name: Broken Bone, location: right shoulder, severity: major, status: visible}
       vitals:
-        conscious: true
         avpu: PAIN
         ambulatory: false
         mental_status: AGONY
@@ -197,7 +195,6 @@ scenes:
           injuries:
             - {name: Broken Bone, location: right shoulder, severity: major, status: visible}  # A severe injury is "known" but you aren't present with the patients so not actually "visible"
           vitals:
-            conscious: true
             avpu: PAIN
             ambulatory: false
             mental_status: AGONY
@@ -219,7 +216,6 @@ scenes:
           injuries:
             - {name: Broken Bone, location: right shoulder, severity: major, status: visible}
           vitals:
-            conscious: true
             avpu: PAIN
             ambulatory: false
             mental_status: AGONY
@@ -244,7 +240,6 @@ scenes:
             mission_importance: normal
           injuries: []
           vitals:
-            conscious: true
             avpu: ALERT
             ambulatory: true
             mental_status: CALM
@@ -328,7 +323,6 @@ scenes:
           injuries:
             - {name: Broken Bone, location: right shoulder, severity: major, status: visible}  # A severe injury is "known" but you aren't present with the patients so not actually "visible"
           vitals:
-            conscious: true
             avpu: PAIN
             ambulatory: false
             mental_status: AGONY
@@ -350,7 +344,6 @@ scenes:
           injuries:
             - {name: Broken Bone, location: right shoulder, severity: major, status: visible}  # A severe injury is "known" but you aren't present with the patients so not actually "visible"
           vitals:
-            conscious: true
             avpu: PAIN
             ambulatory: false
             mental_status: AGONY
@@ -375,7 +368,6 @@ scenes:
             mission_importance: normal
           injuries: []
           vitals:
-            conscious: true
             avpu: ALERT
             ambulatory: true
             mental_status: CALM
@@ -453,7 +445,6 @@ scenes:
           injuries:
             - {name: Broken Bone, location: right shoulder, severity: major, status: discoverable}
           vitals:
-            conscious: true
             avpu: PAIN
             ambulatory: false
             mental_status: AGONY
@@ -475,7 +466,6 @@ scenes:
           injuries:
             - {name: Broken Bone, location: right shoulder, severity: major, status: discoverable}
           vitals:
-            conscious: true
             avpu: PAIN
             ambulatory: false
             mental_status: AGONY
@@ -500,7 +490,6 @@ scenes:
             mission_importance: normal
           injuries: []
           vitals:
-            conscious: true
             avpu: ALERT
             ambulatory: true
             mental_status: CALM
@@ -568,7 +557,6 @@ scenes:
           injuries:
             - {name: Broken Bone, location: right shoulder, severity: major, status: discoverable}
           vitals:
-            conscious: true
             avpu: PAIN
             ambulatory: false
             mental_status: AGONY
@@ -592,7 +580,6 @@ scenes:
           injuries:
             - {name: Broken Bone, location: right shoulder, severity: major, status: discoverable}
           vitals:
-            conscious: true
             avpu: PAIN
             ambulatory: false
             mental_status: AGONY
@@ -617,7 +604,6 @@ scenes:
             mission_importance: normal
           injuries: []
           vitals:
-            conscious: true
             avpu: ALERT
             ambulatory: true
             mental_status: CALM
@@ -685,7 +671,6 @@ scenes:
           injuries:
             - {name: Broken Bone, location: right shoulder, severity: major, status: discoverable}
           vitals:
-            conscious: true
             avpu: PAIN
             ambulatory: false
             mental_status: AGONY
@@ -707,7 +692,6 @@ scenes:
           injuries:
             - {name: Broken Bone, location: right shoulder, severity: major, status: discoverable}
           vitals:
-            conscious: true
             avpu: PAIN
             ambulatory: false
             mental_status: AGONY
@@ -732,7 +716,6 @@ scenes:
             mission_importance: normal
           injuries: []
           vitals:
-            conscious: true
             avpu: ALERT
             ambulatory: true
             mental_status: CALM
@@ -800,7 +783,6 @@ scenes:
           injuries:
             - {name: Broken Bone, location: right shoulder, severity: major, status: discoverable}
           vitals:
-            conscious: true
             avpu: PAIN
             ambulatory: false
             mental_status: AGONY
@@ -824,7 +806,6 @@ scenes:
           injuries:
             - {name: Broken Bone, location: right shoulder, severity: major, status: discoverable}
           vitals:
-            conscious: true
             avpu: PAIN
             ambulatory: false
             mental_status: AGONY
@@ -849,7 +830,6 @@ scenes:
             mission_importance: normal
           injuries: []
           vitals:
-            conscious: true
             avpu: ALERT
             ambulatory: true
             mental_status: CALM
