@@ -7,6 +7,7 @@ from swagger_server.models import (
     CharacterTag,
     InjuryLocation,
     InjuryStatusEnum,
+    InjuryTypeEnum,
     MentalStatusEnum,
     SupplyTypeEnum
 )
@@ -52,7 +53,7 @@ class ITMActionHandler:
         # This logic is in sync with the current OSU Simulator, but may diverge at a later date.
         """
             Head Injuries
-            Forehead Scrape: None
+            Forehead Scrape (Abrasion): Pressure bandage
             Face Shrapnel: Nasopharyngeal airway
             Ear Bleed: None
 
@@ -90,27 +91,30 @@ class ITMActionHandler:
             Calf Shrapnel: Pressure bandage
         """
         match injury_name:
-            case 'Amputation':
+            case InjuryTypeEnum.AMPUTATION:
                 return treatment == SupplyTypeEnum.TOURNIQUET
-            case 'Burn':
+            case InjuryTypeEnum.BURN:
                 return treatment == SupplyTypeEnum.BURN_DRESSING
-            case 'Broken Bone':
+            case InjuryTypeEnum.BROKEN_BONE:
                 return treatment == SupplyTypeEnum.SPLINT
-            case 'Chest Collapse':
+            case InjuryTypeEnum.CHEST_COLLAPSE:
                 return treatment == SupplyTypeEnum.DECOMPRESSION_NEEDLE
-            case 'Laceration':
+            case InjuryTypeEnum.ABRASION:
+                if 'face' in location:
+                    return treatment == SupplyTypeEnum.PRESSURE_BANDAGE
+            case InjuryTypeEnum.LACERATION:
                 if 'thigh' in location:
                     return treatment == SupplyTypeEnum.TOURNIQUET
                 else:
                     return treatment == SupplyTypeEnum.PRESSURE_BANDAGE
-            case 'Puncture':
+            case InjuryTypeEnum.PUNCTURE:
                 if 'bicep' in location or 'thigh' in location:
                     return treatment == SupplyTypeEnum.TOURNIQUET
                 elif 'chest' in location:
                     return treatment == SupplyTypeEnum.VENTED_CHEST_SEAL
                 else:
                     return treatment == SupplyTypeEnum.HEMOSTATIC_GAUZE
-            case 'Shrapnel':
+            case InjuryTypeEnum.SHRAPNEL:
                 if 'face' in location:
                     return treatment == SupplyTypeEnum.NASOPHARYNGEAL_AIRWAY
                 else:
@@ -229,13 +233,21 @@ class ITMActionHandler:
         # If the treatment treats the injury at the specified location, then change its status to treated.
         supply_used = action.parameters.get('treatment', None)
         attempted_retreatment = False
-        for injury in character.injuries:
-            if injury.location == action.parameters.get('location', None):
-                if injury.status != InjuryStatusEnum.TREATED: # Can't attempt to treat a treated injury
-                    if self._proper_treatment(supply_used, injury.name, injury.location):
-                        injury.status = InjuryStatusEnum.TREATED
-                else:
-                    attempted_retreatment = True
+        doesnt_treat_injuries = [SupplyTypeEnum.BLANKET, SupplyTypeEnum.BLOOD, SupplyTypeEnum.EPI_PEN, \
+                                 SupplyTypeEnum.IV_BAG, SupplyTypeEnum.PAIN_MEDICATIONS, SupplyTypeEnum.PULSE_OXIMETER]
+        if supply_used not in doesnt_treat_injuries:
+            for injury in character.injuries:
+                if injury.location == action.parameters.get('location', None):
+                    if injury.status != InjuryStatusEnum.TREATED: # Can't attempt to treat a treated injury
+                        if self._proper_treatment(supply_used, injury.name, injury.location):
+                            injury.status = InjuryStatusEnum.TREATED
+                    else:
+                        attempted_retreatment = True
+
+        if (supply_used == SupplyTypeEnum.BLANKET):
+            if character.has_blanket:
+                attempted_retreatment = True
+            character.has_blanket = True
 
         if attempted_retreatment: # Realize the injury is already treated, but no vital/injury discovery happens
             return self.times_dict["treatmentTimes"]["ALREADY_TREATED"]
