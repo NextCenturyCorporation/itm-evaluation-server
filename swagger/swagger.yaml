@@ -348,7 +348,48 @@ paths:
               schema:
                 $ref: "#/components/schemas/State"
         "400":
-          description: Invalid action or Session ID
+          description: Invalid action or Session ID, or specified an intent action
+        "500":
+          description: An exception occurred on the server; see returned error string.
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+      x-openapi-router-controller: swagger_server.controllers.itm_ta2_eval_controller
+  /ta2/intendAction:
+    post:
+      tags:
+        - itm-ta2-eval
+      summary: Express intent to take an action within a scenario
+      description: Express intent to take the specified Action within a scenario
+      operationId: intend_action
+      parameters:
+        - name: session_id
+          in: query
+          description: a unique session_id, as returned by /ta2/startSession
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: string
+      requestBody:
+        description:
+          Encapsulation of the intended action by a DM in the context of the
+          scenario
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Action"
+      responses:
+        "200":
+          description: "Successful operation, scenario state returned"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/State"
+        "400":
+          description: Invalid action or Session ID, or did not specify an intent action
         "500":
           description: An exception occurred on the server; see returned error string.
           content:
@@ -907,6 +948,10 @@ components:
           example: action_01
         action_type:
           $ref: "#/components/schemas/ActionTypeEnum"
+        intent_action:
+          type: boolean
+          default: false
+          description: Whether this action is to be taken or intended
         unstructured:
           type: string
           description: Natural language, plain text description of the action
@@ -963,6 +1008,10 @@ components:
         character_id:
           type: string
           description: The ID of the character being acted upon
+        intent_action:
+          type: boolean
+          default: false
+          description: Whether this mapping is to take an action or to intend one
         parameters:
           type: object
           description: key-value pairs containing additional [action-specific parameters](https://github.com/NextCenturyCorporation/itm-evaluation-client?tab=readme-ov-file#available-actions)

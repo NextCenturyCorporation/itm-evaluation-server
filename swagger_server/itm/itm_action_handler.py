@@ -450,3 +450,22 @@ class ITMActionHandler:
 
         # Tell Scene what happened
         self.current_scene.action_taken(action=action, session_state=self.session.state)
+
+
+    def process_intention(self, action: Action):
+        """
+        Process the intended action including updating the scenario state,
+        responding to any probes, and determining if the scene has ended.
+        The action should be fully validated via `validate_action()`
+
+        Args:
+            action: The action to process.
+        """
+
+        # Log the intention
+        parameters = {"action_type": action.action_type, "session_id": self.session.session_id}
+        self.session.history.add_history("Intend Action", parameters,
+                                         self.session.state.to_dict())
+
+        # Tell Scene what happened
+        self.current_scene.action_taken(action=action, session_state=self.session.state)
