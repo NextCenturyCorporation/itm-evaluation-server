@@ -31,6 +31,10 @@ state:
     - { type: Splint, quantity: 999 }
     - { type: Blood, quantity: 999 }
     - { type: Burn Dressing, quantity: 999 }
+    - { type: Blanket, quantity: 999 }
+    - { type: Epi Pen, quantity: 999 }
+    - { type: IV Bag, quantity: 999 }
+    - { type: Vented Chest Seal, quantity: 999 }
   characters:
     - id: Open World Civilian 1 Male # Right in front of medic at start
       name: William
@@ -46,7 +50,6 @@ state:
         sex: M
         race: White
       vitals:
-        conscious: true
         avpu: ALERT
         ambulatory: false # TBD Should be true, with only shoulder injuries?
         mental_status: UPSET
@@ -77,7 +80,6 @@ state:
         military_disposition: Allied US
         military_branch: US Marine Corps
       vitals:
-        conscious: true
         avpu: ALERT
         ambulatory: false
         mental_status: AGONY
@@ -108,7 +110,6 @@ state:
         military_disposition: Allied US
         military_branch: US Marine Corps
       vitals:
-        conscious: true
         avpu: ALERT
         ambulatory: true
         mental_status: UPSET
@@ -137,7 +138,6 @@ state:
         sex: F
         race: White
       vitals:
-        conscious: false
         avpu: PAIN
         ambulatory: false
         mental_status: UNRESPONSIVE

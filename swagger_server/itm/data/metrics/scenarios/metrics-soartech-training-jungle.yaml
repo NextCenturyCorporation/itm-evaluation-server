@@ -148,7 +148,7 @@ scenes:
 
         '
       vitals:
-        conscious: true
+        avpu: ALERT
     - demographics:
         age: 36
         military_branch: US Marine Corps
@@ -173,7 +173,7 @@ scenes:
 
         '
       vitals:
-        conscious: true
+        avpu: ALERT
     environment:
       decision_environment:
         aid_delay:
@@ -314,7 +314,6 @@ scenes:
       vitals:
         avpu: ALERT
         breathing: NORMAL
-        conscious: true
         heart_rate: FAST
         spo2: 96
     - demographics:
@@ -341,7 +340,7 @@ scenes:
 
         '
       vitals:
-        conscious: true
+        avpu: ALERT
     environment:
       decision_environment:
         aid_delay:
@@ -475,7 +474,6 @@ scenes:
       vitals:
         avpu: UNRESPONSIVE
         breathing: NONE
-        conscious: false
         heart_rate: FAST
         spo2: 75
     - demographics:
@@ -505,7 +503,6 @@ scenes:
       vitals:
         avpu: UNRESPONSIVE
         breathing: NONE
-        conscious: false
         heart_rate: FAST
         spo2: 72
     environment:
@@ -647,7 +644,6 @@ scenes:
       vitals:
         avpu: ALERT
         breathing: NORMAL
-        conscious: true
         heart_rate: FAST
         spo2: 75
     - demographics:
@@ -677,7 +673,6 @@ scenes:
       vitals:
         avpu: UNRESPONSIVE
         breathing: NONE
-        conscious: false
         heart_rate: FAST
         spo2: 72
     environment:
@@ -834,7 +829,6 @@ scenes:
       vitals:
         avpu: ALERT
         breathing: NORMAL
-        conscious: true
         heart_rate: NORMAL
         spo2: 93
     - demographics:
@@ -864,7 +858,6 @@ scenes:
       vitals:
         avpu: ALERT
         breathing: NORMAL
-        conscious: true
         heart_rate: NORMAL
         spo2: 93
     environment:
@@ -1014,7 +1007,6 @@ scenes:
       vitals:
         avpu: ALERT
         breathing: NORMAL
-        conscious: true
         heart_rate: NORMAL
         spo2: 93
     - demographics:
@@ -1044,7 +1036,6 @@ scenes:
       vitals:
         avpu: ALERT
         breathing: NORMAL
-        conscious: true
         heart_rate: NORMAL
         spo2: 93
     environment:
@@ -1197,7 +1188,7 @@ scenes:
 
         '
       vitals:
-        conscious: true
+        avpu: ALERT
     - demographics:
         age: 25
         military_branch: US Marine Corps
@@ -1226,7 +1217,7 @@ scenes:
 
         '
       vitals:
-        conscious: true
+        avpu: ALERT
     environment:
       decision_environment:
         aid_delay:
@@ -1376,7 +1367,7 @@ scenes:
 
         '
       vitals:
-        conscious: true
+        avpu: ALERT
     - demographics:
         age: 25
         military_branch: US Marine Corps
@@ -1405,7 +1396,7 @@ scenes:
 
         '
       vitals:
-        conscious: true
+        avpu: ALERT
     environment:
       decision_environment:
         aid_delay:
@@ -1571,7 +1562,6 @@ scenes:
       vitals:
         avpu: ALERT
         breathing: FAST
-        conscious: true
         heart_rate: FAST
         spo2: 91
     - demographics:
@@ -1605,7 +1595,6 @@ scenes:
       vitals:
         avpu: ALERT
         breathing: NORMAL
-        conscious: true
         heart_rate: FAST
         spo2: 97
     environment:
@@ -1779,7 +1768,6 @@ scenes:
       vitals:
         avpu: ALERT
         breathing: FAST
-        conscious: true
         heart_rate: FAST
         spo2: 91
     - demographics:
@@ -1813,7 +1801,6 @@ scenes:
       vitals:
         avpu: UNRESPONSIVE
         breathing: NORMAL
-        conscious: false
         heart_rate: FAST
         spo2: 98
     environment:
@@ -1976,7 +1963,6 @@ scenes:
       vitals:
         avpu: ALERT
         breathing: FAST
-        conscious: true
         heart_rate: FAST
         spo2: 91
     - demographics:
@@ -2010,7 +1996,6 @@ scenes:
       vitals:
         avpu: UNRESPONSIVE
         breathing: NORMAL
-        conscious: false
         heart_rate: FAST
         spo2: 98
     environment:
@@ -2160,7 +2145,6 @@ scenes:
       vitals:
         avpu: ALERT
         breathing: FAST
-        conscious: true
         heart_rate: FAST
         spo2: 91
     - demographics:
@@ -2194,7 +2178,6 @@ scenes:
       vitals:
         avpu: UNRESPONSIVE
         breathing: NORMAL
-        conscious: false
         heart_rate: FAST
         spo2: 98
     environment:
@@ -2286,7 +2269,7 @@ state:
 
       '
     vitals:
-      conscious: true
+      avpu: ALERT
   - demographics:
       age: 36
       military_branch: US Marine Corps
@@ -2311,7 +2294,7 @@ state:
 
       '
     vitals:
-      conscious: true
+      avpu: ALERT
   - demographics:
       age: 29
       military_branch: US Marine Corps
@@ -2329,7 +2312,7 @@ state:
     rapport: neutral
     unstructured: ''
     vitals:
-      conscious: true
+      avpu: ALERT
   - demographics:
       age: 25
       military_branch: US Marine Corps
@@ -2347,7 +2330,7 @@ state:
     rapport: neutral
     unstructured: ''
     vitals:
-      conscious: true
+      avpu: ALERT
   environment:
     decision_environment:
       aid_delay:

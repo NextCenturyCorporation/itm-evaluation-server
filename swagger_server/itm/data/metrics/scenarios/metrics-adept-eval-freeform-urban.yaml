@@ -37,6 +37,10 @@ state:
     - { type: Splint, quantity: 999 }
     - { type: Blood, quantity: 999 }
     - { type: Burn Dressing, quantity: 999 }
+    - { type: Blanket, quantity: 999 }
+    - { type: Epi Pen, quantity: 999 }
+    - { type: IV Bag, quantity: 999 }
+    - { type: Vented Chest Seal, quantity: 999 }
   characters:
     - id: Marine 1 Male # Near medic on right
       name: William
@@ -53,7 +57,6 @@ state:
         military_disposition: Allied US
         military_branch: US Marine Corps
       vitals:
-        conscious: false
         avpu: PAIN
         ambulatory: false
         mental_status: UNRESPONSIVE
@@ -97,7 +100,6 @@ state:
         military_disposition: Allied US
         military_branch: US Marine Corps
       vitals:
-        conscious: true
         avpu: ALERT
         ambulatory: false
         mental_status: AGONY
@@ -128,7 +130,6 @@ state:
         military_disposition: Allied US
         military_branch: US Marine Corps
       vitals:
-        conscious: true
         avpu: ALERT
         ambulatory: false
         mental_status: AGONY
@@ -160,7 +161,6 @@ state:
         military_disposition: Allied US
         military_branch: US Marine Corps
       vitals:
-        conscious: true
         avpu: ALERT
         ambulatory: false
         mental_status: AGONY
@@ -190,7 +190,6 @@ state:
         sex: F
         race: Asian
       vitals:
-        conscious: true
         avpu: ALERT
         ambulatory: false
         mental_status: AGONY

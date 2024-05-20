@@ -41,6 +41,8 @@ class ITMScene:
         else:
             self.default_next_scene = scene.next_scene
         for mapping in self.action_mappings:
+            if mapping.action_type == 'END_SCENE':
+                self.end_scene_allowed = True
             if mapping.next_scene is None or mapping.next_scene == '':
                 mapping.next_scene = self.default_next_scene # if not specified in action mapping, inherit from scene
             logging.debug('mapping id %s has next scene of %s.', mapping.action_id, mapping.next_scene)

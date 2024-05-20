@@ -776,6 +776,10 @@ components:
           type: string
           description: unstructured description updated after character assessment
           example: 22 YO male Marine hit by an IED. Puncture wound on the left side of the neck.  Burns cover about 30 of his body.
+        has_blanket:
+          type: boolean
+          description: whether or not this character has a blanket (either wrapped around or underneath)
+          default: false
         intent:
           $ref: "#/components/schemas/IntentEnum"
         directness_of_causality:
@@ -851,9 +855,6 @@ components:
       type: object
       description: Vital levels and other indications of health
       properties:
-        conscious:
-          type: boolean
-          description: whether or not the character appears to be conscious
         avpu:
           $ref: "#/components/schemas/AvpuLevelEnum"
         ambulatory:
@@ -1707,7 +1708,7 @@ components:
         - treated
     AvpuLevelEnum:
       type: string
-      description: Character level of response.  See [Levels of Response](https://www.firstresponse.org.uk/first-aid-az/3-general/first-aid/79-levels-of-response) for details
+      description: Character level of response; anything but ALERT is considered unconscious.  See [Levels of Response](https://www.firstresponse.org.uk/first-aid-az/3-general/first-aid/79-levels-of-response) for details
       enum:
         - ALERT
         - VOICE
