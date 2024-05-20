@@ -21,7 +21,7 @@ class Character(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, id: str=None, name: str=None, unstructured: str=None, unstructured_postassess: str=None, intent: IntentEnum=None, directness_of_causality: DirectnessEnum=None, rapport: RapportEnum=None, demographics: Demographics=None, injuries: List[Injury]=None, vitals: Vitals=None, visited: bool=False, tag: CharacterTagEnum=None):  # noqa: E501
+    def __init__(self, id: str=None, name: str=None, unstructured: str=None, unstructured_postassess: str=None, has_blanket: bool=False, intent: IntentEnum=None, directness_of_causality: DirectnessEnum=None, rapport: RapportEnum=None, demographics: Demographics=None, injuries: List[Injury]=None, vitals: Vitals=None, visited: bool=False, tag: CharacterTagEnum=None):  # noqa: E501
         """Character - a model defined in Swagger
 
         :param id: The id of this Character.  # noqa: E501
@@ -32,6 +32,8 @@ class Character(Model):
         :type unstructured: str
         :param unstructured_postassess: The unstructured_postassess of this Character.  # noqa: E501
         :type unstructured_postassess: str
+        :param has_blanket: The has_blanket of this Character.  # noqa: E501
+        :type has_blanket: bool
         :param intent: The intent of this Character.  # noqa: E501
         :type intent: IntentEnum
         :param directness_of_causality: The directness_of_causality of this Character.  # noqa: E501
@@ -54,6 +56,7 @@ class Character(Model):
             'name': str,
             'unstructured': str,
             'unstructured_postassess': str,
+            'has_blanket': bool,
             'intent': IntentEnum,
             'directness_of_causality': DirectnessEnum,
             'rapport': RapportEnum,
@@ -69,6 +72,7 @@ class Character(Model):
             'name': 'name',
             'unstructured': 'unstructured',
             'unstructured_postassess': 'unstructured_postassess',
+            'has_blanket': 'has_blanket',
             'intent': 'intent',
             'directness_of_causality': 'directness_of_causality',
             'rapport': 'rapport',
@@ -82,6 +86,7 @@ class Character(Model):
         self._name = name
         self._unstructured = unstructured
         self._unstructured_postassess = unstructured_postassess
+        self._has_blanket = has_blanket
         self._intent = intent
         self._directness_of_causality = directness_of_causality
         self._rapport = rapport
@@ -199,6 +204,29 @@ class Character(Model):
         """
 
         self._unstructured_postassess = unstructured_postassess
+
+    @property
+    def has_blanket(self) -> bool:
+        """Gets the has_blanket of this Character.
+
+        whether or not this character has a blanket (either wrapped around or underneath)  # noqa: E501
+
+        :return: The has_blanket of this Character.
+        :rtype: bool
+        """
+        return self._has_blanket
+
+    @has_blanket.setter
+    def has_blanket(self, has_blanket: bool):
+        """Sets the has_blanket of this Character.
+
+        whether or not this character has a blanket (either wrapped around or underneath)  # noqa: E501
+
+        :param has_blanket: The has_blanket of this Character.
+        :type has_blanket: bool
+        """
+
+        self._has_blanket = has_blanket
 
     @property
     def intent(self) -> IntentEnum:

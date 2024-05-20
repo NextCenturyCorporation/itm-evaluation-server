@@ -28,6 +28,10 @@ state:
     - { type: Splint, quantity: 999 }
     - { type: Blood, quantity: 999 }
     - { type: Burn Dressing, quantity: 999 }
+    - { type: Blanket, quantity: 999 }
+    - { type: Epi Pen, quantity: 999 }
+    - { type: IV Bag, quantity: 999 }
+    - { type: Vented Chest Seal, quantity: 999 }
   characters:
     - id: Navy Soldier 3 Male # Straight ahead in rear
       name: Richard

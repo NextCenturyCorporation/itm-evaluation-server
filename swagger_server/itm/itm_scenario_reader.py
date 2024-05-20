@@ -273,6 +273,7 @@ class ITMScenarioReader:
             id=character_data['id'],
             unstructured=character_data['unstructured'],
             unstructured_postassess=character_data.get('unstructured_postassess'),
+            has_blanket=character_data.get('has_blanket', False),
             name=character_data.get('name', 'Unknown'),
             rapport=character_data.get('rapport', 'neutral'),
             demographics=demographics,
