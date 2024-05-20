@@ -17,7 +17,7 @@ class ActionMapping(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, action_id: str=None, action_type: ActionTypeEnum=None, unstructured: str=None, repeatable: bool=False, character_id: str=None, parameters: Dict[str, str]=None, probe_id: str=None, choice: str=None, next_scene: str=None, kdma_association: Dict[str, float]=None, condition_semantics: SemanticTypeEnum=None, conditions: Conditions=None):  # noqa: E501
+    def __init__(self, action_id: str=None, action_type: ActionTypeEnum=None, unstructured: str=None, repeatable: bool=False, character_id: str=None, intent_action: bool=False, parameters: Dict[str, str]=None, probe_id: str=None, choice: str=None, next_scene: str=None, kdma_association: Dict[str, float]=None, condition_semantics: SemanticTypeEnum=None, conditions: Conditions=None):  # noqa: E501
         """ActionMapping - a model defined in Swagger
 
         :param action_id: The action_id of this ActionMapping.  # noqa: E501
@@ -30,6 +30,8 @@ class ActionMapping(Model):
         :type repeatable: bool
         :param character_id: The character_id of this ActionMapping.  # noqa: E501
         :type character_id: str
+        :param intent_action: The intent_action of this ActionMapping.  # noqa: E501
+        :type intent_action: bool
         :param parameters: The parameters of this ActionMapping.  # noqa: E501
         :type parameters: Dict[str, str]
         :param probe_id: The probe_id of this ActionMapping.  # noqa: E501
@@ -51,6 +53,7 @@ class ActionMapping(Model):
             'unstructured': str,
             'repeatable': bool,
             'character_id': str,
+            'intent_action': bool,
             'parameters': Dict[str, str],
             'probe_id': str,
             'choice': str,
@@ -66,6 +69,7 @@ class ActionMapping(Model):
             'unstructured': 'unstructured',
             'repeatable': 'repeatable',
             'character_id': 'character_id',
+            'intent_action': 'intent_action',
             'parameters': 'parameters',
             'probe_id': 'probe_id',
             'choice': 'choice',
@@ -79,6 +83,7 @@ class ActionMapping(Model):
         self._unstructured = unstructured
         self._repeatable = repeatable
         self._character_id = character_id
+        self._intent_action = intent_action
         self._parameters = parameters
         self._probe_id = probe_id
         self._choice = choice
@@ -216,6 +221,29 @@ class ActionMapping(Model):
         """
 
         self._character_id = character_id
+
+    @property
+    def intent_action(self) -> bool:
+        """Gets the intent_action of this ActionMapping.
+
+        Whether this mapping is to take an action or to intend one  # noqa: E501
+
+        :return: The intent_action of this ActionMapping.
+        :rtype: bool
+        """
+        return self._intent_action
+
+    @intent_action.setter
+    def intent_action(self, intent_action: bool):
+        """Sets the intent_action of this ActionMapping.
+
+        Whether this mapping is to take an action or to intend one  # noqa: E501
+
+        :param intent_action: The intent_action of this ActionMapping.
+        :type intent_action: bool
+        """
+
+        self._intent_action = intent_action
 
     @property
     def parameters(self) -> Dict[str, str]:

@@ -112,8 +112,8 @@ class ITMScene:
             for mapping in self.action_mappings if (not mapping.action_id in self.actions_taken) or mapping.repeatable
         ]
 
-        # Restrict intent actions to those explicitly configured in the scene
-        if action.intent_action:
+        # When all actions are intent actions, don't add unmapped action types.
+        if all(action.intent_action for action in actions):
             shuffle(actions)
             return actions
 
