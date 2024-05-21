@@ -1079,7 +1079,7 @@ components:
             - adept-september-demo-probe-1-choice2
         character_vitals:
           type: array
-          description: True if the any of the specified collection of vital values have been met for the specified character_id
+          description: True if any of the specified collection of vital values have been met for the specified character_id
           items:
             required:
               - character_id
