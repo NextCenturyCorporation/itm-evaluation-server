@@ -814,9 +814,6 @@ components:
       type: object
       description: Vital levels and other indications of health
       properties:
-        conscious:
-          type: boolean
-          description: whether or not the character appears to be conscious
         avpu:
           $ref: "#/components/schemas/AvpuLevelEnum"
         ambulatory:
@@ -1662,7 +1659,7 @@ components:
         - treated
     AvpuLevelEnum:
       type: string
-      description: Character level of response.  See [Levels of Response](https://www.firstresponse.org.uk/first-aid-az/3-general/first-aid/79-levels-of-response) for details
+      description: Character level of response; anything but ALERT is considered unconscious.  See [Levels of Response](https://www.firstresponse.org.uk/first-aid-az/3-general/first-aid/79-levels-of-response) for details
       enum:
         - ALERT
         - VOICE

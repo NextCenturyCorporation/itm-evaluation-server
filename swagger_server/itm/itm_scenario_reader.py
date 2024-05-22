@@ -290,7 +290,6 @@ class ITMScenarioReader:
         if not vital_data:
             return None
         vitals = Vitals(
-            conscious=vital_data.get('conscious'),
             avpu=vital_data.get('avpu'),
             ambulatory=vital_data.get('ambulatory'),
             mental_status=vital_data.get('mental_status'),

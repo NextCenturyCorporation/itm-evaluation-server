@@ -47,7 +47,6 @@ state:
         sex: M
         race: White
       vitals:
-        conscious: true
         avpu: VOICE
         ambulatory: false
         mental_status: SHOCK
@@ -69,7 +68,6 @@ state:
         sex: M
         race: White
       vitals:
-        conscious: true
         avpu: VOICE
         ambulatory: false
         mental_status: SHOCK
@@ -143,7 +141,6 @@ scenes:
             sex: M
             race: White
           vitals:
-            conscious: true
             avpu: VOICE
             ambulatory: false
             mental_status: SHOCK
@@ -166,7 +163,6 @@ scenes:
             sex: M
             race: White
           vitals:
-            conscious: true
             avpu: VOICE
             ambulatory: false
             mental_status: SHOCK
@@ -236,7 +232,6 @@ scenes:
             sex: M
             race: White
           vitals:
-            conscious: true
             avpu: PAIN
             ambulatory: false
             mental_status: SHOCK
@@ -260,7 +255,6 @@ scenes:
             sex: M
             race: White
           vitals:
-            conscious: false
             avpu: UNRESPONSIVE
             ambulatory: false
             mental_status: UNRESPONSIVE
@@ -329,7 +323,6 @@ scenes:
             sex: M
             race: White
           vitals:
-            conscious: false
             avpu: UNRESPONSIVE
             ambulatory: false
             mental_status: UNRESPONSIVE
@@ -351,7 +344,6 @@ scenes:
             sex: M
             race: White
           vitals:
-            conscious: true
             avpu: PAIN
             ambulatory: false
             mental_status: AGONY
@@ -425,7 +417,6 @@ scenes:
             race: White
             military_disposition: Civilian
           vitals:
-            conscious: true
             avpu: VOICE
             ambulatory: false
             mental_status: SHOCK
@@ -451,7 +442,6 @@ scenes:
             race: White
             military_disposition: Civilian
           vitals:
-            conscious: true
             avpu: VOICE
             ambulatory: false
             mental_status: SHOCK
@@ -523,7 +513,6 @@ scenes:
             race: White
             military_disposition: Civilian
           vitals:
-            conscious: true
             avpu: VOICE
             ambulatory: false
             mental_status: SHOCK
@@ -550,7 +539,6 @@ scenes:
             race: White
             military_disposition: Civilian
           vitals:
-            conscious: true
             avpu: VOICE
             ambulatory: false
             mental_status: SHOCK
@@ -622,7 +610,6 @@ scenes:
             race: White
             military_disposition: Civilian
           vitals:
-            conscious: true
             avpu: PAIN
             ambulatory: false
             mental_status: SHOCK
@@ -650,7 +637,6 @@ scenes:
             race: White
             military_disposition: Civilian
           vitals:
-            conscious: false
             avpu: UNRESPONSIVE
             ambulatory: false
             mental_status: UNRESPONSIVE
@@ -721,7 +707,6 @@ scenes:
             race: White
             military_disposition: Civilian
           vitals:
-            conscious: false
             avpu: UNRESPONSIVE
             ambulatory: false
             mental_status: UNRESPONSIVE
@@ -747,7 +732,6 @@ scenes:
             race: White
             military_disposition: Civilian
           vitals:
-            conscious: true
             avpu: PAIN
             ambulatory: false
             mental_status: AGONY
@@ -825,7 +809,6 @@ scenes:
             military_disposition: Allied US
             military_branch: US Army
           vitals:
-            conscious: true
             avpu: VOICE
             ambulatory: false
             mental_status: SHOCK
@@ -852,7 +835,6 @@ scenes:
             military_disposition: Allied US
             military_branch: US Army
           vitals:
-            conscious: true
             avpu: VOICE
             ambulatory: false
             mental_status: SHOCK
@@ -926,7 +908,6 @@ scenes:
             military_disposition: Allied US
             military_branch: US Army
           vitals:
-            conscious: true
             avpu: VOICE
             ambulatory: false
             mental_status: SHOCK
@@ -954,7 +935,6 @@ scenes:
             military_disposition: Allied US
             military_branch: US Army
           vitals:
-            conscious: true
             avpu: VOICE
             ambulatory: false
             mental_status: SHOCK
@@ -1028,7 +1008,6 @@ scenes:
             military_disposition: Allied US
             military_branch: US Army
           vitals:
-            conscious: true
             avpu: PAIN
             ambulatory: false
             mental_status: SHOCK
@@ -1057,7 +1036,6 @@ scenes:
             military_disposition: Allied US
             military_branch: US Army
           vitals:
-            conscious: false
             avpu: UNRESPONSIVE
             ambulatory: false
             mental_status: UNRESPONSIVE
@@ -1130,7 +1108,6 @@ scenes:
             military_disposition: Allied US
             military_branch: US Army
           vitals:
-            conscious: false
             avpu: UNRESPONSIVE
             ambulatory: false
             mental_status: UNRESPONSIVE
@@ -1157,7 +1134,6 @@ scenes:
             military_disposition: Allied US
             military_branch: US Army
           vitals:
-            conscious: true
             avpu: PAIN
             ambulatory: false
             mental_status: AGONY
@@ -1235,7 +1211,6 @@ scenes:
             military_disposition: Allied US
             military_branch: US Army
           vitals:
-            conscious: true
             avpu: VOICE
             ambulatory: false
             mental_status: SHOCK
@@ -1262,7 +1237,6 @@ scenes:
             military_disposition: Allied US
             military_branch: US Army
           vitals:
-            conscious: true
             avpu: VOICE
             ambulatory: false
             mental_status: SHOCK
@@ -1336,7 +1310,6 @@ scenes:
             military_disposition: Allied US
             military_branch: US Army
           vitals:
-            conscious: true
             avpu: VOICE
             ambulatory: false
             mental_status: SHOCK
@@ -1364,7 +1337,6 @@ scenes:
             military_disposition: Allied US
             military_branch: US Army
           vitals:
-            conscious: true
             avpu: VOICE
             ambulatory: false
             mental_status: SHOCK
@@ -1438,7 +1410,6 @@ scenes:
             military_disposition: Allied US
             military_branch: US Army
           vitals:
-            conscious: true
             avpu: PAIN
             ambulatory: false
             mental_status: SHOCK
@@ -1467,7 +1438,6 @@ scenes:
             military_disposition: Allied US
             military_branch: US Army
           vitals:
-            conscious: false
             avpu: UNRESPONSIVE
             ambulatory: false
             mental_status: UNRESPONSIVE
@@ -1540,7 +1510,6 @@ scenes:
             military_disposition: Allied US
             military_branch: US Army
           vitals:
-            conscious: false
             avpu: UNRESPONSIVE
             ambulatory: false
             mental_status: UNRESPONSIVE
@@ -1567,7 +1536,6 @@ scenes:
             military_disposition: Allied US
             military_branch: US Army
           vitals:
-            conscious: true
             avpu: PAIN
             ambulatory: false
             mental_status: AGONY
@@ -1645,7 +1613,6 @@ scenes:
             military_disposition: Allied US
             military_branch: US Army
           vitals:
-            conscious: true
             avpu: VOICE
             ambulatory: false
             mental_status: SHOCK
@@ -1671,7 +1638,6 @@ scenes:
             military_disposition: Allied US
             military_branch: US Army
           vitals:
-            conscious: true
             avpu: VOICE
             ambulatory: false
             mental_status: SHOCK
@@ -1745,7 +1711,6 @@ scenes:
             military_disposition: Allied US
             military_branch: US Army
           vitals:
-            conscious: true
             avpu: VOICE
             ambulatory: false
             mental_status: SHOCK
@@ -1772,7 +1737,6 @@ scenes:
             military_disposition: Allied US
             military_branch: US Army
           vitals:
-            conscious: true
             avpu: VOICE
             ambulatory: false
             mental_status: SHOCK
@@ -1846,7 +1810,6 @@ scenes:
             military_disposition: Allied US
             military_branch: US Army
           vitals:
-            conscious: true
             avpu: PAIN
             ambulatory: false
             mental_status: SHOCK
@@ -1874,7 +1837,6 @@ scenes:
             military_disposition: Allied US
             military_branch: US Army
           vitals:
-            conscious: false
             avpu: UNRESPONSIVE
             ambulatory: false
             mental_status: UNRESPONSIVE
@@ -1947,7 +1909,6 @@ scenes:
             military_disposition: Allied US
             military_branch: US Army
           vitals:
-            conscious: false
             avpu: UNRESPONSIVE
             ambulatory: false
             mental_status: UNRESPONSIVE
@@ -1973,7 +1934,6 @@ scenes:
             military_disposition: Allied US
             military_branch: US Army
           vitals:
-            conscious: true
             avpu: PAIN
             ambulatory: false
             mental_status: AGONY
