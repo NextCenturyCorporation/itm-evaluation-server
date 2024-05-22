@@ -233,7 +233,7 @@ class ITMActionHandler:
         # If the treatment treats the injury at the specified location, then change its status to treated.
         supply_used = action.parameters.get('treatment', None)
         attempted_retreatment = False
-        doesnt_treat_injuries = [SupplyTypeEnum.BLANKET, SupplyTypeEnum.BLOOD, SupplyTypeEnum.EPI_PEN, \
+        doesnt_treat_injuries = [SupplyTypeEnum.BLANKET, SupplyTypeEnum.BLOOD, SupplyTypeEnum.EPI_PEN, SupplyTypeEnum.FENTANYL_LOLLIPOP, \
                                  SupplyTypeEnum.IV_BAG, SupplyTypeEnum.PAIN_MEDICATIONS, SupplyTypeEnum.PULSE_OXIMETER]
         if supply_used not in doesnt_treat_injuries:
             for injury in character.injuries:
