@@ -105,11 +105,17 @@ class ITMScene:
                 action_type=mapping.action_type,
                 unstructured=mapping.unstructured,
                 character_id=mapping.character_id,
+                intent_action=mapping.intent_action,
                 parameters=mapping.parameters,
                 kdma_association=mapping.kdma_association if self.training else None
             )
             for mapping in self.action_mappings if (not mapping.action_id in self.actions_taken) or mapping.repeatable
         ]
+
+        # When all actions are intent actions, don't add unmapped action types.
+        if all(action.intent_action for action in actions):
+            shuffle(actions)
+            return actions
 
         # Add unmapped action types (other than END_SCENE) that aren't explicitly restricted.
         valid_action_types = get_swagger_class_enum_values(ActionTypeEnum)

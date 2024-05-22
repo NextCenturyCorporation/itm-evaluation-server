@@ -280,7 +280,7 @@ class ITMScenarioReader:
             injuries=injuries,
             vitals=self._generate_vitals(character_data.get('vitals', {})),
             visited=character_data.get('visited', False),
-            intent=character_data.get('intent'),
+            intent=character_data.get('intent', False),
             directness_of_causality=character_data.get('directness_of_causality'),
             tag=character_data.get('tag')
         )
@@ -306,6 +306,7 @@ class ITMScenarioReader:
             unstructured=mapping_data['unstructured'],
             repeatable=mapping_data.get('repeatable', False),
             character_id=mapping_data.get('character_id'),
+            intent_action=mapping_data.get('intent_action', False),
             parameters=mapping_data.get('parameters'),
             probe_id=mapping_data['probe_id'],
             choice=mapping_data['choice'],

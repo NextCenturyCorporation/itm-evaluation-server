@@ -191,7 +191,7 @@ class Conditions(Model):
     def character_vitals(self) -> List[ConditionsCharacterVitals]:
         """Gets the character_vitals of this Conditions.
 
-        True if the any of the specified collection of vital values have been met for the specified character_id  # noqa: E501
+        True if any of the specified collection of vital values have been met for the specified character_id  # noqa: E501
 
         :return: The character_vitals of this Conditions.
         :rtype: List[ConditionsCharacterVitals]
@@ -202,7 +202,7 @@ class Conditions(Model):
     def character_vitals(self, character_vitals: List[ConditionsCharacterVitals]):
         """Sets the character_vitals of this Conditions.
 
-        True if the any of the specified collection of vital values have been met for the specified character_id  # noqa: E501
+        True if any of the specified collection of vital values have been met for the specified character_id  # noqa: E501
 
         :param character_vitals: The character_vitals of this Conditions.
         :type character_vitals: List[ConditionsCharacterVitals]

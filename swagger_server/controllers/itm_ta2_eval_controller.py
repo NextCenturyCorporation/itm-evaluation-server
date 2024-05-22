@@ -161,7 +161,7 @@ def start_session(adm_name, session_type, adm_profile=None, kdma_training=False,
 def take_action(session_id, body=None):  # noqa: E501
     """Take an action within a scenario
 
-    Take an action with # noqa: E501
+    Take the specified Action within a scenario # noqa: E501
 
     :param session_id: a unique session_id, as returned by /ta2/startSession
     :type session_id: str
@@ -175,3 +175,22 @@ def take_action(session_id, body=None):  # noqa: E501
 
     session = _get_session(session_id)
     return session.take_action(body=body) if session else ('Invalid Session ID', 400)
+
+
+def intend_action(session_id, body=None):  # noqa: E501
+    """Express intent to take an action within a scenario
+
+    Express intent to take the specified Action within a scenario # noqa: E501
+
+    :param session_id: a unique session_id, as returned by /ta2/startSession
+    :type session_id: str
+    :param body: Encapsulation of the intended action by a DM in the context of the scenario
+    :type body: dict | bytes
+
+    :rtype: State
+    """
+    if connexion.request.is_json:
+        body = Action.from_dict(connexion.request.get_json())  # noqa: E501
+
+    session = _get_session(session_id)
+    return session.intend_action(body=body) if session else ('Invalid Session ID', 400)

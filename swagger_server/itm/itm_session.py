@@ -493,22 +493,57 @@ class ITMSession:
         Returns:
             The current state of the scenario as a State object.
         """
+        return self.take_or_intend_action(body, False)
 
-        message = f"ADM chose action {body.action_type}"
-        if body.character_id:
-            message += f" with character {body.character_id}"
-            if body.parameters:
-                message += f" and parameters {body.parameters}"
-        elif body.parameters:
-            message += f" with parameters {body.parameters}"
+
+    def intend_action(self, body: Action) -> State:
+        """
+        Intend an action within a scenario
+
+        Args:
+            body: Encapsulation of an action intended by a DM in the context of the scenario
+
+        Returns:
+            The current state of the scenario as a State object.
+        """
+        return self.take_or_intend_action(body, True)
+
+
+    def take_or_intend_action(self, adm_action: Action, intent_only) -> State:
+        """
+        Take or intend an action within a scenario
+
+        Args:
+            body: Encapsulation of an action taken or intended by a DM in the context of the scenario
+
+        Returns:
+            The current state of the scenario as a State object.
+        """
+
+        message = f"ADM {'intended' if intent_only else 'chose'} action {adm_action.action_type}"
+        if adm_action.character_id:
+            message += f" with character {adm_action.character_id}"
+            if adm_action.parameters:
+                message += f" and parameters {adm_action.parameters}"
+        elif adm_action.parameters:
+            message += f" with parameters {adm_action.parameters}"
         logging.info(message + '.')
 
+        # Validate the right type of action (taken or intended)
+        if intent_only and not adm_action.intent_action:
+            return 'Cannot take actions via intent_action', 400
+        elif adm_action.intent_action and not intent_only:
+            return 'Cannot intend actions via take_action', 400
+
         # Validate that action is a valid, well-formed action
-        (successful, message, code) = self.action_handler.validate_action(body)
+        (successful, message, code) = self.action_handler.validate_action(adm_action)
         if not successful:
             return message, code
 
-        self.action_handler.process_action(action=body)
+        if intent_only:
+            self.action_handler.process_intention(action=adm_action)
+        else:
+            self.action_handler.process_action(action=adm_action)
         return self.state
 
 
