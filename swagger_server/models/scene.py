@@ -21,7 +21,7 @@ class Scene(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, id: str=None, state: State=None, next_scene: str=None, end_scene_allowed: bool=None, persist_characters: bool=None, probe_config: List[ProbeConfig]=None, tagging: Tagging=None, action_mapping: List[ActionMapping]=None, restricted_actions: List[ActionTypeEnum]=None, transition_semantics: SemanticTypeEnum=None, transitions: Conditions=None):  # noqa: E501
+    def __init__(self, id: str=None, state: State=None, next_scene: str=None, end_scene_allowed: bool=None, persist_characters: bool=None, removed_characters: List=None, probe_config: List[ProbeConfig]=None, tagging: Tagging=None, action_mapping: List[ActionMapping]=None, restricted_actions: List[ActionTypeEnum]=None, transition_semantics: SemanticTypeEnum=None, transitions: Conditions=None):  # noqa: E501
         """Scene - a model defined in Swagger
 
         :param id: The id of this Scene.  # noqa: E501
@@ -34,6 +34,8 @@ class Scene(Model):
         :type end_scene_allowed: bool
         :param persist_characters: The persist_characters of this Scene.  # noqa: E501
         :type persist_characters: bool
+        :param removed_characters: The removed_characters of this Scene.  # noqa: E501
+        :type removed_characters: List
         :param probe_config: The probe_config of this Scene.  # noqa: E501
         :type probe_config: List[ProbeConfig]
         :param tagging: The tagging of this Scene.  # noqa: E501
@@ -53,6 +55,7 @@ class Scene(Model):
             'next_scene': str,
             'end_scene_allowed': bool,
             'persist_characters': bool,
+            'removed_characters': List,
             'probe_config': List[ProbeConfig],
             'tagging': Tagging,
             'action_mapping': List[ActionMapping],
@@ -67,6 +70,7 @@ class Scene(Model):
             'next_scene': 'next_scene',
             'end_scene_allowed': 'end_scene_allowed',
             'persist_characters': 'persist_characters',
+            'removed_characters': 'removed_characters',
             'probe_config': 'probe_config',
             'tagging': 'tagging',
             'action_mapping': 'action_mapping',
@@ -79,6 +83,7 @@ class Scene(Model):
         self._next_scene = next_scene
         self._end_scene_allowed = end_scene_allowed
         self._persist_characters = persist_characters
+        self._removed_characters = removed_characters
         self._probe_config = probe_config
         self._tagging = tagging
         self._action_mapping = action_mapping
@@ -213,6 +218,27 @@ class Scene(Model):
         """
 
         self._persist_characters = persist_characters
+
+    @property
+    def removed_characters(self) -> List:
+        """Gets the removed_characters of this Scene.
+
+
+        :return: The removed_characters of this Scene.
+        :rtype: List
+        """
+        return self._removed_characters
+
+    @removed_characters.setter
+    def removed_characters(self, removed_characters: List):
+        """Sets the removed_characters of this Scene.
+
+
+        :param removed_characters: The removed_characters of this Scene.
+        :type removed_characters: List
+        """
+
+        self._removed_characters = removed_characters
 
     @property
     def probe_config(self) -> List[ProbeConfig]:
