@@ -188,6 +188,15 @@ class ITMScenario:
             else:
                 # No characters were specified in the scene, so inherit characters from previous scene.
                 target_state.characters = previous_scene_characters
+            if hasattr(self.isd.current_scene, 'removed_characters'):
+                current_state.characters = [
+                    character for character in current_state.characters
+                    if character.id not in self.isd.current_scene.removed_characters
+                ]
+                target_state.characters = [
+                    character for character in target_state.characters
+                    if character.id not in self.isd.current_scene.removed_characters
+                ]
         else:
             current_state.characters = deepcopy(target_state.characters)
 

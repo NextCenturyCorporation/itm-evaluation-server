@@ -913,6 +913,9 @@ components:
         persist_characters:
           type: boolean
           description: Whether characters should persist from the previous scene
+        removed_characters:
+          type: array
+          desecription: List of character ids to be removed from the scene
         probe_config:
           description: TA1-provided probe configuration, ignored by TA3
           type: array
