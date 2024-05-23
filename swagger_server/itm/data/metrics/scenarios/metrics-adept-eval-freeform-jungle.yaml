@@ -29,6 +29,7 @@ state:
     - { type: Nasopharyngeal airway, quantity: 999 }
     - { type: Pulse Oximeter, quantity: 1, reusable: True }
     - { type: Pain Medications, quantity: 999 }
+    - { type: Fentanyl Lollipop, quantity: 999 }
     - { type: Splint, quantity: 999 }
     - { type: Blood, quantity: 999 }
     - { type: Burn Dressing, quantity: 999 }
