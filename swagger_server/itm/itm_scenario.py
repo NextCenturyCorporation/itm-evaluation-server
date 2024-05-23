@@ -188,6 +188,7 @@ class ITMScenario:
             else:
                 # No characters were specified in the scene, so inherit characters from previous scene.
                 target_state.characters = previous_scene_characters
+            # if removed_characters found in scene, remove those characters from the
             if hasattr(self.isd.current_scene, 'removed_characters'):
                 current_state.characters = [
                     character for character in current_state.characters
