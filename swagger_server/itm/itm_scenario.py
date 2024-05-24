@@ -76,7 +76,6 @@ class ITMScenario:
         return filtered_actions
 
 
-
     def respond_to_probe(self, probe_id, choice_id, justification):
         """
         Respond to the specified probe with the specified choice and justification
@@ -162,6 +161,10 @@ class ITMScenario:
             target_state.to_dict() if target_state else None
         )
 
+        logging.info("Characters Before Scene Change")
+        for character in current_state.characters:
+            print(character.id)
+
         '''
         Merge state from new scene into session.state.  Approach:
         0. Abort if no state to merge
@@ -208,9 +211,6 @@ class ITMScenario:
                     character for character in target_state.characters
                     if character.id not in self.isd.current_scene.removed_characters
                 ]
-                print("Characters")
-                for character in current_state.characters:
-                    print(character.id)
         else:
             current_state.characters = deepcopy(target_state.characters)
 
@@ -240,7 +240,10 @@ class ITMScenario:
                 self.update_property(current_state.environment.sim_environment, target_state.environment.sim_environment)
             current_state.environment.decision_environment = \
                 self.update_property(current_state.environment.decision_environment, target_state.environment.decision_environment)
-
+        
+        logging.info("Characters After Scene Change")
+        for character in current_state.characters:
+            print(character.id)
         # 4. Clear hidden data (e.g., character vitals)
         ITMScenario.clear_hidden_data(current_state)
 

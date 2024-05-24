@@ -405,11 +405,17 @@ scenes:
       - probe_id: adept-september-demo-probe-5
         description: Evacuation probe
     action_mapping:
-      - action_id: action2
+      - action_id: Check Mike's vitals
         action_type: CHECK_ALL_VITALS
         intent_action: True
         unstructured: Check Mike's vital signs
         character_id: Mike
+        probe_id: adept-september-demo-probe-5
+        choice: s1-p5-choice2
+      - action_id: Check Civilian_01 Vitals
+        action_type: CHECK_ALL_VITALS
+        unstructured: Check Civilian_01's vital signs
+        character_id: Civilian_01
         probe_id: adept-september-demo-probe-5
         choice: s1-p5-choice2
     transitions:
@@ -422,7 +428,7 @@ scenes:
       mission:
         unstructured: No mission parameters # mission is not required, but if it is provided, unstructured is required
     action_mapping:
-      - action_id: action2
+      - action_id: Check Civilian_01 Vitals
         action_type: CHECK_ALL_VITALS
         unstructured: Check Civilian_01's vital signs
         character_id: Civilian_01
