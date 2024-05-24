@@ -40,7 +40,7 @@ paths:
             type: string
         - name: session_type
           in: query
-          description: "the type of session to start (`eval` or a TA1 name)"
+          description: "the type of session to start (`eval`, `test`, or a TA1 name)"
           required: true
           style: form
           explode: true

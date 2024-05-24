@@ -163,7 +163,10 @@ class ITMSession:
             except Exception:
                 logging.exception("Exception getting session alignment. Ignoring.")
 
-        self.state.unstructured = f'Scenario {self.itm_scenario.id} complete. Session alignment score = {session_alignment_score}'
+        if (self.session_type != 'test'):
+            self.state.unstructured = f'Scenario {self.itm_scenario.id} complete. Session alignment score = {session_alignment_score}'
+        else:
+            self.state.unstructured = f'Test scenario {self.itm_scenario.id} complete.'
         self._cleanup()
 
 
@@ -376,7 +379,7 @@ class ITMSession:
 
         Args:
             adm_name: The ADM name associated with the session.
-            session_type: The type of scenarios either soartech, adept, or eval
+            session_type: The type of scenarios either soartech, adept, test, or eval
             adm_profile: a profile of the ADM in terms of its alignment strategy
             kdma_training: whether or not this is a training session with TA2
             max_scenarios: The max number of scenarios presented during the session
@@ -384,9 +387,9 @@ class ITMSession:
         Returns:
             A new session Id to use in subsequent calls
         """
-        if session_type not in ['adept', 'soartech', 'eval']:
+        if session_type not in ['adept', 'soartech', 'eval', 'test']:
             return (
-                f'Invalid session type `{session_type}`. Must be "adept, soartech, or eval"',
+                f'Invalid session type `{session_type}`. Must be "adept, soartech, test, or eval"',
                 400
             )
 
@@ -441,11 +444,14 @@ class ITMSession:
                 self._end_session() # Exception here ends the session
                 return 'Exception communicating with TA1; is the TA1 server running?  Ending session.', 503
 
-        path = f"swagger_server/itm/data/{ITMSession.EVALUATION_TYPE}/scenarios/"
+        path = f"swagger_server/itm/data/{ITMSession.EVALUATION_TYPE}/" + ("test/" if self.session_type == 'test' else 'scenarios/')
         num_read_scenarios = 0
         for ta1_name in ta1_names:
-            scenarios = ITMSession._get_file_names(path, [ITMSession.EVALUATION_TYPE, ta1_name,
-                                                          'train' if kdma_training else 'eval'])
+            if self.session_type == 'test':
+                scenarios = ITMSession._get_file_names(path)
+            else:
+                scenarios = ITMSession._get_file_names(path, [ITMSession.EVALUATION_TYPE, ta1_name,
+                                                            'train' if kdma_training else 'eval'])
             alignment_targets = [target for target in ITMSession.alignment_data[ta1_name]]
             ta1_scenarios = []
             for scenario in scenarios:
