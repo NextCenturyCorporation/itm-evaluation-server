@@ -64,7 +64,17 @@ class ITMScenario:
 
     # Pass-through to ITMScene
     def get_available_actions(self) -> List[Action]:
-        return self.isd.current_scene.get_available_actions()
+        current_character_ids = {character.id for character in self.isd.current_scene.state.characters}
+        actions = self.isd.current_scene.get_available_actions()
+
+        # safe guarding that an action with character id of a removed character doesn't slip through the cracks
+        filtered_actions = [
+            action for action in actions 
+            if not hasattr(action, 'character_id') or action.character_id in current_character_ids
+        ]
+
+        return filtered_actions
+
 
 
     def respond_to_probe(self, probe_id, choice_id, justification):
@@ -190,15 +200,17 @@ class ITMScenario:
                 target_state.characters = previous_scene_characters
             # if removed_characters found in scene, remove those characters from the
             if hasattr(self.isd.current_scene, 'removed_characters'):
-                print(self.isd.current_scene.removed_characters)
-                '''current_state.characters = [
+                current_state.characters = [
                     character for character in current_state.characters
                     if character.id not in self.isd.current_scene.removed_characters
                 ]
                 target_state.characters = [
                     character for character in target_state.characters
                     if character.id not in self.isd.current_scene.removed_characters
-                ]'''
+                ]
+                print("Characters")
+                for character in current_state.characters:
+                    print(character.id)
         else:
             current_state.characters = deepcopy(target_state.characters)
 
