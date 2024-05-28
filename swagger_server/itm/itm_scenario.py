@@ -79,7 +79,7 @@ class ITMScenario:
         
         # if actions are filtered out, that means there is a configuration issue in yaml file of available action to character not in scene
         if filtered_out_actions:
-            logging.warning("Scene configuration issue: Filtered out actions: %s", filtered_out_actions)
+            logging.warning("Scene configuration issue: ignoring actions with an invalid character: %s", filtered_out_actions)
 
         return filtered_actions
 
@@ -169,10 +169,6 @@ class ITMScenario:
             target_state.to_dict() if target_state else None
         )
 
-        logging.info("Characters Before Scene Change")
-        for character in current_state.characters:
-            print(character.id)
-
         '''
         Merge state from new scene into session.state.  Approach:
         0. Abort if no state to merge
@@ -257,9 +253,6 @@ class ITMScenario:
             current_state.environment.decision_environment = \
                 self.update_property(current_state.environment.decision_environment, target_state.environment.decision_environment)
         
-        logging.info("Characters After Scene Change")
-        for character in current_state.characters:
-            print(character.id)
         # 4. Clear hidden data (e.g., character vitals)
         ITMScenario.clear_hidden_data(current_state)
 
