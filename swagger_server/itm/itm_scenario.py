@@ -225,7 +225,7 @@ class ITMScenario:
                     if character.id in self.isd.current_scene.removed_characters
                 ]
 
-                if filtered_out_characters.length > 0:
+                if len(filtered_out_characters) > 0:
                     logging.warning("Scene configuration issue: target state includes character that was removed")
         else:
             current_state.characters = deepcopy(target_state.characters)
