@@ -68,10 +68,18 @@ class ITMScenario:
         actions = self.isd.current_scene.get_available_actions()
 
         # safe guarding that an action with character id of a removed character doesn't slip through the cracks
-        filtered_actions = [
-            action for action in actions 
-            if not hasattr(action, 'character_id') or action.character_id in current_character_ids
-        ]
+        filtered_actions = []
+        filtered_out_actions = []
+
+        for action in actions:
+            if not getattr(action, 'character_id', None) or action.character_id in current_character_ids:
+                filtered_actions.append(action)
+            else:
+                filtered_out_actions.append(action)
+        
+        # if actions are filtered out, that means there is a configuration issue in yaml file of available action to character not in scene
+        if filtered_out_actions:
+            logging.warning("Scene configuration issue: Filtered out actions: %s", filtered_out_actions)
 
         return filtered_actions
 
@@ -201,16 +209,24 @@ class ITMScenario:
             else:
                 # No characters were specified in the scene, so inherit characters from previous scene.
                 target_state.characters = previous_scene_characters
-            # if removed_characters found in scene, remove those characters from the
-            if hasattr(self.isd.current_scene, 'removed_characters'):
+            # if removed_characters found in scene, remove those characters from the scene
+            if getattr(self.isd.current_scene, 'removed_characters', None) and len(self.isd.current_scene.removed_characters) > 0:
                 current_state.characters = [
                     character for character in current_state.characters
                     if character.id not in self.isd.current_scene.removed_characters
                 ]
+                # if the target_state includes a character that is listed in removed_characters, that is a yaml misconfiguration
                 target_state.characters = [
                     character for character in target_state.characters
                     if character.id not in self.isd.current_scene.removed_characters
                 ]
+                filtered_out_characters = [
+                    character for character in target_state.characters
+                    if character.id in self.isd.current_scene.removed_characters
+                ]
+
+                if filtered_out_characters.length > 0:
+                    logging.warning("Scene configuration issue: target state includes character that was removed")
         else:
             current_state.characters = deepcopy(target_state.characters)
 
