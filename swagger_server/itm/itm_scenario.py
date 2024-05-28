@@ -64,7 +64,24 @@ class ITMScenario:
 
     # Pass-through to ITMScene
     def get_available_actions(self) -> List[Action]:
-        return self.isd.current_scene.get_available_actions()
+        current_character_ids = {character.id for character in self.isd.current_scene.state.characters}
+        actions = self.isd.current_scene.get_available_actions()
+
+        # safe guarding that an action with character id of a removed character doesn't slip through the cracks
+        filtered_actions = []
+        filtered_out_actions = []
+
+        for action in actions:
+            if not getattr(action, 'character_id', None) or action.character_id in current_character_ids:
+                filtered_actions.append(action)
+            else:
+                filtered_out_actions.append(action)
+        
+        # if actions are filtered out, that means there is a configuration issue in yaml file of available action to character not in scene
+        if filtered_out_actions:
+            logging.warning("Scene configuration issue: ignoring actions with an invalid character: %s", filtered_out_actions)
+
+        return filtered_actions
 
 
     def respond_to_probe(self, probe_id, choice_id, justification):
@@ -188,6 +205,24 @@ class ITMScenario:
             else:
                 # No characters were specified in the scene, so inherit characters from previous scene.
                 target_state.characters = previous_scene_characters
+            # if removed_characters found in scene, remove those characters from the scene
+            if getattr(self.isd.current_scene, 'removed_characters', None) and len(self.isd.current_scene.removed_characters) > 0:
+                current_state.characters = [
+                    character for character in current_state.characters
+                    if character.id not in self.isd.current_scene.removed_characters
+                ]
+                # if the target_state includes a character that is listed in removed_characters, that is a yaml misconfiguration
+                target_state.characters = [
+                    character for character in target_state.characters
+                    if character.id not in self.isd.current_scene.removed_characters
+                ]
+                filtered_out_characters = [
+                    character for character in target_state.characters
+                    if character.id in self.isd.current_scene.removed_characters
+                ]
+
+                if len(filtered_out_characters) > 0:
+                    logging.warning("Scene configuration issue: target state includes character that was removed")
         else:
             current_state.characters = deepcopy(target_state.characters)
 
@@ -217,7 +252,7 @@ class ITMScenario:
                 self.update_property(current_state.environment.sim_environment, target_state.environment.sim_environment)
             current_state.environment.decision_environment = \
                 self.update_property(current_state.environment.decision_environment, target_state.environment.decision_environment)
-
+        
         # 4. Clear hidden data (e.g., character vitals)
         ITMScenario.clear_hidden_data(current_state)
 

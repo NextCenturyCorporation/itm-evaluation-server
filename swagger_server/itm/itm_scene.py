@@ -25,6 +25,7 @@ class ITMScene:
         self.state :State = scene.state # State updates for the scene, including a new cast of characters
         self.end_scene_allowed = scene.end_scene_allowed
         self.persist_characters = scene.persist_characters
+        self.removed_characters = scene.removed_characters
         self.action_mappings :List[ActionMapping] = scene.action_mapping
         self.actions_taken = []
         self.restricted_actions :List[ActionTypeEnum] = scene.restricted_actions
@@ -87,6 +88,7 @@ class ITMScene:
             "end_scene_allowed": self.end_scene_allowed,
             "default_next_scene": self.default_next_scene,
             "persist_characters": self.persist_characters,
+            "removed_characters": self.removed_characters,
             "actions_taken": self.actions_taken,
             "action_mappings": action_mappings,
             "restricted_actions": self.restricted_actions,

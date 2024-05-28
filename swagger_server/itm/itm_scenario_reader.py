@@ -94,6 +94,7 @@ class ITMScenarioReader:
             next_scene=scene_data.get('next_scene', ITMScene.END_SCENARIO_SENTINEL),
             end_scene_allowed=scene_data['end_scene_allowed'],
             persist_characters=scene_data.get('persist_characters', False),
+            removed_characters=scene_data.get('removed_characters', []),
             probe_config=None, # Not used by TA3
             tagging=self._generate_tagging(scene_data),
             action_mapping=action_mapping,
