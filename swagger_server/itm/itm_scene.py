@@ -115,7 +115,7 @@ class ITMScene:
         ]
 
         # When all actions are intent actions, don't add unmapped action types.
-        if all(action.intent_action for action in actions):
+        if len(actions) > 0 and all(action.intent_action for action in actions):
             shuffle(actions)
             return actions
 

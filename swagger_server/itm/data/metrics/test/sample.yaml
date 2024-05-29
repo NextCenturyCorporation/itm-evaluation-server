@@ -1,5 +1,6 @@
 id: sample-1
 name: IED Explosion
+# Test description: This is a sample YAML file with several features covered herein.
 first_scene: opening_scene # Indicates the first/opening scene ID in the scenario; defaults to first scene in the file
 state:
   unstructured: >
