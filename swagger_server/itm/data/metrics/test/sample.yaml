@@ -81,7 +81,7 @@ state:
       unstructured: >
         A 34 year-old male Marine hit by an IED. 
         Has been treated with a bandage on his left hand and has a blanket over his shoulders.
-      hasBlanket: true # Whether or not a blanket has been placed on or under a character
+      has_blanket: true # Whether or not a blanket has been placed on or under a character
       intent: intend minor help # The moral intent of the character; controlled vocab includes intend major harm, intend minor harm, no intent, intend minor help, intend major help
       rapport: familial # A measure of closeness or affinity towards the player/medic. Controlled vocab: loathing, dislike, neutral, close, familial
       demographics:
