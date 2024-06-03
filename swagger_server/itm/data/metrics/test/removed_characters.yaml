@@ -75,7 +75,6 @@ state:
         - name: Internal # controlled vocab includes Abrasion, Ear Bleed, Burn, Laceration, Asthmatic, Puncture, Shrapnel, Chest Collapse, Amputation, Internal, Broken Bone
           location: internal # controlled vocab includes forearm, calf, hand, leg, thigh, stomach, bicep, shoulder, side, chest, wrist, face, neck, internal, unspecified.  Most locations allow a left and right designation.
           status: hidden # controlled vocab: hidden, discoverable, discovered, treated, visible
-          source_character: Civilian_01 # The character id of the person responsible for the injury
         - name: Laceration # controlled vocab includes Abrasion, Ear Bleed, Burn, Laceration, Asthmatic, Puncture, Shrapnel, Chest Collapse, Amputation, Internal, Broken Bone
           location: left hand # controlled vocab includes forearm, calf, hand, leg, thigh, stomach, bicep, shoulder, side, chest, wrist, face, neck, internal, unspecified.  Most locations allow a left and right designation.
           status: treated # controlled vocab: hidden, discoverable, discovered, treated, visible
@@ -229,7 +228,6 @@ scenes:
             - name: Internal # controlled vocab includes Abrasion, Ear Bleed, Burn, Laceration, Asthmatic, Puncture, Shrapnel, Chest Collapse, Amputation, Internal, Broken Bone
               location: internal # controlled vocab includes forearm, calf, hand, leg, thigh, stomach, bicep, shoulder, side, chest, wrist, face, neck, internal, unspecified.  Most locations allow a left and right designation.
               status: hidden # controlled vocab: hidden, discoverable, discovered, treated, visible
-              source_character: Civilian_01 # The character id of the person responsible for the injury
         - id: Captain_01
           name: Katie
           unstructured: >

@@ -415,4 +415,4 @@ scenes:
         probe_id: adept-september-demo-probe-5
         choice: s1-p5-choice2
     transitions:
-      elapsed_time_lt: 0 # Require the ADM to end the scene.
+      elapsed_time_lt: 5 # Require the ADM to end the scene.
