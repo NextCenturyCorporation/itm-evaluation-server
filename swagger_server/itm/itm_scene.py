@@ -5,7 +5,7 @@ from random import shuffle
 from inspect import signature
 from typing import List
 from swagger_server.models import (
-    Action, ActionMapping, ActionTypeEnum, Conditions, Scene, SemanticTypeEnum, State, Supplies
+    Action, ActionMapping, ActionTypeEnum, Conditions, Scene, SemanticTypeEnum, State, Supplies, SupplyTypeEnum
 )
 from swagger_server.util import get_swagger_class_enum_values
 
@@ -100,7 +100,7 @@ class ITMScene:
         return json.dumps(to_obj, indent=4)
 
 
-    def get_available_actions(self) -> List[Action]:
+    def get_available_actions(self, supplies: List[Supplies]) -> List[Action]:
         actions :List[Action] = [
             Action(
                 action_id=mapping.action_id,
@@ -115,7 +115,7 @@ class ITMScene:
         ]
 
         # When all actions are intent actions, don't add unmapped action types.
-        if all(action.intent_action for action in actions):
+        if len(actions) > 0 and all(action.intent_action for action in actions):
             shuffle(actions)
             return actions
 
@@ -129,6 +129,17 @@ class ITMScene:
             current_action_types.append(action.action_type)
         new_action_types = \
             [action_type for action_type in valid_action_types if action_type not in current_action_types if action_type not in self.restricted_actions]
+        # Don't add actions that require a pulse ox if there is no pulse ox available.
+        pulse_ox_available = any(
+            supply.type == SupplyTypeEnum.PULSE_OXIMETER and supply.quantity >= 1
+            for supply in supplies
+        )
+        if not pulse_ox_available:
+            if ActionTypeEnum.CHECK_BLOOD_OXYGEN in new_action_types:
+                new_action_types.remove(ActionTypeEnum.CHECK_BLOOD_OXYGEN)
+            if ActionTypeEnum.CHECK_ALL_VITALS in new_action_types:
+                new_action_types.remove(ActionTypeEnum.CHECK_ALL_VITALS)
+
         for action_type in new_action_types:
             actions.append(Action(
                 action_id=action_type.lower(),

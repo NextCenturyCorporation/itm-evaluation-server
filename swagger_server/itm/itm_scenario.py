@@ -62,10 +62,9 @@ class ITMScenario:
         self.ta1_controller = controller
         self.alignment_target = controller.alignment_target
 
-    # Pass-through to ITMScene
     def get_available_actions(self) -> List[Action]:
         current_character_ids = {character.id for character in self.isd.current_scene.state.characters}
-        actions = self.isd.current_scene.get_available_actions()
+        actions = self.isd.current_scene.get_available_actions(self.session.state.supplies)
 
         # safe guarding that an action with character id of a removed character doesn't slip through the cracks
         filtered_actions = []

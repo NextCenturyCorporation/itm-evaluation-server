@@ -193,8 +193,14 @@ class ITMActionHandler:
             # Requires evac_id parameter
             if not action.parameters or not 'evac_id' in action.parameters:
                 return False, f'Malformed {action.action_type} Action: Missing `evac_id` parameter', 400
-        elif action.action_type == ActionTypeEnum.CHECK_ALL_VITALS or action.action_type == ActionTypeEnum.CHECK_PULSE \
-            or action.action_type == ActionTypeEnum.CHECK_RESPIRATION or action.action_type == ActionTypeEnum.CHECK_BLOOD_OXYGEN:
+        elif action.action_type == ActionTypeEnum.CHECK_BLOOD_OXYGEN or action.action_type == ActionTypeEnum.CHECK_ALL_VITALS:
+            pulse_ox_available = any(
+                supply.type == SupplyTypeEnum.PULSE_OXIMETER and supply.quantity >= 1
+                for supply in self.session.state.supplies
+                )
+            if not pulse_ox_available:
+                return False, f'Cannot perform {action.action_type} when no {SupplyTypeEnum.PULSE_OXIMETER} is available.', 400
+        elif action.action_type == ActionTypeEnum.CHECK_PULSE or action.action_type == ActionTypeEnum.CHECK_RESPIRATION:
             pass # Character was already checked
         elif action.action_type == ActionTypeEnum.DIRECT_MOBILE_CHARACTERS or action.action_type == ActionTypeEnum.END_SCENE \
                 or action.action_type == ActionTypeEnum.SEARCH:
@@ -283,7 +289,7 @@ class ITMActionHandler:
                 character.vitals = isd_character.vitals
                 self._reveal_injuries(isd_character, character)
                 character.visited = True
-                return self.times_dict['CHECK_ALL_VITALS']
+                return self.times_dict[ActionTypeEnum.CHECK_ALL_VITALS]
 
 
     def check_blood_oxygen(self, character: Character):
@@ -297,7 +303,7 @@ class ITMActionHandler:
             if isd_character.id == character.id:
                 self._visit_patient(character, isd_character)
                 character.vitals.spo2 = isd_character.vitals.spo2
-                return self.times_dict['CHECK_BLOOD_OXYGEN']
+                return self.times_dict[ActionTypeEnum.CHECK_BLOOD_OXYGEN]
 
 
     def check_pulse(self, character: Character):
@@ -311,7 +317,7 @@ class ITMActionHandler:
             if isd_character.id == character.id:
                 self._visit_patient(character, isd_character)
                 character.vitals.heart_rate = isd_character.vitals.heart_rate
-                return self.times_dict['CHECK_PULSE']
+                return self.times_dict[ActionTypeEnum.CHECK_PULSE]
 
 
     def check_respiration(self, character: Character):
@@ -324,7 +330,7 @@ class ITMActionHandler:
         for isd_character in self.current_scene.state.characters:
             if isd_character.id == character.id:
                 self._visit_patient(character, isd_character)
-                return self.times_dict['CHECK_RESPIRATION']
+                return self.times_dict[ActionTypeEnum.CHECK_RESPIRATION]
 
 
     def direct_mobile_characters(self):
@@ -340,7 +346,7 @@ class ITMActionHandler:
                         character.vitals.ambulatory = True
                         character.vitals.avpu = AvpuLevelEnum.ALERT
                         character.vitals.mental_status = isd_character.vitals.mental_status
-        return self.times_dict["DIRECT_MOBILE_CHARACTERS"]
+        return self.times_dict[ActionTypeEnum.DIRECT_MOBILE_CHARACTERS]
 
 
     def move_to_evac(self, character: Character):
@@ -350,7 +356,7 @@ class ITMActionHandler:
         Args:
             character: The character to move to evac
         """
-        return self.times_dict["MOVE_TO_EVAC"]
+        return self.times_dict[ActionTypeEnum.MOVE_TO_EVAC]
 
 
     def tag_character(self, character: Character, tag: str):
@@ -364,14 +370,14 @@ class ITMActionHandler:
         character.tag = tag
         for isd_character in self.current_scene.state.characters:
             if isd_character.id == character.id:
-                return self.times_dict['TAG_CHARACTER']
+                return self.times_dict[ActionTypeEnum.TAG_CHARACTER]
 
 
     def search(self):
         """
         Search for more characters in the scene.
         """
-        return self.times_dict["SEARCH"]
+        return self.times_dict[ActionTypeEnum.SEARCH]
 
 
     def sitrep(self, character: Character):
@@ -391,7 +397,7 @@ class ITMActionHandler:
                         self._visit_patient(character, isd_character)
                     else:
                         character.vitals.mental_status = MentalStatusEnum.UNRESPONSIVE
-                    time_passed = self.times_dict["SITREP"]
+                    time_passed = self.times_dict[ActionTypeEnum.SITREP]
         else:
             # takes time for each responsive character during sitrep
             for curr_character in self.session.state.characters:
@@ -401,7 +407,7 @@ class ITMActionHandler:
                             self._visit_patient(curr_character, isd_character)
                         else:
                             curr_character.vitals.mental_status = MentalStatusEnum.UNRESPONSIVE
-                        time_passed += self.times_dict["SITREP"]
+                        time_passed += self.times_dict[ActionTypeEnum.SITREP]
 
         return time_passed
 
