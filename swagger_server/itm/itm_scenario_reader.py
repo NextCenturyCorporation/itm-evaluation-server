@@ -16,6 +16,7 @@ from swagger_server.models import (
     DecisionEnvironment,
     SimEnvironment,
     Injury,
+    MetaInfo,
     Mission,
     Scenario,
     SemanticTypeEnum,
@@ -108,6 +109,7 @@ class ITMScenarioReader:
         if not state_data:
             return None
         unstructured = state_data.get('unstructured')
+        meta_info = state_data.get('meta_info')
         mission = self._generate_mission(state_data)
         environment = self._generate_environment(state_data)
         threat_state = self._generate_threat_state(state_data)
@@ -121,7 +123,7 @@ class ITMScenarioReader:
         ]
         state = State(
             unstructured=unstructured,
-            elapsed_time=0,
+            meta_info=meta_info,
             scenario_complete=False,
             mission=mission,
             environment=environment,

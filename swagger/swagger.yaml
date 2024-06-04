@@ -534,10 +534,8 @@ components:
         unstructured:
           type: string
           description: Natural language, plain text description of a scene's state
-        elapsed_time:
-          type: integer
-          description: the simulated elapsed time (in seconds) since the scenario started
-          example: 500
+        metaInfo:
+          $ref: "#/components/schemas/MetaInfo"
         scenario_complete:
           type: boolean
           description: set to true if the scenario is complete; subsequent calls involving
@@ -558,6 +556,17 @@ components:
           description: A list of characters in the scene, including injured patients, civilians, medics, etc.
           items:
             $ref: "#/components/schemas/Character"
+    MetaInfo:
+      type: object
+      descirption: includes meta info (scene IDs, probe response, elapsed_time)
+      properties:
+        elapsed_time:
+          type: integer
+          description: the simulated elapsed time (in seconds) since the scenario started
+          example: 10
+        scene_id:
+          type: string
+          description: The scene ID, unique throughout the scenario
     Mission:
       required:
         - mission_type

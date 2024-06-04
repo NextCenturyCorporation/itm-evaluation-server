@@ -43,6 +43,7 @@ from swagger_server.models.intent_enum import IntentEnum
 from swagger_server.models.kdma_value import KDMAValue
 from swagger_server.models.lighting_type_enum import LightingTypeEnum
 from swagger_server.models.mental_status_enum import MentalStatusEnum
+from swagger_server.models.meta_info import MetaInfo
 from swagger_server.models.military_branch_enum import MilitaryBranchEnum
 from swagger_server.models.military_disposition_enum import MilitaryDispositionEnum
 from swagger_server.models.military_rank_enum import MilitaryRankEnum

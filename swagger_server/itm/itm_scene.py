@@ -190,12 +190,12 @@ class ITMScene:
     def _elapsed_gt_condition_met(self, elapsed_gt, session_state :State) -> bool:
         if elapsed_gt is None:
             return True
-        return session_state.elapsed_time > elapsed_gt
+        return session_state.meta_info.elapsed_time > elapsed_gt
 
     def _elapsed_lt_condition_met(self, elapsed_lt, session_state :State) -> bool:
         if elapsed_lt is None:
             return True
-        return session_state.elapsed_time < elapsed_lt
+        return session_state.meta_info.elapsed_time < elapsed_lt
 
     # Each list of actions is true if all specified actions have been taken.
     # Return True if the any of the specified lists of actions are true.
