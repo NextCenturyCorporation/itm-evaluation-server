@@ -22,6 +22,7 @@ class InjuryStatusEnum(Model):
     DISCOVERABLE = "discoverable"
     VISIBLE = "visible"
     DISCOVERED = "discovered"
+    PARTIALLY_TREATED = "partially treated"
     TREATED = "treated"
     def __init__(self):  # noqa: E501
         """InjuryStatusEnum - a model defined in Swagger

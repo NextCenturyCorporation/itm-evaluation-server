@@ -33,10 +33,12 @@ class ITMScenario:
     # Hide vitals (if not already visited) and hidden injuries
     @staticmethod
     def clear_hidden_data(state :State):
-        initially_visible_injuries = [InjuryStatusEnum.VISIBLE, InjuryStatusEnum.TREATED, InjuryStatusEnum.DISCOVERED]
+        initially_hidden_injuries = [InjuryStatusEnum.HIDDEN, InjuryStatusEnum.DISCOVERABLE]
         for character in state.characters:
             character.injuries[:] = \
-                [injury for injury in character.injuries if injury.status in initially_visible_injuries]
+                [injury for injury in character.injuries if injury.status not in initially_hidden_injuries]
+            for injury in character.injuries:
+                injury.treatments_required = None
             if not character.visited:
                 character.unstructured_postassess = None
                 character.vitals = Vitals()
@@ -78,7 +80,7 @@ class ITMScenario:
         
         # if actions are filtered out, that means there is a configuration issue in yaml file of available action to character not in scene
         if filtered_out_actions:
-            logging.warning("Scene configuration issue: ignoring actions with an invalid character: %s", filtered_out_actions)
+            logging.warning("\033[92mScene configuration issue: ignoring actions with an invalid character: %s\033[00m", filtered_out_actions)
 
         return filtered_actions
 
@@ -120,7 +122,7 @@ class ITMScenario:
                     )
                     alignment_scenario_id = probe_response_alignment['alignment_source'][0]['scenario_id']
                     if self.id != alignment_scenario_id:
-                        logging.warning("\033[92mContamination in probe alignment! scenario is %s but alignment source scenario is %s.\033[00m", self.id, alignment_scenario_id)
+                        logging.error("\033[92mContamination in probe alignment! scenario is %s but alignment source scenario is %s.\033[00m", self.id, alignment_scenario_id)
             except:
                 logging.exception("Exception posting probe response to TA1.")
         self.probes_sent.append(probe_id)
@@ -141,7 +143,7 @@ class ITMScenario:
                 and self.isd.current_scene.id == next_scene_id - 1:
                 pass # This is expected when scenario ids are simple indices
             else:
-                logging.error("Scene configuration issue: next scene '%s' not found; ending scenario.", next_scene_id)
+                logging.error("\033[92mScene configuration issue: next scene '%s' not found; ending scenario.\033[00m", next_scene_id)
             self.isd.current_scene.state = None # Supports single-scenario sessions
             self.session.end_scenario()
             return
@@ -172,6 +174,7 @@ class ITMScenario:
         Merge state from new scene into session.state.  Approach:
         0. Abort if no state to merge
         1. Replace or supplement `characters` structure based on configuration.
+           1a. Remove `removed_characters`, even if in configured scene state.
         2. For `supplies`, add or update any specified supplies.
         3. For everything else, replace any specified (non-None) values
            3a. Lists are copied whole (e.g., `character_importance`, `aid_delay`, `threats`).
@@ -204,7 +207,8 @@ class ITMScenario:
             else:
                 # No characters were specified in the scene, so inherit characters from previous scene.
                 target_state.characters = previous_scene_characters
-            # if removed_characters found in scene, remove those characters from the scene
+
+            # 1a. Remove `removed_characters`, even if in configured scene state.
             if getattr(self.isd.current_scene, 'removed_characters', None) and len(self.isd.current_scene.removed_characters) > 0:
                 current_state.characters = [
                     character for character in current_state.characters
@@ -221,7 +225,7 @@ class ITMScenario:
                 ]
 
                 if len(filtered_out_characters) > 0:
-                    logging.warning("Scene configuration issue: target state includes character that was removed")
+                    logging.warning("\033[92mScene configuration issue: target state includes character that was removed\033[00m")
         else:
             current_state.characters = deepcopy(target_state.characters)
 
@@ -238,7 +242,7 @@ class ITMScenario:
                         current_supply.reusable = target_supply.reusable
             new_types = [new_type for new_type in target_types if new_type not in current_types]
             new_supplies = [new_supply for new_supply in target_state.supplies if new_supply.type in new_types]
-            current_state.supplies.extend(new_supplies)
+            current_state.supplies.extend(deepcopy(new_supplies))
 
         # Rule 3: For everything else, replace any specified (non-None) values.
         # Lists are copied whole (e.g., `character_importance`, `aid_delay`, `threats`).
