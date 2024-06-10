@@ -63,7 +63,7 @@ class ITMScenario:
         self.alignment_target = controller.alignment_target
 
     def get_available_actions(self) -> List[Action]:
-        current_character_ids = {character.id for character in self.isd.current_scene.state.characters}
+        current_character_ids = {character.id for character in self.session.state.characters}
         actions = self.isd.current_scene.get_available_actions(self.session.state.supplies)
 
         # safe guarding that an action with character id of a removed character doesn't slip through the cracks
@@ -146,7 +146,7 @@ class ITMScenario:
             self.session.end_scenario()
             return
 
-        previous_scene_characters = self.isd.current_scene.state.characters
+        previous_scene_characters = self.session.state.characters
         self.isd.current_scene = next_scene[0]
         self.session.action_handler.set_scene(self.isd.current_scene)
         current_state :State = self.session.state
