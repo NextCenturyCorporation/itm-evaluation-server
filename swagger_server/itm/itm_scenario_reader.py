@@ -109,7 +109,7 @@ class ITMScenarioReader:
         if not state_data:
             return None
         unstructured = state_data.get('unstructured')
-        meta_info = self._generate_meta_info(state_data)
+        meta_info = state_data.get('meta_info')
         mission = self._generate_mission(state_data)
         environment = self._generate_environment(state_data)
         threat_state = self._generate_threat_state(state_data)
@@ -349,9 +349,6 @@ class ITMScenarioReader:
             supplies=supplies
         )
         return conditions
-    
-    def _generate_meta_info(self, state_data):
-        return MetaInfo(elapsed_time=0, scene_id=None)
 
     # Deferred
     def _generate_tagging(self, scene_data):

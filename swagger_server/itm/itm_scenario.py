@@ -189,6 +189,7 @@ class ITMScenario:
                 replaced_character_ids = []
                 persisted_characters = []
                 removed_character_ids = self.isd.current_scene.removed_characters
+
                 # Logging warning if target state includes character that was removed
                 removed_characters_in_target_state = [character.id for character in target_state.characters if character.id in removed_character_ids]
                 if removed_characters_in_target_state:
@@ -205,9 +206,11 @@ class ITMScenario:
                         persisted_characters.append(character)
                 # Remove old versions of target characters from state as well as any removed characters.
                 current_state.characters = \
-                    [character for character in current_state.characters if character.id not in replaced_character_ids if character.id not in removed_character_ids]
+                    [character for character in current_state.characters if character.id not in replaced_character_ids]
                 # Replace them with the new versions (if not removed), plus add new characters.
                 current_state.characters.extend(deepcopy(target_state.characters))
+                # Copy persisted characters (that weren't replaced) into the scene.
+                current_state.characters.extend(persisted_characters)
             else:
                 # No characters were specified in the scene, so inherit characters from previous scene (if not in removed_characters).
                 current_state.characters = [character for character in previous_scene_characters if character.id not in self.isd.current_scene.removed_characters]
@@ -246,6 +249,7 @@ class ITMScenario:
 
         # 5 Update MetaInfo with new scene ID
         current_state.meta_info.scene_id = self.isd.current_scene.id
+        print("Scene in meta info: " + current_state.meta_info)
 
     def update_property(self, current_state, target_state):
         if target_state:
