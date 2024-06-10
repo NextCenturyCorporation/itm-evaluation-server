@@ -53,7 +53,7 @@ class State(Model):
 
         self.attribute_map = {
             'unstructured': 'unstructured',
-            'meta_info': 'metaInfo',
+            'meta_info': 'meta_info',
             'scenario_complete': 'scenario_complete',
             'mission': 'mission',
             'environment': 'environment',
