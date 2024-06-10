@@ -176,7 +176,6 @@ class ITMScenario:
         3. For everything else, replace any specified (non-None) values
            3a. Lists are copied whole (e.g., `character_importance`, `aid_delay`, `threats`).
         4. Clear hidden data (e.g., character vitals)
-        5. Update MetaInfo with new scene id
         '''
         # Rule 0: Abort if no state to merge
         if not target_state:
@@ -188,32 +187,41 @@ class ITMScenario:
             if target_state.characters:
                 replaced_character_ids = []
                 persisted_characters = []
-                removed_character_ids = self.isd.current_scene.removed_characters
-
-                # Logging warning if target state includes character that was removed
-                removed_characters_in_target_state = [character.id for character in target_state.characters if character.id in removed_character_ids]
-                if removed_characters_in_target_state:
-                    # if characters are listed in target state but are in removed_characters we need to filter them out
-                    target_state.characters = [character for character in target_state.characters if character.id not in removed_character_ids]
-                    logging.warning("Scene configuration issue: target state includes character that was removed: %s", removed_characters_in_target_state)
-
                 target_character_ids = [character.id for character in target_state.characters]
                 # Determine who needs to be persisted and who needs to be replaced.
                 for character in previous_scene_characters:
                     if character.id in target_character_ids:
                         replaced_character_ids.append(character.id)
-                    elif character.id not in removed_character_ids:
+                    else:
                         persisted_characters.append(character)
-                # Remove old versions of target characters from state as well as any removed characters.
+                # Remove old versions of target characters from state.
                 current_state.characters = \
                     [character for character in current_state.characters if character.id not in replaced_character_ids]
-                # Replace them with the new versions (if not removed), plus add new characters.
+                # Replace them with the new versions, plus add new characters.
                 current_state.characters.extend(deepcopy(target_state.characters))
                 # Copy persisted characters (that weren't replaced) into the scene.
-                current_state.characters.extend(persisted_characters)
+                target_state.characters.extend(persisted_characters)
             else:
-                # No characters were specified in the scene, so inherit characters from previous scene (if not in removed_characters).
-                current_state.characters = [character for character in previous_scene_characters if character.id not in self.isd.current_scene.removed_characters]
+                # No characters were specified in the scene, so inherit characters from previous scene.
+                target_state.characters = previous_scene_characters
+            # if removed_characters found in scene, remove those characters from the scene
+            if getattr(self.isd.current_scene, 'removed_characters', None) and len(self.isd.current_scene.removed_characters) > 0:
+                current_state.characters = [
+                    character for character in current_state.characters
+                    if character.id not in self.isd.current_scene.removed_characters
+                ]
+                # if the target_state includes a character that is listed in removed_characters, that is a yaml misconfiguration
+                target_state.characters = [
+                    character for character in target_state.characters
+                    if character.id not in self.isd.current_scene.removed_characters
+                ]
+                filtered_out_characters = [
+                    character for character in target_state.characters
+                    if character.id in self.isd.current_scene.removed_characters
+                ]
+
+                if len(filtered_out_characters) > 0:
+                    logging.warning("Scene configuration issue: target state includes character that was removed")
         else:
             current_state.characters = deepcopy(target_state.characters)
 
@@ -247,9 +255,6 @@ class ITMScenario:
         # 4. Clear hidden data (e.g., character vitals)
         ITMScenario.clear_hidden_data(current_state)
 
-        # 5 Update MetaInfo with new scene ID
-        current_state.meta_info.scene_id = self.isd.current_scene.id
-        print("Scene in meta info: " + current_state.meta_info)
 
     def update_property(self, current_state, target_state):
         if target_state:
