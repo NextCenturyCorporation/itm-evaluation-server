@@ -269,7 +269,7 @@ class ITMActionHandler:
                 break
 
         # Injuries and certain basic vitals are discovered when a character is treated.
-        for isd_character in self.current_scene.state.characters:
+        for isd_character in self.session.state.characters:
             if isd_character.id == character.id:
                 self._visit_patient(character, isd_character)
 
@@ -284,7 +284,7 @@ class ITMActionHandler:
         Args:
             character: The character to check.
         """
-        for isd_character in self.current_scene.state.characters:
+        for isd_character in self.session.state.characters:
             if isd_character.id == character.id:
                 character.vitals = isd_character.vitals
                 self._reveal_injuries(isd_character, character)
@@ -299,7 +299,7 @@ class ITMActionHandler:
         Args:
             character: The character to check.
         """
-        for isd_character in self.current_scene.state.characters:
+        for isd_character in self.session.state.characters:
             if isd_character.id == character.id:
                 self._visit_patient(character, isd_character)
                 character.vitals.spo2 = isd_character.vitals.spo2
@@ -313,7 +313,7 @@ class ITMActionHandler:
         Args:
             character: The character to check.
         """
-        for isd_character in self.current_scene.state.characters:
+        for isd_character in self.session.state.characters:
             if isd_character.id == character.id:
                 self._visit_patient(character, isd_character)
                 character.vitals.heart_rate = isd_character.vitals.heart_rate
@@ -327,7 +327,7 @@ class ITMActionHandler:
         Args:
             character: The character to check.
         """
-        for isd_character in self.current_scene.state.characters:
+        for isd_character in self.session.state.characters:
             if isd_character.id == character.id:
                 self._visit_patient(character, isd_character)
                 return self.times_dict[ActionTypeEnum.CHECK_RESPIRATION]
@@ -368,7 +368,7 @@ class ITMActionHandler:
             tag: The tag to assign to the character.
         """
         character.tag = tag
-        for isd_character in self.current_scene.state.characters:
+        for isd_character in self.session.state.characters:
             if isd_character.id == character.id:
                 return self.times_dict[ActionTypeEnum.TAG_CHARACTER]
 
@@ -391,7 +391,7 @@ class ITMActionHandler:
         time_passed = 0
         unresponsive_statuses = [MentalStatusEnum.UNRESPONSIVE, MentalStatusEnum.SHOCK, MentalStatusEnum.CONFUSED]
         if character:
-            for isd_character in self.current_scene.state.characters:
+            for isd_character in self.session.state.characters:
                 if isd_character.id == character.id:
                     if isd_character.vitals.mental_status not in unresponsive_statuses:
                         self._visit_patient(character, isd_character)
@@ -458,7 +458,6 @@ class ITMActionHandler:
 
         # TODO ITM-72: Implement character deterioration/amelioration
         # Ultimately, this should update values based DIRECTLY on how the sim does it
-
         self.session.state.meta_info.elapsed_time += time_passed
         # Log the action
         self.session.history.add_history("Take Action", parameters,

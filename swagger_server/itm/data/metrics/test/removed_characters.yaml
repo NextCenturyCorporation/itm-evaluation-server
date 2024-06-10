@@ -262,7 +262,7 @@ scenes:
       elapsed_time_gt: 1000
   - id: 2
     end_scene_allowed: true
-    persist_characters: True
+    persist_characters: true
     state:
       mission:
         unstructured: No mission parameters # mission is not required, but if it is provided, unstructured is required
