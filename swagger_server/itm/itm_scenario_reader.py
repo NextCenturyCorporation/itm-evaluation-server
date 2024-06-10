@@ -280,6 +280,7 @@ class ITMScenarioReader:
             has_blanket=character_data.get('has_blanket', False),
             name=character_data.get('name', 'Unknown'),
             rapport=character_data.get('rapport', 'neutral'),
+            unseen=character_data.get('unseen', False),
             demographics=demographics,
             injuries=injuries,
             vitals=self._generate_vitals(character_data.get('vitals', {})),

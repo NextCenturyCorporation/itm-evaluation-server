@@ -156,11 +156,16 @@ class ITMActionHandler:
         # Validate character when necessary
         if (action.action_type in [ActionTypeEnum.APPLY_TREATMENT, ActionTypeEnum.CHECK_ALL_VITALS, ActionTypeEnum.CHECK_PULSE,
                                    ActionTypeEnum.CHECK_BLOOD_OXYGEN, ActionTypeEnum.CHECK_RESPIRATION, ActionTypeEnum.MOVE_TO_EVAC,
-                                   ActionTypeEnum.TAG_CHARACTER]):
+                                   ActionTypeEnum.MOVE_TO, ActionTypeEnum.TAG_CHARACTER]):
             if not action.character_id:
                 return False, f'Malformed Action: Missing character_id for {action.action_type}', 400
             elif not character:
                 return False, f'Character `{action.character_id}` not found in state', 400
+            # TODO TBD: Can ADMs *intend* to perform other actions on unseen characters?
+            elif character.unseen and action.action_type not in [ActionTypeEnum.MOVE_TO_EVAC, ActionTypeEnum.MOVE_TO]:
+                return False, f'Cannot {action.action_type} unseen character `{action.character_id}`', 400
+            elif not character.unseen and action.action_type in [ActionTypeEnum.MOVE_TO]:
+                return False, f'Can only {action.action_type} unseen characters, but `{action.character_id}` is not unseen', 400
 
         if action.action_type == ActionTypeEnum.APPLY_TREATMENT:
             # Apply treatment requires a character id and parameters (treatment and location)
@@ -365,6 +370,19 @@ class ITMActionHandler:
         return self.times_dict[ActionTypeEnum.DIRECT_MOBILE_CHARACTERS]
 
 
+    def move_to(self, target_character: Character):
+        """
+        Move to the location of the specified character, toggling whether all characters are seen or not.
+        NOTE: This only works when there are only two locations, which is the stated requirement.
+
+        Args:
+            target_character: The character to move to
+        """
+        for character in self.session.state.characters:
+            character.unseen = not character.unseen
+        return self.times_dict[ActionTypeEnum.MOVE_TO]
+
+
     def move_to_evac(self, character: Character):
         """
         Move the specified character to the evacuation zone (or equivalent).
@@ -391,8 +409,11 @@ class ITMActionHandler:
 
     def search(self):
         """
-        Search for more characters in the scene.
+        Search for more characters.
         """
+        # After a search, the ADM is at a new location (which may or may not have patients), so all previous characters become unseen.
+        for character in self.session.state.characters:
+            character.unseen = True
         return self.times_dict[ActionTypeEnum.SEARCH]
 
 
@@ -461,6 +482,8 @@ class ITMActionHandler:
                 time_passed = self.check_respiration(character)
             case ActionTypeEnum.DIRECT_MOBILE_CHARACTERS:
                 time_passed = self.direct_mobile_characters()
+            case ActionTypeEnum.MOVE_TO:
+                time_passed = self.move_to(character)
             case ActionTypeEnum.MOVE_TO_EVAC:
                 time_passed = self.move_to_evac(character)
             case ActionTypeEnum.SEARCH:
