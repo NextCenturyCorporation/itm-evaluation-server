@@ -20,7 +20,7 @@ state:
           max_transport: 1 # Maximum number of characters that can be transported
 
   supplies:
-    - { type: Pressure bandage, quantity: 2 }
+    - { type: Pressure bandage, quantity: 500 }
     - { type: Pulse Oximeter, quantity: 1, reusable: True }
     - { type: Burn Dressing, quantity: 1, reusable: True }
   characters:

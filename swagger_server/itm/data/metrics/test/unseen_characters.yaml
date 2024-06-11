@@ -15,9 +15,9 @@ state:
           max_transport: 1
 
   supplies:
-    - { type: Pressure bandage, quantity: 2 }
+    - { type: Pressure bandage, quantity: 2, reusable: True }
     - { type: Pulse Oximeter, quantity: 1, reusable: True }
-    - { type: Burn Dressing, quantity: 1}
+    - { type: Burn Dressing, quantity: 1, reusable: True}
   characters:
     - id: Mike
       name: Mike
