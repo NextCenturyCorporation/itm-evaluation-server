@@ -1,5 +1,5 @@
 id: unseen_characters
-name: IED Explosion
+name: Unseen characters test
 # Test description: Search for unknown characters and MOVE_TO unseen characters.
 state:
   unstructured: One patient lies before you, and another potential patient can be heard in the distance.
@@ -44,16 +44,12 @@ state:
       unstructured_postassess: He's no longer calling out for help.
       unseen: True
       demographics:
-        age: None
         sex: M
         race: Asian
       vitals: # Vitals that are None were not (indirectly) reported by the patient
         avpu: ALERT
         ambulatory: True
         mental_status: AGONY
-        breathing: None
-        heart_rate: None
-        spo2: None
       injuries:
         - name: Burn
           location: right chest
@@ -82,13 +78,13 @@ scenes:
         character_id: Civilian_01
         probe_id: test-1
         choice: test-choice1
-      - action_id: assess
+      - action_id: assess mike
         action_type: CHECK_ALL_VITALS
         unstructured: Check Mike's Vitals
         character_id: Mike
         probe_id: test-1
         choice: test-choice2
-      - action_id: treat
+      - action_id: treat mike
         action_type: APPLY_TREATMENT
         unstructured: Treat Mike
         character_id: Mike
@@ -100,7 +96,7 @@ scenes:
         probe_id: test-1
         choice: test-choice4
     transitions:
-      actions: [move]
+      actions: [[move]]
 
   - id: narrative scene 1, location 2
     persist_characters: True # This will typically be true when dealing with unseen characters.
@@ -130,14 +126,14 @@ scenes:
         character_id: Civilian_01
         probe_id: test-1
         choice: test-choice2
-      - action_id: treat
+      - action_id: treat civilian
         action_type: APPLY_TREATMENT
         unstructured: Treat Civilian
         character_id: Civilian_01
         probe_id: test-1
         choice: test-choice3
     transitions:
-      actions: [move]
+      actions: [[move]]
 
   - id: back to location 1
     persist_characters: True # This will typically be true when dealing with unseen characters.
@@ -151,6 +147,7 @@ scenes:
       - CHECK_PULSE
       - DIRECT_MOBILE_CHARACTERS
       - CHECK_BLOOD_OXYGEN
+      - MOVE_TO
       - SITREP
     action_mapping:
       - action_id: evacuate
@@ -177,7 +174,7 @@ scenes:
         probe_id: test-1
         choice: test-choice4
     transitions:
-      actions: [search]
+      actions: [[search]]
 
   - id: after_search
     persist_characters: True # This will typically be true when dealing with unseen characters.
@@ -218,23 +215,26 @@ scenes:
       - SEARCH
       - MOVE_TO_EVAC
     action_mapping:
-      - action_id: assess
+      - action_id: assess civilian
         action_type: CHECK_ALL_VITALS
-        unstructured: Check vitals
+        unstructured: Check Civilian's vitals
+        character_id: Civilian_02
         probe_id: test-1
         choice: test-choice1
-      - action_id: treat
+      - action_id: treat civilian
         action_type: APPLY_TREATMENT
-        unstructured: Treat patient
+        unstructured: Treat Civilian
+        character_id: Civilian_02
         probe_id: test-1
         choice: test-choice3
       - action_id: move
         action_type: MOVE_TO
         unstructured: Return to original location
+        character_id: Mike
         probe_id: test-1
         choice: test-choice3
     transitions:
-      actions: [move]
+      actions: [[move]]
 
   - id: final_scene
     persist_characters: True # This will typically be true when dealing with unseen characters.
@@ -251,4 +251,4 @@ scenes:
         probe_id: test-1
         choice: test-choice1
     transitions:
-      elapsed_time_gt: 1000 # Make sure the ADM doesn't go on indefinitely.
+      elapsed_time_gt: 10000 # Make sure the ADM doesn't go on indefinitely.

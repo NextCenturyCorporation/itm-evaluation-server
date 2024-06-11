@@ -123,13 +123,11 @@ class ITMScene:
         valid_action_types = get_swagger_class_enum_values(ActionTypeEnum)
         valid_action_types.remove(ActionTypeEnum.END_SCENE)
         # Only add MOVE_TO if there are unseen characters.
-        if any(character.unseen for character in state.characters):
-            print(f'Removing {ActionTypeEnum.MOVE_TO} !!!!!!!!!!!!!!')
+        if not any(character.unseen for character in state.characters):
             valid_action_types.remove(ActionTypeEnum.MOVE_TO)
         # Only add MOVE_TO_EVAC if there is an evacuation available.
-        if state['environment']['decision_environment'] is None or state['environment']['decision_environment']['aid_delay'] is None \
-            or state['environment']['decision_environment']['aid_delay'] == []:
-            print(f'Removing {ActionTypeEnum.MOVE_TO_EVAC} !!!!!!!!!!!!!!')
+        if state.environment.decision_environment is None or state.environment.decision_environment.aid_delay is None \
+            or state.environment.decision_environment.aid_delay == []:
             valid_action_types.remove(ActionTypeEnum.MOVE_TO_EVAC)
         #TODO: uncomment when tagging configuration is supported (ITM-217)
         #valid_action_types.remove(ActionTypeEnum.TAG_CHARACTER)
