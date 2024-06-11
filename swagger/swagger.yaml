@@ -1163,21 +1163,26 @@ components:
           description: Re-use the tagging configuration from the specified scene index
           minimum: 0
     ProbeResponse:
+      required:
+        - choice
+        - probe_id
+        - scenario_id
       type: object
-      description: a response to a ta1 probe 
-      properties: 
-        probe_id:
-          type: string
-          description: probe_id being responded to
-        choice_id:
-          type: string
-          description: choice used to respond to probe
+      properties:
         scenario_id:
           type: string
-          description: current scenario id
+          description: globally unique scenario ID
+        probe_id:
+          type: string
+          description: globally unique probe ID
+        choice:
+          type: string
+          description: id of choice made
         justification:
           type: string
-          description: justification for choice, if provided
+          description: A justification of the response to the probe
+      description: encapsulates the selection by a DM of an option in response to
+        a probe
     ProbeResponses:
       required:
         - character_id
