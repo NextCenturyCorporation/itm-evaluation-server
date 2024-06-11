@@ -16,7 +16,6 @@ from swagger_server.models import (
     DecisionEnvironment,
     SimEnvironment,
     Injury,
-    MetaInfo,
     Mission,
     Scenario,
     SemanticTypeEnum,
@@ -109,7 +108,6 @@ class ITMScenarioReader:
         if not state_data:
             return None
         unstructured = state_data.get('unstructured')
-        meta_info = self._generate_meta_info(state_data)
         mission = self._generate_mission(state_data)
         environment = self._generate_environment(state_data)
         threat_state = self._generate_threat_state(state_data)
@@ -124,7 +122,7 @@ class ITMScenarioReader:
         state = State(
             unstructured=unstructured,
             elapsed_time=0,
-            meta_info=meta_info,
+            meta_info=None,
             scenario_complete=False,
             mission=mission,
             environment=environment,
@@ -353,9 +351,6 @@ class ITMScenarioReader:
             supplies=supplies
         )
         return conditions
-    
-    def _generate_meta_info(self, state_data):
-        return MetaInfo(scene_id=None, probe_response=None)
 
     # Deferred
     def _generate_tagging(self, scene_data):
