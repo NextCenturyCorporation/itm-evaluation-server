@@ -28,7 +28,7 @@ state:
       name: Mike # Name used in display/speech
       unstructured: This is a test.
       unstructured_postassess: This is still a test.
-      hasBlanket: true # Whether or not a blanket has been placed on or under a character
+      has_blanket: true # Whether or not a blanket has been placed on or under a character
       demographics:
         age: 34
         sex: M # controlled vocab includes M, F, Unknown
@@ -48,6 +48,7 @@ state:
         - name: Burn # controlled vocab includes Abrasion, Ear Bleed, Burn, Laceration, Asthmatic, Puncture, Shrapnel, Chest Collapse, Amputation, Internal, Broken Bone
           location: right chest # controlled vocab includes forearm, calf, hand, leg, thigh, stomach, bicep, shoulder, side, chest, wrist, face, neck, internal, unspecified.  Most locations allow a left and right designation.
           status: discoverable # controlled vocab: hidden, discoverable, discovered, treated, visible
+          severity: substantial # controlled vocab: minor, moderate, substantial, major, extreme
     - id: Civilian_01
       name: Unknown civilian
       unstructured: This is a test.
@@ -67,6 +68,7 @@ state:
         - name: Burn # controlled vocab includes Abrasion, Ear Bleed, Burn, Laceration, Asthmatic, Puncture, Shrapnel, Chest Collapse, Amputation, Internal, Broken Bone
           location: right chest # controlled vocab includes forearm, calf, hand, leg, thigh, stomach, bicep, shoulder, side, chest, wrist, face, neck, internal, unspecified.  Most locations allow a left and right designation.
           status: discoverable # controlled vocab: hidden, discoverable, discovered, treated, visible
+          severity: substantial # controlled vocab: minor, moderate, substantial, major, extreme
 
 scenes:
   - id: test_scene

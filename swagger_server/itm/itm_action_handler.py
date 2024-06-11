@@ -1,4 +1,5 @@
 import json
+from copy import deepcopy
 from swagger_server.models import (
     Action,
     ActionTypeEnum,
@@ -44,11 +45,13 @@ class ITMActionHandler:
         revealed_injuries = [source_injury for source_injury in source.injuries if source_injury.status == InjuryStatusEnum.DISCOVERABLE]
         for injury in revealed_injuries:
             injury.status = InjuryStatusEnum.DISCOVERED
-        target.injuries.extend(revealed_injuries)
+        target.injuries.extend(deepcopy(revealed_injuries))
+        for injury in target.injuries:
+            injury.treatments_required = None
         if source.unstructured_postassess:
             target.unstructured = source.unstructured_postassess
 
-    def _proper_treatment(self, treatment: str, injury_name: str, location: str) -> bool:
+    def __successful_treatment(self, treatment: str, injury_name: str, location: str) -> bool:
         # NOTE: Asthmatic, Forehead Scrape, Ear Bleed, an Internal injuries are currently untreatable.
         # This logic is in sync with the current OSU Simulator, but may diverge at a later date.
         """
@@ -237,16 +240,29 @@ class ITMActionHandler:
             the location to treat.
         """
         # If the treatment treats the injury at the specified location, then change its status to treated.
-        supply_used = action.parameters.get('treatment', None)
+        supply_used = action.parameters.get('treatment')
         attempted_retreatment = False
         doesnt_treat_injuries = [SupplyTypeEnum.BLANKET, SupplyTypeEnum.BLOOD, SupplyTypeEnum.EPI_PEN, SupplyTypeEnum.FENTANYL_LOLLIPOP, \
                                  SupplyTypeEnum.IV_BAG, SupplyTypeEnum.PAIN_MEDICATIONS, SupplyTypeEnum.PULSE_OXIMETER]
         if supply_used not in doesnt_treat_injuries:
             for injury in character.injuries:
-                if injury.location == action.parameters.get('location', None):
+                if injury.location == action.parameters.get('location'):
                     if injury.status != InjuryStatusEnum.TREATED: # Can't attempt to treat a treated injury
-                        if self._proper_treatment(supply_used, injury.name, injury.location):
-                            injury.status = InjuryStatusEnum.TREATED
+                        if self.__successful_treatment(supply_used, injury.name, injury.location):
+                            injury.treatments_applied += 1
+                            # Find required treatments for the injury
+                            for isd_character in self.current_scene.state.characters:
+                                if isd_character.id == character.id:
+                                    for isd_injury in isd_character.injuries:
+                                        if isd_injury.location == injury.location:
+                                            treatments_required = isd_injury.treatments_required
+                                            break
+                            if injury.treatments_applied < treatments_required:
+                                injury.status = InjuryStatusEnum.PARTIALLY_TREATED
+                            else:
+                                injury.status = InjuryStatusEnum.TREATED
+                        else:
+                            pass # But see ITM-432
                     else:
                         attempted_retreatment = True
 

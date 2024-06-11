@@ -252,10 +252,10 @@ class ITMScene:
                     scene_character = scene_character_lcv
                     break
             if not session_character:
-                logging.warning("character_vitals condition specified character %s that is not in the State", vital_condition.character_id)
+                logging.warning("\033[92mcharacter_vitals condition specified character %s that is not in the State\033[00m", vital_condition.character_id)
                 return False
             if not scene_character:
-                logging.warning("character_vitals condition specified character %s that is not in the Scene", vital_condition.character_id)
+                logging.warning("\033[92mcharacter_vitals condition specified character %s that is not in the Scene\033[00m", vital_condition.character_id)
                 return False
 
             # Copy any undiscovered vitals from the scene (template) character's vitals
@@ -272,7 +272,7 @@ class ITMScene:
     # Second returned value is whether the condition was met
     # "not" semantics means that the overall condition is true if all of the conditions are false
     def _evaluate_condition(self, property, eval_function, semantics, session_state=None):
-        if property:
+        if property is not None and property != []:
             condition_met = \
                 eval_function(property) if len(signature(eval_function).parameters) == 1 \
                 else eval_function(property, session_state)

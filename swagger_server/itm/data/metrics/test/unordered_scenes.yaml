@@ -28,7 +28,7 @@ state:
       name: Mike # Name used in display/speech
       unstructured: This is a test.
       unstructured_postassess: This is still a test.
-      hasBlanket: true # Whether or not a blanket has been placed on or under a character
+      has_blanket: true # Whether or not a blanket has been placed on or under a character
       demographics:
         age: 34
         sex: M # controlled vocab includes M, F, Unknown
@@ -44,10 +44,10 @@ state:
         - name: Internal # controlled vocab includes Abrasion, Ear Bleed, Burn, Laceration, Asthmatic, Puncture, Shrapnel, Chest Collapse, Amputation, Internal, Broken Bone
           location: internal # controlled vocab includes forearm, calf, hand, leg, thigh, stomach, bicep, shoulder, side, chest, wrist, face, neck, internal, unspecified.  Most locations allow a left and right designation.
           status: hidden # controlled vocab: hidden, discoverable, discovered, treated, visible
-          source_character: Civilian_01 # The character id of the person responsible for the injury
         - name: Burn # controlled vocab includes Abrasion, Ear Bleed, Burn, Laceration, Asthmatic, Puncture, Shrapnel, Chest Collapse, Amputation, Internal, Broken Bone
           location: right chest # controlled vocab includes forearm, calf, hand, leg, thigh, stomach, bicep, shoulder, side, chest, wrist, face, neck, internal, unspecified.  Most locations allow a left and right designation.
           status: discoverable # controlled vocab: hidden, discoverable, discovered, treated, visible
+          severity: substantial # controlled vocab: minor, moderate, substantial, major, extreme
 
 scenes:
   - id: test_scene3
@@ -56,7 +56,7 @@ scenes:
     next_scene: test_scene4
     end_scene_allowed: false
     persist_characters: true
-    restricted_actions: SEARCH
+    restricted_actions: [SEARCH]
     action_mapping:
       - action_id: mike-bloodox
         action_type: CHECK_BLOOD_OXYGEN
@@ -81,7 +81,7 @@ scenes:
       unstructured: This is a scene5
     end_scene_allowed: false
     persist_characters: true
-    restricted_actions: SEARCH
+    restricted_actions: [SEARCH]
     action_mapping:
       - action_id: mike-bloodox
         action_type: CHECK_BLOOD_OXYGEN
@@ -102,12 +102,10 @@ scenes:
       elapsed_time_gt: 5000
       probe_responses: [go_back_from_scene5]
   - id: test_scene1
-    state:
-      unstructured: This is a scene1
     next_scene: test_scene2
     end_scene_allowed: false
     persist_characters: true
-    restricted_actions: SEARCH
+    restricted_actions: [SEARCH]
     action_mapping:
       - action_id: mike-bloodox
         action_type: CHECK_BLOOD_OXYGEN
@@ -133,7 +131,7 @@ scenes:
     next_scene: test_scene5
     end_scene_allowed: false
     persist_characters: true
-    restricted_actions: SEARCH
+    restricted_actions: [SEARCH]
     action_mapping:
       - action_id: mike-bloodox
         action_type: CHECK_BLOOD_OXYGEN
@@ -159,7 +157,7 @@ scenes:
     next_scene: test_scene3
     end_scene_allowed: false
     persist_characters: true
-    restricted_actions: SEARCH
+    restricted_actions: [SEARCH]
     action_mapping:
       - action_id: mike-bloodox
         action_type: CHECK_BLOOD_OXYGEN

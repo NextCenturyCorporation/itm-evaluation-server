@@ -1,6 +1,10 @@
 id: removed_characters
 # Test description: A character is removed in the second scene, so the action mapping with this char should be removed by the server.
-# Testing note:  This also tests support of indexed scenes (no first_scene or next_scene)
+# Testing notes:
+#   1. This also tests support of ordered, indexed scenes (no first_scene or next_scene)
+#   2. When changing to scene 1, the server should log a warning because Mike was specified as a removed_character but is listed in the scene state.
+#   3. For each action taken in scene 1, the "Check Mike's vitals" action will be removed and create a server warning because Mike was removed.
+
 name: IED Explosion
 state:
   unstructured: >
@@ -72,7 +76,6 @@ state:
         - name: Internal # controlled vocab includes Abrasion, Ear Bleed, Burn, Laceration, Asthmatic, Puncture, Shrapnel, Chest Collapse, Amputation, Internal, Broken Bone
           location: internal # controlled vocab includes forearm, calf, hand, leg, thigh, stomach, bicep, shoulder, side, chest, wrist, face, neck, internal, unspecified.  Most locations allow a left and right designation.
           status: hidden # controlled vocab: hidden, discoverable, discovered, treated, visible
-          source_character: Civilian_01 # The character id of the person responsible for the injury
         - name: Laceration # controlled vocab includes Abrasion, Ear Bleed, Burn, Laceration, Asthmatic, Puncture, Shrapnel, Chest Collapse, Amputation, Internal, Broken Bone
           location: left hand # controlled vocab includes forearm, calf, hand, leg, thigh, stomach, bicep, shoulder, side, chest, wrist, face, neck, internal, unspecified.  Most locations allow a left and right designation.
           status: treated # controlled vocab: hidden, discoverable, discovered, treated, visible
@@ -206,6 +209,26 @@ scenes:
         character_importance: # A list of pairs of character ids with an indicator of how mission-critical the character is
           - Captain_01: important # controlled vocab includes low, normal, important, priority, vip; must be kept consistent with demographics.mission_importance
       characters:
+        - id: Mike # This should cause a warning in the server and be ignored because Mike was specified as a removed_character.
+          name: Mike
+          unstructured: >
+            A 34 year-old male Marine hit by an IED.
+            No obvious external injuries.
+          demographics:
+            age: 34
+            sex: M
+            race: White
+          vitals:
+            avpu: PAIN
+            ambulatory: false
+            mental_status: UNRESPONSIVE
+            breathing: FAST
+            heart_rate: FAST
+            spo2: 92
+          injuries:
+            - name: Internal # controlled vocab includes Abrasion, Ear Bleed, Burn, Laceration, Asthmatic, Puncture, Shrapnel, Chest Collapse, Amputation, Internal, Broken Bone
+              location: internal # controlled vocab includes forearm, calf, hand, leg, thigh, stomach, bicep, shoulder, side, chest, wrist, face, neck, internal, unspecified.  Most locations allow a left and right designation.
+              status: hidden # controlled vocab: hidden, discoverable, discovered, treated, visible
         - id: Captain_01
           name: Katie
           unstructured: >
@@ -244,7 +267,7 @@ scenes:
               delay: 50
               max_transport: 1
     action_mapping:
-      - action_id: Check Mike's vitals
+      - action_id: Check Mike's vitals # This will cause a warning in the server and be removed because Mike has been removed.
         action_type: CHECK_ALL_VITALS
         intent_action: True
         unstructured: Check Mike's vital signs
