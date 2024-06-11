@@ -355,7 +355,7 @@ class ITMScenarioReader:
         return conditions
     
     def _generate_meta_info(self, state_data):
-        return MetaInfo(scene_id=None)
+        return MetaInfo(scene_id=None, probe_response=None)
 
     # Deferred
     def _generate_tagging(self, scene_data):
