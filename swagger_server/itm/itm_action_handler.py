@@ -460,6 +460,8 @@ class ITMActionHandler:
         # Ultimately, this should update values based DIRECTLY on how the sim does it
 
         self.session.state.meta_info.elapsed_time += time_passed
+        print("Time elapsed after action processed: ")
+        print(self.session.state.meta_info.elapsed_time)
         # Log the action
         self.session.history.add_history("Take Action", parameters,
                                          self.session.state.to_dict())
