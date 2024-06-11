@@ -5,7 +5,7 @@ id: removed_characters
 #   2. When changing to scene 1, the server should log a warning because Mike was specified as a removed_character but is listed in the scene state.
 #   3. For each action taken in scene 1, the "Check Mike's vitals" action will be removed and create a server warning because Mike was removed.
 
-name: IED Explosion
+name: Removed characters test
 state:
   unstructured: >
     You are a medic in a small unit of Marines on an isolated jungle island.
@@ -105,7 +105,6 @@ scenes:
     restricted_actions: # These actions will not be returned in get_available_actions (not including END_SCENE)
       - CHECK_BLOOD_OXYGEN
       - DIRECT_MOBILE_CHARACTERS
-      - SEARCH
       - MOVE_TO_EVAC
     action_mapping:
       - action_id: tag-mike-minimal

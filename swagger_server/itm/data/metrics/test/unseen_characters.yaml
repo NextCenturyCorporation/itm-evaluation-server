@@ -69,7 +69,6 @@ scenes:
       - CHECK_PULSE
       - DIRECT_MOBILE_CHARACTERS
       - CHECK_BLOOD_OXYGEN
-      - SEARCH
       - MOVE_TO_EVAC
     action_mapping:
       - action_id: move
@@ -111,7 +110,6 @@ scenes:
       - DIRECT_MOBILE_CHARACTERS
       - CHECK_BLOOD_OXYGEN
       - SITREP
-      - SEARCH
       - MOVE_TO_EVAC
     action_mapping:
       - action_id: move
@@ -212,7 +210,6 @@ scenes:
       - DIRECT_MOBILE_CHARACTERS
       - CHECK_BLOOD_OXYGEN
       - SITREP
-      - SEARCH
       - MOVE_TO_EVAC
     action_mapping:
       - action_id: assess civilian
@@ -243,7 +240,6 @@ scenes:
       unstructured: You have returned to the original location.
     restricted_actions:
       - MOVE_TO
-      - SEARCH
     action_mapping:
       - action_id: evacuate
         action_type: MOVE_TO_EVAC
