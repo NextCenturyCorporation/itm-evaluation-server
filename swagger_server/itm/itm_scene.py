@@ -168,7 +168,8 @@ class ITMScene:
                 if self.conditions_met(mapping.conditions, session_state, mapping.condition_semantics):
                     self.parent_scenario.respond_to_probe(mapping.probe_id, mapping.choice, action.justification)
                 # If action doesn't respond to probe, set probe response in meta info to None
-                self.parent_scenario.session.state.meta_info.probe_response = None
+                if self.parent_scenario.session.kdma_training:
+                    self.parent_scenario.session.state.meta_info.probe_response = None
                 break  # action_id's are unique within a scene
 
         if not found_mapping: # Handle ADMs ordering something not on the menu
