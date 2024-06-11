@@ -562,11 +562,15 @@ components:
       properties:
         elapsed_time:
           type: integer
-          description: the simulated elapsed time (in seconds) since the scenario started
+          description: The simulated elapsed time (in seconds) since the scenario started
           example: 10
         scene_id:
           type: string
           description: The scene ID, unique throughout the scenario
+        probe_response:
+          type: object
+          description: If the last action taken responded to a probe, the probe response will be recorded here. If not, value will be null.
+
     Mission:
       required:
         - mission_type

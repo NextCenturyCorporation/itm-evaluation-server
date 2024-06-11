@@ -14,25 +14,30 @@ class MetaInfo(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, elapsed_time: int=None, scene_id: str=None):  # noqa: E501
+    def __init__(self, elapsed_time: int=None, scene_id: str=None, probe_response: object=None):  # noqa: E501
         """MetaInfo - a model defined in Swagger
 
         :param elapsed_time: The elapsed_time of this MetaInfo.  # noqa: E501
         :type elapsed_time: int
         :param scene_id: The scene_id of this MetaInfo.  # noqa: E501
         :type scene_id: str
+        :param probe_response: The probe_response of this MetaInfo.  # noqa: E501
+        :type probe_response: object
         """
         self.swagger_types = {
             'elapsed_time': int,
-            'scene_id': str
+            'scene_id': str,
+            'probe_response': object
         }
 
         self.attribute_map = {
             'elapsed_time': 'elapsed_time',
-            'scene_id': 'scene_id'
+            'scene_id': 'scene_id',
+            'probe_response': 'probe_response'
         }
         self._elapsed_time = elapsed_time
         self._scene_id = scene_id
+        self._probe_response = probe_response
 
     @classmethod
     def from_dict(cls, dikt) -> 'MetaInfo':
@@ -49,7 +54,7 @@ class MetaInfo(Model):
     def elapsed_time(self) -> int:
         """Gets the elapsed_time of this MetaInfo.
 
-        the simulated elapsed time (in seconds) since the scenario started  # noqa: E501
+        The simulated elapsed time (in seconds) since the scenario started  # noqa: E501
 
         :return: The elapsed_time of this MetaInfo.
         :rtype: int
@@ -60,7 +65,7 @@ class MetaInfo(Model):
     def elapsed_time(self, elapsed_time: int):
         """Sets the elapsed_time of this MetaInfo.
 
-        the simulated elapsed time (in seconds) since the scenario started  # noqa: E501
+        The simulated elapsed time (in seconds) since the scenario started  # noqa: E501
 
         :param elapsed_time: The elapsed_time of this MetaInfo.
         :type elapsed_time: int
@@ -90,3 +95,26 @@ class MetaInfo(Model):
         """
 
         self._scene_id = scene_id
+
+    @property
+    def probe_response(self) -> object:
+        """Gets the probe_response of this MetaInfo.
+
+        If the last action taken responded to a probe, the probe response will be recorded here. If not, value will be null.  # noqa: E501
+
+        :return: The probe_response of this MetaInfo.
+        :rtype: object
+        """
+        return self._probe_response
+
+    @probe_response.setter
+    def probe_response(self, probe_response: object):
+        """Sets the probe_response of this MetaInfo.
+
+        If the last action taken responded to a probe, the probe response will be recorded here. If not, value will be null.  # noqa: E501
+
+        :param probe_response: The probe_response of this MetaInfo.
+        :type probe_response: object
+        """
+
+        self._probe_response = probe_response
