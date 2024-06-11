@@ -261,7 +261,8 @@ class ITMScenario:
 
         # 5 Update MetaInfo with new scene ID
         current_state.meta_info.scene_id = self.isd.current_scene.id
-        print("Scene in meta info: " + current_state.meta_info)
+        print("Scene in meta info: ")
+        print(current_state.meta_info.scene_id)
 
 
     def update_property(self, current_state, target_state):
