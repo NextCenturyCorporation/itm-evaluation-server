@@ -6,6 +6,7 @@ from datetime import date, datetime  # noqa: F401
 from typing import List, Dict  # noqa: F401
 
 from swagger_server.models.base_model_ import Model
+from swagger_server.models.probe_response import ProbeResponse  # noqa: F401,E501
 from swagger_server import util
 
 
@@ -14,7 +15,7 @@ class MetaInfo(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, elapsed_time: int=None, scene_id: str=None, probe_response: object=None):  # noqa: E501
+    def __init__(self, elapsed_time: int=None, scene_id: str=None, probe_response: ProbeResponse=None):  # noqa: E501
         """MetaInfo - a model defined in Swagger
 
         :param elapsed_time: The elapsed_time of this MetaInfo.  # noqa: E501
@@ -22,12 +23,12 @@ class MetaInfo(Model):
         :param scene_id: The scene_id of this MetaInfo.  # noqa: E501
         :type scene_id: str
         :param probe_response: The probe_response of this MetaInfo.  # noqa: E501
-        :type probe_response: object
+        :type probe_response: ProbeResponse
         """
         self.swagger_types = {
             'elapsed_time': int,
             'scene_id': str,
-            'probe_response': object
+            'probe_response': ProbeResponse
         }
 
         self.attribute_map = {
@@ -97,24 +98,22 @@ class MetaInfo(Model):
         self._scene_id = scene_id
 
     @property
-    def probe_response(self) -> object:
+    def probe_response(self) -> ProbeResponse:
         """Gets the probe_response of this MetaInfo.
 
-        If the last action taken responded to a probe, the probe response will be recorded here. If not, value will be null.  # noqa: E501
 
         :return: The probe_response of this MetaInfo.
-        :rtype: object
+        :rtype: ProbeResponse
         """
         return self._probe_response
 
     @probe_response.setter
-    def probe_response(self, probe_response: object):
+    def probe_response(self, probe_response: ProbeResponse):
         """Sets the probe_response of this MetaInfo.
 
-        If the last action taken responded to a probe, the probe response will be recorded here. If not, value will be null.  # noqa: E501
 
         :param probe_response: The probe_response of this MetaInfo.
-        :type probe_response: object
+        :type probe_response: ProbeResponse
         """
 
         self._probe_response = probe_response

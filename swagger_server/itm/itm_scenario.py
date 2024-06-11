@@ -96,9 +96,13 @@ class ITMScenario:
         """
         response = ProbeResponse(scenario_id=self.id, probe_id=probe_id, choice=choice_id,
                                  justification = '' if justification is None else justification)
-        self.session.state.meta_info.probe_response = response
-        print("Probe response in meta info:")
-        print(self.session.state.meta_info.probe_response)
+        
+        # If in training mode, record probe response in meta info
+        if self.session.kdma_training:
+            self.session.state.meta_info.probe_response = response
+            print("Probe response in meta info:")
+            print(self.session.state.meta_info.probe_response)
+            
         self.session.history.add_history(
             "Respond to TA1 Probe",
             {"session_id": self.session.session_id, "scenario_id": response.scenario_id, "probe_id": response.probe_id,

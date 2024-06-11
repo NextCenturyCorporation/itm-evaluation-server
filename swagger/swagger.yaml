@@ -558,7 +558,7 @@ components:
             $ref: "#/components/schemas/Character"
     MetaInfo:
       type: object
-      description: includes meta info (scene IDs, probe response, elapsed_time)
+      description: includes meta info (scene IDs, probe response, elapsed_time). Only provided during training sessions
       properties:
         elapsed_time:
           type: integer
@@ -568,9 +568,7 @@ components:
           type: string
           description: The scene ID, unique throughout the scenario
         probe_response:
-          type: object
-          description: If the last action taken responded to a probe, the probe response will be recorded here. If not, value will be null.
-
+          $ref: "#/components/schemas/ProbeResponse"
     Mission:
       required:
         - mission_type
@@ -1164,6 +1162,22 @@ components:
           type: integer
           description: Re-use the tagging configuration from the specified scene index
           minimum: 0
+    ProbeResponse:
+      type: object
+      description: a response to a ta1 probe 
+      properties: 
+        probe_id:
+          type: string
+          description: probe_id being responded to
+        choice_id:
+          type: string
+          description: choice used to respond to probe
+        scenario_id:
+          type: string
+          description: current scenario id
+        justification:
+          type: string
+          description: justification for choice, if provided
     ProbeResponses:
       required:
         - character_id
