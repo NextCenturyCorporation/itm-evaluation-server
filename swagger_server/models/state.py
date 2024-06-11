@@ -20,11 +20,13 @@ class State(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, unstructured: str=None, meta_info: MetaInfo=None, scenario_complete: bool=None, mission: Mission=None, environment: Environment=None, threat_state: ThreatState=None, supplies: List[Supplies]=None, characters: List[Character]=None):  # noqa: E501
+    def __init__(self, unstructured: str=None, elapsed_time: int=None, meta_info: MetaInfo=None, scenario_complete: bool=None, mission: Mission=None, environment: Environment=None, threat_state: ThreatState=None, supplies: List[Supplies]=None, characters: List[Character]=None):  # noqa: E501
         """State - a model defined in Swagger
 
         :param unstructured: The unstructured of this State.  # noqa: E501
         :type unstructured: str
+        :param elapsed_time: The elapsed_time of this State.  # noqa: E501
+        :type elapsed_time: int
         :param meta_info: The meta_info of this State.  # noqa: E501
         :type meta_info: MetaInfo
         :param scenario_complete: The scenario_complete of this State.  # noqa: E501
@@ -42,6 +44,7 @@ class State(Model):
         """
         self.swagger_types = {
             'unstructured': str,
+            'elapsed_time': int,
             'meta_info': MetaInfo,
             'scenario_complete': bool,
             'mission': Mission,
@@ -53,6 +56,7 @@ class State(Model):
 
         self.attribute_map = {
             'unstructured': 'unstructured',
+            'elapsed_time': 'elapsed_time',
             'meta_info': 'meta_info',
             'scenario_complete': 'scenario_complete',
             'mission': 'mission',
@@ -62,6 +66,7 @@ class State(Model):
             'characters': 'characters'
         }
         self._unstructured = unstructured
+        self._elapsed_time = elapsed_time
         self._meta_info = meta_info
         self._scenario_complete = scenario_complete
         self._mission = mission
@@ -105,6 +110,29 @@ class State(Model):
             raise ValueError("Invalid value for `unstructured`, must not be `None`")  # noqa: E501
 
         self._unstructured = unstructured
+
+    @property
+    def elapsed_time(self) -> int:
+        """Gets the elapsed_time of this State.
+
+        The simulated elapsed time (in seconds) since the scenario started  # noqa: E501
+
+        :return: The elapsed_time of this State.
+        :rtype: int
+        """
+        return self._elapsed_time
+
+    @elapsed_time.setter
+    def elapsed_time(self, elapsed_time: int):
+        """Sets the elapsed_time of this State.
+
+        The simulated elapsed time (in seconds) since the scenario started  # noqa: E501
+
+        :param elapsed_time: The elapsed_time of this State.
+        :type elapsed_time: int
+        """
+
+        self._elapsed_time = elapsed_time
 
     @property
     def meta_info(self) -> MetaInfo:

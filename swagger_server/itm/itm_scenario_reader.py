@@ -123,6 +123,7 @@ class ITMScenarioReader:
         ]
         state = State(
             unstructured=unstructured,
+            elapsed_time=0,
             meta_info=meta_info,
             scenario_complete=False,
             mission=mission,
@@ -354,7 +355,7 @@ class ITMScenarioReader:
         return conditions
     
     def _generate_meta_info(self, state_data):
-        return MetaInfo(elapsed_time=0, scene_id=None)
+        return MetaInfo(scene_id=None)
 
     # Deferred
     def _generate_tagging(self, scene_data):

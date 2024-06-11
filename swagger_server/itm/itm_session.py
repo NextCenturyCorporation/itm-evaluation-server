@@ -134,7 +134,7 @@ class ITMSession:
         """
         self.history.add_history(
             "Scenario ended", {"scenario_id": self.itm_scenario.id, "session_id": self.session_id,
-                            "elapsed_time": self.state.meta_info.elapsed_time}, None)
+                            "elapsed_time": self.state.elapsed_time}, None)
         logging.info("Scenario %s ended.", self.itm_scenario.id)
         self.state.scenario_complete = True
 

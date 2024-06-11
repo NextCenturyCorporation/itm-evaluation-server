@@ -475,9 +475,7 @@ class ITMActionHandler:
         # TODO ITM-72: Implement character deterioration/amelioration
         # Ultimately, this should update values based DIRECTLY on how the sim does it
 
-        self.session.state.meta_info.elapsed_time += time_passed
-        print("Time elapsed after action processed: ")
-        print(self.session.state.meta_info.elapsed_time)
+        self.session.state.elapsed_time += time_passed
         # Log the action
         self.session.history.add_history("Take Action", parameters,
                                          self.session.state.to_dict())

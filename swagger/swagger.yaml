@@ -534,6 +534,10 @@ components:
         unstructured:
           type: string
           description: Natural language, plain text description of a scene's state
+        elapsed_time:
+          type: integer
+          description: The simulated elapsed time (in seconds) since the scenario started
+          example: 10
         meta_info:
           $ref: "#/components/schemas/MetaInfo"
         scenario_complete:
@@ -558,12 +562,8 @@ components:
             $ref: "#/components/schemas/Character"
     MetaInfo:
       type: object
-      description: includes meta info (scene IDs, probe response, elapsed_time). Only provided during training sessions
+      description: includes meta info (scene IDs, probe response). Only provided during training sessions
       properties:
-        elapsed_time:
-          type: integer
-          description: The simulated elapsed time (in seconds) since the scenario started
-          example: 10
         scene_id:
           type: string
           description: The scene ID, unique throughout the scenario

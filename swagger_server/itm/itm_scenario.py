@@ -102,7 +102,7 @@ class ITMScenario:
             self.session.state.meta_info.probe_response = response
             print("Probe response in meta info:")
             print(self.session.state.meta_info.probe_response)
-            
+
         self.session.history.add_history(
             "Respond to TA1 Probe",
             {"session_id": self.session.session_id, "scenario_id": response.scenario_id, "probe_id": response.probe_id,
@@ -267,10 +267,11 @@ class ITMScenario:
         # 4. Clear hidden data (e.g., character vitals)
         ITMScenario.clear_hidden_data(current_state)
 
-        # 5 Update MetaInfo with new scene ID
-        current_state.meta_info.scene_id = self.isd.current_scene.id
-        print("Scene in meta info: ")
-        print(current_state.meta_info.scene_id)
+        # 5 Update MetaInfo with new scene ID if training mode
+        if self.session.kdma_training:
+            current_state.meta_info.scene_id = self.isd.current_scene.id
+            print("Scene in meta info: ")
+            print(current_state.meta_info.scene_id)
 
 
     def update_property(self, current_state, target_state):
