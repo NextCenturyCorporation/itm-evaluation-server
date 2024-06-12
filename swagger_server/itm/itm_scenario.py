@@ -186,7 +186,7 @@ class ITMScenario:
         3. For everything else, replace any specified (non-None) values
            3a. Lists are copied whole (e.g., `character_importance`, `aid_delay`, `threats`).
         4. Clear hidden data (e.g., character vitals)
-        5. Update MetaInfo with new scene id
+        5. Update MetaInfo with new scene ID if training mode
         '''
         # Rule 0: Abort if no state to merge
         if not target_state:
@@ -267,7 +267,7 @@ class ITMScenario:
         # 4. Clear hidden data (e.g., character vitals)
         ITMScenario.clear_hidden_data(current_state)
 
-        # 5 Update MetaInfo with new scene ID if training mode
+        # 5. Update MetaInfo with new scene ID if training mode
         if self.session.kdma_training:
             current_state.meta_info.scene_id = self.isd.current_scene.id
             print("Scene in meta info: ")
