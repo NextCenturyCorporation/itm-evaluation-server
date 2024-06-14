@@ -5,7 +5,7 @@ from random import shuffle
 from inspect import signature
 from typing import List
 from swagger_server.models import (
-    Action, ActionMapping, ActionTypeEnum, Conditions, Scene, SemanticTypeEnum, State, Supplies, SupplyTypeEnum
+    Action, ActionMapping, ActionTypeEnum, Character, Conditions, Scene, SemanticTypeEnum, State, Supplies, SupplyTypeEnum
 )
 from swagger_server.util import get_swagger_class_enum_values
 
@@ -100,7 +100,7 @@ class ITMScene:
         return json.dumps(to_obj, indent=4)
 
 
-    def get_available_actions(self, supplies: List[Supplies]) -> List[Action]:
+    def get_available_actions(self, state: State) -> List[Action]:
         actions :List[Action] = [
             Action(
                 action_id=mapping.action_id,
@@ -119,9 +119,17 @@ class ITMScene:
             shuffle(actions)
             return actions
 
-        # Add unmapped action types (other than END_SCENE) that aren't explicitly restricted.
+        # Add most unmapped action types that aren't explicitly restricted.
         valid_action_types = get_swagger_class_enum_values(ActionTypeEnum)
         valid_action_types.remove(ActionTypeEnum.END_SCENE)
+        valid_action_types.remove(ActionTypeEnum.SEARCH) # This requires support in configuration, so don't add it.
+        # Only add MOVE_TO if there are unseen characters.
+        if not any(character.unseen for character in state.characters):
+            valid_action_types.remove(ActionTypeEnum.MOVE_TO)
+        # Only add MOVE_TO_EVAC if there is an evacuation available.
+        if state.environment.decision_environment is None or state.environment.decision_environment.aid_delay is None \
+            or state.environment.decision_environment.aid_delay == []:
+            valid_action_types.remove(ActionTypeEnum.MOVE_TO_EVAC)
         #TODO: uncomment when tagging configuration is supported (ITM-217)
         #valid_action_types.remove(ActionTypeEnum.TAG_CHARACTER)
         current_action_types = []
@@ -132,7 +140,7 @@ class ITMScene:
         # Don't add actions that require a pulse ox if there is no pulse ox available.
         pulse_ox_available = any(
             supply.type == SupplyTypeEnum.PULSE_OXIMETER and supply.quantity >= 1
-            for supply in supplies
+            for supply in state.supplies
         )
         if not pulse_ox_available:
             if ActionTypeEnum.CHECK_BLOOD_OXYGEN in new_action_types:

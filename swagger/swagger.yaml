@@ -791,6 +791,10 @@ components:
           type: boolean
           description: whether or not this character has a blanket (either wrapped around or underneath)
           default: false
+        unseen:
+          type: boolean
+          description: whether or not this character is visible in the scene or merely heard or reported about from a nearby location
+          default: false
         intent:
           $ref: "#/components/schemas/IntentEnum"
         directness_of_causality:
@@ -1808,6 +1812,7 @@ components:
         - CHECK_RESPIRATION
         - DIRECT_MOBILE_CHARACTERS
         - END_SCENE
+        - MOVE_TO
         - MOVE_TO_EVAC
         - SEARCH
         - SITREP

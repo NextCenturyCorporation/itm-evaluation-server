@@ -1,5 +1,5 @@
 id: sample-1
-name: IED Explosion
+name: IED Explosion (Sample YAML)
 # Test description: This is a sample YAML file with several features covered herein.
 first_scene: opening_scene # Indicates the first/opening scene ID in the scenario; defaults to first scene in the file
 state:
@@ -185,10 +185,9 @@ scenes:
         description: How to tag Mike
       - probe_id: adept-september-demo-probe-4
         description: How to tag Civilian
-    restricted_actions: # These actions will not be returned in get_available_actions (not including END_SCENE)
+    restricted_actions: # These actions will not be returned in get_available_actions (not including END_SCENE).
       - CHECK_BLOOD_OXYGEN
       - DIRECT_MOBILE_CHARACTERS
-      - SEARCH
       - MOVE_TO_EVAC
     action_mapping:
       - action_id: tag-mike-minimal

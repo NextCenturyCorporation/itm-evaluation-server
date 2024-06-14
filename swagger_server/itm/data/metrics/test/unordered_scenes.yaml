@@ -1,5 +1,5 @@
 id: unordered_scenes
-name: IED Explosion
+name: Unordered scenes test
 # Test description: Scene order in the file is completely unrelated to scene order in the scenario.
 # Tests next_scene, including repeating the scene and jumping back to previous scenes.
 first_scene: test_scene1
@@ -56,7 +56,6 @@ scenes:
     next_scene: test_scene4
     end_scene_allowed: false
     persist_characters: true
-    restricted_actions: [SEARCH]
     action_mapping:
       - action_id: mike-bloodox
         action_type: CHECK_BLOOD_OXYGEN
@@ -81,7 +80,6 @@ scenes:
       unstructured: This is a scene5
     end_scene_allowed: false
     persist_characters: true
-    restricted_actions: [SEARCH]
     action_mapping:
       - action_id: mike-bloodox
         action_type: CHECK_BLOOD_OXYGEN
@@ -105,7 +103,6 @@ scenes:
     next_scene: test_scene2
     end_scene_allowed: false
     persist_characters: true
-    restricted_actions: [SEARCH]
     action_mapping:
       - action_id: mike-bloodox
         action_type: CHECK_BLOOD_OXYGEN
@@ -131,7 +128,6 @@ scenes:
     next_scene: test_scene5
     end_scene_allowed: false
     persist_characters: true
-    restricted_actions: [SEARCH]
     action_mapping:
       - action_id: mike-bloodox
         action_type: CHECK_BLOOD_OXYGEN
@@ -157,7 +153,6 @@ scenes:
     next_scene: test_scene3
     end_scene_allowed: false
     persist_characters: true
-    restricted_actions: [SEARCH]
     action_mapping:
       - action_id: mike-bloodox
         action_type: CHECK_BLOOD_OXYGEN

@@ -1,5 +1,5 @@
 id: reusable-supplies
-name: IED Explosion
+name: Reusable supplies test
 # Test description: Ensure pulse ox and another reusable supply (e.g., Burn Dressing) works as intended.
 first_scene: test_scene
 state:
@@ -20,7 +20,7 @@ state:
           max_transport: 1 # Maximum number of characters that can be transported
 
   supplies:
-    - { type: Pressure bandage, quantity: 2 }
+    - { type: Pressure bandage, quantity: 500 }
     - { type: Pulse Oximeter, quantity: 1, reusable: True }
     - { type: Burn Dressing, quantity: 1, reusable: True }
   characters:
@@ -78,7 +78,6 @@ scenes:
       - CHECK_RESPIRATION
       - CHECK_PULSE
       - DIRECT_MOBILE_CHARACTERS
-      - SEARCH
       - SITREP
       - MOVE_TO_EVAC
     action_mapping:

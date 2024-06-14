@@ -21,7 +21,7 @@ class Character(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, id: str=None, name: str=None, unstructured: str=None, unstructured_postassess: str=None, has_blanket: bool=False, intent: IntentEnum=None, directness_of_causality: DirectnessEnum=None, rapport: RapportEnum=None, demographics: Demographics=None, injuries: List[Injury]=None, vitals: Vitals=None, visited: bool=False, tag: CharacterTagEnum=None):  # noqa: E501
+    def __init__(self, id: str=None, name: str=None, unstructured: str=None, unstructured_postassess: str=None, has_blanket: bool=False, unseen: bool=False, intent: IntentEnum=None, directness_of_causality: DirectnessEnum=None, rapport: RapportEnum=None, demographics: Demographics=None, injuries: List[Injury]=None, vitals: Vitals=None, visited: bool=False, tag: CharacterTagEnum=None):  # noqa: E501
         """Character - a model defined in Swagger
 
         :param id: The id of this Character.  # noqa: E501
@@ -34,6 +34,8 @@ class Character(Model):
         :type unstructured_postassess: str
         :param has_blanket: The has_blanket of this Character.  # noqa: E501
         :type has_blanket: bool
+        :param unseen: The unseen of this Character.  # noqa: E501
+        :type unseen: bool
         :param intent: The intent of this Character.  # noqa: E501
         :type intent: IntentEnum
         :param directness_of_causality: The directness_of_causality of this Character.  # noqa: E501
@@ -57,6 +59,7 @@ class Character(Model):
             'unstructured': str,
             'unstructured_postassess': str,
             'has_blanket': bool,
+            'unseen': bool,
             'intent': IntentEnum,
             'directness_of_causality': DirectnessEnum,
             'rapport': RapportEnum,
@@ -73,6 +76,7 @@ class Character(Model):
             'unstructured': 'unstructured',
             'unstructured_postassess': 'unstructured_postassess',
             'has_blanket': 'has_blanket',
+            'unseen': 'unseen',
             'intent': 'intent',
             'directness_of_causality': 'directness_of_causality',
             'rapport': 'rapport',
@@ -87,6 +91,7 @@ class Character(Model):
         self._unstructured = unstructured
         self._unstructured_postassess = unstructured_postassess
         self._has_blanket = has_blanket
+        self._unseen = unseen
         self._intent = intent
         self._directness_of_causality = directness_of_causality
         self._rapport = rapport
@@ -227,6 +232,29 @@ class Character(Model):
         """
 
         self._has_blanket = has_blanket
+
+    @property
+    def unseen(self) -> bool:
+        """Gets the unseen of this Character.
+
+        whether or not this character is visible in the scene or merely heard or reported about from a nearby location  # noqa: E501
+
+        :return: The unseen of this Character.
+        :rtype: bool
+        """
+        return self._unseen
+
+    @unseen.setter
+    def unseen(self, unseen: bool):
+        """Sets the unseen of this Character.
+
+        whether or not this character is visible in the scene or merely heard or reported about from a nearby location  # noqa: E501
+
+        :param unseen: The unseen of this Character.
+        :type unseen: bool
+        """
+
+        self._unseen = unseen
 
     @property
     def intent(self) -> IntentEnum:

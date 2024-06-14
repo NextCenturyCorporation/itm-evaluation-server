@@ -148,19 +148,19 @@ class ITMActionHandler:
             action.action_type == ActionTypeEnum.END_SCENE and not self.current_scene.end_scene_allowed:
             return False, 'Invalid Action: action restricted', 400
 
-        # lookup character id in state
+        # Validate character
         character = None
         if action.character_id:
             character = next((character for character in self.session.state.characters if character.id == action.character_id), None)
-
-        # Validate character when necessary
-        if (action.action_type in [ActionTypeEnum.APPLY_TREATMENT, ActionTypeEnum.CHECK_ALL_VITALS, ActionTypeEnum.CHECK_PULSE,
-                                   ActionTypeEnum.CHECK_BLOOD_OXYGEN, ActionTypeEnum.CHECK_RESPIRATION, ActionTypeEnum.MOVE_TO_EVAC,
-                                   ActionTypeEnum.TAG_CHARACTER]):
-            if not action.character_id:
-                return False, f'Malformed Action: Missing character_id for {action.action_type}', 400
-            elif not character:
+            if not character:
                 return False, f'Character `{action.character_id}` not found in state', 400
+            elif character.unseen and not action.intent_action and action.action_type not in [ActionTypeEnum.MOVE_TO_EVAC, ActionTypeEnum.MOVE_TO]:
+                return False, f'Cannot perform {action.action_type} action with unseen character `{action.character_id}`', 400 
+        elif (action.action_type in [ActionTypeEnum.APPLY_TREATMENT, ActionTypeEnum.CHECK_ALL_VITALS, ActionTypeEnum.CHECK_PULSE,
+                                   ActionTypeEnum.CHECK_BLOOD_OXYGEN, ActionTypeEnum.CHECK_RESPIRATION, ActionTypeEnum.MOVE_TO_EVAC,
+                                   ActionTypeEnum.MOVE_TO, ActionTypeEnum.TAG_CHARACTER]):
+            # Character required
+            return False, f'Malformed Action: Missing character_id for {action.action_type}', 400
 
         if action.action_type == ActionTypeEnum.APPLY_TREATMENT:
             # Apply treatment requires a character id and parameters (treatment and location)
@@ -179,10 +179,6 @@ class ITMActionHandler:
                     break
             if not sufficient_supplies:
                 return False, f'Invalid or insufficient `{supply_used}` supplies', 400
-        elif action.action_type == ActionTypeEnum.SITREP:
-            # sitrep optionally takes a character id
-            if action.character_id and not character:
-                return False, f'Character `{action.character_id}` not found in state', 400
         elif action.action_type == ActionTypeEnum.TAG_CHARACTER:
             # Requires category parameter
             if not action.parameters or not 'category' in action.parameters:
@@ -192,6 +188,10 @@ class ITMActionHandler:
                 tag = action.parameters.get('category')
                 if not tag in allowed_values:
                     return False, f'Malformed {action.action_type} Action: Invalid Tag `{tag}`', 400
+        elif action.action_type == ActionTypeEnum.MOVE_TO:
+            # Can only target unseen characters
+            if not action.intent_action and not character.unseen:
+                return False, f'Can only perform {action.action_type} action with unseen characters, but `{action.character_id}` is not unseen', 400
         elif action.action_type == ActionTypeEnum.MOVE_TO_EVAC:
             # Requires evac_id parameter
             if not action.parameters or not 'evac_id' in action.parameters:
@@ -203,7 +203,7 @@ class ITMActionHandler:
                 )
             if not pulse_ox_available:
                 return False, f'Cannot perform {action.action_type} when no {SupplyTypeEnum.PULSE_OXIMETER} is available.', 400
-        elif action.action_type == ActionTypeEnum.CHECK_PULSE or action.action_type == ActionTypeEnum.CHECK_RESPIRATION:
+        elif action.action_type in [ActionTypeEnum.CHECK_PULSE, ActionTypeEnum.CHECK_RESPIRATION, ActionTypeEnum.SITREP]:
             pass # Character was already checked
         elif action.action_type == ActionTypeEnum.DIRECT_MOBILE_CHARACTERS or action.action_type == ActionTypeEnum.END_SCENE \
                 or action.action_type == ActionTypeEnum.SEARCH:
@@ -365,6 +365,22 @@ class ITMActionHandler:
         return self.times_dict[ActionTypeEnum.DIRECT_MOBILE_CHARACTERS]
 
 
+    def move_to(self, target_character: Character):
+        """
+        Move to the location of the specified character, toggling whether all characters are seen or not.
+        NOTE: This only works when there are only two locations, which is the stated requirement.
+
+        Args:
+            target_character: The character to move to
+        """
+
+        # NOTE: With the current two-room-only implementation, the target_character isn't actually used in the code.
+        # If we ever implement multiple locations, we'll need to know which character the ADM is moving to.
+        for character in self.session.state.characters:
+            character.unseen = not character.unseen
+        return self.times_dict[ActionTypeEnum.MOVE_TO]
+
+
     def move_to_evac(self, character: Character):
         """
         Move the specified character to the evacuation zone (or equivalent).
@@ -391,8 +407,11 @@ class ITMActionHandler:
 
     def search(self):
         """
-        Search for more characters in the scene.
+        Search for more characters.
         """
+        # After a search, the ADM is at a new location (which may or may not have patients), so all previous characters become unseen.
+        for character in self.session.state.characters:
+            character.unseen = True
         return self.times_dict[ActionTypeEnum.SEARCH]
 
 
@@ -461,6 +480,8 @@ class ITMActionHandler:
                 time_passed = self.check_respiration(character)
             case ActionTypeEnum.DIRECT_MOBILE_CHARACTERS:
                 time_passed = self.direct_mobile_characters()
+            case ActionTypeEnum.MOVE_TO:
+                time_passed = self.move_to(character)
             case ActionTypeEnum.MOVE_TO_EVAC:
                 time_passed = self.move_to_evac(character)
             case ActionTypeEnum.SEARCH:
