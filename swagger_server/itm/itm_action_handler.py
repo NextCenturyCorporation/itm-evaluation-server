@@ -373,6 +373,9 @@ class ITMActionHandler:
         Args:
             target_character: The character to move to
         """
+
+        # NOTE: With the current two-room-only implementation, the target_character isn't actually used in the code.
+        # If we ever implement multiple locations, we'll need to know which character the ADM is moving to.
         for character in self.session.state.characters:
             character.unseen = not character.unseen
         return self.times_dict[ActionTypeEnum.MOVE_TO]
