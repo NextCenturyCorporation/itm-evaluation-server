@@ -160,6 +160,9 @@ class ITMScene:
         self.actions_taken.append(action.action_id)
         found_mapping = False
         next_scene_id = None
+        # Training mode only, meta_info.probe_response will be set in respond_to_probe if necessary
+        if self.parent_scenario.session.kdma_training:
+            self.parent_scenario.session.state.meta_info.probe_response = None
         for mapping in self.action_mappings:
             if mapping.action_id == action.action_id:
                 found_mapping = True

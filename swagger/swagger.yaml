@@ -536,8 +536,10 @@ components:
           description: Natural language, plain text description of a scene's state
         elapsed_time:
           type: integer
-          description: the simulated elapsed time (in seconds) since the scenario started
-          example: 500
+          description: The simulated elapsed time (in seconds) since the scenario started
+          example: 10
+        meta_info:
+          $ref: "#/components/schemas/MetaInfo"
         scenario_complete:
           type: boolean
           description: set to true if the scenario is complete; subsequent calls involving
@@ -558,6 +560,15 @@ components:
           description: A list of characters in the scene, including injured patients, civilians, medics, etc.
           items:
             $ref: "#/components/schemas/Character"
+    MetaInfo:
+      type: object
+      description: Includes meta info to assist with debugging. Only provided during training sessions.
+      properties:
+        scene_id:
+          type: string
+          description: The scene ID, unique throughout the scenario
+        probe_response:
+          $ref: "#/components/schemas/ProbeResponse"
     Mission:
       required:
         - mission_type
@@ -1151,6 +1162,27 @@ components:
           type: integer
           description: Re-use the tagging configuration from the specified scene index
           minimum: 0
+    ProbeResponse:
+      required:
+        - choice
+        - probe_id
+        - scenario_id
+      type: object
+      properties:
+        scenario_id:
+          type: string
+          description: globally unique scenario ID
+        probe_id:
+          type: string
+          description: globally unique probe ID
+        choice:
+          type: string
+          description: id of choice made
+        justification:
+          type: string
+          description: A justification of the response to the probe
+      description: encapsulates the selection by a DM of an option in response to
+        a probe
     ProbeResponses:
       required:
         - character_id

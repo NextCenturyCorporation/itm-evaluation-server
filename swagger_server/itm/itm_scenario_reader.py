@@ -122,6 +122,7 @@ class ITMScenarioReader:
         state = State(
             unstructured=unstructured,
             elapsed_time=0,
+            meta_info=None,
             scenario_complete=False,
             mission=mission,
             environment=environment,

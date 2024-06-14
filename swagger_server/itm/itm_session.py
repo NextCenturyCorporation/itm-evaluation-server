@@ -12,7 +12,8 @@ from swagger_server.models import (
     AlignmentTarget,
     AlignmentResults,
     Scenario,
-    State
+    State,
+    MetaInfo
 )
 from .itm_scenario import ITMScenario
 from .itm_action_handler import ITMActionHandler
@@ -325,6 +326,8 @@ class ITMSession:
         try:
             self.state = deepcopy(self.itm_scenario.isd.current_scene.state)
             ITMScenario.clear_hidden_data(self.state)
+            if self.kdma_training:
+                self.state.meta_info = MetaInfo(scene_id=self.itm_scenario.isd.current_scene.id, probe_response=None)
             scenario = Scenario(
                 id=self.itm_scenario.id,
                 name=self.itm_scenario.name,
