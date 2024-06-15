@@ -306,6 +306,7 @@ class ITMScenarioReader:
         return vitals
 
     def _generate_action_mapping(self, mapping_data) -> ActionMapping:
+        threat_state = self._generate_threat_state(mapping_data)
         mapping = ActionMapping(
             action_id=mapping_data['action_id'],
             action_type=mapping_data['action_type'],
@@ -313,6 +314,7 @@ class ITMScenarioReader:
             repeatable=mapping_data.get('repeatable', False),
             character_id=mapping_data.get('character_id'),
             intent_action=mapping_data.get('intent_action', False),
+            threat_state=threat_state,
             parameters=mapping_data.get('parameters'),
             probe_id=mapping_data['probe_id'],
             choice=mapping_data['choice'],

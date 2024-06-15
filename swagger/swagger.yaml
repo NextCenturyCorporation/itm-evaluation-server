@@ -989,6 +989,8 @@ components:
         character_id:
           type: string
           description: The ID of the character being acted upon
+        threat_state:
+          $ref: "#/components/schemas/ThreatState"
         parameters:
           type: object
           description: key-value pairs containing additional [action-specific parameters](https://github.com/NextCenturyCorporation/itm-evaluation-client?tab=readme-ov-file#available-actions)
@@ -1042,6 +1044,8 @@ components:
           type: boolean
           default: false
           description: Whether this mapping is to take an action or to intend one
+        threat_state:
+          $ref: "#/components/schemas/ThreatState"
         parameters:
           type: object
           description: key-value pairs containing additional [action-specific parameters](https://github.com/NextCenturyCorporation/itm-evaluation-client?tab=readme-ov-file#available-actions)

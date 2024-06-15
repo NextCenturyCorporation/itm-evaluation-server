@@ -7,6 +7,7 @@ from typing import List, Dict  # noqa: F401
 
 from swagger_server.models.base_model_ import Model
 from swagger_server.models.action_type_enum import ActionTypeEnum  # noqa: F401,E501
+from swagger_server.models.threat_state import ThreatState  # noqa: F401,E501
 from swagger_server import util
 
 
@@ -15,7 +16,7 @@ class Action(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, action_id: str=None, action_type: ActionTypeEnum=None, intent_action: bool=False, unstructured: str=None, character_id: str=None, parameters: Dict[str, str]=None, justification: str=None, kdma_association: Dict[str, float]=None):  # noqa: E501
+    def __init__(self, action_id: str=None, action_type: ActionTypeEnum=None, intent_action: bool=False, unstructured: str=None, character_id: str=None, threat_state: ThreatState=None, parameters: Dict[str, str]=None, justification: str=None, kdma_association: Dict[str, float]=None):  # noqa: E501
         """Action - a model defined in Swagger
 
         :param action_id: The action_id of this Action.  # noqa: E501
@@ -28,6 +29,8 @@ class Action(Model):
         :type unstructured: str
         :param character_id: The character_id of this Action.  # noqa: E501
         :type character_id: str
+        :param threat_state: The threat_state of this Action.  # noqa: E501
+        :type threat_state: ThreatState
         :param parameters: The parameters of this Action.  # noqa: E501
         :type parameters: Dict[str, str]
         :param justification: The justification of this Action.  # noqa: E501
@@ -41,6 +44,7 @@ class Action(Model):
             'intent_action': bool,
             'unstructured': str,
             'character_id': str,
+            'threat_state': ThreatState,
             'parameters': Dict[str, str],
             'justification': str,
             'kdma_association': Dict[str, float]
@@ -52,6 +56,7 @@ class Action(Model):
             'intent_action': 'intent_action',
             'unstructured': 'unstructured',
             'character_id': 'character_id',
+            'threat_state': 'threat_state',
             'parameters': 'parameters',
             'justification': 'justification',
             'kdma_association': 'kdma_association'
@@ -61,6 +66,7 @@ class Action(Model):
         self._intent_action = intent_action
         self._unstructured = unstructured
         self._character_id = character_id
+        self._threat_state = threat_state
         self._parameters = parameters
         self._justification = justification
         self._kdma_association = kdma_association
@@ -192,6 +198,27 @@ class Action(Model):
         """
 
         self._character_id = character_id
+
+    @property
+    def threat_state(self) -> ThreatState:
+        """Gets the threat_state of this Action.
+
+
+        :return: The threat_state of this Action.
+        :rtype: ThreatState
+        """
+        return self._threat_state
+
+    @threat_state.setter
+    def threat_state(self, threat_state: ThreatState):
+        """Sets the threat_state of this Action.
+
+
+        :param threat_state: The threat_state of this Action.
+        :type threat_state: ThreatState
+        """
+
+        self._threat_state = threat_state
 
     @property
     def parameters(self) -> Dict[str, str]:
