@@ -108,6 +108,7 @@ class ITMScene:
                 unstructured=mapping.unstructured,
                 character_id=mapping.character_id,
                 intent_action=mapping.intent_action,
+                threat_state=mapping.threat_state,
                 parameters=mapping.parameters,
                 kdma_association=mapping.kdma_association if self.training else None
             )
