@@ -70,17 +70,12 @@ class ITMScenario:
 
         # safe guarding that an action with character id of a removed character doesn't slip through the cracks
         filtered_actions = []
-        filtered_out_actions = []
 
         for action in actions:
             if not getattr(action, 'character_id', None) or action.character_id in current_character_ids:
                 filtered_actions.append(action)
             else:
-                filtered_out_actions.append(action)
-        
-        # if actions are filtered out, that means there is a configuration issue in yaml file of available action to character not in scene
-        if filtered_out_actions:
-            logging.warning("\033[92mScene configuration issue: ignoring actions with an invalid character: %s\033[00m", filtered_out_actions)
+                pass # This an error condition that will be flagged when changing scenes
 
         return filtered_actions
 
@@ -100,8 +95,6 @@ class ITMScenario:
         # If in training mode, record probe response in meta info
         if self.session.kdma_training:
             self.session.state.meta_info.probe_response = response
-            print("Probe response in meta info:")
-            print(self.session.state.meta_info.probe_response)
 
         self.session.history.add_history(
             "Respond to TA1 Probe",
@@ -218,15 +211,6 @@ class ITMScenario:
 
             # 1a. Remove `removed_characters`, even if in configured scene state.
             if getattr(self.isd.current_scene, 'removed_characters', None) and len(self.isd.current_scene.removed_characters) > 0:
-                current_state.characters = [
-                    character for character in current_state.characters
-                    if character.id not in self.isd.current_scene.removed_characters
-                ]
-                # if the target_state includes a character that is listed in removed_characters, that is a yaml misconfiguration
-                target_state.characters = [
-                    character for character in target_state.characters
-                    if character.id not in self.isd.current_scene.removed_characters
-                ]
                 filtered_out_characters = [
                     character for character in target_state.characters
                     if character.id in self.isd.current_scene.removed_characters
@@ -234,6 +218,17 @@ class ITMScenario:
 
                 if len(filtered_out_characters) > 0:
                     logging.warning("\033[92mScene configuration issue: target state includes character that was removed\033[00m")
+                
+                current_state.characters = [
+                    character for character in current_state.characters
+                    if character.id not in self.isd.current_scene.removed_characters
+                ]
+
+                # if the target_state includes a character that is listed in removed_characters, that is a yaml misconfiguration
+                target_state.characters = [
+                    character for character in target_state.characters
+                    if character.id not in self.isd.current_scene.removed_characters
+                ]
         else:
             current_state.characters = deepcopy(target_state.characters)
 
@@ -270,8 +265,6 @@ class ITMScenario:
         # 5. Update MetaInfo with new scene ID if training mode
         if self.session.kdma_training:
             current_state.meta_info.scene_id = self.isd.current_scene.id
-            print("Scene in meta info: ")
-            print(current_state.meta_info.scene_id)
 
 
     def update_property(self, current_state, target_state):
