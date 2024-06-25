@@ -74,6 +74,8 @@ class ITMScenario:
         for action in actions:
             if not getattr(action, 'character_id', None) or action.character_id in current_character_ids:
                 filtered_actions.append(action)
+            else:
+                pass # This an error condition that will be flagged when changing scenes
 
         return filtered_actions
 
@@ -221,8 +223,7 @@ class ITMScenario:
                     character for character in current_state.characters
                     if character.id not in self.isd.current_scene.removed_characters
                 ]
-                logging.warning("Current characters after scene change")
-                logging.warning(current_state.characters)
+
                 # if the target_state includes a character that is listed in removed_characters, that is a yaml misconfiguration
                 target_state.characters = [
                     character for character in target_state.characters
