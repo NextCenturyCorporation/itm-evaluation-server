@@ -70,17 +70,10 @@ class ITMScenario:
 
         # safe guarding that an action with character id of a removed character doesn't slip through the cracks
         filtered_actions = []
-        filtered_out_actions = []
 
         for action in actions:
             if not getattr(action, 'character_id', None) or action.character_id in current_character_ids:
                 filtered_actions.append(action)
-            else:
-                filtered_out_actions.append(action)
-        
-        # if actions are filtered out, that means there is a configuration issue in yaml file of available action to character not in scene
-        if filtered_out_actions:
-            logging.warning("\033[92mScene configuration issue: ignoring actions with an invalid character: %s\033[00m", filtered_out_actions)
 
         return filtered_actions
 
