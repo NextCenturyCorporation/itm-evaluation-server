@@ -24,7 +24,7 @@ state:
   environment: # Normally many of these fields would be left unspecified.
     sim_environment:
       type: jungle # controlled vocab includes jungle, submarine, urban, desert
-      terrain: jungle # controlled vocab could include jungle, indoors, urban, dunes, forest, beach, mountain, plains, hills, swamp, flat, rough, extreme, etc.
+      terrain: jungle # controlled vocab includes jungle, indoors, urban, dunes, forest, beach, mountain, plains, hills, swamp, flat, rough, extreme, etc.
       weather: rain # controlled vocab includes clear, wind, clouds, rain, fog, thunderstorm, hail, sleet, snow, etc.
       lighting: limited # controlled vocab includes includes none, limited, normal, bright, flashing, etc.
       visibility: low # controlled vocab includes includes none, very low, low, moderate, good, excellent; affected by time of day, lighting, weather, terrain, etc.
@@ -368,6 +368,16 @@ scenes:
             breathing: NORMAL # controlled vocab includes NORMAL, FAST, RESTRICTED, NONE
             heart_rate: NORMAL # controlled vocab includes NONE, FAINT, NORMAL, FAST
             spo2: 99 # a percentage
+      events:
+        - unstructured: The captain tells you the helicopter has been delayed and is still 50 minutes away.
+          type: change # The nature or type of the event; controlled vocab includes change, emphasize, inform, order, recommend
+          source: Captain_01 # The entity communicating the event; can be a character id or ally, adversary, civilian, commander, everybody, medic
+          relevant_state: # string paths within the `State` object, with context-sensitive indexed lists
+          -  environment.decision_environment.aid_delay[air_evac].delay
+        - unstructured: Your medical assistant recommends that you evacuate Bob by ground transport.
+          type: recommend # The nature or type of the event; controlled vocab includes change, emphasize, inform, order, recommend
+          source: medic # The entity communicating the event; can be a character id or ally, adversary, civilian, commander, everybody, medic
+          action_id: intend-evac-marine-ground
       environment:
         decision_environment:
           unstructured: >
@@ -438,6 +448,12 @@ scenes:
     state:
       mission:
         unstructured: No mission parameters # mission is not required, but if it is provided, unstructured is required
+      events:
+        - unstructured: Mike reminds you of the IED activity in the area.
+          type: emphasize # The nature or type of the event; controlled vocab includes change, emphasize, inform, order, recommend
+          source: Mike # The subject of the event; can be a character id or ally, adversary, civilian, commander, everybody, medic
+          relevant_state: # string paths within the `State` object, with context-sensitive indexed lists
+          -  threat_state.threats[IED activity]
     action_mapping:
       - action_id: cleanup
         action_type: CHECK_ALL_VITALS

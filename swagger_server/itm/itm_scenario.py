@@ -201,6 +201,15 @@ class ITMScenario:
                 # Remove old versions of target characters from state.
                 current_state.characters = \
                     [character for character in current_state.characters if character.id not in replaced_character_ids]
+
+                # If the target_state includes a character that is listed in removed_characters, that is a yaml misconfiguration
+                filtered_out_characters = [
+                    character for character in target_state.characters
+                    if character.id in getattr(self.isd.current_scene, 'removed_characters', [])
+                ]
+                if len(filtered_out_characters) > 0:
+                    logging.warning("\033[92mScene configuration issue: target state includes character that was removed\033[00m")
+
                 # Replace them with the new versions, plus add new characters.
                 current_state.characters.extend(deepcopy(target_state.characters))
                 # Copy persisted characters (that weren't replaced) into the scene.
@@ -210,21 +219,12 @@ class ITMScenario:
                 target_state.characters = previous_scene_characters
 
             # 1a. Remove `removed_characters`, even if in configured scene state.
-            if getattr(self.isd.current_scene, 'removed_characters', None) and len(self.isd.current_scene.removed_characters) > 0:
-                filtered_out_characters = [
-                    character for character in target_state.characters
-                    if character.id in self.isd.current_scene.removed_characters
-                ]
-
-                if len(filtered_out_characters) > 0:
-                    logging.warning("\033[92mScene configuration issue: target state includes character that was removed\033[00m")
-                
+            if getattr(self.isd.current_scene, 'removed_characters', None) and len(self.isd.current_scene.removed_characters) > 0:                
                 current_state.characters = [
                     character for character in current_state.characters
                     if character.id not in self.isd.current_scene.removed_characters
                 ]
 
-                # if the target_state includes a character that is listed in removed_characters, that is a yaml misconfiguration
                 target_state.characters = [
                     character for character in target_state.characters
                     if character.id not in self.isd.current_scene.removed_characters
@@ -247,12 +247,13 @@ class ITMScenario:
             new_supplies = [new_supply for new_supply in target_state.supplies if new_supply.type in new_types]
             current_state.supplies.extend(deepcopy(new_supplies))
 
-        # Rule 3: For everything else, replace any specified (non-None) values.
+        # Rule 3: For everything else except Events, replace any specified (non-None) values. Events are always replaced.
         # Lists are copied whole (e.g., `character_importance`, `aid_delay`, `threats`).
         if target_state.unstructured:
             current_state.unstructured = target_state.unstructured
         current_state.threat_state = self.update_property(current_state.threat_state, target_state.threat_state)
         current_state.mission = self.update_property(current_state.mission, target_state.mission)
+        current_state.events = deepcopy(target_state.events)
         if target_state.environment:
             current_state.environment.sim_environment = \
                 self.update_property(current_state.environment.sim_environment, target_state.environment.sim_environment)

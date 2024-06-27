@@ -31,7 +31,7 @@ state:
         ambulatory: False
         mental_status: UNRESPONSIVE
         breathing: FAST
-        heart_rate:
+        heart_rate: FAST
         spo2: 92
       injuries:
         - name: Burn
@@ -199,7 +199,7 @@ scenes:
           spo2: 97
         injuries:
           - name: Broken Bone
-            location: left arm
+            location: left forearm
             status: discoverable
     end_scene_allowed: False
     next_scene: final_scene
