@@ -201,6 +201,15 @@ class ITMScenario:
                 # Remove old versions of target characters from state.
                 current_state.characters = \
                     [character for character in current_state.characters if character.id not in replaced_character_ids]
+                
+                filtered_out_characters = [
+                    character for character in target_state.characters
+                    if character.id in getattr(self.isd.current_scene, 'removed_characters', [])
+                ]
+
+                if len(filtered_out_characters) > 0:
+                    logging.warning("\033[92mScene configuration issue: target state includes character that was removed\033[00m")
+
                 # Replace them with the new versions, plus add new characters.
                 current_state.characters.extend(deepcopy(target_state.characters))
                 # Copy persisted characters (that weren't replaced) into the scene.
@@ -211,14 +220,6 @@ class ITMScenario:
 
             # 1a. Remove `removed_characters`, even if in configured scene state.
             if getattr(self.isd.current_scene, 'removed_characters', None) and len(self.isd.current_scene.removed_characters) > 0:
-                filtered_out_characters = [
-                    character for character in target_state.characters
-                    if character.id in self.isd.current_scene.removed_characters
-                ]
-
-                if len(filtered_out_characters) > 0:
-                    logging.warning("\033[92mScene configuration issue: target state includes character that was removed\033[00m")
-                
                 current_state.characters = [
                     character for character in current_state.characters
                     if character.id not in self.isd.current_scene.removed_characters
