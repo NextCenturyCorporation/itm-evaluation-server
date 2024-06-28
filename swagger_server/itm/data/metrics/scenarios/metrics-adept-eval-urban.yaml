@@ -40,7 +40,7 @@ state:
       noise_peak: normal
     decision_environment:
       unstructured: You do not have time to treat both the shooter and the victim.
-      aid_delay: []
+      aid: []
       movement_restriction: unrestricted
       sound_restriction: unrestricted
       oxygen_levels: normal
@@ -347,10 +347,10 @@ scenes:
       environment:
         decision_environment:
           unstructured: You do not have time to treat both the shooter and the victim.
-          aid_delay:
+          aid:
             - id: evac_to_military_hospital
               delay: 1
-              type: air
+              type: air evac
               max_transport: 1
       characters:
         - id: patient_1_shooter
@@ -434,10 +434,10 @@ scenes:
       environment:
         decision_environment:
           unstructured: You do not have time to treat both the shooter and the victim.
-          aid_delay:
+          aid:
             - id: evac_to_military_hospital
               delay: 1
-              type: air
+              type: air evac
               max_transport: 1
       characters:
         - id: patient_1_shooter

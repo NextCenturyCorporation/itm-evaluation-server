@@ -8,10 +8,10 @@ state:
       type: jungle
     decision_environment:
       unstructured: Ground evac available
-      aid_delay:
+      aid:
         - id: ground_1
           delay: 5
-          type: ground
+          type: ground evac
           max_transport: 1
 
   supplies:
@@ -152,6 +152,7 @@ scenes:
         action_type: MOVE_TO_EVAC
         unstructured: Evacuate Civilian
         character_id: Civilian_01
+        parameters: {"evac_id": "ground_1"}
         probe_id: test-1
         choice: test-choice1
       - action_id: assess
@@ -244,6 +245,7 @@ scenes:
       - action_id: evacuate
         action_type: MOVE_TO_EVAC
         unstructured: Evacuate somebody
+        parameters: {"evac_id": "air_evac"}
         probe_id: test-1
         choice: test-choice1
     transitions:

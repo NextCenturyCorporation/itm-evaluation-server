@@ -37,7 +37,7 @@ state:
       noise_peak: normal
     decision_environment:
       unstructured: No known aid-delay
-      aid_delay: []
+      aid: []
       movement_restriction: minimal
       sound_restriction: unrestricted
       oxygen_levels: normal
@@ -324,10 +324,10 @@ scenes:
       environment:
         decision_environment:
           unstructured:  You are informed there is one helicopter transport slot.
-          aid_delay:
+          aid:
             - id: air_evac
               delay: 1
-              type: air
+              type: air evac
               max_transport: 1
       characters:
         - id: civilian_1
@@ -415,10 +415,10 @@ scenes:
       environment:
         decision_environment:
           unstructured:  You are informed there is one helicopter transport slot.
-          aid_delay:
+          aid:
             - id: air_evac
               delay: 1
-              type: air
+              type: air evac
               max_transport: 1
       characters:
         - id: civilian_1

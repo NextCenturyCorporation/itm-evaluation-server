@@ -173,10 +173,10 @@ scenes:
         avpu: ALERT
     environment:
       decision_environment:
-        aid_delay:
+        aid:
         - delay: 1440
           id: delay-0
-          type: unknown
+          type: unknown evac
         air_quality: green
         city_infrastructure: TBD
         injury_triggers: fire
@@ -334,10 +334,10 @@ scenes:
         avpu: ALERT
     environment:
       decision_environment:
-        aid_delay:
+        aid:
         - delay: 1440
           id: delay-0
-          type: unknown
+          type: unknown evac
         air_quality: green
         city_infrastructure: TBD
         injury_triggers: fire
@@ -492,10 +492,10 @@ scenes:
         spo2: 72
     environment:
       decision_environment:
-        aid_delay:
+        aid:
         - delay: 1440
           id: delay-0
-          type: unknown
+          type: unknown evac
         air_quality: green
         city_infrastructure: TBD
         injury_triggers: fire
@@ -667,10 +667,10 @@ scenes:
         spo2: 72
     environment:
       decision_environment:
-        aid_delay:
+        aid:
         - delay: 1440
           id: delay-0
-          type: unknown
+          type: unknown evac
         air_quality: green
         city_infrastructure: TBD
         injury_triggers: fire
@@ -848,10 +848,10 @@ scenes:
         spo2: 69
     environment:
       decision_environment:
-        aid_delay:
+        aid:
         - delay: 1440
           id: delay-0
-          type: unknown
+          type: unknown evac
         air_quality: green
         city_infrastructure: TBD
         injury_triggers: fire
@@ -1021,10 +1021,10 @@ scenes:
         spo2: 69
     environment:
       decision_environment:
-        aid_delay:
+        aid:
         - delay: 1440
           id: delay-0
-          type: unknown
+          type: unknown evac
         air_quality: green
         city_infrastructure: TBD
         injury_triggers: fire
@@ -1195,10 +1195,10 @@ scenes:
         avpu: ALERT
     environment:
       decision_environment:
-        aid_delay:
+        aid:
         - delay: 1440
           id: delay-0
-          type: unknown
+          type: unknown evac
         air_quality: green
         city_infrastructure: TBD
         injury_triggers: fire
@@ -1368,10 +1368,10 @@ scenes:
         avpu: ALERT
     environment:
       decision_environment:
-        aid_delay:
+        aid:
         - delay: 1440
           id: delay-0
-          type: unknown
+          type: unknown evac
         air_quality: green
         city_infrastructure: TBD
         injury_triggers: fire
@@ -1562,10 +1562,10 @@ scenes:
         spo2: 97
     environment:
       decision_environment:
-        aid_delay:
+        aid:
         - delay: 1440
           id: delay-0
-          type: unknown
+          type: unknown evac
         air_quality: green
         city_infrastructure: TBD
         injury_triggers: fire
@@ -1784,10 +1784,10 @@ scenes:
         spo2: 97
     environment:
       decision_environment:
-        aid_delay:
+        aid:
         - delay: 1440
           id: delay-0
-          type: unknown
+          type: unknown evac
         air_quality: green
         city_infrastructure: TBD
         injury_triggers: fire
@@ -1975,10 +1975,10 @@ scenes:
         spo2: 97
     environment:
       decision_environment:
-        aid_delay:
+        aid:
         - delay: 1440
           id: delay-0
-          type: unknown
+          type: unknown evac
         air_quality: green
         city_infrastructure: TBD
         injury_triggers: fire
@@ -2151,10 +2151,10 @@ scenes:
         spo2: 97
     environment:
       decision_environment:
-        aid_delay:
+        aid:
         - delay: 1440
           id: delay-0
-          type: unknown
+          type: unknown evac
         air_quality: green
         city_infrastructure: TBD
         injury_triggers: fire
@@ -2296,10 +2296,10 @@ state:
       avpu: ALERT
   environment:
     decision_environment:
-      aid_delay:
+      aid:
       - delay: 1440
         id: delay-0
-        type: unknown
+        type: unknown evac
       air_quality: green
       city_infrastructure: TBD
       injury_triggers: fire

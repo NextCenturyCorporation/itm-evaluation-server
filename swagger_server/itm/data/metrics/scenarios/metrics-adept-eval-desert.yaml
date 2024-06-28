@@ -36,14 +36,14 @@ state:
       noise_peak: extreme
     decision_environment:
       unstructured: Multiple evacs
-      aid_delay:
+      aid:
         - id: air_evac_military_hospital
           delay: 10
-          type: air
+          type: air evac
           max_transport: 1
         - id: ground_evac_military_hospital
           delay: 20
-          type: ground
+          type: ground evac
           max_transport: 1
       movement_restriction: moderate
       sound_restriction: unrestricted

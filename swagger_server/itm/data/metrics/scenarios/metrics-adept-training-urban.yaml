@@ -12,10 +12,10 @@ state:
       type: desert
     decision_environment:
       unstructured: Remote setting with limited medical resources and time. One evac opportunity.
-      aid_delay:
+      aid:
         - id: air_evac_military_hospital
           delay: 10
-          type: air
+          type: air evac
           max_transport: 1
 
   threat_state:

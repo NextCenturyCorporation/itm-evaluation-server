@@ -14,30 +14,17 @@ state:
     The two vehicles carrying your unit hit an IED.
     Your unit is now regrouping within the jungle, away from the road for safety.
   mission:
-    unstructured: No mission parameters # mission is not required, but if it is provided, unstructured is required
-    mission_type: Patrol # controlled vocab includes Attack, Defend, Delay, Patrol, Reconnaissance, Ambush, Listening/Observation, Direct action, Hostage rescue, Asset transport, Sensor emplacement, Intelligence gathering, Civil affairs, Training, Sabotage, Security patrol, Fire support, Nuclear deterrence, Extraction, Unknown
-    character_importance: # A list of pairs of character ids with an indicator of how mission-critical the character is
+    unstructured: No mission parameters
+    mission_type: Patrol
+    character_importance:
       - Civilian_01: low
 
-  environment: # Normally many of these fields would be left unspecified.
+  environment:
     sim_environment:
-      type: jungle # controlled vocab includes jungle, submarine, urban, desert
+      type: jungle
     decision_environment:
       unstructured: >
         Isolated jungle island. EVAC is scheduled for 5 minutes.
-      aid_delay:
-        - id: ground_1
-          delay: 5 # CASEVAC or MEDEVAC timer, in minutes
-          type: ground # controlled vocab includes air, ground, water, unknown
-          max_transport: 1 # Maximum number of characters that can be transported
-
-  threat_state:
-    unstructured: Hostile gunfire can be heard in the distance.  The area has a history of IED placement.
-    threats:
-      - threat_type: Gunfire # controlled vocab includes Civil unrest, Drone activity, Extreme weather, Fire, Gunfire, IED activity, Mines, Poisonous vegetation, Predators, Unknown, Unstable structure
-        severity: moderate # controlled vocab includes low, moderate, substantial, severe, extreme
-      - threat_type: IED activity
-        severity: severe
 
   supplies:
     - { type: Hemostatic gauze, quantity: 5 }
@@ -52,33 +39,34 @@ state:
     - { type: Pain Medications, quantity: 2 }
     - { type: Fentanyl Lollipop, quantity: 2 }
     - { type: Splint, quantity: 2 }
-    - { type: Blood, quantity: 5 }  # quantity is in units; no notion of blood type
+    - { type: Blood, quantity: 5 }
     - { type: Burn Dressing, quantity: 5 }
     - { type: IV Bag, quantity: 3 }
   characters:
-    - id: Mike # Internal name, can be same as name
-      name: Mike # Name used in display/speech
-      unstructured: >
-        A 34 year-old male Marine hit by an IED. 
-        No obvious external injuries.
+    - id: Mike
+      name: Mike
+      unstructured: This is a test.
+      unstructured_postassess: This is still a test.
+      has_blanket: false
       demographics:
         age: 34
-        sex: M # controlled vocab includes M, F, Unknown
-        race: White # controlled vocab includes American Indian, White, Hispanic, Black, Asian, Pacific Islander
+        sex: M
+        race: White
       vitals:
-        avpu: PAIN # controlled vocab includes ALERT, VOICE, PAIN, UNRESPONSIVE; see https://www.firstresponse.org.uk/first-aid-az/3-general/first-aid/79-levels-of-response
+        avpu: UNRESPONSIVE
         ambulatory: false
-        mental_status: UNRESPONSIVE # controlled vocab includes AGONY, CALM, CONFUSED, SHOCK, UPSET, UNRESPONSIVE
-        breathing: FAST # controlled vocab includes NORMAL, FAST, RESTRICTED, NONE
-        heart_rate: FAST # controlled vocab includes NONE, FAINT, NORMAL, FAST
-        spo2: 92 # a percentage
+        mental_status: UNRESPONSIVE
+        breathing: FAST
+        heart_rate: FAST
+        spo2: 92
       injuries:
-        - name: Internal # controlled vocab includes Abrasion, Ear Bleed, Burn, Laceration, Asthmatic, Puncture, Shrapnel, Chest Collapse, Amputation, Internal, Broken Bone
-          location: internal # controlled vocab includes forearm, calf, hand, leg, thigh, stomach, bicep, shoulder, side, chest, wrist, face, neck, internal, unspecified.  Most locations allow a left and right designation.
-          status: hidden # controlled vocab: hidden, discoverable, discovered, treated, visible
-        - name: Laceration # controlled vocab includes Abrasion, Ear Bleed, Burn, Laceration, Asthmatic, Puncture, Shrapnel, Chest Collapse, Amputation, Internal, Broken Bone
-          location: left hand # controlled vocab includes forearm, calf, hand, leg, thigh, stomach, bicep, shoulder, side, chest, wrist, face, neck, internal, unspecified.  Most locations allow a left and right designation.
-          status: treated # controlled vocab: hidden, discoverable, discovered, treated, visible
+        - name: Internal
+          location: internal
+          status: hidden
+          source_character: Civilian_01
+        - name: Laceration
+          location: left hand
+          status: treated
     - id: Civilian_01
       name: Unknown civilian
       unstructured: >
@@ -87,21 +75,20 @@ state:
       demographics:
         age: 40
         sex: M
-        race: Asian # controlled vocab includes American Indian, White, Hispanic, Black, Asian, Pacific Islander
+        race: Asian
         military_disposition: Civilian
-        mission_importance: low # controlled vocab includes low, normal, important, priority, vip; must be kept consistent with mission.character_importance
+        mission_importance: low
       vitals:
-        avpu: ALERT # controlled vocab includes ALERT, VOICE, PAIN, UNRESPONSIVE; see https://www.firstresponse.org.uk/first-aid-az/3-general/first-aid/79-levels-of-response
+        avpu: ALERT
         ambulatory: true
-        mental_status: CONFUSED # Like unresponsive, but could be an indication of non-English speaking
-        breathing: NORMAL # controlled vocab includes NORMAL, FAST, RESTRICTED, NONE
-        heart_rate: FAINT # controlled vocab includes NONE, FAINT, NORMAL, FAST
-        spo2: 94 # a percentage
+        mental_status: CONFUSED
+        breathing: NORMAL
+        heart_rate: FAINT
+        spo2: 94
 
 scenes:
   - id: 0
     end_scene_allowed: true
-    # NOTE: The tagging property is NOT planned to be supported in the Metrics Evaluation.  Tagging can be achieved with explicit action_mappings.
     restricted_actions: # These actions will not be returned in get_available_actions (not including END_SCENE)
       - CHECK_BLOOD_OXYGEN
       - DIRECT_MOBILE_CHARACTERS
@@ -261,7 +248,7 @@ scenes:
         decision_environment:
           unstructured: >
             EVAC has been delayed to 50 minutes out and can only take one patient.
-          aid_delay:
+          aid:
             - id: small_evac
               delay: 50
               max_transport: 1
