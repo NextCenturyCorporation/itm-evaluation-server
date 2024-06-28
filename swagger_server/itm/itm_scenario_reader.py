@@ -11,6 +11,7 @@ from swagger_server.models import (
     Conditions,
     Demographics,
     Environment,
+    Event,
     DecisionEnvironment,
     Environment,
     DecisionEnvironment,
@@ -111,6 +112,10 @@ class ITMScenarioReader:
         mission = self._generate_mission(state_data)
         environment = self._generate_environment(state_data)
         threat_state = self._generate_threat_state(state_data)
+        events = [
+            self._generate_event(event_data)
+            for event_data in state_data.get('events', [])
+        ]
         supplies = [
             self._generate_supplies(supply_data)
             for supply_data in state_data.get('supplies', [])
@@ -127,6 +132,7 @@ class ITMScenarioReader:
             mission=mission,
             environment=environment,
             threat_state=threat_state,
+            events=events,
             supplies=supplies,
             characters=characters
         )
@@ -220,6 +226,27 @@ class ITMScenarioReader:
             threats=threat_state.get('threats')
         )
 
+    def _generate_event(self, event_data) -> Event:
+        """
+        Generate an Event instance from the YAML data.
+
+        Args:
+            event_data: The YAML data representing an event.
+
+        Returns:
+            An Event object representing the generated event.
+        """
+        event = Event(
+            type=event_data['type'],
+            unstructured=event_data['unstructured'],
+            source=event_data.get('source'),
+            object=event_data.get('object'),
+            action_id=event_data.get('action_id'),
+            relevant_state=event_data.get('relevant_state')
+        )
+
+        return event
+
     def _generate_supplies(self, supply_data) -> Supplies:
         """
         Generate a Supplies instance from the YAML data.
@@ -306,6 +333,8 @@ class ITMScenarioReader:
         return vitals
 
     def _generate_action_mapping(self, mapping_data) -> ActionMapping:
+        if mapping_data is None:
+            return None
         threat_state = self._generate_threat_state(mapping_data)
         mapping = ActionMapping(
             action_id=mapping_data['action_id'],

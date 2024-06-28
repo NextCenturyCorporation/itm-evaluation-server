@@ -8,6 +8,7 @@ from typing import List, Dict  # noqa: F401
 from swagger_server.models.base_model_ import Model
 from swagger_server.models.character import Character  # noqa: F401,E501
 from swagger_server.models.environment import Environment  # noqa: F401,E501
+from swagger_server.models.event import Event  # noqa: F401,E501
 from swagger_server.models.meta_info import MetaInfo  # noqa: F401,E501
 from swagger_server.models.mission import Mission  # noqa: F401,E501
 from swagger_server.models.supplies import Supplies  # noqa: F401,E501
@@ -20,7 +21,7 @@ class State(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, unstructured: str=None, elapsed_time: int=None, meta_info: MetaInfo=None, scenario_complete: bool=None, mission: Mission=None, environment: Environment=None, threat_state: ThreatState=None, supplies: List[Supplies]=None, characters: List[Character]=None):  # noqa: E501
+    def __init__(self, unstructured: str=None, elapsed_time: int=None, meta_info: MetaInfo=None, scenario_complete: bool=None, mission: Mission=None, environment: Environment=None, threat_state: ThreatState=None, events: List[Event]=None, supplies: List[Supplies]=None, characters: List[Character]=None):  # noqa: E501
         """State - a model defined in Swagger
 
         :param unstructured: The unstructured of this State.  # noqa: E501
@@ -37,6 +38,8 @@ class State(Model):
         :type environment: Environment
         :param threat_state: The threat_state of this State.  # noqa: E501
         :type threat_state: ThreatState
+        :param events: The events of this State.  # noqa: E501
+        :type events: List[Event]
         :param supplies: The supplies of this State.  # noqa: E501
         :type supplies: List[Supplies]
         :param characters: The characters of this State.  # noqa: E501
@@ -50,6 +53,7 @@ class State(Model):
             'mission': Mission,
             'environment': Environment,
             'threat_state': ThreatState,
+            'events': List[Event],
             'supplies': List[Supplies],
             'characters': List[Character]
         }
@@ -62,6 +66,7 @@ class State(Model):
             'mission': 'mission',
             'environment': 'environment',
             'threat_state': 'threat_state',
+            'events': 'events',
             'supplies': 'supplies',
             'characters': 'characters'
         }
@@ -72,6 +77,7 @@ class State(Model):
         self._mission = mission
         self._environment = environment
         self._threat_state = threat_state
+        self._events = events
         self._supplies = supplies
         self._characters = characters
 
@@ -242,6 +248,29 @@ class State(Model):
         """
 
         self._threat_state = threat_state
+
+    @property
+    def events(self) -> List[Event]:
+        """Gets the events of this State.
+
+        A list of scenario events to inform decision-making  # noqa: E501
+
+        :return: The events of this State.
+        :rtype: List[Event]
+        """
+        return self._events
+
+    @events.setter
+    def events(self, events: List[Event]):
+        """Sets the events of this State.
+
+        A list of scenario events to inform decision-making  # noqa: E501
+
+        :param events: The events of this State.
+        :type events: List[Event]
+        """
+
+        self._events = events
 
     @property
     def supplies(self) -> List[Supplies]:

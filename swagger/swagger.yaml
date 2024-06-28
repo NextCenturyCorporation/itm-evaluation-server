@@ -550,6 +550,11 @@ components:
           $ref: "#/components/schemas/Environment"
         threat_state:
           $ref: "#/components/schemas/ThreatState"
+        events:
+          type: array
+          description: A list of scenario events to inform decision-making
+          items:
+            $ref: "#/components/schemas/Event"
         supplies:
           type: array
           description: A list of supplies available to the medic
@@ -739,6 +744,39 @@ components:
           $ref: "#/components/schemas/ThreatTypeEnum"
         severity:
           $ref: "#/components/schemas/ThreatSeverityEnum"
+    Event:
+      required:
+        - unstructured
+        - type
+      type: object
+      description: an unit of structured communication from scenario to ADM
+      properties:
+        unstructured:
+          type: string
+          description: Natural language, plain text description of the event
+        type:
+          $ref: "#/components/schemas/EventTypeEnum"
+        source:
+          type: string
+          description: "The 'subject' of the event; can be a character `id` or an `EntityTypeEnum`"
+        object:
+          type: string
+          description: "The 'object' of the event; can be a character `id` or an `EntityTypeEnum`"
+        action_id:
+          type: string
+          description: An action ID from among the available actions
+        relevant_state:
+          type: array
+          description: An array of relevant state for the Event
+          items:
+            description: >
+              string paths within the `State` object, in which indexed lists are context-sensitive:
+              for an aid_delay or a character, it's the id;
+              for a supply, it's the type;
+              for a threat, it's the threat_type;
+              for an injury, it's the location
+            type: string
+            example: environment.decision_environment.aid_delay[civilian_facility].max_transport
     Supplies:
       required:
         - quantity
@@ -1454,6 +1492,27 @@ components:
         - substantial
         - severe
         - extreme
+    EventTypeEnum:
+      type: string
+      description: "an enumeration of available event types; the 'verb' of the event"
+      enum:
+        - change
+        - emphasize
+        - inform
+        - order
+        - recommend
+        - tbd
+    EntityTypeEnum:
+      type: string
+      description: an enumeration of available entity types; can be a subject or object
+      enum:
+        - ally
+        - adversary
+        - civilian
+        - commander
+        - everybody
+        - medic
+        - tbd
     SupplyTypeEnum:
       type: string
       description: an enumeration of available supply types
