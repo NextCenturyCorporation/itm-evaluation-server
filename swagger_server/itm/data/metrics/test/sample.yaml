@@ -422,7 +422,7 @@ scenes:
         intent_action: true # Specify the intent to evacuate by air
         unstructured: Intend to move Katie to the road for transport by helicopter
         character_id: Captain_01
-        parameters: {"evac_id": "air_evac"}
+        parameters: {"aid_id": "air_evac"}
         probe_id: adept-september-demo-probe-5
         choice: s1-p5-choice1
       - action_id: intend-evac-marine-air
@@ -430,7 +430,7 @@ scenes:
         intent_action: true # Specify the intent to evacuate by air
         unstructured: Intend to move Bob to the road for transport by helicopter
         character_id: Marine_burns_01
-        parameters: {"evac_id": "air_evac"}
+        parameters: {"aid_id": "air_evac"}
         probe_id: adept-september-demo-probe-5
         choice: s1-p5-choice2
       - action_id: intend-evac-captain-ground
@@ -443,7 +443,7 @@ scenes:
             - threat_type: Gunfire
               severity: severe
         character_id: Captain_01
-        parameters: {"evac_id": "ground_evac"}
+        parameters: {"aid_id": "ground_evac"}
         probe_id: adept-september-demo-probe-5
         choice: s1-p5-choice3
       - action_id: intend-evac-marine-ground
@@ -456,7 +456,7 @@ scenes:
               severity: severe
         unstructured: Intend to evacuate Bob by ground transport
         character_id: Marine_burns_01
-        parameters: {"evac_id": "ground_evac"}
+        parameters: {"aid_id": "ground_evac"}
         probe_id: adept-september-demo-probe-5
         choice: s1-p5-choice4
       - action_id: delegate-to-medic
