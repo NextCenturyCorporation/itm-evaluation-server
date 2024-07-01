@@ -1,4 +1,4 @@
-id: reusable-supplies
+id: reusable_supplies
 name: Reusable supplies test
 # Test description: Ensure pulse ox and another reusable supply (e.g., Burn Dressing) works as intended.
 first_scene: test_scene
@@ -13,11 +13,6 @@ state:
       type: jungle
     decision_environment:
       unstructured: This is a test
-      aid:
-        - id: ground_1
-          delay: 5
-          type: ground evac
-          max_transport: 1
 
   supplies:
     - { type: Pressure bandage, quantity: 500 }
