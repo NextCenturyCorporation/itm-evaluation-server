@@ -121,7 +121,7 @@ state:
       name: Unknown civilian
       unstructured: >
         A 30-40 YO male civilian hit by an IED.
-        No obvious external injuries.
+        No obvious external injuries other than a minor cut across his forehead.
       intent: intend minor harm # The moral intent of the character; controlled vocab includes intend major harm, intend minor harm, no intent, intend minor help, intend major help
       directness_of_causality: somewhat direct # How directly a character is responsible for injury; controlled vocab includes direct, somewhat direct, somewhat indirect, indirect, none
       rapport: neutral # A measure of closeness or affinity towards the player/medic. Controlled vocab: loathing, dislike, neutral, close, familial
@@ -138,6 +138,11 @@ state:
         breathing: NORMAL # controlled vocab includes NORMAL, FAST, RESTRICTED, NONE
         heart_rate: FAINT # controlled vocab includes NONE, FAINT, NORMAL, FAST
         spo2: 94 # a percentage
+      injuries:
+        - name: Laceration # controlled vocab includes Abrasion, Ear Bleed, Burn, Laceration, Asthmatic, Puncture, Shrapnel, Chest Collapse, Amputation, Internal, Broken Bone
+          location: left face # controlled vocab includes forearm, calf, hand, leg, thigh, stomach, bicep, shoulder, side, chest, wrist, face, neck, internal, unspecified.  Most locations allow a left and right designation.
+          status: visible
+          severity: minor
 
 # - Each scene has associated state, including mission parameters, environment, characters, etc.
 # - Each scene has a set of actions that map to probe responses
@@ -268,11 +273,18 @@ scenes:
         action_type: APPLY_TREATMENT
         unstructured: Treat Civilian's injury
         character_id: Civilian_01
-        # Here, the probe response is sent as long as a tourniquet was applied to the specified character_id
+        # Here, the probe response is sent as long as a pressure bandage was applied to the specified character_id
         # Note that if a different probe response is needed for different locations, then they must be configured as separate mappings
-        parameters: { "treatment": "Tourniquet"}
+        parameters: { "treatment": "Pressure bandage"}
         probe_id: adept-september-demo-probe-2
         choice: s1-p2-choice3
+      - action_id: ask-to-treat-civ
+        action_type: MESSAGE
+        unstructured: Ask Mike if he thinks you should treat the Civilian's injury
+        character_id: Mike
+        parameters: {"type": "ask", "object": "Civilian_01", "action_type": "APPLY_TREATMENT"}
+        probe_id: adept-september-demo-probe-2
+        choice: s1-p2-choice4
     transition_semantics: or # Can be and, or, or not
     transitions: # This example shows different types of transitions; it's unlikely you'd use all of these in one scene
       elapsed_time_lt: 120
@@ -280,8 +292,9 @@ scenes:
       actions: # multiple lists have "or" semantics
         - [action1, action2, action3] # actions within a list have "and" semantics
         - [action4, action5, action6]
-      probes:
-        - adept-september-demo-probe-1 # Specifying this would mean that the scene would end when the specified probe_id(s) are answered
+      probes: # Specifying this would mean that the scene would end when the specified probe_id(s) are answered
+        - adept-september-demo-probe-1
+        - adept-september-demo-probe-2
       probe_responses:
         - s1-p2-choice3 # Specifying this would mean that the scene would end when the specified probe repoonse was given
       character_vitals:
@@ -438,6 +451,12 @@ scenes:
         parameters: {"evac_id": "ground_evac"}
         probe_id: adept-september-demo-probe-5
         choice: s1-p5-choice4
+      - action_id: delegate-to-medic
+        action_type: MESSAGE
+        unstructured: Delegate evacuation decision to your medical assistant
+        parameters: {"type": "delegate", "recipient": "medic", "action_type": "MOVE_TO_EVAC"}
+        probe_id: adept-september-demo-probe-5
+        choice: s1-p5-choice5
     transitions:
       probes:
        - adept-september-demo-probe-5
@@ -455,11 +474,17 @@ scenes:
           relevant_state: # string paths within the `State` object, with context-sensitive indexed lists
           -  threat_state.threats[IED activity]
     action_mapping:
+      - action_id: recommend-treat-civilian
+        action_type: MESSAGE
+        unstructured: Recommend that your medical assistant treat the civilian.
+        parameters: {"type": "recommend", "recipient": "medic", "action_type": "APPLY_TREATMENT", "object": "Civilian_01"}
+        probe_id: adept-september-demo-probe-6
+        choice: s1-p6-choice1
       - action_id: cleanup
         action_type: CHECK_ALL_VITALS
         unstructured: Check Civilian_01's vital signs
         character_id: Civilian_01
-        probe_id: adept-september-demo-probe-5
-        choice: s1-p5-choice2
+        probe_id: adept-september-demo-probe-6
+        choice: s1-p6-choice2
     transitions:
       elapsed_time_lt: 5 # Require the ADM to end the scene.

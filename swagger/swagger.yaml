@@ -1513,6 +1513,17 @@ components:
         - everybody
         - medic
         - tbd
+    MessageTypeEnum:
+      type: string
+      description: an enumeration of available message types
+      enum:
+        - allow
+        - ask
+        - delegate
+        - deny
+        - recommend
+        - wait
+        - tbd
     SupplyTypeEnum:
       type: string
       description: an enumeration of available supply types
@@ -1875,6 +1886,7 @@ components:
         - CHECK_RESPIRATION
         - DIRECT_MOBILE_CHARACTERS
         - END_SCENE
+        - MESSAGE
         - MOVE_TO
         - MOVE_TO_EVAC
         - SEARCH

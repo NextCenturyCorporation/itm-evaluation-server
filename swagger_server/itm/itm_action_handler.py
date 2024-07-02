@@ -188,6 +188,11 @@ class ITMActionHandler:
                 tag = action.parameters.get('category')
                 if not tag in allowed_values:
                     return False, f'Malformed {action.action_type} Action: Invalid Tag `{tag}`', 400
+        elif action.action_type == ActionTypeEnum.MESSAGE:
+            # Ensure they chose one of the pre-configured actions and didn't make up their own MESSAGE
+            scene_action_ids = [mapping.action_id for mapping in self.current_scene.action_mappings]
+            if action.action_id not in scene_action_ids:
+                return False, f'Malformed {action.action_type} Action: action_id `{action.action_id}` is not a valid action_id from the current scene', 400
         elif action.action_type == ActionTypeEnum.MOVE_TO:
             # Can only target unseen characters
             if not action.intent_action and not character.unseen:
@@ -492,6 +497,8 @@ class ITMActionHandler:
                 # The tag is specified in the category parameter
                 time_passed = self.tag_character(character, action.parameters.get('category'))
                 parameters['category'] = action.parameters['category']
+            case _: # Nothing to process except the passage of time
+                time_passed = self.times_dict[action.action_type]
 
         # TODO ITM-72: Implement character deterioration/amelioration
         # Ultimately, this should update values based DIRECTLY on how the sim does it

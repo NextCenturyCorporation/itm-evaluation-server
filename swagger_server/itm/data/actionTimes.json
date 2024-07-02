@@ -23,6 +23,8 @@
     "CHECK_PULSE": 10,
     "CHECK_RESPIRATION": 10,
     "DIRECT_MOBILE_CHARACTERS": 10,
+    "END_SCENE": 0,
+    "MESSAGE": 5,
     "MOVE_TO": 200,
     "MOVE_TO_EVAC": 5,
     "SEARCH": 360,

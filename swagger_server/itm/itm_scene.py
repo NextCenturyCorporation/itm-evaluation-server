@@ -124,6 +124,7 @@ class ITMScene:
         valid_action_types = get_swagger_class_enum_values(ActionTypeEnum)
         valid_action_types.remove(ActionTypeEnum.END_SCENE)
         valid_action_types.remove(ActionTypeEnum.SEARCH) # This requires support in configuration, so don't add it.
+        valid_action_types.remove(ActionTypeEnum.MESSAGE) # This must be pre-configured, so don't add it.
         # Only add MOVE_TO if there are unseen characters.
         if not any(character.unseen for character in state.characters):
             valid_action_types.remove(ActionTypeEnum.MOVE_TO)
