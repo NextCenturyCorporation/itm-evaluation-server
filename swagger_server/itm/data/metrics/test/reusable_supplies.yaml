@@ -1,54 +1,49 @@
-id: reusable-supplies
+id: reusable_supplies
 name: Reusable supplies test
 # Test description: Ensure pulse ox and another reusable supply (e.g., Burn Dressing) works as intended.
 first_scene: test_scene
 state:
   unstructured: This is a test
   mission:
-    unstructured: No mission parameters # mission is not required, but if it is provided, unstructured is required
-    mission_type: Patrol # controlled vocab includes Attack, Defend, Delay, Patrol, Reconnaissance, Ambush, Listening/Observation, Direct action, Hostage rescue, Asset transport, Sensor emplacement, Intelligence gathering, Civil affairs, Training, Sabotage, Security patrol, Fire support, Nuclear deterrence, Extraction, Unknown
+    unstructured: No mission parameters
+    mission_type: Patrol
 
-  environment: # Normally many of these fields would be left unspecified.
+  environment:
     sim_environment:
-      type: jungle # controlled vocab includes jungle, submarine, urban, desert
+      type: jungle
     decision_environment:
       unstructured: This is a test
-      aid_delay:
-        - id: ground_1
-          delay: 5 # CASEVAC or MEDEVAC timer, in minutes
-          type: ground # controlled vocab includes air, ground, water, unknown
-          max_transport: 1 # Maximum number of characters that can be transported
 
   supplies:
     - { type: Pressure bandage, quantity: 500 }
     - { type: Pulse Oximeter, quantity: 1, reusable: True }
     - { type: Burn Dressing, quantity: 1, reusable: True }
   characters:
-    - id: Mike # Internal name, can be same as name
-      name: Mike # Name used in display/speech
+    - id: Mike
+      name: Mike
       unstructured: This is a test.
       unstructured_postassess: This is still a test.
-      has_blanket: false # Whether or not a blanket has been placed on or under a character
+      has_blanket: false
       demographics:
         age: 34
-        sex: M # controlled vocab includes M, F, Unknown
-        race: White # controlled vocab includes American Indian, White, Hispanic, Black, Asian, Pacific Islander
+        sex: M
+        race: White
       vitals:
-        avpu: UNRESPONSIVE # controlled vocab includes ALERT, VOICE, PAIN, UNRESPONSIVE; see https://www.firstresponse.org.uk/first-aid-az/3-general/first-aid/79-levels-of-response
+        avpu: UNRESPONSIVE
         ambulatory: false
-        mental_status: UNRESPONSIVE # controlled vocab includes AGONY, CALM, CONFUSED, SHOCK, UPSET, UNRESPONSIVE
-        breathing: FAST # controlled vocab includes NORMAL, FAST, RESTRICTED, NONE
-        heart_rate: FAST # controlled vocab includes NONE, FAINT, NORMAL, FAST
-        spo2: 92 # a percentage
+        mental_status: UNRESPONSIVE
+        breathing: FAST
+        heart_rate: FAST
+        spo2: 92
       injuries:
-        - name: Internal # controlled vocab includes Abrasion, Ear Bleed, Burn, Laceration, Asthmatic, Puncture, Shrapnel, Chest Collapse, Amputation, Internal, Broken Bone
-          location: internal # controlled vocab includes forearm, calf, hand, leg, thigh, stomach, bicep, shoulder, side, chest, wrist, face, neck, internal, unspecified.  Most locations allow a left and right designation.
-          status: hidden # controlled vocab: hidden, discoverable, discovered, treated, visible
-          source_character: Civilian_01 # The character id of the person responsible for the injury
-        - name: Burn # controlled vocab includes Abrasion, Ear Bleed, Burn, Laceration, Asthmatic, Puncture, Shrapnel, Chest Collapse, Amputation, Internal, Broken Bone
-          location: right chest # controlled vocab includes forearm, calf, hand, leg, thigh, stomach, bicep, shoulder, side, chest, wrist, face, neck, internal, unspecified.  Most locations allow a left and right designation.
-          status: discoverable # controlled vocab: hidden, discoverable, discovered, treated, visible
-          severity: substantial # controlled vocab: minor, moderate, substantial, major, extreme
+        - name: Internal
+          location: internal
+          status: hidden
+          source_character: Civilian_01
+        - name: Burn
+          location: right chest
+          status: discoverable
+          severity: substantial
     - id: Civilian_01
       name: Unknown civilian
       unstructured: This is a test.
@@ -56,24 +51,24 @@ state:
       demographics:
         age: 40
         sex: M
-        race: Asian # controlled vocab includes American Indian, White, Hispanic, Black, Asian, Pacific Islander
+        race: Asian
       vitals:
-        avpu: ALERT # controlled vocab includes ALERT, VOICE, PAIN, UNRESPONSIVE; see https://www.firstresponse.org.uk/first-aid-az/3-general/first-aid/79-levels-of-response
+        avpu: ALERT
         ambulatory: true
-        mental_status: CONFUSED # Like unresponsive, but could be an indication of non-English speaking
-        breathing: NORMAL # controlled vocab includes NORMAL, FAST, RESTRICTED, NONE
-        heart_rate: FAINT # controlled vocab includes NONE, FAINT, NORMAL, FAST
-        spo2: 94 # a percentage
+        mental_status: CONFUSED
+        breathing: NORMAL
+        heart_rate: FAINT
+        spo2: 94
       injuries:
-        - name: Burn # controlled vocab includes Abrasion, Ear Bleed, Burn, Laceration, Asthmatic, Puncture, Shrapnel, Chest Collapse, Amputation, Internal, Broken Bone
-          location: right chest # controlled vocab includes forearm, calf, hand, leg, thigh, stomach, bicep, shoulder, side, chest, wrist, face, neck, internal, unspecified.  Most locations allow a left and right designation.
-          status: discoverable # controlled vocab: hidden, discoverable, discovered, treated, visible
-          severity: substantial # controlled vocab: minor, moderate, substantial, major, extreme
+        - name: Burn
+          location: right chest
+          status: discoverable
+          severity: substantial
 
 scenes:
   - id: test_scene
     end_scene_allowed: false
-    restricted_actions: # These actions will not be returned in get_available_actions (not including END_SCENE)
+    restricted_actions:
       - TAG_CHARACTER
       - CHECK_RESPIRATION
       - CHECK_PULSE

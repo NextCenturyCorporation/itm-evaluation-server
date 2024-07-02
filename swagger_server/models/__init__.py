@@ -3,7 +3,7 @@ from __future__ import absolute_import
 from swagger_server.models.action import Action
 from swagger_server.models.action_mapping import ActionMapping
 from swagger_server.models.action_type_enum import ActionTypeEnum
-from swagger_server.models.aid_delay import AidDelay
+from swagger_server.models.aid import Aid
 from swagger_server.models.aid_type_enum import AidTypeEnum
 from swagger_server.models.air_quality_enum import AirQualityEnum
 from swagger_server.models.alignment_results import AlignmentResults
@@ -46,6 +46,7 @@ from swagger_server.models.intent_enum import IntentEnum
 from swagger_server.models.kdma_value import KDMAValue
 from swagger_server.models.lighting_type_enum import LightingTypeEnum
 from swagger_server.models.mental_status_enum import MentalStatusEnum
+from swagger_server.models.message_type_enum import MessageTypeEnum
 from swagger_server.models.meta_info import MetaInfo
 from swagger_server.models.military_branch_enum import MilitaryBranchEnum
 from swagger_server.models.military_disposition_enum import MilitaryDispositionEnum

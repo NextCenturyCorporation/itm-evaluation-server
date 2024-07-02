@@ -207,7 +207,7 @@ class ITMScenarioReader:
         environment = state['environment'].get('decision_environment', {})
         return DecisionEnvironment(
             unstructured=environment.get('unstructured'),
-            aid_delay=environment.get('aid_delay'),
+            aid=environment.get('aid'),
             movement_restriction=environment.get('movement_restriction'),
             sound_restriction=environment.get('sound_restriction'),
             oxygen_levels=environment.get('oxygen_levels'),

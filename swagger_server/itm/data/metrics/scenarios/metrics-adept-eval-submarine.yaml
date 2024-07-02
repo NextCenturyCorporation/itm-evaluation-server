@@ -38,7 +38,7 @@ state:
       noise_peak: normal
     decision_environment:
       unstructured:  Due to tight environment, you can only be brought patients one at a time.
-      aid_delay: []
+      aid: []
       movement_restriction: severe
       sound_restriction: unrestricted
       oxygen_levels: normal

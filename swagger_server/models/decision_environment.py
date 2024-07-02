@@ -6,7 +6,7 @@ from datetime import date, datetime  # noqa: F401
 from typing import List, Dict  # noqa: F401
 
 from swagger_server.models.base_model_ import Model
-from swagger_server.models.aid_delay import AidDelay  # noqa: F401,E501
+from swagger_server.models.aid import Aid  # noqa: F401,E501
 from swagger_server.models.air_quality_enum import AirQualityEnum  # noqa: F401,E501
 from swagger_server.models.injury_trigger_enum import InjuryTriggerEnum  # noqa: F401,E501
 from swagger_server.models.movement_restriction_enum import MovementRestrictionEnum  # noqa: F401,E501
@@ -21,13 +21,13 @@ class DecisionEnvironment(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, unstructured: str=None, aid_delay: List[AidDelay]=None, movement_restriction: MovementRestrictionEnum=None, sound_restriction: SoundRestrictionEnum=None, oxygen_levels: OxygenLevelsEnum=None, population_density: PopulationDensityEnum=None, injury_triggers: InjuryTriggerEnum=None, air_quality: AirQualityEnum=None, city_infrastructure: str=None):  # noqa: E501
+    def __init__(self, unstructured: str=None, aid: List[Aid]=None, movement_restriction: MovementRestrictionEnum=None, sound_restriction: SoundRestrictionEnum=None, oxygen_levels: OxygenLevelsEnum=None, population_density: PopulationDensityEnum=None, injury_triggers: InjuryTriggerEnum=None, air_quality: AirQualityEnum=None, city_infrastructure: str=None):  # noqa: E501
         """DecisionEnvironment - a model defined in Swagger
 
         :param unstructured: The unstructured of this DecisionEnvironment.  # noqa: E501
         :type unstructured: str
-        :param aid_delay: The aid_delay of this DecisionEnvironment.  # noqa: E501
-        :type aid_delay: List[AidDelay]
+        :param aid: The aid of this DecisionEnvironment.  # noqa: E501
+        :type aid: List[Aid]
         :param movement_restriction: The movement_restriction of this DecisionEnvironment.  # noqa: E501
         :type movement_restriction: MovementRestrictionEnum
         :param sound_restriction: The sound_restriction of this DecisionEnvironment.  # noqa: E501
@@ -45,7 +45,7 @@ class DecisionEnvironment(Model):
         """
         self.swagger_types = {
             'unstructured': str,
-            'aid_delay': List[AidDelay],
+            'aid': List[Aid],
             'movement_restriction': MovementRestrictionEnum,
             'sound_restriction': SoundRestrictionEnum,
             'oxygen_levels': OxygenLevelsEnum,
@@ -57,7 +57,7 @@ class DecisionEnvironment(Model):
 
         self.attribute_map = {
             'unstructured': 'unstructured',
-            'aid_delay': 'aid_delay',
+            'aid': 'aid',
             'movement_restriction': 'movement_restriction',
             'sound_restriction': 'sound_restriction',
             'oxygen_levels': 'oxygen_levels',
@@ -67,7 +67,7 @@ class DecisionEnvironment(Model):
             'city_infrastructure': 'city_infrastructure'
         }
         self._unstructured = unstructured
-        self._aid_delay = aid_delay
+        self._aid = aid
         self._movement_restriction = movement_restriction
         self._sound_restriction = sound_restriction
         self._oxygen_levels = oxygen_levels
@@ -113,27 +113,27 @@ class DecisionEnvironment(Model):
         self._unstructured = unstructured
 
     @property
-    def aid_delay(self) -> List[AidDelay]:
-        """Gets the aid_delay of this DecisionEnvironment.
+    def aid(self) -> List[Aid]:
+        """Gets the aid of this DecisionEnvironment.
 
-        A list of evacuation opportunities  # noqa: E501
+        A list of available forms of aid  # noqa: E501
 
-        :return: The aid_delay of this DecisionEnvironment.
-        :rtype: List[AidDelay]
+        :return: The aid of this DecisionEnvironment.
+        :rtype: List[Aid]
         """
-        return self._aid_delay
+        return self._aid
 
-    @aid_delay.setter
-    def aid_delay(self, aid_delay: List[AidDelay]):
-        """Sets the aid_delay of this DecisionEnvironment.
+    @aid.setter
+    def aid(self, aid: List[Aid]):
+        """Sets the aid of this DecisionEnvironment.
 
-        A list of evacuation opportunities  # noqa: E501
+        A list of available forms of aid  # noqa: E501
 
-        :param aid_delay: The aid_delay of this DecisionEnvironment.
-        :type aid_delay: List[AidDelay]
+        :param aid: The aid of this DecisionEnvironment.
+        :type aid: List[Aid]
         """
 
-        self._aid_delay = aid_delay
+        self._aid = aid
 
     @property
     def movement_restriction(self) -> MovementRestrictionEnum:

@@ -177,7 +177,7 @@ class ITMScenario:
            1a. Remove `removed_characters`, even if in configured scene state.
         2. For `supplies`, add or update any specified supplies.
         3. For everything else, replace any specified (non-None) values
-           3a. Lists are copied whole (e.g., `character_importance`, `aid_delay`, `threats`).
+           3a. Lists are copied whole (e.g., `character_importance`, `aid`, `threats`).
         4. Clear hidden data (e.g., character vitals)
         5. Update MetaInfo with new scene ID if training mode
         '''
@@ -248,7 +248,7 @@ class ITMScenario:
             current_state.supplies.extend(deepcopy(new_supplies))
 
         # Rule 3: For everything else except Events, replace any specified (non-None) values. Events are always replaced.
-        # Lists are copied whole (e.g., `character_importance`, `aid_delay`, `threats`).
+        # Lists are copied whole (e.g., `character_importance`, `aid`, `threats`).
         if target_state.unstructured:
             current_state.unstructured = target_state.unstructured
         current_state.threat_state = self.update_property(current_state.threat_state, target_state.threat_state)

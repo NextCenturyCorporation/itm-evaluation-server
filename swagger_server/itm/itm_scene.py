@@ -129,8 +129,8 @@ class ITMScene:
         if not any(character.unseen for character in state.characters):
             valid_action_types.remove(ActionTypeEnum.MOVE_TO)
         # Only add MOVE_TO_EVAC if there is an evacuation available.
-        if state.environment.decision_environment is None or state.environment.decision_environment.aid_delay is None \
-            or state.environment.decision_environment.aid_delay == []:
+        if state.environment.decision_environment is None or state.environment.decision_environment.aid is None \
+            or state.environment.decision_environment.aid == []:
             valid_action_types.remove(ActionTypeEnum.MOVE_TO_EVAC)
         #TODO: uncomment when tagging configuration is supported (ITM-217)
         #valid_action_types.remove(ActionTypeEnum.TAG_CHARACTER)
