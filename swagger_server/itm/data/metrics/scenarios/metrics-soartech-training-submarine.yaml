@@ -306,7 +306,7 @@ scenes:
         avpu: PAIN
         breathing: NONE
         heart_rate: FAST
-        spo2: 75
+        spo2: NONE
     - demographics:
         age: 36
         military_branch: US Marine Corps
@@ -460,7 +460,7 @@ scenes:
         avpu: UNRESPONSIVE
         breathing: NONE
         heart_rate: NORMAL
-        spo2: 97
+        spo2: NORMAL
     - demographics:
         age: 36
         military_branch: US Marine Corps
@@ -489,7 +489,7 @@ scenes:
         avpu: UNRESPONSIVE
         breathing: NONE
         heart_rate: FAST
-        spo2: 72
+        spo2: NONE
     environment:
       decision_environment:
         aid:
@@ -635,7 +635,7 @@ scenes:
         avpu: PAIN
         breathing: NONE
         heart_rate: NORMAL
-        spo2: 97
+        spo2: NORMAL
     - demographics:
         age: 36
         military_branch: US Marine Corps
@@ -664,7 +664,7 @@ scenes:
         avpu: UNRESPONSIVE
         breathing: NONE
         heart_rate: FAST
-        spo2: 72
+        spo2: NONE
     environment:
       decision_environment:
         aid:
@@ -816,7 +816,7 @@ scenes:
         avpu: PAIN
         breathing: NONE
         heart_rate: FAST
-        spo2: 72
+        spo2: NONE
     - demographics:
         age: 36
         military_branch: US Marine Corps
@@ -845,7 +845,7 @@ scenes:
         avpu: PAIN
         breathing: NONE
         heart_rate: FAST
-        spo2: 69
+        spo2: NONE
     environment:
       decision_environment:
         aid:
@@ -989,7 +989,7 @@ scenes:
         avpu: PAIN
         breathing: NONE
         heart_rate: FAST
-        spo2: 72
+        spo2: NONE
     - demographics:
         age: 36
         military_branch: US Marine Corps
@@ -1018,7 +1018,7 @@ scenes:
         avpu: PAIN
         breathing: NONE
         heart_rate: FAST
-        spo2: 69
+        spo2: NONE
     environment:
       decision_environment:
         aid:
@@ -1526,7 +1526,7 @@ scenes:
         avpu: ALERT
         breathing: FAST
         heart_rate: FAST
-        spo2: 91
+        spo2: LOW
     - demographics:
         age: 25
         military_branch: US Marine Corps
@@ -1559,7 +1559,7 @@ scenes:
         avpu: ALERT
         breathing: NORMAL
         heart_rate: FAST
-        spo2: 97
+        spo2: NORMAL
     environment:
       decision_environment:
         aid:
@@ -1748,7 +1748,7 @@ scenes:
         avpu: ALERT
         breathing: FAST
         heart_rate: FAST
-        spo2: 91
+        spo2: LOW
     - demographics:
         age: 25
         military_branch: US Marine Corps
@@ -1781,7 +1781,7 @@ scenes:
         avpu: UNRESPONSIVE
         breathing: NORMAL
         heart_rate: FAST
-        spo2: 97
+        spo2: NORMAL
     environment:
       decision_environment:
         aid:
@@ -1939,7 +1939,7 @@ scenes:
         avpu: ALERT
         breathing: FAST
         heart_rate: FAST
-        spo2: 91
+        spo2: LOW
     - demographics:
         age: 25
         military_branch: US Marine Corps
@@ -1972,7 +1972,7 @@ scenes:
         avpu: UNRESPONSIVE
         breathing: NORMAL
         heart_rate: FAST
-        spo2: 97
+        spo2: NORMAL
     environment:
       decision_environment:
         aid:
@@ -2115,7 +2115,7 @@ scenes:
         avpu: ALERT
         breathing: FAST
         heart_rate: FAST
-        spo2: 91
+        spo2: LOW
     - demographics:
         age: 25
         military_branch: US Marine Corps
@@ -2148,7 +2148,7 @@ scenes:
         avpu: UNRESPONSIVE
         breathing: NORMAL
         heart_rate: FAST
-        spo2: 97
+        spo2: NORMAL
     environment:
       decision_environment:
         aid:

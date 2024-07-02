@@ -52,7 +52,7 @@ state:
         mental_status: SHOCK
         breathing: FAST
         heart_rate: FAST
-        spo2: 90
+        spo2: LOW
       injuries:
         - name: Internal
           location: internal
@@ -73,7 +73,7 @@ state:
         mental_status: SHOCK
         breathing: FAST
         heart_rate: FAST
-        spo2: 90
+        spo2: LOW
       injuries:
         - name: Internal
           location: internal
@@ -146,7 +146,7 @@ scenes:
             mental_status: SHOCK
             breathing: NORMAL
             heart_rate: FAST
-            spo2: 90
+            spo2: LOW
           injuries:
             - name: Internal
               location: internal
@@ -168,7 +168,7 @@ scenes:
             mental_status: SHOCK
             breathing: FAST
             heart_rate: FAST
-            spo2: 80
+            spo2: NONE
           injuries:
             - name: Internal
               location: internal
@@ -237,7 +237,7 @@ scenes:
             mental_status: SHOCK
             breathing: FAST
             heart_rate: FAST
-            spo2: 92
+            spo2: NORMAL
           injuries:
             - name: Amputation
               location: left calf
@@ -260,7 +260,7 @@ scenes:
             mental_status: UNRESPONSIVE
             breathing: RESTRICTED
             heart_rate: FAINT
-            spo2: 90
+            spo2: LOW
           injuries:
             - name: Puncture
               location: right face  # head
@@ -328,7 +328,7 @@ scenes:
             mental_status: UNRESPONSIVE
             breathing: RESTRICTED
             heart_rate: FAST
-            spo2: 85
+            spo2: LOW
           injuries:
             - name: Puncture
               location: left chest
@@ -349,7 +349,7 @@ scenes:
             mental_status: AGONY
             breathing: NORMAL
             heart_rate: NORMAL
-            spo2: 92
+            spo2: NORMAL
           injuries:
             - name: Broken Bone
               location: left chest
@@ -422,7 +422,7 @@ scenes:
             mental_status: SHOCK
             breathing: FAST
             heart_rate: FAST
-            spo2: 90
+            spo2: LOW
           injuries:
             - name: Internal
               location: internal
@@ -447,7 +447,7 @@ scenes:
             mental_status: SHOCK
             breathing: FAST
             heart_rate: FAST
-            spo2: 90
+            spo2: LOW
           injuries:
             - name: Internal
               location: internal
@@ -518,7 +518,7 @@ scenes:
             mental_status: SHOCK
             breathing: NORMAL
             heart_rate: FAST
-            spo2: 90
+            spo2: LOW
           injuries:
             - name: Internal
               location: internal
@@ -544,7 +544,7 @@ scenes:
             mental_status: SHOCK
             breathing: FAST
             heart_rate: FAST
-            spo2: 80
+            spo2: NONE
           injuries:
             - name: Internal
               location: internal
@@ -615,7 +615,7 @@ scenes:
             mental_status: SHOCK
             breathing: FAST
             heart_rate: FAST
-            spo2: 92
+            spo2: NORMAL
           injuries:
             - name: Amputation
               location: left calf
@@ -642,7 +642,7 @@ scenes:
             mental_status: UNRESPONSIVE
             breathing: RESTRICTED
             heart_rate: FAINT
-            spo2: 90
+            spo2: LOW
           injuries:
             - name: Puncture
               location: right face  # head
@@ -712,7 +712,7 @@ scenes:
             mental_status: UNRESPONSIVE
             breathing: RESTRICTED
             heart_rate: FAST
-            spo2: 85
+            spo2: LOW
           injuries:
             - name: Puncture
               location: left chest
@@ -737,7 +737,7 @@ scenes:
             mental_status: AGONY
             breathing: NORMAL
             heart_rate: NORMAL
-            spo2: 92
+            spo2: NORMAL
           injuries:
             - name: Broken Bone
               location: left chest
@@ -814,7 +814,7 @@ scenes:
             mental_status: SHOCK
             breathing: FAST
             heart_rate: FAST
-            spo2: 90
+            spo2: LOW
           injuries:
             - name: Internal
               location: internal
@@ -840,7 +840,7 @@ scenes:
             mental_status: SHOCK
             breathing: FAST
             heart_rate: FAST
-            spo2: 90
+            spo2: LOW
           injuries:
             - name: Internal
               location: internal
@@ -913,7 +913,7 @@ scenes:
             mental_status: SHOCK
             breathing: NORMAL
             heart_rate: FAST
-            spo2: 90
+            spo2: LOW
           injuries:
             - name: Internal
               location: internal
@@ -940,7 +940,7 @@ scenes:
             mental_status: SHOCK
             breathing: FAST
             heart_rate: FAST
-            spo2: 80
+            spo2: NONE
           injuries:
             - name: Internal
               location: internal
@@ -1013,7 +1013,7 @@ scenes:
             mental_status: SHOCK
             breathing: FAST
             heart_rate: FAST
-            spo2: 92
+            spo2: NORMAL
           injuries:
             - name: Amputation
               location: left calf
@@ -1041,7 +1041,7 @@ scenes:
             mental_status: UNRESPONSIVE
             breathing: RESTRICTED
             heart_rate: FAINT
-            spo2: 90
+            spo2: LOW
           injuries:
             - name: Puncture
               location: right face  # head
@@ -1113,7 +1113,7 @@ scenes:
             mental_status: UNRESPONSIVE
             breathing: RESTRICTED
             heart_rate: FAST
-            spo2: 85
+            spo2: LOW
           injuries:
             - name: Puncture
               location: left chest
@@ -1139,7 +1139,7 @@ scenes:
             mental_status: AGONY
             breathing: NORMAL
             heart_rate: NORMAL
-            spo2: 92
+            spo2: NORMAL
           injuries:
             - name: Broken Bone
               location: left chest
@@ -1216,7 +1216,7 @@ scenes:
             mental_status: SHOCK
             breathing: FAST
             heart_rate: FAST
-            spo2: 90
+            spo2: LOW
           injuries:
             - name: Internal
               location: internal
@@ -1242,7 +1242,7 @@ scenes:
             mental_status: SHOCK
             breathing: FAST
             heart_rate: FAST
-            spo2: 90
+            spo2: LOW
           injuries:
             - name: Internal
               location: internal
@@ -1315,7 +1315,7 @@ scenes:
             mental_status: SHOCK
             breathing: NORMAL
             heart_rate: FAST
-            spo2: 90
+            spo2: LOW
           injuries:
             - name: Internal
               location: internal
@@ -1342,7 +1342,7 @@ scenes:
             mental_status: SHOCK
             breathing: FAST
             heart_rate: FAST
-            spo2: 80
+            spo2: NONE
           injuries:
             - name: Internal
               location: internal
@@ -1415,7 +1415,7 @@ scenes:
             mental_status: SHOCK
             breathing: FAST
             heart_rate: FAST
-            spo2: 92
+            spo2: NORMAL
           injuries:
             - name: Amputation
               location: left calf
@@ -1443,7 +1443,7 @@ scenes:
             mental_status: UNRESPONSIVE
             breathing: RESTRICTED
             heart_rate: FAINT
-            spo2: 90
+            spo2: LOW
           injuries:
             - name: Puncture
               location: right face  # head
@@ -1515,7 +1515,7 @@ scenes:
             mental_status: UNRESPONSIVE
             breathing: RESTRICTED
             heart_rate: FAST
-            spo2: 85
+            spo2: LOW
           injuries:
             - name: Puncture
               location: left chest
@@ -1541,7 +1541,7 @@ scenes:
             mental_status: AGONY
             breathing: NORMAL
             heart_rate: NORMAL
-            spo2: 92
+            spo2: NORMAL
           injuries:
             - name: Broken Bone
               location: left chest
@@ -1618,7 +1618,7 @@ scenes:
             mental_status: SHOCK
             breathing: FAST
             heart_rate: FAST
-            spo2: 90
+            spo2: LOW
           injuries:
             - name: Internal
               location: internal
@@ -1643,7 +1643,7 @@ scenes:
             mental_status: SHOCK
             breathing: FAST
             heart_rate: FAST
-            spo2: 90
+            spo2: LOW
           injuries:
             - name: Internal
               location: internal
@@ -1716,7 +1716,7 @@ scenes:
             mental_status: SHOCK
             breathing: NORMAL
             heart_rate: FAST
-            spo2: 90
+            spo2: LOW
           injuries:
             - name: Internal
               location: internal
@@ -1742,7 +1742,7 @@ scenes:
             mental_status: SHOCK
             breathing: FAST
             heart_rate: FAST
-            spo2: 80
+            spo2: NONE
           injuries:
             - name: Internal
               location: internal
@@ -1815,7 +1815,7 @@ scenes:
             mental_status: SHOCK
             breathing: FAST
             heart_rate: FAST
-            spo2: 92
+            spo2: NORMAL
           injuries:
             - name: Amputation
               location: left calf
@@ -1842,7 +1842,7 @@ scenes:
             mental_status: UNRESPONSIVE
             breathing: RESTRICTED
             heart_rate: FAINT
-            spo2: 90
+            spo2: LOW
           injuries:
             - name: Puncture
               location: right face  # head
@@ -1914,7 +1914,7 @@ scenes:
             mental_status: UNRESPONSIVE
             breathing: RESTRICTED
             heart_rate: FAST
-            spo2: 85
+            spo2: LOW
           injuries:
             - name: Puncture
               location: left chest
@@ -1939,7 +1939,7 @@ scenes:
             mental_status: AGONY
             breathing: NORMAL
             heart_rate: NORMAL
-            spo2: 92
+            spo2: NORMAL
           injuries:
             - name: Broken Bone
               location: left chest

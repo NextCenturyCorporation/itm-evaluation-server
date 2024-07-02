@@ -7,6 +7,7 @@ from typing import List, Dict  # noqa: F401
 
 from swagger_server.models.base_model_ import Model
 from swagger_server.models.avpu_level_enum import AvpuLevelEnum  # noqa: F401,E501
+from swagger_server.models.blood_oxygen_enum import BloodOxygenEnum  # noqa: F401,E501
 from swagger_server.models.breathing_level_enum import BreathingLevelEnum  # noqa: F401,E501
 from swagger_server.models.heart_rate_enum import HeartRateEnum  # noqa: F401,E501
 from swagger_server.models.mental_status_enum import MentalStatusEnum  # noqa: F401,E501
@@ -18,7 +19,7 @@ class Vitals(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, avpu: AvpuLevelEnum=None, ambulatory: bool=None, mental_status: MentalStatusEnum=None, breathing: BreathingLevelEnum=None, heart_rate: HeartRateEnum=None, spo2: float=None):  # noqa: E501
+    def __init__(self, avpu: AvpuLevelEnum=None, ambulatory: bool=None, mental_status: MentalStatusEnum=None, breathing: BreathingLevelEnum=None, heart_rate: HeartRateEnum=None, spo2: BloodOxygenEnum=None):  # noqa: E501
         """Vitals - a model defined in Swagger
 
         :param avpu: The avpu of this Vitals.  # noqa: E501
@@ -32,7 +33,7 @@ class Vitals(Model):
         :param heart_rate: The heart_rate of this Vitals.  # noqa: E501
         :type heart_rate: HeartRateEnum
         :param spo2: The spo2 of this Vitals.  # noqa: E501
-        :type spo2: float
+        :type spo2: BloodOxygenEnum
         """
         self.swagger_types = {
             'avpu': AvpuLevelEnum,
@@ -40,7 +41,7 @@ class Vitals(Model):
             'mental_status': MentalStatusEnum,
             'breathing': BreathingLevelEnum,
             'heart_rate': HeartRateEnum,
-            'spo2': float
+            'spo2': BloodOxygenEnum
         }
 
         self.attribute_map = {
@@ -177,24 +178,22 @@ class Vitals(Model):
         self._heart_rate = heart_rate
 
     @property
-    def spo2(self) -> float:
+    def spo2(self) -> BloodOxygenEnum:
         """Gets the spo2 of this Vitals.
 
-        blood oxygen level (percentage)  # noqa: E501
 
         :return: The spo2 of this Vitals.
-        :rtype: float
+        :rtype: BloodOxygenEnum
         """
         return self._spo2
 
     @spo2.setter
-    def spo2(self, spo2: float):
+    def spo2(self, spo2: BloodOxygenEnum):
         """Sets the spo2 of this Vitals.
 
-        blood oxygen level (percentage)  # noqa: E501
 
         :param spo2: The spo2 of this Vitals.
-        :type spo2: float
+        :type spo2: BloodOxygenEnum
         """
 
         self._spo2 = spo2

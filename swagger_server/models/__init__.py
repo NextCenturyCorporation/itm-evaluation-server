@@ -12,6 +12,7 @@ from swagger_server.models.alignment_target import AlignmentTarget
 from swagger_server.models.ambient_noise_enum import AmbientNoiseEnum
 from swagger_server.models.avpu_level_enum import AvpuLevelEnum
 from swagger_server.models.base_model_ import Model
+from swagger_server.models.blood_oxygen_enum import BloodOxygenEnum
 from swagger_server.models.breathing_level_enum import BreathingLevelEnum
 from swagger_server.models.character import Character
 from swagger_server.models.character_relationship import CharacterRelationship
