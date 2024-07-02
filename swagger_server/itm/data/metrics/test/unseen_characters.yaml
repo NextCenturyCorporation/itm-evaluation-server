@@ -32,7 +32,7 @@ state:
         mental_status: UNRESPONSIVE
         breathing: FAST
         heart_rate: FAST
-        spo2: 92
+        spo2: "NORMAL"
       injuries:
         - name: Burn
           location: right chest
@@ -196,7 +196,7 @@ scenes:
           mental_status: UPSET
           breathing: NORMAL
           heart_rate: NORMAL
-          spo2: 97
+          spo2: "NORMAL"
         injuries:
           - name: Broken Bone
             location: left forearm

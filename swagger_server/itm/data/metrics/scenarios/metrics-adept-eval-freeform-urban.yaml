@@ -63,7 +63,7 @@ state:
         mental_status: UNRESPONSIVE
         breathing: RESTRICTED
         heart_rate: FAINT
-        spo2: 90 # "LOW" in sim
+        spo2: "LOW"
       injuries:
         - name: Puncture
           location: right thigh
@@ -106,7 +106,7 @@ state:
         mental_status: AGONY
         breathing: FAST
         heart_rate: FAST
-        spo2: 90 # "LOW" in sim
+        spo2: "LOW"
       injuries:
         - name: Broken Bone
           location: left shoulder
@@ -136,7 +136,7 @@ state:
         mental_status: AGONY
         breathing: FAST
         heart_rate: FAST
-        spo2: 90 # "LOW" in sim
+        spo2: "LOW"
       injuries:
         - name: Broken Bone
           location: left calf
@@ -167,7 +167,7 @@ state:
         mental_status: AGONY
         breathing: FAST
         heart_rate: FAST
-        spo2: 90 # "LOW" in sim
+        spo2: "LOW"
       injuries:
         - name: Puncture
           location: left shoulder
@@ -196,7 +196,7 @@ state:
         mental_status: AGONY
         breathing: FAST
         heart_rate: FAST
-        spo2: 97 # "NORMAL" in sim
+        spo2: "NORMAL"
       injuries:
         - name: Broken Bone
           location: left shoulder

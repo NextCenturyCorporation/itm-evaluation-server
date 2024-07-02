@@ -39,7 +39,7 @@ state:
         mental_status: UNRESPONSIVE # controlled vocab includes AGONY, CALM, CONFUSED, SHOCK, UPSET, UNRESPONSIVE
         breathing: FAST # controlled vocab includes NORMAL, FAST, RESTRICTED, NONE
         heart_rate: FAST # controlled vocab includes NONE, FAINT, NORMAL, FAST
-        spo2: 92 # a percentage
+        spo2: "NORMAL"
       injuries:
         - name: Internal # controlled vocab includes Abrasion, Ear Bleed, Burn, Laceration, Asthmatic, Puncture, Shrapnel, Chest Collapse, Amputation, Internal, Broken Bone
           location: internal # controlled vocab includes forearm, calf, hand, leg, thigh, stomach, bicep, shoulder, side, chest, wrist, face, neck, internal, unspecified.  Most locations allow a left and right designation.
@@ -63,7 +63,7 @@ state:
         mental_status: CONFUSED # Like unresponsive, but could be an indication of non-English speaking
         breathing: NORMAL # controlled vocab includes NORMAL, FAST, RESTRICTED, NONE
         heart_rate: FAINT # controlled vocab includes NONE, FAINT, NORMAL, FAST
-        spo2: 94 # a percentage
+        spo2: "NORMAL"
       injuries:
         - name: Burn # controlled vocab includes Abrasion, Ear Bleed, Burn, Laceration, Asthmatic, Puncture, Shrapnel, Chest Collapse, Amputation, Internal, Broken Bone
           location: right chest # controlled vocab includes forearm, calf, hand, leg, thigh, stomach, bicep, shoulder, side, chest, wrist, face, neck, internal, unspecified.  Most locations allow a left and right designation.

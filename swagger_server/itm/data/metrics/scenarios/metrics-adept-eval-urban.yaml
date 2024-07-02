@@ -93,7 +93,7 @@ state:
         mental_status: UNRESPONSIVE
         breathing: FAST
         heart_rate: FAST
-        spo2: 60
+        spo2: "NONE"
         
     - id: patient_2_victim
       name: Brown
@@ -118,7 +118,7 @@ state:
         mental_status: UNRESPONSIVE
         breathing: SLOW
         heart_rate: FAINT
-        spo2: 30
+        spo2: "NONE"
 
 scenes:
   - id: 0  # "Probe 1"
@@ -191,7 +191,7 @@ scenes:
             mental_status: UNRESPONSIVE
             breathing: FAST
             heart_rate: FAST
-            spo2: 60
+            spo2: "NONE"
         - id: patient_2_victim
           name: Brown
           unstructured: Male; mid-30s; civilian; civilian clothing.  Was shot by another civilian.
@@ -211,7 +211,7 @@ scenes:
             mental_status: UNRESPONSIVE
             breathing: SLOW
             heart_rate: FAINT
-            spo2: 30
+            spo2: "NONE"
         # We could possibly add the security guard as a character, which would allow us to indicate they are the source of shooter's injuries
     end_scene_allowed: false
     tagging: {enabled: true, repeatable: true}
@@ -282,7 +282,7 @@ scenes:
             mental_status: UNRESPONSIVE
             breathing: FAST
             heart_rate: FAST
-            spo2: 60
+            spo2: "NONE"
         - id: patient_2_victim
           name: Brown
           unstructured: Male; mid-30s; civilian; civilian clothing.  Was shot by another civilian.
@@ -302,7 +302,7 @@ scenes:
             mental_status: UNRESPONSIVE
             breathing: SLOW
             heart_rate: FAINT
-            spo2: 28
+            spo2: "NONE"
     end_scene_allowed: false
     tagging: {enabled: true, repeatable: true}
     action_mapping:
@@ -371,7 +371,7 @@ scenes:
             mental_status: UNRESPONSIVE
             breathing: FAST
             heart_rate: FAST
-            spo2: 60
+            spo2: "NONE"
         - id: patient_2_victim
           name: Brown
           unstructured: Male; mid-30s; civilian; civilian clothing.  Was shot by another civilian.  Treated gunshot wound to the shoulder, arm, and torso.
@@ -391,7 +391,7 @@ scenes:
             mental_status: UNRESPONSIVE
             breathing: SLOW
             heart_rate: FAINT
-            spo2: 30
+            spo2: "NONE"
     end_scene_allowed: false
     tagging: {enabled: true, repeatable: true}
     action_mapping:
@@ -458,7 +458,7 @@ scenes:
             mental_status: UNRESPONSIVE
             breathing: FAST
             heart_rate: FAST
-            spo2: 60
+            spo2: "NONE"
         - id: patient_2_victim
           name: Brown
           unstructured: Male; mid-30s; civilian; civilian clothing.  Was shot by another civilian.  Treated gunshot wound to the abdomen and other injuries.
@@ -478,7 +478,7 @@ scenes:
             mental_status: UNRESPONSIVE
             breathing: SLOW
             heart_rate: FAINT
-            spo2: 25
+            spo2: "NONE"
     end_scene_allowed: false
     tagging: {enabled: true, repeatable: true}
     action_mapping:

@@ -56,7 +56,7 @@ state:
         mental_status: UPSET
         breathing: NORMAL
         heart_rate: FAST
-        spo2: 97 # "NORMAL" in sim
+        spo2: "NORMAL"
       injuries:
         - name: Puncture
           location: right shoulder
@@ -86,7 +86,7 @@ state:
         mental_status: AGONY
         breathing: FAST
         heart_rate: FAST
-        spo2: 90 # "LOW" in sim
+        spo2: "LOW"
       injuries:
         - name: Broken Bone
           location: right calf
@@ -116,7 +116,7 @@ state:
         mental_status: UPSET
         breathing: NORMAL
         heart_rate: NORMAL
-        spo2: 97 # "NORMAL" in sim
+        spo2: "NORMAL"
       injuries:
         - name: Laceration
           location: right forearm
@@ -144,7 +144,7 @@ state:
         mental_status: UNRESPONSIVE
         breathing: FAST
         heart_rate: FAST
-        spo2: 90 # "LOW" in sim
+        spo2: "LOW"
       injuries:
         - name: Puncture
           location: left bicep
