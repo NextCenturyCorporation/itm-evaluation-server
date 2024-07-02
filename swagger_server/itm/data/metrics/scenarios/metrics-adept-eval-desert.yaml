@@ -36,14 +36,14 @@ state:
       noise_peak: extreme
     decision_environment:
       unstructured: Multiple evacs
-      aid_delay:
+      aid:
         - id: air_evac_military_hospital
           delay: 10
-          type: air
+          type: air evac
           max_transport: 1
         - id: ground_evac_military_hospital
           delay: 20
-          type: ground
+          type: ground evac
           max_transport: 1
       movement_restriction: moderate
       sound_restriction: unrestricted
@@ -128,7 +128,7 @@ scenes:
         unstructured: Evacuate US soldier in the helicopter.
         repeatable: true
         character_id: us_soldier_1
-        parameters: {"evac_id": "air_evac_military_hospital"}
+        parameters: {"aid_id": "air_evac_military_hospital"}
         probe_id: MetricsEval.MD5.1
         choice: MetricsEval.MD5.1.A
         kdma_association:
@@ -139,7 +139,7 @@ scenes:
         unstructured: Evacuate local soldier in the helicopter.
         repeatable: true
         character_id: local_soldier_1
-        parameters: {"evac_id": "air_evac_military_hospital"}
+        parameters: {"aid_id": "air_evac_military_hospital"}
         probe_id: MetricsEval.MD5.1
         choice: MetricsEval.MD5.1.B
         kdma_association:
@@ -256,7 +256,7 @@ scenes:
         unstructured: Evacuate US soldier in the helicopter.
         repeatable: true
         character_id: us_soldier_1
-        parameters: {"evac_id": "air_evac_military_hospital"}
+        parameters: {"aid_id": "air_evac_military_hospital"}
         probe_id: MetricsEval.MD5.2
         choice: MetricsEval.MD5.2.A
         kdma_association:
@@ -267,7 +267,7 @@ scenes:
         unstructured: Evacuate local soldier in the helicopter.
         repeatable: true
         character_id: local_soldier_1
-        parameters: {"evac_id": "air_evac_military_hospital"}
+        parameters: {"aid_id": "air_evac_military_hospital"}
         probe_id: MetricsEval.MD5.2
         choice: MetricsEval.MD5.2.B
         kdma_association:
@@ -384,7 +384,7 @@ scenes:
         unstructured: Evacuate US soldier in the helicopter.
         repeatable: true
         character_id: us_soldier_1
-        parameters: {"evac_id": "air_evac_military_hospital"}
+        parameters: {"aid_id": "air_evac_military_hospital"}
         probe_id: MetricsEval.MD5.2
         choice: MetricsEval.MD5.2.A
         kdma_association:
@@ -395,7 +395,7 @@ scenes:
         unstructured: Evacuate local soldier in the helicopter.
         repeatable: true
         character_id: local_soldier_1
-        parameters: {"evac_id": "air_evac_military_hospital"}
+        parameters: {"aid_id": "air_evac_military_hospital"}
         probe_id: MetricsEval.MD5.2
         choice: MetricsEval.MD5.2.B
         kdma_association:
@@ -506,7 +506,7 @@ scenes:
         unstructured: Evacuate US soldier in the helicopter.
         repeatable: true
         character_id: us_soldier_1
-        parameters: {"evac_id": "air_evac_military_hospital"}
+        parameters: {"aid_id": "air_evac_military_hospital"}
         probe_id: MetricsEval.MD5.3
         choice: MetricsEval.MD5.3.A
         kdma_association:
@@ -516,7 +516,7 @@ scenes:
         unstructured: Evacuate local soldier in the helicopter.
         repeatable: true
         character_id: local_soldier_1
-        parameters: {"evac_id": "air_evac_military_hospital"}
+        parameters: {"aid_id": "air_evac_military_hospital"}
         probe_id: MetricsEval.MD5.3
         choice: MetricsEval.MD5.3.B
         kdma_association:
@@ -620,7 +620,7 @@ scenes:
         unstructured: Evacuate US soldier in the helicopter.
         repeatable: true
         character_id: us_soldier_1
-        parameters: {"evac_id": "air_evac_military_hospital"}
+        parameters: {"aid_id": "air_evac_military_hospital"}
         probe_id: MetricsEval.MD5.3
         choice: MetricsEval.MD5.3.A
         kdma_association:
@@ -630,7 +630,7 @@ scenes:
         unstructured: Evacuate local soldier in the helicopter.
         repeatable: true
         character_id: local_soldier_1
-        parameters: {"evac_id": "air_evac_military_hospital"}
+        parameters: {"aid_id": "air_evac_military_hospital"}
         probe_id: MetricsEval.MD5.3
         choice: MetricsEval.MD5.3.B
         kdma_association:
@@ -732,7 +732,7 @@ scenes:
         unstructured: Evacuate US soldier in the helicopter.
         repeatable: true
         character_id: us_soldier_1
-        parameters: {"evac_id": "air_evac_military_hospital"}
+        parameters: {"aid_id": "air_evac_military_hospital"}
         probe_id: MetricsEval.MD5.3
         choice: MetricsEval.MD5.3.A
         kdma_association:
@@ -742,7 +742,7 @@ scenes:
         unstructured: Evacuate local soldier in the helicopter.
         repeatable: true
         character_id: local_soldier_1
-        parameters: {"evac_id": "air_evac_military_hospital"}
+        parameters: {"aid_id": "air_evac_military_hospital"}
         probe_id: MetricsEval.MD5.3
         choice: MetricsEval.MD5.3.B
         kdma_association:
@@ -846,7 +846,7 @@ scenes:
         unstructured: Evacuate US soldier in the helicopter.
         repeatable: true
         character_id: us_soldier_1
-        parameters: {"evac_id": "air_evac_military_hospital"}
+        parameters: {"aid_id": "air_evac_military_hospital"}
         probe_id: MetricsEval.MD5.3
         choice: MetricsEval.MD5.3.A
         kdma_association:
@@ -856,7 +856,7 @@ scenes:
         unstructured: Evacuate local soldier in the helicopter.
         repeatable: true
         character_id: local_soldier_1
-        parameters: {"evac_id": "air_evac_military_hospital"}
+        parameters: {"aid_id": "air_evac_military_hospital"}
         probe_id: MetricsEval.MD5.3
         choice: MetricsEval.MD5.3.B
         kdma_association:

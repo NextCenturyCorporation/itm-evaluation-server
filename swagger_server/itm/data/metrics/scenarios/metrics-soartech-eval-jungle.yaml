@@ -176,10 +176,10 @@ scenes:
         avpu: ALERT
     environment:
       decision_environment:
-        aid_delay:
+        aid:
         - delay: 1440
           id: delay-0
-          type: unknown
+          type: unknown evac
         air_quality: green
         city_infrastructure: TBD
         injury_triggers: collision
@@ -343,10 +343,10 @@ scenes:
         avpu: ALERT
     environment:
       decision_environment:
-        aid_delay:
+        aid:
         - delay: 1440
           id: delay-0
-          type: unknown
+          type: unknown evac
         air_quality: green
         city_infrastructure: TBD
         injury_triggers: collision
@@ -507,10 +507,10 @@ scenes:
         spo2: "NONE"
     environment:
       decision_environment:
-        aid_delay:
+        aid:
         - delay: 1440
           id: delay-0
-          type: unknown
+          type: unknown evac
         air_quality: green
         city_infrastructure: TBD
         injury_triggers: collision
@@ -677,10 +677,10 @@ scenes:
         spo2: "NONE"
     environment:
       decision_environment:
-        aid_delay:
+        aid:
         - delay: 1440
           id: delay-0
-          type: unknown
+          type: unknown evac
         air_quality: green
         city_infrastructure: TBD
         injury_triggers: collision
@@ -862,10 +862,10 @@ scenes:
         spo2: "NORMAL"
     environment:
       decision_environment:
-        aid_delay:
+        aid:
         - delay: 1440
           id: delay-0
-          type: unknown
+          type: unknown evac
         air_quality: green
         city_infrastructure: TBD
         injury_triggers: collision
@@ -1040,10 +1040,10 @@ scenes:
         spo2: "NORMAL"
     environment:
       decision_environment:
-        aid_delay:
+        aid:
         - delay: 1440
           id: delay-0
-          type: unknown
+          type: unknown evac
         air_quality: green
         city_infrastructure: TBD
         injury_triggers: collision
@@ -1220,10 +1220,10 @@ scenes:
         avpu: ALERT
     environment:
       decision_environment:
-        aid_delay:
+        aid:
         - delay: 1440
           id: delay-0
-          type: unknown
+          type: unknown evac
         air_quality: green
         city_infrastructure: TBD
         injury_triggers: collision
@@ -1399,10 +1399,10 @@ scenes:
         avpu: ALERT
     environment:
       decision_environment:
-        aid_delay:
+        aid:
         - delay: 1440
           id: delay-0
-          type: unknown
+          type: unknown evac
         air_quality: green
         city_infrastructure: TBD
         injury_triggers: collision
@@ -1599,10 +1599,10 @@ scenes:
         spo2: "NORMAL"
     environment:
       decision_environment:
-        aid_delay:
+        aid:
         - delay: 1440
           id: delay-0
-          type: unknown
+          type: unknown evac
         air_quality: green
         city_infrastructure: TBD
         injury_triggers: collision
@@ -1805,10 +1805,10 @@ scenes:
         spo2: "NORMAL"
     environment:
       decision_environment:
-        aid_delay:
+        aid:
         - delay: 1440
           id: delay-0
-          type: unknown
+          type: unknown evac
         air_quality: green
         city_infrastructure: TBD
         injury_triggers: collision
@@ -2000,10 +2000,10 @@ scenes:
         spo2: "NORMAL"
     environment:
       decision_environment:
-        aid_delay:
+        aid:
         - delay: 1440
           id: delay-0
-          type: unknown
+          type: unknown evac
         air_quality: green
         city_infrastructure: TBD
         injury_triggers: collision
@@ -2182,10 +2182,10 @@ scenes:
         spo2: "NORMAL"
     environment:
       decision_environment:
-        aid_delay:
+        aid:
         - delay: 1440
           id: delay-0
-          type: unknown
+          type: unknown evac
         air_quality: green
         city_infrastructure: TBD
         injury_triggers: collision
@@ -2333,10 +2333,10 @@ state:
         avpu: ALERT
   environment:
     decision_environment:
-      aid_delay:
+      aid:
       - delay: 1440
         id: delay-0
-        type: unknown
+        type: unknown evac
       air_quality: green
       city_infrastructure: TBD
       injury_triggers: collision

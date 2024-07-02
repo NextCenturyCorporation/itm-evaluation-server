@@ -38,11 +38,15 @@ state:
     decision_environment:
       unstructured: >
         Isolated jungle island. EVAC is scheduled for 5 minutes.
-      aid_delay:
+      aid:
         - id: air_evac
-          delay: 5 # CASEVAC or MEDEVAC timer, in minutes
-          type: air # controlled vocab includes air, ground, water, unknown
-          max_transport: 3 # Maximum number of characters that can be transported
+          delay: 5 # Time until aid is available, in minutes; 0 means ready now
+          type: air evac # controlled vocab includes local military, local non-military, air evac, ground evac, water evac, unknown evac
+          level: 2 # Refers to the kinds of resources/capabilities available in a trauma center; Level 1 has more resources than Level 5 (see https://www.amtrauma.org/page/traumalevels/).
+          patients_treated: # A list of types of patients that can be helped; if omitted, then no restrictions or restrictions are irrelevant
+            - Allied
+            - Allied US
+          max_transport: 3 # Maximum number of casualties that can be accommodated
       movement_restriction: unrestricted # operational movement restrictions; controlled vocab includes unrestricted, minimal, moderate, severe, extreme
       sound_restriction: unrestricted # operational sound restrictions; controlled vocab includes unrestricted, minimal, moderate, severe, extreme
       oxygen_levels: normal # controlled vocab includes normal, limited, scarce, none
@@ -137,17 +141,12 @@ state:
         mental_status: CONFUSED # Like unresponsive, but could be an indication of non-English speaking
         breathing: NORMAL # controlled vocab includes NORMAL, FAST, RESTRICTED, NONE
         heart_rate: FAINT # controlled vocab includes NONE, FAINT, NORMAL, FAST
-<<<<<<< Updated upstream
-        spo2: 94 # a percentage
+        spo2: "NORMAL"
       injuries:
         - name: Laceration # controlled vocab includes Abrasion, Ear Bleed, Burn, Laceration, Asthmatic, Puncture, Shrapnel, Chest Collapse, Amputation, Internal, Broken Bone
           location: left face # controlled vocab includes forearm, calf, hand, leg, thigh, stomach, bicep, shoulder, side, chest, wrist, face, neck, internal, unspecified.  Most locations allow a left and right designation.
           status: visible
           severity: minor
-=======
-        spo2: "NORMAL"
->>>>>>> Stashed changes
-
 # - Each scene has associated state, including mission parameters, environment, characters, etc.
 # - Each scene has a set of actions that map to probe responses
 #   - Action mappings can be flagged as intent_action, where the ADM will only intend an action instead of taking one.
@@ -390,7 +389,7 @@ scenes:
           type: change # The nature or type of the event; controlled vocab includes change, emphasize, inform, order, recommend
           source: Captain_01 # The entity communicating the event; can be a character id or ally, adversary, civilian, commander, everybody, medic
           relevant_state: # string paths within the `State` object, with context-sensitive indexed lists
-          -  environment.decision_environment.aid_delay[air_evac].delay
+          -  environment.decision_environment.aid[air_evac].delay
         - unstructured: Your medical assistant recommends that you evacuate Bob by ground transport.
           type: recommend # The nature or type of the event; controlled vocab includes change, emphasize, inform, order, recommend
           source: medic # The entity communicating the event; can be a character id or ally, adversary, civilian, commander, everybody, medic
@@ -400,14 +399,18 @@ scenes:
           unstructured: >
             The helicopter has been delayed and is still 50 minutes away.
             You can also try to evac one casualty by ground immediately, but you're more likely to encounter hostiles.
-          aid_delay:
-            - id: air_evac
+          aid:
+            - id: air_evac # Notice that when you update an aid entry, you must also include unchanged parameters
               delay: 50
-              type: air
+              type: air evac
+              level: 2
+              patients_treated:
+                - Allied
+                - Allied US
               max_transport: 3
             - id: ground_evac
-              delay: 1
-              type: ground
+              delay: 0
+              type: ground evac
               max_transport: 1
     probe_config:
       - probe_id: adept-september-demo-probe-5
@@ -418,7 +421,7 @@ scenes:
         intent_action: true # Specify the intent to evacuate by air
         unstructured: Intend to move Katie to the road for transport by helicopter
         character_id: Captain_01
-        parameters: {"evac_id": "air_evac"}
+        parameters: {"aid_id": "air_evac"}
         probe_id: adept-september-demo-probe-5
         choice: s1-p5-choice1
       - action_id: intend-evac-marine-air
@@ -426,7 +429,7 @@ scenes:
         intent_action: true # Specify the intent to evacuate by air
         unstructured: Intend to move Bob to the road for transport by helicopter
         character_id: Marine_burns_01
-        parameters: {"evac_id": "air_evac"}
+        parameters: {"aid_id": "air_evac"}
         probe_id: adept-september-demo-probe-5
         choice: s1-p5-choice2
       - action_id: intend-evac-captain-ground
@@ -439,7 +442,7 @@ scenes:
             - threat_type: Gunfire
               severity: severe
         character_id: Captain_01
-        parameters: {"evac_id": "ground_evac"}
+        parameters: {"aid_id": "ground_evac"}
         probe_id: adept-september-demo-probe-5
         choice: s1-p5-choice3
       - action_id: intend-evac-marine-ground
@@ -452,7 +455,7 @@ scenes:
               severity: severe
         unstructured: Intend to evacuate Bob by ground transport
         character_id: Marine_burns_01
-        parameters: {"evac_id": "ground_evac"}
+        parameters: {"aid_id": "ground_evac"}
         probe_id: adept-september-demo-probe-5
         choice: s1-p5-choice4
       - action_id: delegate-to-medic

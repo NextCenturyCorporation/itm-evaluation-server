@@ -37,7 +37,7 @@ state:
       noise_peak: normal
     decision_environment:
       unstructured: No known aid-delay
-      aid_delay: []
+      aid: []
       movement_restriction: minimal
       sound_restriction: unrestricted
       oxygen_levels: normal
@@ -324,10 +324,10 @@ scenes:
       environment:
         decision_environment:
           unstructured:  You are informed there is one helicopter transport slot.
-          aid_delay:
+          aid:
             - id: air_evac
               delay: 1
-              type: air
+              type: air evac
               max_transport: 1
       characters:
         - id: civilian_1
@@ -382,7 +382,7 @@ scenes:
         unstructured: Evacuate Adiwijaya.
         repeatable: true
         character_id: civilian_1
-        parameters: {"evac_id": "air_evac"}
+        parameters: {"aid_id": "air_evac"}
         probe_id: MetricsEval.MD-Jungle.3
         choice: MetricsEval.MD-Jungle.3.A
         kdma_association:
@@ -392,7 +392,7 @@ scenes:
         unstructured: Evacuate Bun.
         repeatable: true
         character_id: civilian_2
-        parameters: {"evac_id": "air_evac"}
+        parameters: {"aid_id": "air_evac"}
         probe_id: MetricsEval.MD-Jungle.3
         choice: MetricsEval.MD-Jungle.3.B
         kdma_association:
@@ -415,10 +415,10 @@ scenes:
       environment:
         decision_environment:
           unstructured:  You are informed there is one helicopter transport slot.
-          aid_delay:
+          aid:
             - id: air_evac
               delay: 1
-              type: air
+              type: air evac
               max_transport: 1
       characters:
         - id: civilian_1
@@ -473,7 +473,7 @@ scenes:
         unstructured: Evacuate Adiwijaya.
         repeatable: true
         character_id: civilian_1
-        parameters: {"evac_id": "air_evac"}
+        parameters: {"aid_id": "air_evac"}
         probe_id: MetricsEval.MD-Jungle.3
         choice: MetricsEval.MD-Jungle.3.A
         kdma_association:
@@ -483,7 +483,7 @@ scenes:
         unstructured: Evacuate Bun.
         repeatable: true
         character_id: civilian_2
-        parameters: {"evac_id": "air_evac"}
+        parameters: {"aid_id": "air_evac"}
         probe_id: MetricsEval.MD-Jungle.3
         choice: MetricsEval.MD-Jungle.3.B
         kdma_association:

@@ -198,9 +198,9 @@ class ITMActionHandler:
             if not action.intent_action and not character.unseen:
                 return False, f'Can only perform {action.action_type} action with unseen characters, but `{action.character_id}` is not unseen', 400
         elif action.action_type == ActionTypeEnum.MOVE_TO_EVAC:
-            # Requires evac_id parameter
-            if not action.parameters or not 'evac_id' in action.parameters:
-                return False, f'Malformed {action.action_type} Action: Missing `evac_id` parameter', 400
+            # Requires aid_id parameter
+            if not action.parameters or not 'aid_id' in action.parameters:
+                return False, f'Malformed {action.action_type} Action: Missing `aid_id` parameter', 400
         elif action.action_type == ActionTypeEnum.CHECK_BLOOD_OXYGEN or action.action_type == ActionTypeEnum.CHECK_ALL_VITALS:
             pulse_ox_available = any(
                 supply.type == SupplyTypeEnum.PULSE_OXIMETER and supply.quantity >= 1
