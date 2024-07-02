@@ -1904,7 +1904,7 @@ components:
         - TAG_CHARACTER
     BloodOxygenEnum:
       type: string
-      description: The percentage of oxygen in someone's blood, as measured by a pulse oximeter
+      description: A description of the percentage of oxygen in someone's blood, as measured by a pulse oximeter
       enum:
         - NORMAL
         - LOW

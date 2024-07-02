@@ -34,7 +34,7 @@ state:
         mental_status: UNRESPONSIVE
         breathing: FAST
         heart_rate: FAST
-        spo2: "NORMAL"
+        spo2: NORMAL
       injuries:
         - name: Internal
           location: internal
@@ -58,7 +58,7 @@ state:
         mental_status: CONFUSED
         breathing: NORMAL
         heart_rate: FAINT
-        spo2: "NORMAL"
+        spo2: NORMAL
       injuries:
         - name: Burn
           location: right chest

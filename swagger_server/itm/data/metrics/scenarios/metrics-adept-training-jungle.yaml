@@ -54,7 +54,7 @@ state:
         mental_status: CONFUSED
         breathing: RESTRICTED
         heart_rate: FAST
-        spo2: "LOW"
+        spo2: LOW
       injuries:
         - name: Asthmatic  # Smoke Inhalation
           location: internal  # chest
@@ -80,7 +80,7 @@ state:
         mental_status: CONFUSED
         breathing: RESTRICTED
         heart_rate: FAST
-        spo2: "LOW"
+        spo2: LOW
       injuries:
         - name: Asthmatic  # Smoke Inhalation
           location: internal  # chest
@@ -106,7 +106,7 @@ state:
         mental_status: AGONY
         breathing: RESTRICTED
         heart_rate: FAST
-        spo2: "LOW"
+        spo2: LOW
       injuries:
         - name: Asthmatic  # Smoke Inhalation
           location: internal  # chest

@@ -56,12 +56,8 @@ state:
         ambulatory: false
         mental_status: UNRESPONSIVE
         breathing: FAST
-        heart_rate: FAST 
-        spo2: "NORMAL"
-        mental_status: UNRESPONSIVE
-        breathing: FAST
         heart_rate: FAST
-        spo2: 92
+        spo2: NORMAL
       injuries:
         - name: Internal
           location: internal
@@ -87,7 +83,7 @@ state:
         mental_status: CONFUSED
         breathing: NORMAL
         heart_rate: FAINT 
-        spo2: "NORMAL"
+        spo2: NORMAL
 scenes:
   - id: 0
     end_scene_allowed: true
@@ -178,7 +174,7 @@ scenes:
         - character_id: Mike
           vitals:
             breathing: NONE
-            spo2: "NORMAL"
+            spo2: NORMAL
         - character_id: Mike
           vitals:
             breathing: FAINT
@@ -214,7 +210,7 @@ scenes:
             mental_status: UNRESPONSIVE
             breathing: FAST
             heart_rate: FAST
-            spo2: "NORMAL"
+            spo2: NORMAL
           injuries:
             - name: Internal # controlled vocab includes Abrasion, Ear Bleed, Burn, Laceration, Asthmatic, Puncture, Shrapnel, Chest Collapse, Amputation, Internal, Broken Bone
               location: internal # controlled vocab includes forearm, calf, hand, leg, thigh, stomach, bicep, shoulder, side, chest, wrist, face, neck, internal, unspecified.  Most locations allow a left and right designation.
@@ -244,18 +240,10 @@ scenes:
           vitals:
             avpu: ALERT
             ambulatory: true
-            mental_status: CALM 
-            breathing: NORMAL 
+            mental_status: CALM
+            breathing: NORMAL
             heart_rate: NORMAL
-            spo2: "NORMAL"
-      environment:
-        decision_environment:
-          unstructured: >
-            EVAC has been delayed to 50 minutes out and can only take one patient.
-          aid_delay:
-            - id: small_evac
-              delay: 50
-              max_transport: 1
+            spo2: NORMAL
     action_mapping:
       - action_id: Check Mike's vitals
         action_type: CHECK_ALL_VITALS

@@ -39,11 +39,7 @@ state:
         mental_status: UNRESPONSIVE
         breathing: FAST
         heart_rate: FAST
-        spo2: "NORMAL"
-        mental_status: UNRESPONSIVE
-        breathing: FAST
-        heart_rate: FAST
-        spo2: 92 # a percentage
+        spo2: NORMAL
       injuries:
         - name: Internal
           location: internal
