@@ -247,6 +247,9 @@ class ITMActionHandler:
         # If the treatment treats the injury at the specified location, then change its status to treated.
         supply_used = action.parameters.get('treatment')
         attempted_retreatment = False
+        successful_treatment = False
+        # Note: Anything added to doesnt_treat_injuries is assumed to be automatically successful, which decrements the supply.
+        #       If this is not the case, then add an elif branch below (like BLANKET).
         doesnt_treat_injuries = [SupplyTypeEnum.BLANKET, SupplyTypeEnum.BLOOD, SupplyTypeEnum.EPI_PEN, SupplyTypeEnum.FENTANYL_LOLLIPOP, \
                                  SupplyTypeEnum.IV_BAG, SupplyTypeEnum.PAIN_MEDICATIONS, SupplyTypeEnum.PULSE_OXIMETER]
         if supply_used not in doesnt_treat_injuries:
@@ -254,6 +257,7 @@ class ITMActionHandler:
                 if injury.location == action.parameters.get('location'):
                     if injury.status != InjuryStatusEnum.TREATED: # Can't attempt to treat a treated injury
                         if self.__successful_treatment(supply_used, injury.name, injury.location):
+                            successful_treatment = True
                             injury.treatments_applied += 1
                             # Find required treatments for the injury
                             for isd_character in self.current_scene.state.characters:
@@ -266,24 +270,26 @@ class ITMActionHandler:
                                 injury.status = InjuryStatusEnum.PARTIALLY_TREATED
                             else:
                                 injury.status = InjuryStatusEnum.TREATED
-                        else:
-                            pass # But see ITM-432
                     else:
                         attempted_retreatment = True
-
-        if (supply_used == SupplyTypeEnum.BLANKET):
+                    break
+        elif (supply_used == SupplyTypeEnum.BLANKET):
             if character.has_blanket:
                 attempted_retreatment = True
-            character.has_blanket = True
+            else:
+                successful_treatment = True
+                character.has_blanket = True
+        elif (supply_used != SupplyTypeEnum.PULSE_OXIMETER):
+            successful_treatment = True
 
         if attempted_retreatment: # Realize the injury is already treated, but no vital/injury discovery happens
             return self.times_dict["treatmentTimes"]["ALREADY_TREATED"]
 
-        # Decrement unreusable supplies and increment time passed during treatment, even if the injury is untreated
+        # Increment time passed during treatment, and decrement unreusable supplies if the injury is successfully treated
         time_passed = 0
         for supply in self.session.state.supplies:
             if supply.type == supply_used:
-                if not supply.reusable:
+                if successful_treatment and not supply.reusable:
                     supply.quantity -= 1
                 if supply_used in self.times_dict["treatmentTimes"]:
                     time_passed = self.times_dict["treatmentTimes"][supply_used]
