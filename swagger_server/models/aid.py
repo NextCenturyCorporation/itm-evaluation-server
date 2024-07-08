@@ -16,7 +16,7 @@ class Aid(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, id: str=None, delay: float=None, type: AidTypeEnum=None, level: int=None, patients_treated: List[MilitaryDispositionEnum]=None, max_transport: int=None):  # noqa: E501
+    def __init__(self, id: str=None, delay: float=None, type: AidTypeEnum=None, role: int=None, patients_treated: List[MilitaryDispositionEnum]=None, max_transport: int=None):  # noqa: E501
         """Aid - a model defined in Swagger
 
         :param id: The id of this Aid.  # noqa: E501
@@ -25,8 +25,8 @@ class Aid(Model):
         :type delay: float
         :param type: The type of this Aid.  # noqa: E501
         :type type: AidTypeEnum
-        :param level: The level of this Aid.  # noqa: E501
-        :type level: int
+        :param role: The role of this Aid.  # noqa: E501
+        :type role: int
         :param patients_treated: The patients_treated of this Aid.  # noqa: E501
         :type patients_treated: List[MilitaryDispositionEnum]
         :param max_transport: The max_transport of this Aid.  # noqa: E501
@@ -36,7 +36,7 @@ class Aid(Model):
             'id': str,
             'delay': float,
             'type': AidTypeEnum,
-            'level': int,
+            'role': int,
             'patients_treated': List[MilitaryDispositionEnum],
             'max_transport': int
         }
@@ -45,14 +45,14 @@ class Aid(Model):
             'id': 'id',
             'delay': 'delay',
             'type': 'type',
-            'level': 'level',
+            'role': 'role',
             'patients_treated': 'patients_treated',
             'max_transport': 'max_transport'
         }
         self._id = id
         self._delay = delay
         self._type = type
-        self._level = level
+        self._role = role
         self._patients_treated = patients_treated
         self._max_transport = max_transport
 
@@ -139,27 +139,27 @@ class Aid(Model):
         self._type = type
 
     @property
-    def level(self) -> int:
-        """Gets the level of this Aid.
+    def role(self) -> int:
+        """Gets the role of this Aid.
 
-        Refers to the kinds of resources/capabilities available in a trauma center; Level 1 has more resources than Level 5. See [amtrauma.org](https://www.amtrauma.org/page/traumalevels/)   # noqa: E501
+        The characterization of health support for the distribution of medical resources and capabilities; Role 1 has higher capability than Role 4. See [health.mil](https://health.mil/Reference-Center/Glossary-Terms/2018/06/22/Roles-of-Medical-Care)   # noqa: E501
 
-        :return: The level of this Aid.
+        :return: The role of this Aid.
         :rtype: int
         """
-        return self._level
+        return self._role
 
-    @level.setter
-    def level(self, level: int):
-        """Sets the level of this Aid.
+    @role.setter
+    def role(self, role: int):
+        """Sets the role of this Aid.
 
-        Refers to the kinds of resources/capabilities available in a trauma center; Level 1 has more resources than Level 5. See [amtrauma.org](https://www.amtrauma.org/page/traumalevels/)   # noqa: E501
+        The characterization of health support for the distribution of medical resources and capabilities; Role 1 has higher capability than Role 4. See [health.mil](https://health.mil/Reference-Center/Glossary-Terms/2018/06/22/Roles-of-Medical-Care)   # noqa: E501
 
-        :param level: The level of this Aid.
-        :type level: int
+        :param role: The role of this Aid.
+        :type role: int
         """
 
-        self._level = level
+        self._role = role
 
     @property
     def patients_treated(self) -> List[MilitaryDispositionEnum]:
