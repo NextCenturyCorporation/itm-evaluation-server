@@ -52,31 +52,34 @@ class ITMActionHandler:
             target.unstructured = source.unstructured_postassess
 
     def __successful_treatment(self, treatment: str, injury_name: str, location: str) -> bool:
-        # NOTE: Asthmatic, Forehead Scrape, Ear Bleed, an Internal injuries are currently untreatable.
-        # This logic is in sync with the current OSU Simulator, but may diverge at a later date.
+        # NOTE: Asthmatic, Ear Bleed, Traumatic Brain Injury, Open Abdominal Wound, and Internal injuries are currently untreatable.
+        # This logic is in sync with the current ITM Simulator, but may diverge at a later date.
         """
             Head Injuries
-            Forehead Scrape (Abrasion): Pressure bandage
+            Face Laceration: Pressure bandage
             Face Shrapnel: Nasopharyngeal airway
             Ear Bleed: None
+            Traumatic Brain Injury: None
 
             Neck Injuries
             Neck Puncture: Hemostatic gauze
+            Neck Burn: Burn Dressing 
 
             Hand Injuries
             Wrist Amputation: Tourniquet
-            Broken Wrist: Splint
             Hand (Palm) Laceration: Pressure bandage
 
             Arm Injuries
             Forearm Laceration: Pressure bandage
-            Broken Forearm: Splint
+            Forearm Burn: Burn Dressing
+            Bicep Burn: Burn Dressing
             Bicep Puncture: Tourniquet
             Shoulder Puncture: Hemostatic gauze
             Broken Shoulder: Splint
 
             Chest Injuries
             Asthmatic: None
+            Chest Burn: Burn Dressing
             Chest Collapse: Decompression Needle
             Chest Puncture: Vented Chest Seal
 
@@ -84,14 +87,19 @@ class ITMActionHandler:
             Stomach Laceration: Pressure bandage
             Stomach Puncture: Hemostatic gauze
             Side Puncture: Hemostatic gauze
+            Open Abdominal Wound: None
 
             Leg Injuries
             Thigh Puncture: Tourniquet
             Thigh Laceration: Tourniquet
+            Thigh Amputation: Tourniquet
+            Thigh Burn: Burn Dressing
             Leg (Shin) Amputation: Tourniquet
             Broken Leg: Splint
+            Calf Burn: Burn Dressing
             Calf Laceration: Pressure bandage
             Calf Shrapnel: Pressure bandage
+            Calf Puncture: Tourniquet
         """
         match injury_name:
             case InjuryTypeEnum.AMPUTATION:
@@ -102,16 +110,13 @@ class ITMActionHandler:
                 return treatment == SupplyTypeEnum.SPLINT
             case InjuryTypeEnum.CHEST_COLLAPSE:
                 return treatment == SupplyTypeEnum.DECOMPRESSION_NEEDLE
-            case InjuryTypeEnum.ABRASION:
-                if 'face' in location:
-                    return treatment == SupplyTypeEnum.PRESSURE_BANDAGE
             case InjuryTypeEnum.LACERATION:
                 if 'thigh' in location:
                     return treatment == SupplyTypeEnum.TOURNIQUET
                 else:
                     return treatment == SupplyTypeEnum.PRESSURE_BANDAGE
             case InjuryTypeEnum.PUNCTURE:
-                if 'bicep' in location or 'thigh' in location:
+                if 'bicep' in location or 'thigh' in location or 'calf' in location:
                     return treatment == SupplyTypeEnum.TOURNIQUET
                 elif 'chest' in location:
                     return treatment == SupplyTypeEnum.VENTED_CHEST_SEAL

@@ -46,6 +46,9 @@ class InjuryLocationEnum(Model):
     LEFT_NECK = "left neck"
     RIGHT_NECK = "right neck"
     INTERNAL = "internal"
+    HEAD = "head"
+    NECK = "neck"
+    STOMACH = "stomach"
     UNSPECIFIED = "unspecified"
     def __init__(self):  # noqa: E501
         """InjuryLocationEnum - a model defined in Swagger
