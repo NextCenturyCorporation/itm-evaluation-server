@@ -1791,9 +1791,10 @@ components:
         - Chest Collapse
         - Amputation
         - Burn
-        - Abrasion
         - Broken Bone
         - Internal
+        - Traumatic Brain Injury
+        - Open Abdominal Wound
     InjuryLocationEnum:
       type: string
       description: the injury location on the character's body
@@ -1826,6 +1827,9 @@ components:
         - left neck
         - right neck
         - internal
+        - head
+        - neck
+        - stomach
         - unspecified
     InjurySeverityEnum:
       type: string
