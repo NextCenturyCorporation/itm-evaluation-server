@@ -15,7 +15,7 @@ class Event(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, unstructured: str=None, type: EventTypeEnum=None, source: str=None, object: str=None, action_id: str=None, relevant_state: List[str]=None):  # noqa: E501
+    def __init__(self, unstructured: str=None, type: EventTypeEnum=None, source: str=None, object: str=None, when: float=None, action_id: str=None, relevant_state: List[str]=None):  # noqa: E501
         """Event - a model defined in Swagger
 
         :param unstructured: The unstructured of this Event.  # noqa: E501
@@ -26,6 +26,8 @@ class Event(Model):
         :type source: str
         :param object: The object of this Event.  # noqa: E501
         :type object: str
+        :param when: The when of this Event.  # noqa: E501
+        :type when: float
         :param action_id: The action_id of this Event.  # noqa: E501
         :type action_id: str
         :param relevant_state: The relevant_state of this Event.  # noqa: E501
@@ -36,6 +38,7 @@ class Event(Model):
             'type': EventTypeEnum,
             'source': str,
             'object': str,
+            'when': float,
             'action_id': str,
             'relevant_state': List[str]
         }
@@ -45,6 +48,7 @@ class Event(Model):
             'type': 'type',
             'source': 'source',
             'object': 'object',
+            'when': 'when',
             'action_id': 'action_id',
             'relevant_state': 'relevant_state'
         }
@@ -52,6 +56,7 @@ class Event(Model):
         self._type = type
         self._source = source
         self._object = object
+        self._when = when
         self._action_id = action_id
         self._relevant_state = relevant_state
 
@@ -159,6 +164,29 @@ class Event(Model):
         """
 
         self._object = object
+
+    @property
+    def when(self) -> float:
+        """Gets the when of this Event.
+
+        indicates when (in minutes) the event happened (negative value) or is expected to happen (positive value); omit if zero (event happens now)  # noqa: E501
+
+        :return: The when of this Event.
+        :rtype: float
+        """
+        return self._when
+
+    @when.setter
+    def when(self, when: float):
+        """Sets the when of this Event.
+
+        indicates when (in minutes) the event happened (negative value) or is expected to happen (positive value); omit if zero (event happens now)  # noqa: E501
+
+        :param when: The when of this Event.
+        :type when: float
+        """
+
+        self._when = when
 
     @property
     def action_id(self) -> str:

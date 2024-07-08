@@ -245,7 +245,7 @@ scenes:
       - action_id: evacuate
         action_type: MOVE_TO_EVAC
         unstructured: Evacuate somebody
-        parameters: {"aid_id": "air_evac"}
+        parameters: {"aid_id": "ground_1"}
         probe_id: test-1
         choice: test-choice1
     transitions:

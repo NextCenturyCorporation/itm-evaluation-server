@@ -168,7 +168,7 @@ scenes:
         parameters: { "treatment": "Tourniquet"}
         probe_id: test-probe-2
         choice: test-choice3
-    transition_semantics:
+    transition_semantics: or
     transitions:
       character_vitals:
         - character_id: Mike
