@@ -1,0 +1,8 @@
+# globally unique alignment target
+id: ADEPT-dryrun_eval-alignment-target-eval-HIGH
+
+# list of KDMAs to align to
+# {kdma: str name, value: float target value}
+kdma_values:
+  - {kdma: Moral judgement, value: 0.84}
+  - {kdma: Ingroup Bias, value: 0.84}

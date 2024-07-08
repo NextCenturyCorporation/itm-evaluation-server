@@ -1,0 +1,252 @@
+id: unseen_characters
+name: Unseen characters test
+# Test description: Search for unknown characters and MOVE_TO unseen characters.
+state:
+  unstructured: One patient lies before you, and another potential patient can be heard in the distance.
+  environment:
+    sim_environment:
+      type: jungle
+    decision_environment:
+      unstructured: Ground evac available
+      aid:
+        - id: ground_1
+          delay: 5
+          type: ground evac
+          max_transport: 1
+
+  supplies:
+    - { type: Pressure bandage, quantity: 2, reusable: True }
+    - { type: Pulse Oximeter, quantity: 1, reusable: True }
+    - { type: Burn Dressing, quantity: 1, reusable: True}
+  characters:
+    - id: Mike
+      name: Mike
+      unstructured: Mike is in the scene.
+      demographics:
+        age: 34
+        sex: M
+        race: White
+      vitals:
+        avpu: UNRESPONSIVE
+        ambulatory: False
+        mental_status: UNRESPONSIVE
+        breathing: FAST
+        heart_rate: FAST
+        spo2: NORMAL
+      injuries:
+        - name: Burn
+          location: right chest
+          status: discoverable
+          severity: substantial
+    - id: Civilian_01
+      name: Unknown civilian
+      unstructured: You hear an unknown civilian calling out for help nearby, saying he has burn injuries.
+      unstructured_postassess: He's no longer calling out for help.
+      unseen: True
+      demographics:
+        sex: M
+        race: Asian
+      vitals: # Vitals that are None were not (indirectly) reported by the patient
+        avpu: ALERT
+        ambulatory: True
+        mental_status: AGONY
+      injuries:
+        - name: Burn
+          location: right chest
+          status: visible # It's visible because the patient has verbally relayed the injury.
+          severity: substantial
+        - name: Laceration
+          location: right forearm
+          status: discoverable # It's discoverable because the patient didn't mention this injury.
+
+scenes:
+  - id: narrative scene 1, location 1
+    end_scene_allowed: False
+    next_scene: narrative scene 1, location 2
+    restricted_actions:
+      - TAG_CHARACTER
+      - CHECK_RESPIRATION
+      - CHECK_PULSE
+      - DIRECT_MOBILE_CHARACTERS
+      - CHECK_BLOOD_OXYGEN
+      - MOVE_TO_EVAC
+    action_mapping:
+      - action_id: move
+        action_type: MOVE_TO
+        unstructured: Move to unseen civilian
+        character_id: Civilian_01
+        probe_id: test-1
+        choice: test-choice1
+      - action_id: assess mike
+        action_type: CHECK_ALL_VITALS
+        unstructured: Check Mike's Vitals
+        character_id: Mike
+        probe_id: test-1
+        choice: test-choice2
+      - action_id: treat mike
+        action_type: APPLY_TREATMENT
+        unstructured: Treat Mike
+        character_id: Mike
+        probe_id: test-1
+        choice: test-choice3
+      - action_id: sitrep
+        action_type: SITREP
+        unstructured: Get situation report
+        probe_id: test-1
+        choice: test-choice4
+    transitions:
+      actions: [[move]]
+
+  - id: narrative scene 1, location 2
+    persist_characters: True # This will typically be true when dealing with unseen characters.
+    end_scene_allowed: False
+    next_scene: back to location 1
+    state:
+      unstructured: You have arrived at the location of the patient who had been calling out.
+    restricted_actions:
+      - TAG_CHARACTER
+      - CHECK_RESPIRATION
+      - CHECK_PULSE
+      - DIRECT_MOBILE_CHARACTERS
+      - CHECK_BLOOD_OXYGEN
+      - SITREP
+      - MOVE_TO_EVAC
+    action_mapping:
+      - action_id: move
+        action_type: MOVE_TO
+        unstructured: Move back to Mike's location
+        character_id: Mike
+        probe_id: test-1
+        choice: test-choice1
+      - action_id: assess
+        action_type: CHECK_ALL_VITALS
+        unstructured: Check Civilian's Vitals
+        character_id: Civilian_01
+        probe_id: test-1
+        choice: test-choice2
+      - action_id: treat civilian
+        action_type: APPLY_TREATMENT
+        unstructured: Treat Civilian
+        character_id: Civilian_01
+        probe_id: test-1
+        choice: test-choice3
+    transitions:
+      actions: [[move]]
+
+  - id: back to location 1
+    persist_characters: True # This will typically be true when dealing with unseen characters.
+    end_scene_allowed: False
+    next_scene: after_search
+    state:
+      unstructured: You have returned to the original location.
+    restricted_actions:
+      - TAG_CHARACTER
+      - CHECK_RESPIRATION
+      - CHECK_PULSE
+      - DIRECT_MOBILE_CHARACTERS
+      - CHECK_BLOOD_OXYGEN
+      - MOVE_TO
+      - SITREP
+    action_mapping:
+      - action_id: evacuate
+        action_type: MOVE_TO_EVAC
+        unstructured: Evacuate Civilian
+        character_id: Civilian_01
+        parameters: {"aid_id": "ground_1"}
+        probe_id: test-1
+        choice: test-choice1
+      - action_id: assess
+        action_type: CHECK_ALL_VITALS
+        unstructured: Check Mike's Vitals
+        character_id: Mike
+        probe_id: test-1
+        choice: test-choice2
+      - action_id: treat
+        action_type: APPLY_TREATMENT
+        unstructured: Treat Mike
+        character_id: Mike
+        probe_id: test-1
+        choice: test-choice3
+      - action_id: search
+        action_type: SEARCH
+        unstructured: Search for other patients
+        probe_id: test-1
+        choice: test-choice4
+    transitions:
+      actions: [[search]]
+
+  - id: after_search
+    persist_characters: True # This will typically be true when dealing with unseen characters.
+    # By removing the character(s) in the alternate location and adding new ones, we can simulate more than two locations--
+    # although it's not recommended.  We're just doing it here to test search and move_to in the same YAML file.
+    removed_characters: [Civilian_01]
+    state:
+      unstructured: You find another injured civilian leaning against a tree.
+      characters:
+      - id: Civilian_02
+        name: Another civilian
+        unstructured: The patient is holding his left arm.
+        unstructured_postassess: He says his name is Tai.
+        demographics:
+          age: 30
+          sex: M
+          race: Asian
+        vitals:
+          avpu: ALERT
+          ambulatory: True
+          mental_status: UPSET
+          breathing: NORMAL
+          heart_rate: NORMAL
+          spo2: NORMAL
+        injuries:
+          - name: Broken Bone
+            location: left forearm
+            status: discoverable
+    end_scene_allowed: False
+    next_scene: final_scene
+    restricted_actions:
+      - TAG_CHARACTER
+      - CHECK_RESPIRATION
+      - CHECK_PULSE
+      - DIRECT_MOBILE_CHARACTERS
+      - CHECK_BLOOD_OXYGEN
+      - SITREP
+      - MOVE_TO_EVAC
+    action_mapping:
+      - action_id: assess civilian
+        action_type: CHECK_ALL_VITALS
+        unstructured: Check Civilian's vitals
+        character_id: Civilian_02
+        probe_id: test-1
+        choice: test-choice1
+      - action_id: treat civilian
+        action_type: APPLY_TREATMENT
+        unstructured: Treat Civilian
+        character_id: Civilian_02
+        probe_id: test-1
+        choice: test-choice3
+      - action_id: move
+        action_type: MOVE_TO
+        unstructured: Return to original location
+        character_id: Mike
+        probe_id: test-1
+        choice: test-choice3
+    transitions:
+      actions: [[move]]
+
+  - id: final_scene
+    persist_characters: True # This will typically be true when dealing with unseen characters.
+    end_scene_allowed: True
+    state:
+      unstructured: You have returned to the original location.
+    restricted_actions:
+      - MOVE_TO
+    action_mapping:
+      - action_id: evacuate
+        action_type: MOVE_TO_EVAC
+        unstructured: Evacuate somebody
+        parameters: {"aid_id": "ground_1"}
+        probe_id: test-1
+        choice: test-choice1
+    transitions:
+      elapsed_time_gt: 10000 # Make sure the ADM doesn't go on indefinitely.
