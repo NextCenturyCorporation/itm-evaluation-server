@@ -52,11 +52,11 @@ class ITMActionHandler:
             target.unstructured = source.unstructured_postassess
 
     def __successful_treatment(self, treatment: str, injury_name: str, location: str) -> bool:
-        # NOTE: Asthmatic, Forehead Scrape, Ear Bleed, Traumatic Brain Injury, Open Abdominal Wound and Internal injuries are currently untreatable.
-        # This logic is in sync with the current OSU Simulator, but may diverge at a later date.
+        # NOTE: Asthmatic, Ear Bleed, Traumatic Brain Injury, Open Abdominal Wound, and Internal injuries are currently untreatable.
+        # This logic is in sync with the current ITM Simulator, but may diverge at a later date.
         """
             Head Injuries
-            Forehead Scrape (Abrasion): Pressure bandage
+            Face Laceration: Pressure bandage
             Face Shrapnel: Nasopharyngeal airway
             Ear Bleed: None
             Traumatic Brain Injury: None
@@ -67,19 +67,19 @@ class ITMActionHandler:
 
             Hand Injuries
             Wrist Amputation: Tourniquet
-            Broken Wrist: Splint
             Hand (Palm) Laceration: Pressure bandage
 
             Arm Injuries
             Forearm Laceration: Pressure bandage
-            Broken Forearm: Splint
+            Forearm Burn: Burn Dressing
+            Bicep Burn: Burn Dressing
             Bicep Puncture: Tourniquet
             Shoulder Puncture: Hemostatic gauze
             Broken Shoulder: Splint
-            Bicep Burn: Burn Dressing
 
             Chest Injuries
             Asthmatic: None
+            Chest Burn: Burn Dressing
             Chest Collapse: Decompression Needle
             Chest Puncture: Vented Chest Seal
 
@@ -93,8 +93,10 @@ class ITMActionHandler:
             Thigh Puncture: Tourniquet
             Thigh Laceration: Tourniquet
             Thigh Amputation: Tourniquet
+            Thigh Burn: Burn Dressing
             Leg (Shin) Amputation: Tourniquet
             Broken Leg: Splint
+            Calf Burn: Burn Dressing
             Calf Laceration: Pressure bandage
             Calf Shrapnel: Pressure bandage
             Calf Puncture: Tourniquet
