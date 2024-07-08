@@ -27,7 +27,6 @@ class ITMScenario:
         from.itm_session import ITMSession
         self.session :ITMSession = session
         self.isd :ITMScenarioData
-        self.first_scene_id = ''
         self.id=''
         self.name=''
 
@@ -53,8 +52,7 @@ class ITMScenario:
         (scenario, isd.scenes) = \
             scenario_reader.read_scenario_from_yaml()
         isd.current_scene = [scene for scene in isd.scenes if scene.id == scenario.first_scene][0]
-        self.first_scene_id = isd.current_scene.id
-        logging.debug("First scene of scenario '%s' is '%s'.", scenario.id, self.first_scene_id)
+        logging.debug("First scene of scenario '%s' is '%s'.", scenario.id, isd.current_scene.id)
         for scene in isd.scenes:
             scene.training = self.training
             scene.parent_scenario = self
@@ -189,8 +187,7 @@ class ITMScenario:
             return
 
         # Rule 1: Replace or supplement state and scene `characters` structure based on configuration.
-        if self.isd.current_scene.persist_characters \
-                or next_scene_id == self.first_scene_id: # Scenario looped back to first scene
+        if self.isd.current_scene.persist_characters:
             if target_state.characters:
                 replaced_character_ids = []
                 persisted_characters = []

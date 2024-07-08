@@ -102,7 +102,6 @@ scenes:
   - id: test_scene1
     next_scene: test_scene2
     end_scene_allowed: false
-    persist_characters: true
     action_mapping:
       - action_id: mike-bloodox
         action_type: CHECK_BLOOD_OXYGEN
@@ -150,6 +149,22 @@ scenes:
   - id: test_scene2
     state:
       unstructured: This is a scene2
+      characters:
+      - id: Joe
+        name: Joe
+        unstructured: This is a test.
+        unstructured_postassess: This is still a test.
+        demographics:
+          age: 43
+          sex: F
+          race: black
+        vitals:
+          avpu: ALERT
+          ambulatory: true
+          mental_status: CALM
+          breathing: NORMAL
+          heart_rate: NORMAL
+          spo2: NORMAL
     next_scene: test_scene3
     end_scene_allowed: false
     persist_characters: true
