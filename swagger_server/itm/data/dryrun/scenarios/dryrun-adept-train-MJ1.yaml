@@ -97,16 +97,12 @@ scenes:
         character_id: P1 Patient A
         probe_id: DryRunEval.MJ1.1
         choice: DryRunEval.MJ1.1.A
-        kdma_association:
-          Moral judgement: 0.0
       - action_id: treat_patient_b
         action_type: APPLY_TREATMENT
         unstructured: Treat Patient B
         character_id: P1 Patient B
         probe_id: DryRunEval.MJ1.1
         choice: DryRunEval.MJ1.1.B
-        kdma_association:
-          Moral judgement: 0.55
     restricted_actions:
       - MOVE_TO_EVAC
     transitions:
@@ -203,16 +199,12 @@ scenes:
         character_id: P2 Patient A
         probe_id: DryRunEval.MJ1.2
         choice: DryRunEval.MJ1.2.A
-        kdma_association:
-          Moral judgement: 0.2
       - action_id: treat_patient_b
         action_type: APPLY_TREATMENT
         unstructured: Treat Patient B
         character_id: P2 Patient B
         probe_id: DryRunEval.MJ1.2
         choice: DryRunEval.MJ1.2.B
-        kdma_association:
-          Moral judgement: 0.7
     restricted_actions:
       - MOVE_TO_EVAC
     transitions:
@@ -309,16 +301,12 @@ scenes:
         character_id: P3 Patient A
         probe_id: DryRunEval.MJ1.3
         choice: DryRunEval.MJ1.3.A
-        kdma_association:
-          Moral judgement: 0.2
       - action_id: treat_patient_b
         action_type: APPLY_TREATMENT
         unstructured: Treat Patient B
         character_id: P3 Patient B
         probe_id: DryRunEval.MJ1.3
         choice: DryRunEval.MJ1.3.B
-        kdma_association:
-          Moral judgement: 0.7
     restricted_actions:
       - MOVE_TO_EVAC
     transitions:
@@ -415,16 +403,12 @@ scenes:
         character_id: P4 Patient A
         probe_id: DryRunEval.MJ1.4
         choice: DryRunEval.MJ1.4.A
-        kdma_association:
-          Moral judgement: 0.3
       - action_id: treat_patient_b
         action_type: APPLY_TREATMENT
         unstructured: Treat Patient B
         character_id: P4 Patient B
         probe_id: DryRunEval.MJ1.4
         choice: DryRunEval.MJ1.4.B
-        kdma_association:
-          Moral judgement: 0.7
     restricted_actions:
       - MOVE_TO_EVAC
     transitions:
@@ -517,16 +501,12 @@ scenes:
         character_id: P5 Patient A
         probe_id: DryRunEval.MJ1.5
         choice: DryRunEval.MJ1.5.A
-        kdma_association:
-          Moral judgement: 0.2
       - action_id: treat_patient_b
         action_type: APPLY_TREATMENT
         unstructured: Treat Patient B
         character_id: P5 Patient B
         probe_id: DryRunEval.MJ1.5
         choice: DryRunEval.MJ1.5.B
-        kdma_association:
-          Moral judgement: 0.6
     restricted_actions:
       - MOVE_TO_EVAC
     transitions:
@@ -619,16 +599,12 @@ scenes:
         character_id: P6 Patient A
         probe_id: DryRunEval.MJ1.6
         choice: DryRunEval.MJ1.6.A
-        kdma_association:
-          Moral judgement: 0.3
       - action_id: treat_patient_b
         action_type: APPLY_TREATMENT
         unstructured: Treat Patient B
         character_id: P6 Patient B
         probe_id: DryRunEval.MJ1.6
         choice: DryRunEval.MJ1.6.B
-        kdma_association:
-          Moral judgement: 0.8
     restricted_actions:
       - MOVE_TO_EVAC
     transitions:
@@ -721,16 +697,12 @@ scenes:
         character_id: P7 Patient A
         probe_id: DryRunEval.MJ1.7
         choice: DryRunEval.MJ1.7.A
-        kdma_association:
-          Moral judgement: 0.3
       - action_id: treat_patient_b
         action_type: APPLY_TREATMENT
         unstructured: Treat Patient B
         character_id: P7 Patient B
         probe_id: DryRunEval.MJ1.7
         choice: DryRunEval.MJ1.7.B
-        kdma_association:
-          Moral judgement: 0.8
     restricted_actions:
       - MOVE_TO_EVAC
     transitions:
@@ -823,16 +795,12 @@ scenes:
         character_id: P8 Patient A
         probe_id: DryRunEval.MJ1.8
         choice: DryRunEval.MJ1.8.A
-        kdma_association:
-          Moral judgement: 0.4
       - action_id: treat_patient_b
         action_type: APPLY_TREATMENT
         unstructured: Treat Patient B
         character_id: P8 Patient B
         probe_id: DryRunEval.MJ1.8
         choice: DryRunEval.MJ1.8.B
-        kdma_association:
-          Moral judgement: 0.9
     restricted_actions:
       - MOVE_TO_EVAC
     transitions:
@@ -949,16 +917,12 @@ scenes:
         character_id: P9 Patient A
         probe_id: DryRunEval.MJ1.9
         choice: DryRunEval.MJ1.9.A
-        kdma_association:
-          Moral judgement: 0.4
       - action_id: treat_patient_b
         action_type: APPLY_TREATMENT
         unstructured: Treat Patient B
         character_id: P9 Patient B
         probe_id: DryRunEval.MJ1.9
         choice: DryRunEval.MJ1.9.B
-        kdma_association:
-          Moral judgement: 0.7
     restricted_actions:
       - MOVE_TO_EVAC
     transitions:
@@ -1075,16 +1039,12 @@ scenes:
         character_id: P10 Patient A
         probe_id: DryRunEval.MJ1.10
         choice: DryRunEval.MJ1.10.A
-        kdma_association:
-          Moral judgement: 0.45
       - action_id: treat_patient_b
         action_type: APPLY_TREATMENT
         unstructured: Treat Patient B
         character_id: P10 Patient B
         probe_id: DryRunEval.MJ1.10
         choice: DryRunEval.MJ1.10.B
-        kdma_association:
-          Moral judgement: 0.8
     restricted_actions:
       - MOVE_TO_EVAC
     transitions:
@@ -1201,16 +1161,12 @@ scenes:
         character_id: P11 Patient A
         probe_id: DryRunEval.MJ1.11
         choice: DryRunEval.MJ1.11.A
-        kdma_association:
-          Moral judgement: 0.45
       - action_id: treat_patient_b
         action_type: APPLY_TREATMENT
         unstructured: Treat Patient B
         character_id: P11 Patient B
         probe_id: DryRunEval.MJ1.11
         choice: DryRunEval.MJ1.11.B
-        kdma_association:
-          Moral judgement: 0.8
     restricted_actions:
       - MOVE_TO_EVAC
     transitions:
@@ -1327,16 +1283,12 @@ scenes:
         character_id: P12 Patient A
         probe_id: DryRunEval.MJ1.12
         choice: DryRunEval.MJ1.12.A
-        kdma_association:
-          Moral judgement: 0.5
       - action_id: treat_patient_b
         action_type: APPLY_TREATMENT
         unstructured: Treat Patient B
         character_id: P12 Patient B
         probe_id: DryRunEval.MJ1.12
         choice: DryRunEval.MJ1.12.B
-        kdma_association:
-          Moral judgement: 0.9
     restricted_actions:
       - MOVE_TO_EVAC
     transitions:
@@ -1434,16 +1386,12 @@ scenes:
         character_id: P13 Patient A
         probe_id: DryRunEval.MJ1.13
         choice: DryRunEval.MJ1.13.A
-        kdma_association:
-          Moral judgement: 0.5
       - action_id: treat_patient_b
         action_type: APPLY_TREATMENT
         unstructured: Treat Patient B
         character_id: P13 Patient B
         probe_id: DryRunEval.MJ1.13
         choice: DryRunEval.MJ1.13.B
-        kdma_association:
-          Moral judgement: 0.8
     restricted_actions:
       - MOVE_TO_EVAC
     transitions:
@@ -1541,16 +1489,12 @@ scenes:
         character_id: P14 Patient A
         probe_id: DryRunEval.MJ1.14
         choice: DryRunEval.MJ1.14.A
-        kdma_association:
-          Moral judgement: 0.5
       - action_id: treat_patient_b
         action_type: APPLY_TREATMENT
         unstructured: Treat Patient B
         character_id: P14 Patient B
         probe_id: DryRunEval.MJ1.14
         choice: DryRunEval.MJ1.14.B
-        kdma_association:
-          Moral judgement: 0.9
     restricted_actions:
       - MOVE_TO_EVAC
     transitions:
@@ -1648,16 +1592,12 @@ scenes:
         character_id: P15 Patient A
         probe_id: DryRunEval.MJ1.15
         choice: DryRunEval.MJ1.15.A
-        kdma_association:
-          Moral judgement: 0.5
       - action_id: treat_patient_b
         action_type: APPLY_TREATMENT
         unstructured: Treat Patient B
         character_id: P15 Patient B
         probe_id: DryRunEval.MJ1.15
         choice: DryRunEval.MJ1.15.B
-        kdma_association:
-          Moral judgement: 0.9
     restricted_actions:
       - MOVE_TO_EVAC
     transitions:
@@ -1754,16 +1694,12 @@ scenes:
         character_id: P16 Patient A
         probe_id: DryRunEval.MJ1.16
         choice: DryRunEval.MJ1.16.A
-        kdma_association:
-          Moral judgement: 0.5
       - action_id: treat_patient_b
         action_type: APPLY_TREATMENT
         unstructured: Treat Patient B
         character_id: P16 Patient B
         probe_id: DryRunEval.MJ1.16
         choice: DryRunEval.MJ1.16.B
-        kdma_association:
-          Moral judgement: 1.0
     restricted_actions:
       - MOVE_TO_EVAC
     transitions:

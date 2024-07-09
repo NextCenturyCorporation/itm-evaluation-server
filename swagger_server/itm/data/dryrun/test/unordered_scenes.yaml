@@ -157,7 +157,7 @@ scenes:
         demographics:
           age: 43
           sex: F
-          race: black
+          race: Black
         vitals:
           avpu: ALERT
           ambulatory: true

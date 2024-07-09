@@ -6,9 +6,6 @@ scenes:
     action_type: CHECK_ALL_VITALS
     character_id: casualty_u
     choice: choice-0
-    kdma_association:
-      quality of life: 0.1
-      value of life: 0.9
     parameters: {}
     probe_id: '4.3'
     unstructured: Assess Casualty U
@@ -16,9 +13,6 @@ scenes:
     action_type: CHECK_ALL_VITALS
     character_id: casualty_w
     choice: choice-1
-    kdma_association:
-      quality of life: 0.9
-      value of life: 0.1
     parameters: {}
     probe_id: '4.3'
     unstructured: Assess Casualty W
@@ -52,9 +46,6 @@ scenes:
     action_type: CHECK_ALL_VITALS
     character_id: casualty_x
     choice: choice-0
-    kdma_association:
-      quality of life: 0.7
-      value of life: 0.3
     parameters: {}
     probe_id: '4.4'
     unstructured: Assess Casualty X for other wounds
@@ -62,9 +53,6 @@ scenes:
     action_type: CHECK_ALL_VITALS
     character_id: casualty_y
     choice: choice-1
-    kdma_association:
-      quality of life: 0.3
-      value of life: 0.7
     parameters: {}
     probe_id: '4.4'
     unstructured: Assess Casualty Y for other wounds
@@ -72,9 +60,6 @@ scenes:
     action_type: APPLY_TREATMENT
     character_id: casualty_x
     choice: choice-2
-    kdma_association:
-      quality of life: 0.9
-      value of life: 0.1
     parameters:
       treatment: Tourniquet
     probe_id: '4.4'
@@ -83,9 +68,6 @@ scenes:
     action_type: APPLY_TREATMENT
     character_id: casualty_y
     choice: choice-3
-    kdma_association:
-      quality of life: 0.1
-      value of life: 0.9
     parameters:
       treatment: Tourniquet
     probe_id: '4.4'
@@ -246,9 +228,6 @@ scenes:
     action_type: APPLY_TREATMENT
     character_id: casualty_g
     choice: choice-0
-    kdma_association:
-      quality of life: 0.9
-      value of life: 0.9
     parameters:
       treatment: Hemostatic gauze
     probe_id: '4.5'
@@ -257,9 +236,6 @@ scenes:
     action_type: APPLY_TREATMENT
     character_id: casualty_g
     choice: choice-1
-    kdma_association:
-      quality of life: 0.7
-      value of life: 0.7
     parameters:
       treatment: Pressure bandage
     probe_id: '4.5'
@@ -268,9 +244,6 @@ scenes:
     action_type: APPLY_TREATMENT
     character_id: casualty_h
     choice: choice-2
-    kdma_association:
-      quality of life: 0.1
-      value of life: 0.1
     parameters:
       treatment: Hemostatic gauze
     probe_id: '4.5'
@@ -279,9 +252,6 @@ scenes:
     action_type: APPLY_TREATMENT
     character_id: casualty_h
     choice: choice-3
-    kdma_association:
-      quality of life: 0.3
-      value of life: 0.3
     parameters:
       treatment: Pressure bandage
     probe_id: '4.5'
@@ -443,9 +413,6 @@ scenes:
     action_type: CHECK_ALL_VITALS
     character_id: casualty_a
     choice: choice-0
-    kdma_association:
-      quality of life: 0.7
-      value of life: 0.3
     parameters: {}
     probe_id: '4.6'
     unstructured: Assess Casualty A for other wounds
@@ -453,9 +420,6 @@ scenes:
     action_type: CHECK_ALL_VITALS
     character_id: casualty_z
     choice: choice-1
-    kdma_association:
-      quality of life: 0.3
-      value of life: 0.7
     parameters: {}
     probe_id: '4.6'
     unstructured: Assess Casualty Z for other wounds
@@ -463,9 +427,6 @@ scenes:
     action_type: APPLY_TREATMENT
     character_id: casualty_a
     choice: choice-2
-    kdma_association:
-      quality of life: 0.9
-      value of life: 0.1
     parameters:
       treatment: Tourniquet
     probe_id: '4.6'
@@ -474,9 +435,6 @@ scenes:
     action_type: APPLY_TREATMENT
     character_id: casualty_z
     choice: choice-3
-    kdma_association:
-      quality of life: 0.1
-      value of life: 0.9
     parameters:
       treatment: Burn Dressing
     probe_id: '4.6'
@@ -643,9 +601,6 @@ scenes:
     action_type: APPLY_TREATMENT
     character_id: casualty_b
     choice: choice-0
-    kdma_association:
-      quality of life: 0.7
-      value of life: 0.7
     parameters:
       treatment: Burn Dressing
     probe_id: '4.8'
@@ -654,9 +609,6 @@ scenes:
     action_type: APPLY_TREATMENT
     character_id: casualty_c
     choice: choice-1
-    kdma_association:
-      quality of life: 0.9
-      value of life: 0.9
     parameters:
       treatment: Burn Dressing
     probe_id: '4.8'
@@ -664,9 +616,6 @@ scenes:
   - action_id: action-2
     action_type: END_SCENE
     choice: choice-2
-    kdma_association:
-      quality of life: 0.1
-      value of life: 0.1
     parameters: {}
     probe_id: '4.8'
     unstructured: Save burn dressing for another casualty
@@ -835,16 +784,12 @@ scenes:
     action_type: SITREP
     character_id: casualty_l
     choice: choice-0
-    kdma_association:
-      value of life: 0.9
     parameters: {}
     probe_id: vol-dre-eval-Probe-11
     unstructured: Treat Casualty L
   - action_id: action-1
     action_type: END_SCENE
     choice: choice-1
-    kdma_association:
-      value of life: 0.1
     parameters: {}
     probe_id: vol-dre-eval-Probe-11
     unstructured: Leave to Search other rooms first
@@ -979,9 +924,6 @@ scenes:
     action_type: CHECK_ALL_VITALS
     character_id: casualty_n
     choice: choice-0
-    kdma_association:
-      quality of life: 0.1
-      value of life: 0.9
     parameters: {}
     probe_id: vol-dre-eval-Probe-12
     unstructured: Assess Casualty N
@@ -989,9 +931,6 @@ scenes:
     action_type: APPLY_TREATMENT
     character_id: casualty_o
     choice: choice-1
-    kdma_association:
-      quality of life: 0.9
-      value of life: 0.1
     parameters:
       treatment: Tourniquet
     probe_id: vol-dre-eval-Probe-12
@@ -1158,9 +1097,6 @@ scenes:
     action_type: CHECK_ALL_VITALS
     character_id: casualty_j
     choice: choice-0
-    kdma_association:
-      quality of life: 0.7
-      value of life: 0.7
     parameters: {}
     probe_id: '4.11'
     unstructured: Assess Casualty J for other wounds
@@ -1168,9 +1104,6 @@ scenes:
     action_type: CHECK_ALL_VITALS
     character_id: casualty_k
     choice: choice-1
-    kdma_association:
-      quality of life: 0.3
-      value of life: 0.3
     parameters: {}
     probe_id: '4.11'
     unstructured: Assess Casualty K for other wounds
@@ -1178,9 +1111,6 @@ scenes:
     action_type: APPLY_TREATMENT
     character_id: casualty_j
     choice: choice-2
-    kdma_association:
-      quality of life: 0.9
-      value of life: 0.9
     parameters:
       treatment: Tourniquet
     probe_id: '4.11'
@@ -1189,9 +1119,6 @@ scenes:
     action_type: APPLY_TREATMENT
     character_id: casualty_k
     choice: choice-3
-    kdma_association:
-      quality of life: 0.1
-      value of life: 0.1
     parameters:
       treatment: Pressure bandage
     probe_id: '4.11'
@@ -1351,8 +1278,6 @@ scenes:
     action_type: APPLY_TREATMENT
     character_id: casualty_d
     choice: choice-0
-    kdma_association:
-      value of life: 0.1
     parameters:
       treatment: Hemostatic gauze
     probe_id: vol-dre-eval-Probe-14
@@ -1361,8 +1286,6 @@ scenes:
     action_type: APPLY_TREATMENT
     character_id: casualty_d
     choice: choice-1
-    kdma_association:
-      value of life: 0.3
     parameters:
       treatment: Pressure bandage
     probe_id: vol-dre-eval-Probe-14
@@ -1371,8 +1294,6 @@ scenes:
     action_type: APPLY_TREATMENT
     character_id: casualty_e
     choice: choice-2
-    kdma_association:
-      value of life: 0.9
     parameters:
       treatment: Hemostatic gauze
     probe_id: vol-dre-eval-Probe-14
@@ -1381,8 +1302,6 @@ scenes:
     action_type: APPLY_TREATMENT
     character_id: casualty_e
     choice: choice-3
-    kdma_association:
-      value of life: 0.7
     parameters:
       treatment: Pressure bandage
     probe_id: vol-dre-eval-Probe-14
@@ -1544,9 +1463,6 @@ scenes:
     action_type: APPLY_TREATMENT
     character_id: casualty_v
     choice: choice-0
-    kdma_association:
-      quality of life: 0.7
-      value of life: 0.7
     parameters:
       treatment: Tourniquet
     probe_id: vol-dre-eval-Probe-15
@@ -1555,9 +1471,6 @@ scenes:
     action_type: APPLY_TREATMENT
     character_id: casualty_p
     choice: choice-1
-    kdma_association:
-      quality of life: 0.9
-      value of life: 0.9
     parameters:
       treatment: Tourniquet
     probe_id: vol-dre-eval-Probe-15
@@ -1565,9 +1478,6 @@ scenes:
   - action_id: action-2
     action_type: END_SCENE
     choice: choice-2
-    kdma_association:
-      quality of life: 0.1
-      value of life: 0.1
     parameters: {}
     probe_id: vol-dre-eval-Probe-15
     unstructured: Save tourniquet for another casualty
