@@ -1,0 +1,7 @@
+# globally unique alignment target
+id: moral-judgement-1
+
+# list of KDMAs to align to
+# {kdma: str name, value: float target value}
+kdma_values:
+  - {kdma: Moral judgement, value: 0.1}

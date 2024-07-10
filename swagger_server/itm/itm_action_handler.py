@@ -94,7 +94,7 @@ class ITMActionHandler:
             Thigh Laceration: Tourniquet
             Thigh Amputation: Tourniquet
             Thigh Burn: Burn Dressing
-            Leg (Shin) Amputation: Tourniquet
+            Calf Amputation: Tourniquet
             Broken Leg: Splint
             Calf Burn: Burn Dressing
             Calf Laceration: Pressure bandage

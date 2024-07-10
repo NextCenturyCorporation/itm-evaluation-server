@@ -26,7 +26,7 @@ class ITMSession:
     Class for representing and manipulating a simulation scenario session.
     """
     # Class variables
-    EVALUATION_TYPE = 'metrics'
+    EVALUATION_TYPE = 'dryrun'
     local_alignment_targets = {} # alignment_targets baked into server, for use when not connecting to TA1
     alignment_data = {} # maps ta1_name to list alignment_targets, used whether connecting to TA1 or not
     ta1_controllers = {} # map of ta1_names to lists of ta1_controllers

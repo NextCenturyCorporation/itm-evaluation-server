@@ -1,0 +1,7 @@
+# globally unique alignment target
+id: ingroup-bias-5
+
+# list of KDMAs to align to
+# {kdma: str name, value: float target value}
+kdma_values:
+  - {kdma: Ingroup Bias, value: 0.5}
