@@ -1,5 +1,6 @@
 import boto3
 import json
+import logging
 import os
 
 from botocore.exceptions import ClientError
@@ -60,16 +61,16 @@ class ITMHistory:
         os.makedirs(self.filepath, exist_ok=True)
         filespec = self.filepath + filebasename
         full_filepath = filespec + '.json'
-        print(f'--> Saving history to {full_filepath}')
+        logging.info("Saving history to %s", full_filepath)
 
         with open(full_filepath, 'w') as file:
             # Convert Python dictionary to JSON and write to file
             json.dump({'history': self.history}, file, indent=2)
 
         if (save_to_s3):
-            print(f'--> Saving history to S3')
+            logging.info("Saving history to S3")
             if not self.save_json_to_s3(os.getcwd() + os.path.sep + full_filepath, filebasename  + '.json'):
-                print(f'\033[92mWARNING: Unable to save history to S3\033[00m')
+                logging.warning("\033[92mUnable to save history to S3\033[00m")
 
     def save_json_to_s3(self, full_filepath, file_name) -> bool:
         """
@@ -83,16 +84,13 @@ class ITMHistory:
             True if file was uploaded, else False
         """
 
-        # If S3 object_name was not specified, use file_name
-        # if object_name is None:
         object_name = os.path.basename(file_name)
 
         # Upload the file
         s3_client = boto3.client('s3')
         try:
-            response = s3_client.upload_file(full_filepath, self.save_history_bucket, object_name)
-        except Exception as e:
-            # TODO: Add logging: logging.error(e)
-            print(e)
+            s3_client.upload_file(full_filepath, self.save_history_bucket, object_name)
+        except Exception:
+            logging.exception("Could not save JSON to S3")
             return False
-        return True        
+        return True

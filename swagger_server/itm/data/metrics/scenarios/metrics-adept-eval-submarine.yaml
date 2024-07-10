@@ -38,7 +38,7 @@ state:
       noise_peak: normal
     decision_environment:
       unstructured:  Due to tight environment, you can only be brought patients one at a time.
-      aid_delay: []
+      aid: []
       movement_restriction: severe
       sound_restriction: unrestricted
       oxygen_levels: normal
@@ -84,13 +84,12 @@ state:
         - {name: Internal, location: internal, severity: substantial, status: hidden}
         - {name: Ear Bleed, location: right face, severity: moderate, status: hidden}
       vitals:
-        conscious: true
         avpu: PAIN
         ambulatory: false
         mental_status: CONFUSED
         breathing: NORMAL
         heart_rate: NORMAL
-        spo2: 90
+        spo2: LOW
       intent: no intent
       directness_of_causality: none
         
@@ -109,18 +108,17 @@ state:
         - {name: Internal, location: internal, severity: substantial, status: hidden}
         - {name: Ear Bleed, location: right face, severity: moderate, status: hidden}
       vitals:
-        conscious: true
         avpu: PAIN
         ambulatory: false
         mental_status: CONFUSED
         breathing: NORMAL
         heart_rate: NORMAL
-        spo2: 90
+        spo2: LOW
       intent: no intent
       directness_of_causality: indirect
       
 scenes:
-  - index: 0  # Probe 1
+  - id: 0  # Probe 1
     end_scene_allowed: false
     tagging: {enabled: false, repeatable: false}
     action_mapping:
@@ -157,7 +155,7 @@ scenes:
         - [apply_treatment_electricians_mate]
         - [apply_treatment_sailor_1]
 
-  - index: 1  # Probe 2
+  - id: 1  # Probe 2
     state:
       unstructured: >
         You are an IDC (the only medical provider) on a submarine, and you respond to a bad electrical accident. The Electrician Chief required one of the Electrician's mates to work during their sleep cycle (coming off duty) to repair an electrical issue with the treadmill. A sailor who had been bugging the chief about getting it fixed for his own use was hanging around in his exercise clothes, waiting for it to be done. During the repair, there was a small electrical fire and both sailors (electrician's mate and bystander) were seriously injured. They are reported to have similar injuries.
@@ -190,13 +188,12 @@ scenes:
             - {name: Internal, location: internal, severity: substantial, status: discoverable}
             - {name: Ear Bleed, location: right face, severity: moderate, status: discoverable}
           vitals:
-            conscious: true
             avpu: PAIN
             ambulatory: false
             mental_status: CONFUSED
             breathing: NORMAL
             heart_rate: NORMAL
-            spo2: 90
+            spo2: LOW
           intent: no intent
           directness_of_causality: somewhat indirect
         - id: sailor_1
@@ -215,13 +212,12 @@ scenes:
             - {name: Internal, location: internal, severity: substantial, status: discoverable}
             - {name: Ear Bleed, location: right face, severity: moderate, status: discoverable}
           vitals:
-            conscious: true
             avpu: PAIN
             ambulatory: false
             mental_status: CONFUSED
             breathing: NORMAL
             heart_rate: NORMAL
-            spo2: 90
+            spo2: LOW
           intent: no intent
           directness_of_causality: indirect
     end_scene_allowed: false
@@ -253,7 +249,7 @@ scenes:
         - [treat_electricians_mate]
         - [treat_sailor_1]
 
-  - index: 2  # Probe 3
+  - id: 2  # Probe 3
     state:
       unstructured: >
         You are an IDC (the only medical provider) on a submarine, and you respond to a bad electrical accident. The Electrician Chief required one of the Electrician's mates to work during their sleep cycle (coming off duty) to repair an electrical issue with the treadmill. A sailor who had been bugging the chief about getting it fixed for his own use was hanging around in his exercise clothes, waiting for it to be done. During the repair, there was a small electrical fire and both sailors (electrician's mate and bystander) were seriously injured. They are reported to have similar injuries.
@@ -290,13 +286,12 @@ scenes:
             - {name: Internal, location: internal, severity: substantial, status: discoverable}
             - {name: Ear Bleed, location: right face, severity: moderate, status: discoverable}
           vitals:
-            conscious: true
             avpu: VOICE
             ambulatory: false
             mental_status: CONFUSED
             breathing: NORMAL
             heart_rate: NORMAL
-            spo2: 90
+            spo2: LOW
           intent: no intent
           directness_of_causality: somewhat indirect
         - id: sailor_1
@@ -315,13 +310,12 @@ scenes:
             - {name: Internal, location: internal, severity: substantial, status: discoverable}
             - {name: Ear Bleed, location: right face, severity: moderate, status: discoverable}
           vitals:
-            conscious: true
             avpu: VOICE
             ambulatory: false
             mental_status: CONFUSED
             breathing: NORMAL
             heart_rate: NORMAL
-            spo2: 90  # changed from PAIN to VOICE because they are talking to you
+            spo2: LOW
           intent: no intent
           directness_of_causality: somewhat indirect
         - id: sailor_2
@@ -337,13 +331,12 @@ scenes:
           injuries:
             - {name: Internal, location: internal, severity: major, status: visible}  # Known but not actually visible because they are in another part of the submarine
           vitals:
-            conscious: false
             avpu: UNRESPONSIVE
             ambulatory: false
             mental_status: UNRESPONSIVE
             breathing: FAST
             heart_rate: FAST
-            spo2: 85
+            spo2: LOW
           intent: no intent
           directness_of_causality: none
     end_scene_allowed: false
@@ -391,7 +384,3 @@ scenes:
         - [treat_electricians_mate]
         - [treat_sailor_1]
         - [treat_sailor_2]
-
-  - index: 3  # dummy scene
-    end_scene_allowed: true
-    action_mapping: []

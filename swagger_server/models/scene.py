@@ -21,15 +21,21 @@ class Scene(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, index: int=None, state: State=None, end_scene_allowed: bool=None, probe_config: List[ProbeConfig]=None, tagging: Tagging=None, action_mapping: List[ActionMapping]=None, restricted_actions: List[ActionTypeEnum]=None, transition_semantics: SemanticTypeEnum=None, transitions: Conditions=None):  # noqa: E501
+    def __init__(self, id: str=None, state: State=None, next_scene: str=None, end_scene_allowed: bool=None, persist_characters: bool=None, removed_characters: List[str]=None, probe_config: List[ProbeConfig]=None, tagging: Tagging=None, action_mapping: List[ActionMapping]=None, restricted_actions: List[ActionTypeEnum]=None, transition_semantics: SemanticTypeEnum=None, transitions: Conditions=None):  # noqa: E501
         """Scene - a model defined in Swagger
 
-        :param index: The index of this Scene.  # noqa: E501
-        :type index: int
+        :param id: The id of this Scene.  # noqa: E501
+        :type id: str
         :param state: The state of this Scene.  # noqa: E501
         :type state: State
+        :param next_scene: The next_scene of this Scene.  # noqa: E501
+        :type next_scene: str
         :param end_scene_allowed: The end_scene_allowed of this Scene.  # noqa: E501
         :type end_scene_allowed: bool
+        :param persist_characters: The persist_characters of this Scene.  # noqa: E501
+        :type persist_characters: bool
+        :param removed_characters: The removed_characters of this Scene.  # noqa: E501
+        :type removed_characters: List[str]
         :param probe_config: The probe_config of this Scene.  # noqa: E501
         :type probe_config: List[ProbeConfig]
         :param tagging: The tagging of this Scene.  # noqa: E501
@@ -44,9 +50,12 @@ class Scene(Model):
         :type transitions: Conditions
         """
         self.swagger_types = {
-            'index': int,
+            'id': str,
             'state': State,
+            'next_scene': str,
             'end_scene_allowed': bool,
+            'persist_characters': bool,
+            'removed_characters': List[str],
             'probe_config': List[ProbeConfig],
             'tagging': Tagging,
             'action_mapping': List[ActionMapping],
@@ -56,9 +65,12 @@ class Scene(Model):
         }
 
         self.attribute_map = {
-            'index': 'index',
+            'id': 'id',
             'state': 'state',
+            'next_scene': 'next_scene',
             'end_scene_allowed': 'end_scene_allowed',
+            'persist_characters': 'persist_characters',
+            'removed_characters': 'removed_characters',
             'probe_config': 'probe_config',
             'tagging': 'tagging',
             'action_mapping': 'action_mapping',
@@ -66,9 +78,12 @@ class Scene(Model):
             'transition_semantics': 'transition_semantics',
             'transitions': 'transitions'
         }
-        self._index = index
+        self._id = id
         self._state = state
+        self._next_scene = next_scene
         self._end_scene_allowed = end_scene_allowed
+        self._persist_characters = persist_characters
+        self._removed_characters = removed_characters
         self._probe_config = probe_config
         self._tagging = tagging
         self._action_mapping = action_mapping
@@ -88,29 +103,29 @@ class Scene(Model):
         return util.deserialize_model(dikt, cls)
 
     @property
-    def index(self) -> int:
-        """Gets the index of this Scene.
+    def id(self) -> str:
+        """Gets the id of this Scene.
 
-        The order the scene appears in the scenario  # noqa: E501
+        The scene ID, unique throughout the scenario  # noqa: E501
 
-        :return: The index of this Scene.
-        :rtype: int
+        :return: The id of this Scene.
+        :rtype: str
         """
-        return self._index
+        return self._id
 
-    @index.setter
-    def index(self, index: int):
-        """Sets the index of this Scene.
+    @id.setter
+    def id(self, id: str):
+        """Sets the id of this Scene.
 
-        The order the scene appears in the scenario  # noqa: E501
+        The scene ID, unique throughout the scenario  # noqa: E501
 
-        :param index: The index of this Scene.
-        :type index: int
+        :param id: The id of this Scene.
+        :type id: str
         """
-        if index is None:
-            raise ValueError("Invalid value for `index`, must not be `None`")  # noqa: E501
+        if id is None:
+            raise ValueError("Invalid value for `id`, must not be `None`")  # noqa: E501
 
-        self._index = index
+        self._id = id
 
     @property
     def state(self) -> State:
@@ -132,6 +147,29 @@ class Scene(Model):
         """
 
         self._state = state
+
+    @property
+    def next_scene(self) -> str:
+        """Gets the next_scene of this Scene.
+
+        The ID of the default next scene in the scenario; if empty or missing, then by default this is the last scene.  # noqa: E501
+
+        :return: The next_scene of this Scene.
+        :rtype: str
+        """
+        return self._next_scene
+
+    @next_scene.setter
+    def next_scene(self, next_scene: str):
+        """Sets the next_scene of this Scene.
+
+        The ID of the default next scene in the scenario; if empty or missing, then by default this is the last scene.  # noqa: E501
+
+        :param next_scene: The next_scene of this Scene.
+        :type next_scene: str
+        """
+
+        self._next_scene = next_scene
 
     @property
     def end_scene_allowed(self) -> bool:
@@ -157,6 +195,52 @@ class Scene(Model):
             raise ValueError("Invalid value for `end_scene_allowed`, must not be `None`")  # noqa: E501
 
         self._end_scene_allowed = end_scene_allowed
+
+    @property
+    def persist_characters(self) -> bool:
+        """Gets the persist_characters of this Scene.
+
+        Whether characters should persist from the previous scene  # noqa: E501
+
+        :return: The persist_characters of this Scene.
+        :rtype: bool
+        """
+        return self._persist_characters
+
+    @persist_characters.setter
+    def persist_characters(self, persist_characters: bool):
+        """Sets the persist_characters of this Scene.
+
+        Whether characters should persist from the previous scene  # noqa: E501
+
+        :param persist_characters: The persist_characters of this Scene.
+        :type persist_characters: bool
+        """
+
+        self._persist_characters = persist_characters
+
+    @property
+    def removed_characters(self) -> List[str]:
+        """Gets the removed_characters of this Scene.
+
+        List of character ids to be removed from the scene  # noqa: E501
+
+        :return: The removed_characters of this Scene.
+        :rtype: List[str]
+        """
+        return self._removed_characters
+
+    @removed_characters.setter
+    def removed_characters(self, removed_characters: List[str]):
+        """Sets the removed_characters of this Scene.
+
+        List of character ids to be removed from the scene  # noqa: E501
+
+        :param removed_characters: The removed_characters of this Scene.
+        :type removed_characters: List[str]
+        """
+
+        self._removed_characters = removed_characters
 
     @property
     def probe_config(self) -> List[ProbeConfig]:

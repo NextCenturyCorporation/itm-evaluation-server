@@ -108,18 +108,20 @@ def _reclaim_old_session():
             session_mapping.pop(session_id)             # From both places
             return ITMSession()
 
-def start_session(adm_name, session_type, kdma_training=None, max_scenarios=None):  # noqa: E501
+def start_session(adm_name, session_type, adm_profile=None, kdma_training=False, max_scenarios=None):  # noqa: E501
     """Start a new session
 
     Get unique session id for grouping answers from a collection of scenarios/probes together # noqa: E501
 
-    :param adm_name: A self-assigned ADM name.  Can add authentication later.
+    :param adm_name: A self-assigned ADM name.
     :type adm_name: str
-    :param session_type: the type of session to start (&#x60;test&#x60;, &#x60;eval&#x60;, or a TA1 name)
+    :param session_type: the type of session to start (`eval`, `test`, or a TA1 name)
     :type session_type: str
+    :param adm_profile: a profile of the ADM in terms of its alignment strategy
+    :type adm_profile: str
     :param kdma_training: whether or not this is a training session with TA2
     :type kdma_training: bool
-    :param max_scenarios: the maximum number of scenarios requested, supported only in &#x60;test&#x60; sessions
+    :param max_scenarios: the maximum number of scenarios requested, supported only in `test` sessions
     :type max_scenarios: int
 
     :rtype: str
@@ -149,6 +151,7 @@ def start_session(adm_name, session_type, kdma_training=None, max_scenarios=None
         adm_name=adm_name,
         session_type=session_type,
         kdma_training=kdma_training,
+        adm_profile=adm_profile if adm_profile != 'None' else None,
         max_scenarios=max_scenarios
     )
     session_mapping[session_id] = {"adm_name": adm_name, "last_accessed": time.time()}
@@ -158,7 +161,7 @@ def start_session(adm_name, session_type, kdma_training=None, max_scenarios=None
 def take_action(session_id, body=None):  # noqa: E501
     """Take an action within a scenario
 
-    Take an action with # noqa: E501
+    Take the specified Action within a scenario # noqa: E501
 
     :param session_id: a unique session_id, as returned by /ta2/startSession
     :type session_id: str
@@ -172,3 +175,22 @@ def take_action(session_id, body=None):  # noqa: E501
 
     session = _get_session(session_id)
     return session.take_action(body=body) if session else ('Invalid Session ID', 400)
+
+
+def intend_action(session_id, body=None):  # noqa: E501
+    """Express intent to take an action within a scenario
+
+    Express intent to take the specified Action within a scenario # noqa: E501
+
+    :param session_id: a unique session_id, as returned by /ta2/startSession
+    :type session_id: str
+    :param body: Encapsulation of the intended action by a DM in the context of the scenario
+    :type body: dict | bytes
+
+    :rtype: State
+    """
+    if connexion.request.is_json:
+        body = Action.from_dict(connexion.request.get_json())  # noqa: E501
+
+    session = _get_session(session_id)
+    return session.intend_action(body=body) if session else ('Invalid Session ID', 400)

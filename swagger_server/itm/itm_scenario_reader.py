@@ -11,6 +11,7 @@ from swagger_server.models import (
     Conditions,
     Demographics,
     Environment,
+    Event,
     DecisionEnvironment,
     Environment,
     DecisionEnvironment,
@@ -49,15 +50,20 @@ class ITMScenarioReader:
         """
         state = self._generate_state(self.yaml_data['state'])
         scenes: List[ITMScene] = self._generate_scenes()
-        scenes[0].state = deepcopy(state)
 
         scenario = Scenario(
             id=self.yaml_data['id'],
             name=self.yaml_data['name'],
+            first_scene=self.yaml_data.get('first_scene', scenes[0].id),
             scenes=None,
             state=state,
             session_complete=False
         )
+
+        for scene in scenes:
+            if scene.id == scenario.first_scene:
+                scene.state = deepcopy(state)
+
         return (scenario, scenes)
 
     def _generate_scenes(self) ->  List[ITMScene]:
@@ -84,9 +90,12 @@ class ITMScenarioReader:
         ]
         state = self._generate_state(scene_data.get('state'))
         scene = Scene(
-            index=scene_data['index'],
+            id=scene_data['id'],
             state=state,
+            next_scene=scene_data.get('next_scene', ITMScene.END_SCENARIO_SENTINEL),
             end_scene_allowed=scene_data['end_scene_allowed'],
+            persist_characters=scene_data.get('persist_characters', False),
+            removed_characters=scene_data.get('removed_characters', []),
             probe_config=None, # Not used by TA3
             tagging=self._generate_tagging(scene_data),
             action_mapping=action_mapping,
@@ -103,6 +112,10 @@ class ITMScenarioReader:
         mission = self._generate_mission(state_data)
         environment = self._generate_environment(state_data)
         threat_state = self._generate_threat_state(state_data)
+        events = [
+            self._generate_event(event_data)
+            for event_data in state_data.get('events', [])
+        ]
         supplies = [
             self._generate_supplies(supply_data)
             for supply_data in state_data.get('supplies', [])
@@ -114,10 +127,12 @@ class ITMScenarioReader:
         state = State(
             unstructured=unstructured,
             elapsed_time=0,
+            meta_info=None,
             scenario_complete=False,
             mission=mission,
             environment=environment,
             threat_state=threat_state,
+            events=events,
             supplies=supplies,
             characters=characters
         )
@@ -192,7 +207,7 @@ class ITMScenarioReader:
         environment = state['environment'].get('decision_environment', {})
         return DecisionEnvironment(
             unstructured=environment.get('unstructured'),
-            aid_delay=environment.get('aid_delay'),
+            aid=environment.get('aid'),
             movement_restriction=environment.get('movement_restriction'),
             sound_restriction=environment.get('sound_restriction'),
             oxygen_levels=environment.get('oxygen_levels'),
@@ -210,6 +225,27 @@ class ITMScenarioReader:
             unstructured=threat_state.get('unstructured'),
             threats=threat_state.get('threats')
         )
+
+    def _generate_event(self, event_data) -> Event:
+        """
+        Generate an Event instance from the YAML data.
+
+        Args:
+            event_data: The YAML data representing an event.
+
+        Returns:
+            An Event object representing the generated event.
+        """
+        event = Event(
+            type=event_data['type'],
+            unstructured=event_data['unstructured'],
+            source=event_data.get('source'),
+            object=event_data.get('object'),
+            action_id=event_data.get('action_id'),
+            relevant_state=event_data.get('relevant_state')
+        )
+
+        return event
 
     def _generate_supplies(self, supply_data) -> Supplies:
         """
@@ -258,6 +294,9 @@ class ITMScenarioReader:
                 location=injury.get('location'),
                 severity=injury.get('severity'),
                 source_character=injury.get('source_character'),
+                treatments_required=injury.get('treatments_required', 1),
+                #treatments_applied=injury.get('treatments_applied', 0), # Uncomment if/when sim allows partial pre-treatment
+                treatments_applied=injury.get('treatments_applied', 1) if injury.get('status') == 'treated' else 0,
                 status=injury.get('status', 'visible')
             )
             for injury in character_data.get('injuries', [])
@@ -266,13 +305,15 @@ class ITMScenarioReader:
             id=character_data['id'],
             unstructured=character_data['unstructured'],
             unstructured_postassess=character_data.get('unstructured_postassess'),
+            has_blanket=character_data.get('has_blanket', False),
             name=character_data.get('name', 'Unknown'),
             rapport=character_data.get('rapport', 'neutral'),
+            unseen=character_data.get('unseen', False),
             demographics=demographics,
             injuries=injuries,
             vitals=self._generate_vitals(character_data.get('vitals', {})),
             visited=character_data.get('visited', False),
-            intent=character_data.get('intent'),
+            intent=character_data.get('intent', False),
             directness_of_causality=character_data.get('directness_of_causality'),
             tag=character_data.get('tag')
         )
@@ -282,7 +323,6 @@ class ITMScenarioReader:
         if not vital_data:
             return None
         vitals = Vitals(
-            conscious=vital_data.get('conscious'),
             avpu=vital_data.get('avpu'),
             ambulatory=vital_data.get('ambulatory'),
             mental_status=vital_data.get('mental_status'),
@@ -293,12 +333,17 @@ class ITMScenarioReader:
         return vitals
 
     def _generate_action_mapping(self, mapping_data) -> ActionMapping:
+        if mapping_data is None:
+            return None
+        threat_state = self._generate_threat_state(mapping_data)
         mapping = ActionMapping(
             action_id=mapping_data['action_id'],
             action_type=mapping_data['action_type'],
             unstructured=mapping_data['unstructured'],
             repeatable=mapping_data.get('repeatable', False),
             character_id=mapping_data.get('character_id'),
+            intent_action=mapping_data.get('intent_action', False),
+            threat_state=threat_state,
             parameters=mapping_data.get('parameters'),
             probe_id=mapping_data['probe_id'],
             choice=mapping_data['choice'],

@@ -18,7 +18,7 @@ class Injury(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, name: InjuryTypeEnum=None, location: InjuryLocationEnum=None, severity: InjurySeverityEnum=None, status: InjuryStatusEnum=None, source_character: str=None):  # noqa: E501
+    def __init__(self, name: InjuryTypeEnum=None, location: InjuryLocationEnum=None, severity: InjurySeverityEnum=None, status: InjuryStatusEnum=None, source_character: str=None, treatments_required: int=None, treatments_applied: int=0):  # noqa: E501
         """Injury - a model defined in Swagger
 
         :param name: The name of this Injury.  # noqa: E501
@@ -31,13 +31,19 @@ class Injury(Model):
         :type status: InjuryStatusEnum
         :param source_character: The source_character of this Injury.  # noqa: E501
         :type source_character: str
+        :param treatments_required: The treatments_required of this Injury.  # noqa: E501
+        :type treatments_required: int
+        :param treatments_applied: The treatments_applied of this Injury.  # noqa: E501
+        :type treatments_applied: int
         """
         self.swagger_types = {
             'name': InjuryTypeEnum,
             'location': InjuryLocationEnum,
             'severity': InjurySeverityEnum,
             'status': InjuryStatusEnum,
-            'source_character': str
+            'source_character': str,
+            'treatments_required': int,
+            'treatments_applied': int
         }
 
         self.attribute_map = {
@@ -45,13 +51,17 @@ class Injury(Model):
             'location': 'location',
             'severity': 'severity',
             'status': 'status',
-            'source_character': 'source_character'
+            'source_character': 'source_character',
+            'treatments_required': 'treatments_required',
+            'treatments_applied': 'treatments_applied'
         }
         self._name = name
         self._location = location
         self._severity = severity
         self._status = status
         self._source_character = source_character
+        self._treatments_required = treatments_required
+        self._treatments_applied = treatments_applied
 
     @classmethod
     def from_dict(cls, dikt) -> 'Injury':
@@ -176,3 +186,49 @@ class Injury(Model):
         """
 
         self._source_character = source_character
+
+    @property
+    def treatments_required(self) -> int:
+        """Gets the treatments_required of this Injury.
+
+        The number of successful treatments required to treat the injury fully, which sets `status` to `treated`  # noqa: E501
+
+        :return: The treatments_required of this Injury.
+        :rtype: int
+        """
+        return self._treatments_required
+
+    @treatments_required.setter
+    def treatments_required(self, treatments_required: int):
+        """Sets the treatments_required of this Injury.
+
+        The number of successful treatments required to treat the injury fully, which sets `status` to `treated`  # noqa: E501
+
+        :param treatments_required: The treatments_required of this Injury.
+        :type treatments_required: int
+        """
+
+        self._treatments_required = treatments_required
+
+    @property
+    def treatments_applied(self) -> int:
+        """Gets the treatments_applied of this Injury.
+
+        The number of successful treatments applied to the injury  # noqa: E501
+
+        :return: The treatments_applied of this Injury.
+        :rtype: int
+        """
+        return self._treatments_applied
+
+    @treatments_applied.setter
+    def treatments_applied(self, treatments_applied: int):
+        """Sets the treatments_applied of this Injury.
+
+        The number of successful treatments applied to the injury  # noqa: E501
+
+        :param treatments_applied: The treatments_applied of this Injury.
+        :type treatments_applied: int
+        """
+
+        self._treatments_applied = treatments_applied

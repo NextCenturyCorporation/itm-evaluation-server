@@ -20,6 +20,10 @@ class InjuryLocationEnum(Model):
     """
     RIGHT_FOREARM = "right forearm"
     LEFT_FOREARM = "left forearm"
+    RIGHT_HAND = "right hand"
+    LEFT_HAND = "left hand"
+    RIGHT_LEG = "right leg"
+    LEFT_LEG = "left leg"
     RIGHT_CALF = "right calf"
     LEFT_CALF = "left calf"
     RIGHT_THIGH = "right thigh"
@@ -34,6 +38,7 @@ class InjuryLocationEnum(Model):
     LEFT_SIDE = "left side"
     RIGHT_CHEST = "right chest"
     LEFT_CHEST = "left chest"
+    CENTER_CHEST = "center chest"
     RIGHT_WRIST = "right wrist"
     LEFT_WRIST = "left wrist"
     LEFT_FACE = "left face"
@@ -41,6 +46,9 @@ class InjuryLocationEnum(Model):
     LEFT_NECK = "left neck"
     RIGHT_NECK = "right neck"
     INTERNAL = "internal"
+    HEAD = "head"
+    NECK = "neck"
+    STOMACH = "stomach"
     UNSPECIFIED = "unspecified"
     def __init__(self):  # noqa: E501
         """InjuryLocationEnum - a model defined in Swagger

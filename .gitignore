@@ -66,6 +66,9 @@ target/
 # gradle
 .gradle
 
+# Visual Studio Code
+.vscode
+
 # generated files
 generated
 swagger_server/api

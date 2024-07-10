@@ -1,0 +1,189 @@
+id: unordered_scenes
+name: Unordered scenes test
+# Test description: Scene order in the file is completely unrelated to scene order in the scenario.
+# Tests next_scene, including repeating the scene and jumping back to previous scenes.
+first_scene: test_scene1
+state:
+  unstructured: This is a test
+  mission:
+    unstructured: No mission parameters
+    mission_type: Patrol
+
+  environment:
+    sim_environment:
+      type: jungle
+    decision_environment:
+      unstructured: This is a test
+      aid:
+        - id: ground_1
+          delay: 5
+          type: ground evac
+          max_transport: 1
+
+  supplies:
+    - { type: Pulse Oximeter, quantity: 1, reusable: True }
+    - { type: Burn Dressing, quantity: 1, reusable: True } # Make sure we don't run out of supplies
+  characters:
+    - id: Mike
+      name: Mike
+      unstructured: This is a test.
+      unstructured_postassess: This is still a test.
+      has_blanket: false
+      demographics:
+        age: 34
+        sex: M
+        race: White
+      vitals:
+        avpu: UNRESPONSIVE
+        ambulatory: false
+        mental_status: UNRESPONSIVE
+        breathing: FAST
+        heart_rate: FAST
+        spo2: NORMAL
+      injuries:
+        - name: Internal
+          location: internal
+          status: hidden
+        - name: Burn
+          location: right chest
+          status: discoverable
+          severity: substantial
+
+scenes:
+  - id: test_scene3
+    state:
+      unstructured: This is a scene3
+    next_scene: test_scene4
+    end_scene_allowed: false
+    persist_characters: true
+    action_mapping:
+      - action_id: mike-bloodox
+        action_type: CHECK_BLOOD_OXYGEN
+        unstructured: Check Mike's blood oxygen
+        character_id: Mike
+        probe_id: test-1
+        choice: test-choice1
+      - action_id: go_back_one_scene
+        action_type: CHECK_RESPIRATION
+        unstructured: Check Mike's respiration
+        character_id: Mike
+        repeatable: True
+        next_scene: test_scene2
+        probe_id: test-1
+        choice: go_back_from_scene3
+    transition_semantics: or
+    transitions:
+      elapsed_time_gt: 5000
+      probe_responses: [go_back_from_scene3]
+  - id: test_scene5
+    state:
+      unstructured: This is a scene5
+    end_scene_allowed: false
+    persist_characters: true
+    action_mapping:
+      - action_id: mike-bloodox
+        action_type: CHECK_BLOOD_OXYGEN
+        unstructured: Check Mike's blood oxygen
+        character_id: Mike
+        probe_id: test-1
+        choice: test-choice1
+      - action_id: go_back_one_scene
+        action_type: CHECK_RESPIRATION
+        unstructured: Check Mike's respiration
+        character_id: Mike
+        repeatable: True
+        next_scene: test_scene4
+        probe_id: test-1
+        choice: go_back_from_scene5
+    transition_semantics: or
+    transitions:
+      elapsed_time_gt: 5000
+      probe_responses: [go_back_from_scene5]
+  - id: test_scene1
+    next_scene: test_scene2
+    end_scene_allowed: false
+    action_mapping:
+      - action_id: mike-bloodox
+        action_type: CHECK_BLOOD_OXYGEN
+        unstructured: Check Mike's blood oxygen
+        character_id: Mike
+        probe_id: test-1
+        choice: test-choice1
+      - action_id: repeat_scene
+        action_type: CHECK_RESPIRATION
+        unstructured: Check Mike's respiration
+        next_scene: test_scene1
+        character_id: Mike
+        repeatable: True
+        probe_id: test-1
+        choice: go_back_from_scene1
+    transition_semantics: or
+    transitions:
+      elapsed_time_gt: 5000
+      probe_responses: [go_back_from_scene1]
+  - id: test_scene4
+    state:
+      unstructured: This is a scene4
+    next_scene: test_scene5
+    end_scene_allowed: false
+    persist_characters: true
+    action_mapping:
+      - action_id: mike-bloodox
+        action_type: CHECK_BLOOD_OXYGEN
+        unstructured: Check Mike's blood oxygen
+        character_id: Mike
+        probe_id: test-1
+        choice: test-choice1
+      - action_id: go_back_one_scene
+        action_type: CHECK_RESPIRATION
+        unstructured: Check Mike's respiration
+        character_id: Mike
+        repeatable: True
+        next_scene: test_scene3
+        probe_id: test-1
+        choice: go_back_from_scene4
+    transition_semantics: or
+    transitions:
+      elapsed_time_gt: 5000
+      probe_responses: [go_back_from_scene4]
+  - id: test_scene2
+    state:
+      unstructured: This is a scene2
+      characters:
+      - id: Joe
+        name: Joe
+        unstructured: This is a test.
+        unstructured_postassess: This is still a test.
+        demographics:
+          age: 43
+          sex: F
+          race: black
+        vitals:
+          avpu: ALERT
+          ambulatory: true
+          mental_status: CALM
+          breathing: NORMAL
+          heart_rate: NORMAL
+          spo2: NORMAL
+    next_scene: test_scene3
+    end_scene_allowed: false
+    persist_characters: true
+    action_mapping:
+      - action_id: mike-bloodox
+        action_type: CHECK_BLOOD_OXYGEN
+        unstructured: Check Mike's blood oxygen
+        character_id: Mike
+        probe_id: test-1
+        choice: test-choice1
+      - action_id: go_back_one_scene
+        action_type: CHECK_RESPIRATION
+        unstructured: Check Mike's respiration
+        character_id: Mike
+        repeatable: True
+        next_scene: test_scene1
+        probe_id: test-1
+        choice: go_back_from_scene2
+    transition_semantics: or
+    transitions:
+      elapsed_time_gt: 5000
+      probe_responses: [go_back_from_scene2]

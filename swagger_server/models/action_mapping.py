@@ -9,6 +9,7 @@ from swagger_server.models.base_model_ import Model
 from swagger_server.models.action_type_enum import ActionTypeEnum  # noqa: F401,E501
 from swagger_server.models.conditions import Conditions  # noqa: F401,E501
 from swagger_server.models.semantic_type_enum import SemanticTypeEnum  # noqa: F401,E501
+from swagger_server.models.threat_state import ThreatState  # noqa: F401,E501
 from swagger_server import util
 
 
@@ -17,7 +18,7 @@ class ActionMapping(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, action_id: str=None, action_type: ActionTypeEnum=None, unstructured: str=None, repeatable: bool=False, character_id: str=None, parameters: Dict[str, str]=None, probe_id: str=None, choice: str=None, next_scene: int=None, kdma_association: Dict[str, float]=None, condition_semantics: SemanticTypeEnum=None, conditions: Conditions=None):  # noqa: E501
+    def __init__(self, action_id: str=None, action_type: ActionTypeEnum=None, unstructured: str=None, repeatable: bool=False, character_id: str=None, intent_action: bool=False, threat_state: ThreatState=None, parameters: Dict[str, str]=None, probe_id: str=None, choice: str=None, next_scene: str=None, kdma_association: Dict[str, float]=None, condition_semantics: SemanticTypeEnum=None, conditions: Conditions=None):  # noqa: E501
         """ActionMapping - a model defined in Swagger
 
         :param action_id: The action_id of this ActionMapping.  # noqa: E501
@@ -30,6 +31,10 @@ class ActionMapping(Model):
         :type repeatable: bool
         :param character_id: The character_id of this ActionMapping.  # noqa: E501
         :type character_id: str
+        :param intent_action: The intent_action of this ActionMapping.  # noqa: E501
+        :type intent_action: bool
+        :param threat_state: The threat_state of this ActionMapping.  # noqa: E501
+        :type threat_state: ThreatState
         :param parameters: The parameters of this ActionMapping.  # noqa: E501
         :type parameters: Dict[str, str]
         :param probe_id: The probe_id of this ActionMapping.  # noqa: E501
@@ -37,7 +42,7 @@ class ActionMapping(Model):
         :param choice: The choice of this ActionMapping.  # noqa: E501
         :type choice: str
         :param next_scene: The next_scene of this ActionMapping.  # noqa: E501
-        :type next_scene: int
+        :type next_scene: str
         :param kdma_association: The kdma_association of this ActionMapping.  # noqa: E501
         :type kdma_association: Dict[str, float]
         :param condition_semantics: The condition_semantics of this ActionMapping.  # noqa: E501
@@ -51,10 +56,12 @@ class ActionMapping(Model):
             'unstructured': str,
             'repeatable': bool,
             'character_id': str,
+            'intent_action': bool,
+            'threat_state': ThreatState,
             'parameters': Dict[str, str],
             'probe_id': str,
             'choice': str,
-            'next_scene': int,
+            'next_scene': str,
             'kdma_association': Dict[str, float],
             'condition_semantics': SemanticTypeEnum,
             'conditions': Conditions
@@ -66,6 +73,8 @@ class ActionMapping(Model):
             'unstructured': 'unstructured',
             'repeatable': 'repeatable',
             'character_id': 'character_id',
+            'intent_action': 'intent_action',
+            'threat_state': 'threat_state',
             'parameters': 'parameters',
             'probe_id': 'probe_id',
             'choice': 'choice',
@@ -79,6 +88,8 @@ class ActionMapping(Model):
         self._unstructured = unstructured
         self._repeatable = repeatable
         self._character_id = character_id
+        self._intent_action = intent_action
+        self._threat_state = threat_state
         self._parameters = parameters
         self._probe_id = probe_id
         self._choice = choice
@@ -218,6 +229,50 @@ class ActionMapping(Model):
         self._character_id = character_id
 
     @property
+    def intent_action(self) -> bool:
+        """Gets the intent_action of this ActionMapping.
+
+        Whether this mapping is to take an action or to intend one  # noqa: E501
+
+        :return: The intent_action of this ActionMapping.
+        :rtype: bool
+        """
+        return self._intent_action
+
+    @intent_action.setter
+    def intent_action(self, intent_action: bool):
+        """Sets the intent_action of this ActionMapping.
+
+        Whether this mapping is to take an action or to intend one  # noqa: E501
+
+        :param intent_action: The intent_action of this ActionMapping.
+        :type intent_action: bool
+        """
+
+        self._intent_action = intent_action
+
+    @property
+    def threat_state(self) -> ThreatState:
+        """Gets the threat_state of this ActionMapping.
+
+
+        :return: The threat_state of this ActionMapping.
+        :rtype: ThreatState
+        """
+        return self._threat_state
+
+    @threat_state.setter
+    def threat_state(self, threat_state: ThreatState):
+        """Sets the threat_state of this ActionMapping.
+
+
+        :param threat_state: The threat_state of this ActionMapping.
+        :type threat_state: ThreatState
+        """
+
+        self._threat_state = threat_state
+
+    @property
     def parameters(self) -> Dict[str, str]:
         """Gets the parameters of this ActionMapping.
 
@@ -291,24 +346,24 @@ class ActionMapping(Model):
         self._choice = choice
 
     @property
-    def next_scene(self) -> int:
+    def next_scene(self) -> str:
         """Gets the next_scene of this ActionMapping.
 
-        The next scene in the scenario, by index  # noqa: E501
+        The ID of the next scene in the scenario; overrides Scene.next_scene  # noqa: E501
 
         :return: The next_scene of this ActionMapping.
-        :rtype: int
+        :rtype: str
         """
         return self._next_scene
 
     @next_scene.setter
-    def next_scene(self, next_scene: int):
+    def next_scene(self, next_scene: str):
         """Sets the next_scene of this ActionMapping.
 
-        The next scene in the scenario, by index  # noqa: E501
+        The ID of the next scene in the scenario; overrides Scene.next_scene  # noqa: E501
 
         :param next_scene: The next_scene of this ActionMapping.
-        :type next_scene: int
+        :type next_scene: str
         """
 
         self._next_scene = next_scene

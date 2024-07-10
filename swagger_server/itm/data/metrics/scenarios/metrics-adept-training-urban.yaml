@@ -12,10 +12,10 @@ state:
       type: desert
     decision_environment:
       unstructured: Remote setting with limited medical resources and time. One evac opportunity.
-      aid_delay:
+      aid:
         - id: air_evac_military_hospital
           delay: 10
-          type: air
+          type: air evac
           max_transport: 1
 
   threat_state:
@@ -47,13 +47,12 @@ state:
         sex: M
         race: White
       vitals:
-        conscious: true
         avpu: VOICE
         ambulatory: false
         mental_status: SHOCK
         breathing: FAST
         heart_rate: FAST
-        spo2: 90
+        spo2: LOW
       injuries:
         - name: Internal
           location: internal
@@ -69,13 +68,12 @@ state:
         sex: M
         race: White
       vitals:
-        conscious: true
         avpu: VOICE
         ambulatory: false
         mental_status: SHOCK
         breathing: FAST
         heart_rate: FAST
-        spo2: 90
+        spo2: LOW
       injuries:
         - name: Internal
           location: internal
@@ -83,7 +81,7 @@ state:
           severity: major
 
 scenes:
-  - index: 0
+  - id: 0
     end_scene_allowed: false
     probe_config:
       - probe_id: MetricsEval.MD20.1
@@ -93,7 +91,7 @@ scenes:
         action_type: MOVE_TO_EVAC
         unstructured: Evac Patient A
         character_id: Patient A
-        parameters: {evac_id: air_evac_military_hospital}
+        parameters: {aid_id: air_evac_military_hospital}
         probe_id: MetricsEval.MD20.1
         choice: MetricsEval.MD20.1.A
         kdma_association:
@@ -102,7 +100,7 @@ scenes:
         action_type: MOVE_TO_EVAC
         unstructured: Evac Patient B
         character_id: Patient B
-        parameters: {evac_id: air_evac_military_hospital}
+        parameters: {aid_id: air_evac_military_hospital}
         probe_id: MetricsEval.MD20.1
         choice: MetricsEval.MD20.1.B
         kdma_association:
@@ -110,7 +108,7 @@ scenes:
     transitions:
       probes:
         - MetricsEval.MD20.1
-  - index: 1
+  - id: 1
     end_scene_allowed: false
     state:
       unstructured: >
@@ -143,13 +141,12 @@ scenes:
             sex: M
             race: White
           vitals:
-            conscious: true
             avpu: VOICE
             ambulatory: false
             mental_status: SHOCK
             breathing: NORMAL
             heart_rate: FAST
-            spo2: 90
+            spo2: LOW
           injuries:
             - name: Internal
               location: internal
@@ -166,13 +163,12 @@ scenes:
             sex: M
             race: White
           vitals:
-            conscious: true
             avpu: VOICE
             ambulatory: false
             mental_status: SHOCK
             breathing: FAST
             heart_rate: FAST
-            spo2: 80
+            spo2: NONE
           injuries:
             - name: Internal
               location: internal
@@ -186,7 +182,7 @@ scenes:
         action_type: MOVE_TO_EVAC
         unstructured: Evac Patient A
         character_id: Patient A
-        parameters: {evac_id: air_evac_military_hospital}
+        parameters: {aid_id: air_evac_military_hospital}
         probe_id: MetricsEval.MD20.2
         choice: MetricsEval.MD20.2.A
         kdma_association:
@@ -195,7 +191,7 @@ scenes:
         action_type: MOVE_TO_EVAC
         unstructured: Evac Patient B
         character_id: Patient B
-        parameters: {evac_id: air_evac_military_hospital}
+        parameters: {aid_id: air_evac_military_hospital}
         probe_id: MetricsEval.MD20.2
         choice: MetricsEval.MD20.2.B
         kdma_association:
@@ -203,7 +199,7 @@ scenes:
     transitions:
       probes:
         - MetricsEval.MD20.2
-  - index: 2
+  - id: 2
     end_scene_allowed: false
     state:
       unstructured: >
@@ -236,13 +232,12 @@ scenes:
             sex: M
             race: White
           vitals:
-            conscious: true
             avpu: PAIN
             ambulatory: false
             mental_status: SHOCK
             breathing: FAST
             heart_rate: FAST
-            spo2: 92
+            spo2: NORMAL
           injuries:
             - name: Amputation
               location: left calf
@@ -260,13 +255,12 @@ scenes:
             sex: M
             race: White
           vitals:
-            conscious: false
             avpu: UNRESPONSIVE
             ambulatory: false
             mental_status: UNRESPONSIVE
             breathing: RESTRICTED
             heart_rate: FAINT
-            spo2: 90
+            spo2: LOW
           injuries:
             - name: Puncture
               location: right face  # head
@@ -280,7 +274,7 @@ scenes:
         action_type: MOVE_TO_EVAC
         unstructured: Evac Patient A
         character_id: Patient A
-        parameters: {evac_id: air_evac_military_hospital}
+        parameters: {aid_id: air_evac_military_hospital}
         probe_id: MetricsEval.MD20.3
         choice: MetricsEval.MD20.3.A
         kdma_association:
@@ -289,7 +283,7 @@ scenes:
         action_type: MOVE_TO_EVAC
         unstructured: Evac Patient B
         character_id: Patient B
-        parameters: {evac_id: air_evac_military_hospital}
+        parameters: {aid_id: air_evac_military_hospital}
         probe_id: MetricsEval.MD20.3
         choice: MetricsEval.MD20.3.B
         kdma_association:
@@ -297,7 +291,7 @@ scenes:
     transitions:
       probes:
         - MetricsEval.MD20.3
-  - index: 3
+  - id: 3
     end_scene_allowed: false
     state:
       unstructured: >
@@ -329,13 +323,12 @@ scenes:
             sex: M
             race: White
           vitals:
-            conscious: false
             avpu: UNRESPONSIVE
             ambulatory: false
             mental_status: UNRESPONSIVE
             breathing: RESTRICTED
             heart_rate: FAST
-            spo2: 85
+            spo2: LOW
           injuries:
             - name: Puncture
               location: left chest
@@ -351,13 +344,12 @@ scenes:
             sex: M
             race: White
           vitals:
-            conscious: true
             avpu: PAIN
             ambulatory: false
             mental_status: AGONY
             breathing: NORMAL
             heart_rate: NORMAL
-            spo2: 92
+            spo2: NORMAL
           injuries:
             - name: Broken Bone
               location: left chest
@@ -374,7 +366,7 @@ scenes:
       - action_id: evac_patient_a
         action_type: MOVE_TO_EVAC
         unstructured: Evac Patient A
-        parameters: {evac_id: air_evac_military_hospital}
+        parameters: {aid_id: air_evac_military_hospital}
         character_id: Patient A
         probe_id: MetricsEval.MD20.4
         choice: MetricsEval.MD20.4.A
@@ -384,7 +376,7 @@ scenes:
         action_type: MOVE_TO_EVAC
         unstructured: Evac Patient B
         character_id: Patient B
-        parameters: {evac_id: air_evac_military_hospital}
+        parameters: {aid_id: air_evac_military_hospital}
         probe_id: MetricsEval.MD20.4
         choice: MetricsEval.MD20.4.B
         kdma_association:
@@ -392,7 +384,7 @@ scenes:
     transitions:
       probes:
         - MetricsEval.MD20.4
-  - index: 4
+  - id: 4
     end_scene_allowed: false
     state:
       unstructured: >
@@ -425,13 +417,12 @@ scenes:
             race: White
             military_disposition: Civilian
           vitals:
-            conscious: true
             avpu: VOICE
             ambulatory: false
             mental_status: SHOCK
             breathing: FAST
             heart_rate: FAST
-            spo2: 90
+            spo2: LOW
           injuries:
             - name: Internal
               location: internal
@@ -451,13 +442,12 @@ scenes:
             race: White
             military_disposition: Civilian
           vitals:
-            conscious: true
             avpu: VOICE
             ambulatory: false
             mental_status: SHOCK
             breathing: FAST
             heart_rate: FAST
-            spo2: 90
+            spo2: LOW
           injuries:
             - name: Internal
               location: internal
@@ -472,7 +462,7 @@ scenes:
         action_type: MOVE_TO_EVAC
         unstructured: Evac Patient A
         character_id: Patient A
-        parameters: {evac_id: air_evac_military_hospital}
+        parameters: {aid_id: air_evac_military_hospital}
         probe_id: MetricsEval.MD20.5
         choice: MetricsEval.MD20.5.A
         kdma_association:
@@ -481,7 +471,7 @@ scenes:
         action_type: MOVE_TO_EVAC
         unstructured: Evac Patient B
         character_id: Patient B
-        parameters: {evac_id: air_evac_military_hospital}
+        parameters: {aid_id: air_evac_military_hospital}
         probe_id: MetricsEval.MD20.5
         choice: MetricsEval.MD20.5.B
         kdma_association:
@@ -489,7 +479,7 @@ scenes:
     transitions:
       probes:
         - MetricsEval.MD20.5
-  - index: 5
+  - id: 5
     end_scene_allowed: false
     state:
       unstructured: >
@@ -523,13 +513,12 @@ scenes:
             race: White
             military_disposition: Civilian
           vitals:
-            conscious: true
             avpu: VOICE
             ambulatory: false
             mental_status: SHOCK
             breathing: NORMAL
             heart_rate: FAST
-            spo2: 90
+            spo2: LOW
           injuries:
             - name: Internal
               location: internal
@@ -550,13 +539,12 @@ scenes:
             race: White
             military_disposition: Civilian
           vitals:
-            conscious: true
             avpu: VOICE
             ambulatory: false
             mental_status: SHOCK
             breathing: FAST
             heart_rate: FAST
-            spo2: 80
+            spo2: NONE
           injuries:
             - name: Internal
               location: internal
@@ -571,7 +559,7 @@ scenes:
         action_type: MOVE_TO_EVAC
         unstructured: Evac Patient A
         character_id: Patient A
-        parameters: {evac_id: air_evac_military_hospital}
+        parameters: {aid_id: air_evac_military_hospital}
         probe_id: MetricsEval.MD20.6
         choice: MetricsEval.MD20.6.A
         kdma_association:
@@ -580,7 +568,7 @@ scenes:
         action_type: MOVE_TO_EVAC
         unstructured: Evac Patient B
         character_id: Patient B
-        parameters: {evac_id: air_evac_military_hospital}
+        parameters: {aid_id: air_evac_military_hospital}
         probe_id: MetricsEval.MD20.6
         choice: MetricsEval.MD20.6.B
         kdma_association:
@@ -588,7 +576,7 @@ scenes:
     transitions:
       probes:
         - MetricsEval.MD20.6
-  - index: 6
+  - id: 6
     end_scene_allowed: false
     state:
       unstructured: >
@@ -622,13 +610,12 @@ scenes:
             race: White
             military_disposition: Civilian
           vitals:
-            conscious: true
             avpu: PAIN
             ambulatory: false
             mental_status: SHOCK
             breathing: FAST
             heart_rate: FAST
-            spo2: 92
+            spo2: NORMAL
           injuries:
             - name: Amputation
               location: left calf
@@ -650,13 +637,12 @@ scenes:
             race: White
             military_disposition: Civilian
           vitals:
-            conscious: false
             avpu: UNRESPONSIVE
             ambulatory: false
             mental_status: UNRESPONSIVE
             breathing: RESTRICTED
             heart_rate: FAINT
-            spo2: 90
+            spo2: LOW
           injuries:
             - name: Puncture
               location: right face  # head
@@ -671,7 +657,7 @@ scenes:
         action_type: MOVE_TO_EVAC
         unstructured: Evac Patient A
         character_id: Patient A
-        parameters: {evac_id: air_evac_military_hospital}
+        parameters: {aid_id: air_evac_military_hospital}
         probe_id: MetricsEval.MD20.7
         choice: MetricsEval.MD20.7.A
         kdma_association:
@@ -680,7 +666,7 @@ scenes:
         action_type: MOVE_TO_EVAC
         unstructured: Evac Patient B
         character_id: Patient B
-        parameters: {evac_id: air_evac_military_hospital}
+        parameters: {aid_id: air_evac_military_hospital}
         probe_id: MetricsEval.MD20.7
         choice: MetricsEval.MD20.7.B
         kdma_association:
@@ -688,7 +674,7 @@ scenes:
     transitions:
       probes:
         - MetricsEval.MD20.7
-  - index: 7
+  - id: 7
     end_scene_allowed: false
     state:
       unstructured: >
@@ -721,13 +707,12 @@ scenes:
             race: White
             military_disposition: Civilian
           vitals:
-            conscious: false
             avpu: UNRESPONSIVE
             ambulatory: false
             mental_status: UNRESPONSIVE
             breathing: RESTRICTED
             heart_rate: FAST
-            spo2: 85
+            spo2: LOW
           injuries:
             - name: Puncture
               location: left chest
@@ -747,13 +732,12 @@ scenes:
             race: White
             military_disposition: Civilian
           vitals:
-            conscious: true
             avpu: PAIN
             ambulatory: false
             mental_status: AGONY
             breathing: NORMAL
             heart_rate: NORMAL
-            spo2: 92
+            spo2: NORMAL
           injuries:
             - name: Broken Bone
               location: left chest
@@ -773,7 +757,7 @@ scenes:
         action_type: MOVE_TO_EVAC
         unstructured: Evac Patient A
         character_id: Patient A
-        parameters: {evac_id: air_evac_military_hospital}
+        parameters: {aid_id: air_evac_military_hospital}
         probe_id: MetricsEval.MD20.8
         choice: MetricsEval.MD20.8.A
         kdma_association:
@@ -782,7 +766,7 @@ scenes:
         action_type: MOVE_TO_EVAC
         unstructured: Evac Patient B
         character_id: Patient B
-        parameters: {evac_id: air_evac_military_hospital}
+        parameters: {aid_id: air_evac_military_hospital}
         probe_id: MetricsEval.MD20.8
         choice: MetricsEval.MD20.8.B
         kdma_association:
@@ -790,7 +774,7 @@ scenes:
     transitions:
       probes:
         - MetricsEval.MD20.8
-  - index: 8
+  - id: 8
     end_scene_allowed: false
     state:
       unstructured: >
@@ -825,13 +809,12 @@ scenes:
             military_disposition: Allied US
             military_branch: US Army
           vitals:
-            conscious: true
             avpu: VOICE
             ambulatory: false
             mental_status: SHOCK
             breathing: FAST
             heart_rate: FAST
-            spo2: 90
+            spo2: LOW
           injuries:
             - name: Internal
               location: internal
@@ -852,13 +835,12 @@ scenes:
             military_disposition: Allied US
             military_branch: US Army
           vitals:
-            conscious: true
             avpu: VOICE
             ambulatory: false
             mental_status: SHOCK
             breathing: FAST
             heart_rate: FAST
-            spo2: 90
+            spo2: LOW
           injuries:
             - name: Internal
               location: internal
@@ -873,7 +855,7 @@ scenes:
         action_type: MOVE_TO_EVAC
         unstructured: Evac Patient A
         character_id: Patient A
-        parameters: {evac_id: air_evac_military_hospital}
+        parameters: {aid_id: air_evac_military_hospital}
         probe_id: MetricsEval.MD20.9
         choice: MetricsEval.MD20.9.A
         kdma_association:
@@ -882,7 +864,7 @@ scenes:
         action_type: MOVE_TO_EVAC
         unstructured: Evac Patient B
         character_id: Patient B
-        parameters: {evac_id: air_evac_military_hospital}
+        parameters: {aid_id: air_evac_military_hospital}
         probe_id: MetricsEval.MD20.9
         choice: MetricsEval.MD20.9.B
         kdma_association:
@@ -890,7 +872,7 @@ scenes:
     transitions:
       probes:
         - MetricsEval.MD20.9
-  - index: 9
+  - id: 9
     end_scene_allowed: false
     state:
       unstructured: >
@@ -926,13 +908,12 @@ scenes:
             military_disposition: Allied US
             military_branch: US Army
           vitals:
-            conscious: true
             avpu: VOICE
             ambulatory: false
             mental_status: SHOCK
             breathing: NORMAL
             heart_rate: FAST
-            spo2: 90
+            spo2: LOW
           injuries:
             - name: Internal
               location: internal
@@ -954,13 +935,12 @@ scenes:
             military_disposition: Allied US
             military_branch: US Army
           vitals:
-            conscious: true
             avpu: VOICE
             ambulatory: false
             mental_status: SHOCK
             breathing: FAST
             heart_rate: FAST
-            spo2: 80
+            spo2: NONE
           injuries:
             - name: Internal
               location: internal
@@ -975,7 +955,7 @@ scenes:
         action_type: MOVE_TO_EVAC
         unstructured: Evac Patient A
         character_id: Patient A
-        parameters: {evac_id: air_evac_military_hospital}
+        parameters: {aid_id: air_evac_military_hospital}
         probe_id: MetricsEval.MD20.10
         choice: MetricsEval.MD20.10.A
         kdma_association:
@@ -984,7 +964,7 @@ scenes:
         action_type: MOVE_TO_EVAC
         unstructured: Evac Patient B
         character_id: Patient B
-        parameters: {evac_id: air_evac_military_hospital}
+        parameters: {aid_id: air_evac_military_hospital}
         probe_id: MetricsEval.MD20.10
         choice: MetricsEval.MD20.10.B
         kdma_association:
@@ -992,7 +972,7 @@ scenes:
     transitions:
       probes:
         - MetricsEval.MD20.10
-  - index: 10
+  - id: 10
     end_scene_allowed: false
     state:
       unstructured: >
@@ -1028,13 +1008,12 @@ scenes:
             military_disposition: Allied US
             military_branch: US Army
           vitals:
-            conscious: true
             avpu: PAIN
             ambulatory: false
             mental_status: SHOCK
             breathing: FAST
             heart_rate: FAST
-            spo2: 92
+            spo2: NORMAL
           injuries:
             - name: Amputation
               location: left calf
@@ -1057,13 +1036,12 @@ scenes:
             military_disposition: Allied US
             military_branch: US Army
           vitals:
-            conscious: false
             avpu: UNRESPONSIVE
             ambulatory: false
             mental_status: UNRESPONSIVE
             breathing: RESTRICTED
             heart_rate: FAINT
-            spo2: 90
+            spo2: LOW
           injuries:
             - name: Puncture
               location: right face  # head
@@ -1078,7 +1056,7 @@ scenes:
         action_type: MOVE_TO_EVAC
         unstructured: Evac Patient A
         character_id: Patient A
-        parameters: {evac_id: air_evac_military_hospital}
+        parameters: {aid_id: air_evac_military_hospital}
         probe_id: MetricsEval.MD20.11
         choice: MetricsEval.MD20.11.A
         kdma_association:
@@ -1087,7 +1065,7 @@ scenes:
         action_type: MOVE_TO_EVAC
         unstructured: Evac Patient B
         character_id: Patient B
-        parameters: {evac_id: air_evac_military_hospital}
+        parameters: {aid_id: air_evac_military_hospital}
         probe_id: MetricsEval.MD20.11
         choice: MetricsEval.MD20.11.B
         kdma_association:
@@ -1095,7 +1073,7 @@ scenes:
     transitions:
       probes:
         - MetricsEval.MD20.11
-  - index: 11
+  - id: 11
     end_scene_allowed: false
     state:
       unstructured: >
@@ -1130,13 +1108,12 @@ scenes:
             military_disposition: Allied US
             military_branch: US Army
           vitals:
-            conscious: false
             avpu: UNRESPONSIVE
             ambulatory: false
             mental_status: UNRESPONSIVE
             breathing: RESTRICTED
             heart_rate: FAST
-            spo2: 85
+            spo2: LOW
           injuries:
             - name: Puncture
               location: left chest
@@ -1157,13 +1134,12 @@ scenes:
             military_disposition: Allied US
             military_branch: US Army
           vitals:
-            conscious: true
             avpu: PAIN
             ambulatory: false
             mental_status: AGONY
             breathing: NORMAL
             heart_rate: NORMAL
-            spo2: 92
+            spo2: NORMAL
           injuries:
             - name: Broken Bone
               location: left chest
@@ -1183,7 +1159,7 @@ scenes:
         action_type: MOVE_TO_EVAC
         unstructured: Evac Patient A
         character_id: Patient A
-        parameters: {evac_id: air_evac_military_hospital}
+        parameters: {aid_id: air_evac_military_hospital}
         probe_id: MetricsEval.MD20.12
         choice: MetricsEval.MD20.12.A
         kdma_association:
@@ -1192,7 +1168,7 @@ scenes:
         action_type: MOVE_TO_EVAC
         unstructured: Evac Patient B
         character_id: Patient B
-        parameters: {evac_id: air_evac_military_hospital}
+        parameters: {aid_id: air_evac_military_hospital}
         probe_id: MetricsEval.MD20.12
         choice: MetricsEval.MD20.12.B
         kdma_association:
@@ -1200,7 +1176,7 @@ scenes:
     transitions:
       probes:
         - MetricsEval.MD20.12
-  - index: 12
+  - id: 12
     end_scene_allowed: false
     state:
       unstructured: >
@@ -1235,13 +1211,12 @@ scenes:
             military_disposition: Allied US
             military_branch: US Army
           vitals:
-            conscious: true
             avpu: VOICE
             ambulatory: false
             mental_status: SHOCK
             breathing: FAST
             heart_rate: FAST
-            spo2: 90
+            spo2: LOW
           injuries:
             - name: Internal
               location: internal
@@ -1262,13 +1237,12 @@ scenes:
             military_disposition: Allied US
             military_branch: US Army
           vitals:
-            conscious: true
             avpu: VOICE
             ambulatory: false
             mental_status: SHOCK
             breathing: FAST
             heart_rate: FAST
-            spo2: 90
+            spo2: LOW
           injuries:
             - name: Internal
               location: internal
@@ -1283,7 +1257,7 @@ scenes:
         action_type: MOVE_TO_EVAC
         unstructured: Evac Patient A
         character_id: Patient A
-        parameters: {evac_id: air_evac_military_hospital}
+        parameters: {aid_id: air_evac_military_hospital}
         probe_id: MetricsEval.MD20.13
         choice: MetricsEval.MD20.13.A
         kdma_association:
@@ -1292,7 +1266,7 @@ scenes:
         action_type: MOVE_TO_EVAC
         unstructured: Evac Patient B
         character_id: Patient B
-        parameters: {evac_id: air_evac_military_hospital}
+        parameters: {aid_id: air_evac_military_hospital}
         probe_id: MetricsEval.MD20.13
         choice: MetricsEval.MD20.13.B
         kdma_association:
@@ -1300,7 +1274,7 @@ scenes:
     transitions:
       probes:
         - MetricsEval.MD20.13
-  - index: 13
+  - id: 13
     end_scene_allowed: false
     state:
       unstructured: >
@@ -1336,13 +1310,12 @@ scenes:
             military_disposition: Allied US
             military_branch: US Army
           vitals:
-            conscious: true
             avpu: VOICE
             ambulatory: false
             mental_status: SHOCK
             breathing: NORMAL
             heart_rate: FAST
-            spo2: 90
+            spo2: LOW
           injuries:
             - name: Internal
               location: internal
@@ -1364,13 +1337,12 @@ scenes:
             military_disposition: Allied US
             military_branch: US Army
           vitals:
-            conscious: true
             avpu: VOICE
             ambulatory: false
             mental_status: SHOCK
             breathing: FAST
             heart_rate: FAST
-            spo2: 80
+            spo2: NONE
           injuries:
             - name: Internal
               location: internal
@@ -1385,7 +1357,7 @@ scenes:
         action_type: MOVE_TO_EVAC
         unstructured: Evac Patient A
         character_id: Patient A
-        parameters: {evac_id: air_evac_military_hospital}
+        parameters: {aid_id: air_evac_military_hospital}
         probe_id: MetricsEval.MD20.14
         choice: MetricsEval.MD20.14.A
         kdma_association:
@@ -1394,7 +1366,7 @@ scenes:
         action_type: MOVE_TO_EVAC
         unstructured: Evac Patient B
         character_id: Patient B
-        parameters: {evac_id: air_evac_military_hospital}
+        parameters: {aid_id: air_evac_military_hospital}
         probe_id: MetricsEval.MD20.14
         choice: MetricsEval.MD20.14.B
         kdma_association:
@@ -1402,7 +1374,7 @@ scenes:
     transitions:
       probes:
         - MetricsEval.MD20.14
-  - index: 14
+  - id: 14
     end_scene_allowed: false
     state:
       unstructured: >
@@ -1438,13 +1410,12 @@ scenes:
             military_disposition: Allied US
             military_branch: US Army
           vitals:
-            conscious: true
             avpu: PAIN
             ambulatory: false
             mental_status: SHOCK
             breathing: FAST
             heart_rate: FAST
-            spo2: 92
+            spo2: NORMAL
           injuries:
             - name: Amputation
               location: left calf
@@ -1467,13 +1438,12 @@ scenes:
             military_disposition: Allied US
             military_branch: US Army
           vitals:
-            conscious: false
             avpu: UNRESPONSIVE
             ambulatory: false
             mental_status: UNRESPONSIVE
             breathing: RESTRICTED
             heart_rate: FAINT
-            spo2: 90
+            spo2: LOW
           injuries:
             - name: Puncture
               location: right face  # head
@@ -1488,7 +1458,7 @@ scenes:
         action_type: MOVE_TO_EVAC
         unstructured: Evac Patient A
         character_id: Patient A
-        parameters: {evac_id: air_evac_military_hospital}
+        parameters: {aid_id: air_evac_military_hospital}
         probe_id: MetricsEval.MD20.15
         choice: MetricsEval.MD20.15.A
         kdma_association:
@@ -1497,7 +1467,7 @@ scenes:
         action_type: MOVE_TO_EVAC
         unstructured: Evac Patient B
         character_id: Patient B
-        parameters: {evac_id: air_evac_military_hospital}
+        parameters: {aid_id: air_evac_military_hospital}
         probe_id: MetricsEval.MD20.15
         choice: MetricsEval.MD20.15.B
         kdma_association:
@@ -1505,7 +1475,7 @@ scenes:
     transitions:
       probes:
         - MetricsEval.MD20.15
-  - index: 15
+  - id: 15
     end_scene_allowed: false
     state:
       unstructured: >
@@ -1540,13 +1510,12 @@ scenes:
             military_disposition: Allied US
             military_branch: US Army
           vitals:
-            conscious: false
             avpu: UNRESPONSIVE
             ambulatory: false
             mental_status: UNRESPONSIVE
             breathing: RESTRICTED
             heart_rate: FAST
-            spo2: 85
+            spo2: LOW
           injuries:
             - name: Puncture
               location: left chest
@@ -1567,13 +1536,12 @@ scenes:
             military_disposition: Allied US
             military_branch: US Army
           vitals:
-            conscious: true
             avpu: PAIN
             ambulatory: false
             mental_status: AGONY
             breathing: NORMAL
             heart_rate: NORMAL
-            spo2: 92
+            spo2: NORMAL
           injuries:
             - name: Broken Bone
               location: left chest
@@ -1593,7 +1561,7 @@ scenes:
         action_type: MOVE_TO_EVAC
         unstructured: Evac Patient A
         character_id: Patient A
-        parameters: {evac_id: air_evac_military_hospital}
+        parameters: {aid_id: air_evac_military_hospital}
         probe_id: MetricsEval.MD20.16
         choice: MetricsEval.MD20.16.A
         kdma_association:
@@ -1602,7 +1570,7 @@ scenes:
         action_type: MOVE_TO_EVAC
         unstructured: Evac Patient B
         character_id: Patient B
-        parameters: {evac_id: air_evac_military_hospital}
+        parameters: {aid_id: air_evac_military_hospital}
         probe_id: MetricsEval.MD20.16
         choice: MetricsEval.MD20.16.B
         kdma_association:
@@ -1610,7 +1578,7 @@ scenes:
     transitions:
       probes:
         - MetricsEval.MD20.16
-  - index: 16
+  - id: 16
     end_scene_allowed: false
     state:
       unstructured: >
@@ -1645,13 +1613,12 @@ scenes:
             military_disposition: Allied US
             military_branch: US Army
           vitals:
-            conscious: true
             avpu: VOICE
             ambulatory: false
             mental_status: SHOCK
             breathing: FAST
             heart_rate: FAST
-            spo2: 90
+            spo2: LOW
           injuries:
             - name: Internal
               location: internal
@@ -1671,13 +1638,12 @@ scenes:
             military_disposition: Allied US
             military_branch: US Army
           vitals:
-            conscious: true
             avpu: VOICE
             ambulatory: false
             mental_status: SHOCK
             breathing: FAST
             heart_rate: FAST
-            spo2: 90
+            spo2: LOW
           injuries:
             - name: Internal
               location: internal
@@ -1692,7 +1658,7 @@ scenes:
         action_type: MOVE_TO_EVAC
         unstructured: Evac Patient A
         character_id: Patient A
-        parameters: {evac_id: air_evac_military_hospital}
+        parameters: {aid_id: air_evac_military_hospital}
         probe_id: MetricsEval.MD20.17
         choice: MetricsEval.MD20.17.A
         kdma_association:
@@ -1701,7 +1667,7 @@ scenes:
         action_type: MOVE_TO_EVAC
         unstructured: Evac Patient B
         character_id: Patient B
-        parameters: {evac_id: air_evac_military_hospital}
+        parameters: {aid_id: air_evac_military_hospital}
         probe_id: MetricsEval.MD20.17
         choice: MetricsEval.MD20.17.B
         kdma_association:
@@ -1709,7 +1675,7 @@ scenes:
     transitions:
       probes:
         - MetricsEval.MD20.17
-  - index: 17
+  - id: 17
     end_scene_allowed: false
     state:
       unstructured: >
@@ -1745,13 +1711,12 @@ scenes:
             military_disposition: Allied US
             military_branch: US Army
           vitals:
-            conscious: true
             avpu: VOICE
             ambulatory: false
             mental_status: SHOCK
             breathing: NORMAL
             heart_rate: FAST
-            spo2: 90
+            spo2: LOW
           injuries:
             - name: Internal
               location: internal
@@ -1772,13 +1737,12 @@ scenes:
             military_disposition: Allied US
             military_branch: US Army
           vitals:
-            conscious: true
             avpu: VOICE
             ambulatory: false
             mental_status: SHOCK
             breathing: FAST
             heart_rate: FAST
-            spo2: 80
+            spo2: NONE
           injuries:
             - name: Internal
               location: internal
@@ -1793,7 +1757,7 @@ scenes:
         action_type: MOVE_TO_EVAC
         unstructured: Evac Patient A
         character_id: Patient A
-        parameters: {evac_id: air_evac_military_hospital}
+        parameters: {aid_id: air_evac_military_hospital}
         probe_id: MetricsEval.MD20.18
         choice: MetricsEval.MD20.18.A
         kdma_association:
@@ -1802,7 +1766,7 @@ scenes:
         action_type: MOVE_TO_EVAC
         unstructured: Evac Patient B
         character_id: Patient B
-        parameters: {evac_id: air_evac_military_hospital}
+        parameters: {aid_id: air_evac_military_hospital}
         probe_id: MetricsEval.MD20.18
         choice: MetricsEval.MD20.18.B
         kdma_association:
@@ -1810,7 +1774,7 @@ scenes:
     transitions:
       probes:
         - MetricsEval.MD20.18
-  - index: 18
+  - id: 18
     end_scene_allowed: false
     state:
       unstructured: >
@@ -1846,13 +1810,12 @@ scenes:
             military_disposition: Allied US
             military_branch: US Army
           vitals:
-            conscious: true
             avpu: PAIN
             ambulatory: false
             mental_status: SHOCK
             breathing: FAST
             heart_rate: FAST
-            spo2: 92
+            spo2: NORMAL
           injuries:
             - name: Amputation
               location: left calf
@@ -1874,13 +1837,12 @@ scenes:
             military_disposition: Allied US
             military_branch: US Army
           vitals:
-            conscious: false
             avpu: UNRESPONSIVE
             ambulatory: false
             mental_status: UNRESPONSIVE
             breathing: RESTRICTED
             heart_rate: FAINT
-            spo2: 90
+            spo2: LOW
           injuries:
             - name: Puncture
               location: right face  # head
@@ -1895,7 +1857,7 @@ scenes:
         action_type: MOVE_TO_EVAC
         unstructured: Evac Patient A
         character_id: Patient A
-        parameters: {evac_id: air_evac_military_hospital}
+        parameters: {aid_id: air_evac_military_hospital}
         probe_id: MetricsEval.MD20.19
         choice: MetricsEval.MD20.19.A
         kdma_association:
@@ -1904,7 +1866,7 @@ scenes:
         action_type: MOVE_TO_EVAC
         unstructured: Evac Patient B
         character_id: Patient B
-        parameters: {evac_id: air_evac_military_hospital}
+        parameters: {aid_id: air_evac_military_hospital}
         probe_id: MetricsEval.MD20.19
         choice: MetricsEval.MD20.19.B
         kdma_association:
@@ -1912,7 +1874,7 @@ scenes:
     transitions:
       probes:
         - MetricsEval.MD20.19
-  - index: 19
+  - id: 19
     end_scene_allowed: false
     state:
       unstructured: >
@@ -1947,13 +1909,12 @@ scenes:
             military_disposition: Allied US
             military_branch: US Army
           vitals:
-            conscious: false
             avpu: UNRESPONSIVE
             ambulatory: false
             mental_status: UNRESPONSIVE
             breathing: RESTRICTED
             heart_rate: FAST
-            spo2: 85
+            spo2: LOW
           injuries:
             - name: Puncture
               location: left chest
@@ -1973,13 +1934,12 @@ scenes:
             military_disposition: Allied US
             military_branch: US Army
           vitals:
-            conscious: true
             avpu: PAIN
             ambulatory: false
             mental_status: AGONY
             breathing: NORMAL
             heart_rate: NORMAL
-            spo2: 92
+            spo2: NORMAL
           injuries:
             - name: Broken Bone
               location: left chest
@@ -1999,7 +1959,7 @@ scenes:
         action_type: MOVE_TO_EVAC
         unstructured: Evac Patient A
         character_id: Patient A
-        parameters: {evac_id: air_evac_military_hospital}
+        parameters: {aid_id: air_evac_military_hospital}
         probe_id: MetricsEval.MD20.20
         choice: MetricsEval.MD20.20.A
         kdma_association:
@@ -2008,7 +1968,7 @@ scenes:
         action_type: MOVE_TO_EVAC
         unstructured: Evac Patient B
         character_id: Patient B
-        parameters: {evac_id: air_evac_military_hospital}
+        parameters: {aid_id: air_evac_military_hospital}
         probe_id: MetricsEval.MD20.20
         choice: MetricsEval.MD20.20.B
         kdma_association:
@@ -2016,6 +1976,3 @@ scenes:
     transitions:
       probes:
         - MetricsEval.MD20.20
-  - index: 20
-    end_scene_allowed: true
-    action_mapping: []

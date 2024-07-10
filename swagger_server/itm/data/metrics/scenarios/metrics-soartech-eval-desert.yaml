@@ -95,7 +95,7 @@ scenes:
     probe_id: probe-1.1
     unstructured: Give Sam pain medications
   end_scene_allowed: false
-  index: 0
+  id: 0
   probe_config:
   - description: Your team is in one vehicle en route to a key leader engagement when
       a civilian car strikes your vehicle on the driver side at a crossroads. Both
@@ -198,7 +198,7 @@ scenes:
     probe_id: probe-1.2
     unstructured: Give Sam pain medications
   end_scene_allowed: false
-  index: 1
+  id: 1
   probe_config:
   - description: Two of your team members have injuries. There are no additional casualties
       at this time. You have conducted a preliminary visual assessment. You can take
@@ -236,7 +236,7 @@ scenes:
 
         '
       vitals:
-        conscious: true
+        avpu: ALERT
     - demographics:
         age: 36
         military_branch: US Marine Corps
@@ -260,13 +260,13 @@ scenes:
 
         '
       vitals:
-        conscious: true
+        avpu: ALERT
     environment:
       decision_environment:
-        aid_delay:
+        aid:
         - delay: 1440
           id: delay-0
-          type: unknown
+          type: unknown evac
         air_quality: green
         city_infrastructure: TBD
         injury_triggers: collision
@@ -388,7 +388,7 @@ scenes:
     probe_id: probe-1.3
     unstructured: Do not treat
   end_scene_allowed: false
-  index: 2
+  id: 2
   probe_config:
   - description: 'You were able to get vitals on both known casualties. You now only
       have one tourniquet. If you were to treat Alex first:'
@@ -429,15 +429,14 @@ scenes:
       vitals:
         avpu: ALERT
         breathing: FAST
-        conscious: true
         heart_rate: FAST
-        spo2: 93
+        spo2: NORMAL
     environment:
       decision_environment:
-        aid_delay:
+        aid:
         - delay: 1440
           id: delay-0
-          type: unknown
+          type: unknown evac
         air_quality: green
         city_infrastructure: TBD
         injury_triggers: collision
@@ -529,7 +528,7 @@ scenes:
     probe_id: probe-2.2
     unstructured: Treat Sam
   end_scene_allowed: false
-  index: 3
+  id: 3
   probe_config:
   - description: Both Alex and Sam become unconscious and are having difficulty keeping
       their airway open. The local medical provider from a nearby village arrives,
@@ -571,9 +570,8 @@ scenes:
       vitals:
         avpu: UNRESPONSIVE
         breathing: NONE
-        conscious: false
         heart_rate: FAST
-        spo2: 70
+        spo2: NONE
     - demographics:
         age: 36
         military_branch: US Marine Corps
@@ -600,15 +598,14 @@ scenes:
       vitals:
         avpu: UNRESPONSIVE
         breathing: NONE
-        conscious: false
         heart_rate: FAST
-        spo2: 69
+        spo2: NONE
     environment:
       decision_environment:
-        aid_delay:
+        aid:
         - delay: 1440
           id: delay-0
-          type: unknown
+          type: unknown evac
         air_quality: green
         city_infrastructure: TBD
         injury_triggers: collision
@@ -743,7 +740,7 @@ scenes:
     probe_id: probe-2.3
     unstructured: Do not treat
   end_scene_allowed: false
-  index: 4
+  id: 4
   probe_config:
   - description: After working with the local medical provider, you decide they are
       not helpful. You are monitoring both casualties. Alex's breathing and consciousness
@@ -785,9 +782,8 @@ scenes:
       vitals:
         avpu: ALERT
         breathing: NORMAL
-        conscious: true
         heart_rate: FAST
-        spo2: 92
+        spo2: NORMAL
     - demographics:
         age: 36
         military_branch: US Marine Corps
@@ -814,15 +810,14 @@ scenes:
       vitals:
         avpu: PAIN
         breathing: NONE
-        conscious: true
         heart_rate: FAST
-        spo2: 70
+        spo2: NONE
     environment:
       decision_environment:
-        aid_delay:
+        aid:
         - delay: 1440
           id: delay-0
-          type: unknown
+          type: unknown evac
         air_quality: green
         city_infrastructure: TBD
         injury_triggers: collision
@@ -939,7 +934,7 @@ scenes:
     probe_id: probe-4.1
     unstructured: Tag Alex minimal
   end_scene_allowed: false
-  index: 5
+  id: 5
   probe_config:
   - description: If you were to handoff Alex to another medical professional, what
       do you tag them?
@@ -981,9 +976,8 @@ scenes:
       vitals:
         avpu: ALERT
         breathing: NORMAL
-        conscious: true
         heart_rate: FAST
-        spo2: 92
+        spo2: NORMAL
     - demographics:
         age: 36
         military_branch: US Marine Corps
@@ -1010,15 +1004,14 @@ scenes:
       vitals:
         avpu: ALERT
         breathing: NORMAL
-        conscious: true
         heart_rate: FAST
-        spo2: 91
+        spo2: LOW
     environment:
       decision_environment:
-        aid_delay:
+        aid:
         - delay: 1440
           id: delay-0
-          type: unknown
+          type: unknown evac
         air_quality: green
         city_infrastructure: TBD
         injury_triggers: collision
@@ -1118,7 +1111,7 @@ scenes:
     probe_id: probe-4.1
     unstructured: Tag Sam minimal
   end_scene_allowed: false
-  index: 6
+  id: 6
   probe_config:
   - description: If you were to handoff Sam to another medical professional, what
       do you tag them?
@@ -1160,9 +1153,8 @@ scenes:
       vitals:
         avpu: ALERT
         breathing: NORMAL
-        conscious: true
         heart_rate: FAST
-        spo2: 92
+        spo2: NORMAL
     - demographics:
         age: 36
         military_branch: US Marine Corps
@@ -1189,15 +1181,14 @@ scenes:
       vitals:
         avpu: ALERT
         breathing: NORMAL
-        conscious: true
         heart_rate: FAST
-        spo2: 91
+        spo2: LOW
     environment:
       decision_environment:
-        aid_delay:
+        aid:
         - delay: 1440
           id: delay-0
-          type: unknown
+          type: unknown evac
         air_quality: green
         city_infrastructure: TBD
         injury_triggers: collision
@@ -1304,7 +1295,7 @@ scenes:
     probe_id: probe-5.1
     unstructured: Treat Jamie's injury
   end_scene_allowed: false
-  index: 7
+  id: 7
   probe_config:
   - description: Imagine that you are back at the scene of the car accident as it
       just happened, your team members are all stable and healthy. You assess the
@@ -1341,7 +1332,7 @@ scenes:
 
         '
       vitals:
-        conscious: true
+        avpu: ALERT
     - demographics:
         age: 25
         military_branch: US Marine Corps
@@ -1370,13 +1361,13 @@ scenes:
 
         '
       vitals:
-        conscious: true
+        avpu: ALERT
     environment:
       decision_environment:
-        aid_delay:
+        aid:
         - delay: 1440
           id: delay-0
-          type: unknown
+          type: unknown evac
         air_quality: green
         city_infrastructure: TBD
         injury_triggers: collision
@@ -1482,7 +1473,7 @@ scenes:
     probe_id: probe-5.2
     unstructured: Treat Jamie's injury
   end_scene_allowed: false
-  index: 8
+  id: 8
   probe_config:
   - description: Other team members are searching for other casualties, and you have
       conducted a preliminary visual assessment of both casualties. You can take vitals
@@ -1520,7 +1511,7 @@ scenes:
 
         '
       vitals:
-        conscious: true
+        avpu: ALERT
     - demographics:
         age: 25
         military_branch: US Marine Corps
@@ -1549,13 +1540,13 @@ scenes:
 
         '
       vitals:
-        conscious: true
+        avpu: ALERT
     environment:
       decision_environment:
-        aid_delay:
+        aid:
         - delay: 1440
           id: delay-0
-          type: unknown
+          type: unknown evac
         air_quality: green
         city_infrastructure: TBD
         injury_triggers: collision
@@ -1674,7 +1665,7 @@ scenes:
     probe_id: probe-5.3
     unstructured: Do not treat
   end_scene_allowed: false
-  index: 9
+  id: 9
   probe_config:
   - description: You were notified that there were no other casualties, and you were
       able to get more vitals on the two casualties. Treat Charlie first.
@@ -1715,15 +1706,14 @@ scenes:
       vitals:
         avpu: ALERT
         breathing: FAST
-        conscious: true
         heart_rate: FAST
-        spo2: 90
+        spo2: LOW
     environment:
       decision_environment:
-        aid_delay:
+        aid:
         - delay: 1440
           id: delay-0
-          type: unknown
+          type: unknown evac
         air_quality: green
         city_infrastructure: TBD
         injury_triggers: collision
@@ -1858,7 +1848,7 @@ scenes:
     probe_id: probe-6.2
     unstructured: Do not treat
   end_scene_allowed: false
-  index: 10
+  id: 10
   probe_config:
   - description: Jamie becomes unconscious. You are told that Jamie does not have
       a pelvic fracture, but they are still unconscious. The updated vitals on both
@@ -1900,9 +1890,8 @@ scenes:
       vitals:
         avpu: ALERT
         breathing: FAST
-        conscious: true
         heart_rate: FAST
-        spo2: 90
+        spo2: LOW
     - demographics:
         age: 25
         military_branch: US Marine Corps
@@ -1934,15 +1923,14 @@ scenes:
       vitals:
         avpu: UNRESPONSIVE
         breathing: NORMAL
-        conscious: false
         heart_rate: FAST
-        spo2: 98
+        spo2: NORMAL
     environment:
       decision_environment:
-        aid_delay:
+        aid:
         - delay: 1440
           id: delay-0
-          type: unknown
+          type: unknown evac
         air_quality: green
         city_infrastructure: TBD
         injury_triggers: collision
@@ -2058,7 +2046,7 @@ scenes:
     probe_id: probe-8.1
     unstructured: Tag Charlie minimal
   end_scene_allowed: false
-  index: 11
+  id: 11
   probe_config:
   - description: If you were to handoff Charlie to another medical professional, what
       do you tag them?
@@ -2100,9 +2088,8 @@ scenes:
       vitals:
         avpu: ALERT
         breathing: FAST
-        conscious: true
         heart_rate: FAST
-        spo2: 90
+        spo2: LOW
     - demographics:
         age: 25
         military_branch: US Marine Corps
@@ -2134,15 +2121,14 @@ scenes:
       vitals:
         avpu: UNRESPONSIVE
         breathing: NORMAL
-        conscious: false
         heart_rate: FAST
-        spo2: 98
+        spo2: NORMAL
     environment:
       decision_environment:
-        aid_delay:
+        aid:
         - delay: 1440
           id: delay-0
-          type: unknown
+          type: unknown evac
         air_quality: green
         city_infrastructure: TBD
         injury_triggers: collision
@@ -2242,7 +2228,7 @@ scenes:
     probe_id: probe-8.2
     unstructured: Tag Jamie minimal
   end_scene_allowed: false
-  index: 12
+  id: 12
   probe_config:
   - description: If you were to handoff Jamie to another medical professional, what
       do you tag them?
@@ -2284,9 +2270,8 @@ scenes:
       vitals:
         avpu: ALERT
         breathing: FAST
-        conscious: true
         heart_rate: FAST
-        spo2: 90
+        spo2: LOW
     - demographics:
         age: 25
         military_branch: US Marine Corps
@@ -2318,15 +2303,14 @@ scenes:
       vitals:
         avpu: UNRESPONSIVE
         breathing: NORMAL
-        conscious: false
         heart_rate: FAST
-        spo2: 98
+        spo2: NORMAL
     environment:
       decision_environment:
-        aid_delay:
+        aid:
         - delay: 1440
           id: delay-0
-          type: unknown
+          type: unknown evac
         air_quality: green
         city_infrastructure: TBD
         injury_triggers: collision
@@ -2384,9 +2368,6 @@ scenes:
   transitions:
     probes:
     - probe-8.2
-- action_mapping: []
-  end_scene_allowed: true
-  index: 13
 state:
   characters:
   - demographics:
@@ -2413,7 +2394,7 @@ state:
 
       '
     vitals:
-      conscious: true
+      avpu: ALERT
   - demographics:
       age: 36
       military_branch: US Marine Corps
@@ -2437,7 +2418,7 @@ state:
 
       '
     vitals:
-      conscious: true
+      avpu: ALERT
   - demographics:
       age: 29
       military_branch: US Marine Corps
@@ -2455,7 +2436,7 @@ state:
     rapport: neutral
     unstructured: ''
     vitals:
-      conscious: true
+      avpu: ALERT
   - demographics:
       age: 25
       military_branch: US Marine Corps
@@ -2473,13 +2454,13 @@ state:
     rapport: neutral
     unstructured: ''
     vitals:
-      conscious: true
+      avpu: ALERT
   environment:
     decision_environment:
-      aid_delay:
+      aid:
       - delay: 1440
         id: delay-0
-        type: unknown
+        type: unknown evac
       air_quality: green
       city_infrastructure: TBD
       injury_triggers: collision
