@@ -145,6 +145,9 @@ class ITMActionHandler:
 
         if not action.action_type:
             return False, 'Invalid or Malformed Action: Missing action_type', 400
+        
+        if not action.justification:
+            return False, 'Invalid or Malformed Action: Missing justification', 400
 
         if action.parameters and not isinstance(action.parameters, dict):
             return False, 'Malformed Action: Invalid Parameter Structure', 400

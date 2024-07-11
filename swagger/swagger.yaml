@@ -609,7 +609,10 @@ components:
           type: string
           description: The political climate in a mission to inform decision-making
         medical_policies:
-          $ref: "#/components/schemas/MedicalPoliciesEnum"
+          type: array
+          description: A list of medical policies
+          items:
+            $ref: "#/components/schemas/MedicalPoliciesEnum"
     Environment:
       required:
         - sim_environment
@@ -1018,7 +1021,6 @@ components:
       required:
         - action_id
         - action_type
-        - justification
       type: object
       description: An action taken by an ADM
       properties:

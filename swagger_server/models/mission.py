@@ -19,7 +19,7 @@ class Mission(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, unstructured: str=None, mission_type: MissionTypeEnum=None, character_importance: List[Dict[str, MissionImportanceEnum]]=None, civilian_presence: CivilianPresenceEnum=None, communication_capability: CommunicationCapabilityEnum=None, roe: str=None, political_climate: str=None, medical_policies: MedicalPoliciesEnum=None):  # noqa: E501
+    def __init__(self, unstructured: str=None, mission_type: MissionTypeEnum=None, character_importance: List[Dict[str, MissionImportanceEnum]]=None, civilian_presence: CivilianPresenceEnum=None, communication_capability: CommunicationCapabilityEnum=None, roe: str=None, political_climate: str=None, medical_policies: List[MedicalPoliciesEnum]=None):  # noqa: E501
         """Mission - a model defined in Swagger
 
         :param unstructured: The unstructured of this Mission.  # noqa: E501
@@ -37,7 +37,7 @@ class Mission(Model):
         :param political_climate: The political_climate of this Mission.  # noqa: E501
         :type political_climate: str
         :param medical_policies: The medical_policies of this Mission.  # noqa: E501
-        :type medical_policies: MedicalPoliciesEnum
+        :type medical_policies: List[MedicalPoliciesEnum]
         """
         self.swagger_types = {
             'unstructured': str,
@@ -47,7 +47,7 @@ class Mission(Model):
             'communication_capability': CommunicationCapabilityEnum,
             'roe': str,
             'political_climate': str,
-            'medical_policies': MedicalPoliciesEnum
+            'medical_policies': List[MedicalPoliciesEnum]
         }
 
         self.attribute_map = {
@@ -240,22 +240,24 @@ class Mission(Model):
         self._political_climate = political_climate
 
     @property
-    def medical_policies(self) -> MedicalPoliciesEnum:
+    def medical_policies(self) -> List[MedicalPoliciesEnum]:
         """Gets the medical_policies of this Mission.
 
+        A list of medical policies  # noqa: E501
 
         :return: The medical_policies of this Mission.
-        :rtype: MedicalPoliciesEnum
+        :rtype: List[MedicalPoliciesEnum]
         """
         return self._medical_policies
 
     @medical_policies.setter
-    def medical_policies(self, medical_policies: MedicalPoliciesEnum):
+    def medical_policies(self, medical_policies: List[MedicalPoliciesEnum]):
         """Sets the medical_policies of this Mission.
 
+        A list of medical policies  # noqa: E501
 
         :param medical_policies: The medical_policies of this Mission.
-        :type medical_policies: MedicalPoliciesEnum
+        :type medical_policies: List[MedicalPoliciesEnum]
         """
 
         self._medical_policies = medical_policies
