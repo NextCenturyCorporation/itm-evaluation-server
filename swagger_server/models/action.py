@@ -263,6 +263,8 @@ class Action(Model):
         :param justification: The justification of this Action.
         :type justification: str
         """
+        if justification is None:
+            raise ValueError("Invalid value for `justification`, must not be `None`")  # noqa: E501
 
         self._justification = justification
 

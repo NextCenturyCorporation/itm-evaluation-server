@@ -303,7 +303,7 @@ scenes:
       - casualty_x: normal
       civilian_presence: some
       communication_capability: both
-      medical_policies: Nothing noteworthy
+      medical_policies: neutral
       mission_type: Civil affairs
       political_climate: Nothing noteworthy
       roe: Nothing noteworthy
@@ -473,7 +473,7 @@ scenes:
       - casualty_x: normal
       civilian_presence: some
       communication_capability: both
-      medical_policies: Nothing noteworthy
+      medical_policies: neutral
       mission_type: Civil affairs
       political_climate: Nothing noteworthy
       roe: Nothing noteworthy
@@ -642,7 +642,7 @@ scenes:
       - casualty_x: normal
       civilian_presence: some
       communication_capability: both
-      medical_policies: Nothing noteworthy
+      medical_policies: neutral
       mission_type: Civil affairs
       political_climate: Nothing noteworthy
       roe: Nothing noteworthy
@@ -854,7 +854,7 @@ scenes:
       - casualty_x: normal
       civilian_presence: some
       communication_capability: both
-      medical_policies: Nothing noteworthy
+      medical_policies: neutral
       mission_type: Civil affairs
       political_climate: Nothing noteworthy
       roe: Nothing noteworthy
@@ -1048,7 +1048,7 @@ scenes:
       - casualty_x: normal
       civilian_presence: some
       communication_capability: both
-      medical_policies: Nothing noteworthy
+      medical_policies: neutral
       mission_type: Civil affairs
       political_climate: Nothing noteworthy
       roe: Nothing noteworthy
@@ -1225,7 +1225,7 @@ scenes:
       - casualty_x: normal
       civilian_presence: some
       communication_capability: both
-      medical_policies: Nothing noteworthy
+      medical_policies: neutral
       mission_type: Civil affairs
       political_climate: Nothing noteworthy
       roe: Nothing noteworthy
@@ -1404,7 +1404,7 @@ scenes:
       - casualty_x: normal
       civilian_presence: some
       communication_capability: both
-      medical_policies: Nothing noteworthy
+      medical_policies: neutral
       mission_type: Civil affairs
       political_climate: Nothing noteworthy
       roe: Nothing noteworthy
@@ -1583,7 +1583,7 @@ scenes:
       - casualty_x: normal
       civilian_presence: some
       communication_capability: both
-      medical_policies: Nothing noteworthy
+      medical_policies: neutral
       mission_type: Civil affairs
       political_climate: Nothing noteworthy
       roe: Nothing noteworthy
@@ -1750,7 +1750,7 @@ scenes:
       - casualty_x: normal
       civilian_presence: some
       communication_capability: both
-      medical_policies: Nothing noteworthy
+      medical_policies: neutral
       mission_type: Civil affairs
       political_climate: Nothing noteworthy
       roe: Nothing noteworthy
@@ -1967,7 +1967,7 @@ scenes:
       - casualty_x: normal
       civilian_presence: some
       communication_capability: both
-      medical_policies: Nothing noteworthy
+      medical_policies: neutral
       mission_type: Civil affairs
       political_climate: Nothing noteworthy
       roe: Nothing noteworthy
@@ -2165,7 +2165,7 @@ scenes:
       - casualty_x: normal
       civilian_presence: some
       communication_capability: both
-      medical_policies: Nothing noteworthy
+      medical_policies: neutral
       mission_type: Civil affairs
       political_climate: Nothing noteworthy
       roe: Nothing noteworthy
@@ -2347,7 +2347,7 @@ scenes:
       - casualty_x: normal
       civilian_presence: some
       communication_capability: both
-      medical_policies: Nothing noteworthy
+      medical_policies: neutral
       mission_type: Civil affairs
       political_climate: Nothing noteworthy
       roe: Nothing noteworthy
@@ -2497,7 +2497,7 @@ state:
     - casualty_x: normal
     civilian_presence: some
     communication_capability: both
-    medical_policies: Nothing noteworthy
+    medical_policies: neutral
     mission_type: Civil affairs
     political_climate: Nothing noteworthy
     roe: Nothing noteworthy
