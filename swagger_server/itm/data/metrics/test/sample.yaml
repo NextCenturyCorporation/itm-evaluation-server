@@ -19,7 +19,7 @@ state:
     communication_capability: both # current availability of internal and external communication, controlled vocab includes internal, external, both, neither
     roe: unused # rules of engagement to inform decision-making, but not to restrict decision space
     political_climate: unused # The political climate in a mission to inform decision-making
-    medical_policies: Neutral # controlled vocab includes Neutral, Treat Enemy LLE, Treat Civilian LLE, and Prioritize Mission
+    medical_policies: Treat All Neutrally # controlled vocab includes Treat All Neutrally, Treat Enemy LLE, Treat Civilian LLE, and Prioritize Mission
 
   environment: # Normally many of these fields would be left unspecified.
     sim_environment:
