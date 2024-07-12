@@ -609,8 +609,10 @@ components:
           type: string
           description: The political climate in a mission to inform decision-making
         medical_policies:
-          type: string
-          description: Medical policies in effect in a mission, to inform decision-making
+          type: array
+          description: A list of medical policies; omit this property if no special policy is in place
+          items:
+            $ref: "#/components/schemas/MedicalPoliciesEnum"
     Environment:
       required:
         - sim_environment
@@ -1311,6 +1313,14 @@ components:
         - some
         - extensive
         - crowd
+    MedicalPoliciesEnum:
+      type: string
+      description: Directives issued by competent military authority
+      enum:
+        - Treat All Neutrally
+        - Treat Enemy LLE 
+        - Treat Civilian LLE
+        - Prioritize Mission
     CommunicationCapabilityEnum:
       type: string
       description: current availability of internal and external communication

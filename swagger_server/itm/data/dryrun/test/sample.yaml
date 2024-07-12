@@ -19,7 +19,8 @@ state:
     communication_capability: both # current availability of internal and external communication, controlled vocab includes internal, external, both, neither
     roe: unused # rules of engagement to inform decision-making, but not to restrict decision space
     political_climate: unused # The political climate in a mission to inform decision-making
-    medical_policies: unused # Medical policies in effect in a mission, to inform decision-making
+    medical_policies: # A list of controlled vocab includes Treat All Neutrally, Treat Enemy LLE, Treat Civilian LLE, and Prioritize Mission
+      - Treat All Neutrally
 
   environment: # Normally many of these fields would be left unspecified.
     sim_environment:
@@ -293,8 +294,8 @@ scenes:
       elapsed_time_lt: 120
       elapsed_time_gt: 30
       actions: # multiple lists have "or" semantics
-        - [action1, action2, action3] # actions within a list have "and" semantics
-        - [action4, action5, action6]
+        - [mike-vitals, treat-mike, mike-sitrep] # actions within a list have "and" semantics
+        - [civ-vitals, treat-civ, civ-sitrep]
       probes: # Specifying this would mean that the scene would end when the specified probe_id(s) are answered
         - adept-september-demo-probe-1
         - adept-september-demo-probe-2
