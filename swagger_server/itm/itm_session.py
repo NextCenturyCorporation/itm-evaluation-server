@@ -40,7 +40,7 @@ class ITMSession:
     def __init__(self):
         """
         Initialize an ITMSession.
-        """ 
+        """
         self.session_id = None
         self.adm_name = ''
         self.adm_profile = ''
