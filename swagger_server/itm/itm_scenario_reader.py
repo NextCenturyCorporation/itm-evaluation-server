@@ -38,7 +38,7 @@ class ITMScenarioReader:
         Args:
             yaml_path: The file path to the YAML data.
         """
-        with open(yaml_path, 'r') as file:
+        with open(yaml_path, 'r', encoding='utf-8') as file:
             self.yaml_data = yaml.safe_load(file)
 
     def read_scenario_from_yaml(self) -> Tuple[Scenario, List[ITMScene]]:
