@@ -20,13 +20,18 @@ from .itm_action_handler import ITMActionHandler
 from .itm_alignment_target_reader import ITMAlignmentTargetReader
 from .itm_ta1_controller import ITMTa1Controller
 from .itm_history import ITMHistory
+from swagger_server import config_util
 
 class ITMSession:
     """
     Class for representing and manipulating a simulation scenario session.
     """
+    config_util.check_ini()
+    config = config_util.read_ini()[0]
+    
     # Class variables
-    EVALUATION_TYPE = 'dryrun'
+    EVALUATION_TYPE = config['DEFAULT']['EVALUATION_TYPE']
+    SCENARIO_DIRECTORY =config['DEFAULT']['SCENARIO_DIRECTORY']
     local_alignment_targets = {} # alignment_targets baked into server, for use when not connecting to TA1
     alignment_data = {} # maps ta1_name to list alignment_targets, used whether connecting to TA1 or not
     ta1_controllers = {} # map of ta1_names to lists of ta1_controllers
@@ -35,7 +40,7 @@ class ITMSession:
     def __init__(self):
         """
         Initialize an ITMSession.
-        """
+        """ 
         self.session_id = None
         self.adm_name = ''
         self.adm_profile = ''
@@ -447,7 +452,7 @@ class ITMSession:
                 self._end_session() # Exception here ends the session
                 return 'Exception communicating with TA1; is the TA1 server running?  Ending session.', 503
 
-        path = f"swagger_server/itm/data/{ITMSession.EVALUATION_TYPE}/" + ("test/" if self.session_type == 'test' else 'scenarios/')
+        path = f"{ITMSession.SCENARIO_DIRECTORY}" + ("test/" if self.session_type == 'test' else 'scenarios/')
         num_read_scenarios = 0
         for ta1_name in ta1_names:
             if self.session_type == 'test':

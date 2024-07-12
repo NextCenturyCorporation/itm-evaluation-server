@@ -75,3 +75,6 @@ swagger_server/api
 
 # local history output
 itm_history_output
+
+# local config files
+config.ini
