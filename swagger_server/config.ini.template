@@ -4,4 +4,4 @@
 [DEFAULT]
 
 EVALUATION_TYPE=dryrun
-SCENARIO_DIRECTORY=swagger_server/itm/data/%(EVALUATION_TYPE)s/
+SCENARIO_DIRECTORY=swagger_server/itm/data/%(EVALUATION_TYPE)s/scenarios/
