@@ -31,7 +31,7 @@ class ITMSession:
     
     # Class variables
     EVALUATION_TYPE = config['DEFAULT']['EVALUATION_TYPE']
-    SCENARIO_DIRECTORY =config['DEFAULT']['SCENARIO_DIRECTORY']
+    SCENARIO_DIRECTORY = config['DEFAULT']['SCENARIO_DIRECTORY']
     local_alignment_targets = {} # alignment_targets baked into server, for use when not connecting to TA1
     alignment_data = {} # maps ta1_name to list alignment_targets, used whether connecting to TA1 or not
     ta1_controllers = {} # map of ta1_names to lists of ta1_controllers
