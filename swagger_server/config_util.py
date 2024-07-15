@@ -14,7 +14,7 @@ def read_ini(default_path='swagger_server/config.ini'):
     path = os.path.expanduser(default_path)
     parser = ConfigParser()
     parser.read(path)
-    return (parser,path)
+    return (parser, path)
 
 def check_ini():
     keys_values = {}
