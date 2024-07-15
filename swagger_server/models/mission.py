@@ -243,7 +243,7 @@ class Mission(Model):
     def medical_policies(self) -> List[MedicalPoliciesEnum]:
         """Gets the medical_policies of this Mission.
 
-        A list of medical policies  # noqa: E501
+        A list of medical policies; omit this property if no special policy is in place  # noqa: E501
 
         :return: The medical_policies of this Mission.
         :rtype: List[MedicalPoliciesEnum]
@@ -254,7 +254,7 @@ class Mission(Model):
     def medical_policies(self, medical_policies: List[MedicalPoliciesEnum]):
         """Sets the medical_policies of this Mission.
 
-        A list of medical policies  # noqa: E501
+        A list of medical policies; omit this property if no special policy is in place  # noqa: E501
 
         :param medical_policies: The medical_policies of this Mission.
         :type medical_policies: List[MedicalPoliciesEnum]

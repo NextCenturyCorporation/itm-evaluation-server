@@ -18,7 +18,7 @@ class MedicalPoliciesEnum(Model):
     """
     allowed enum values
     """
-    NEUTRAL = "Neutral"
+    TREAT_ALL_NEUTRALLY = "Treat All Neutrally"
     TREAT_ENEMY_LLE = "Treat Enemy LLE"
     TREAT_CIVILIAN_LLE = "Treat Civilian LLE"
     PRIORITIZE_MISSION = "Prioritize Mission"

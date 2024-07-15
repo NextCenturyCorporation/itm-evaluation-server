@@ -22,9 +22,9 @@ class MessageTypeEnum(Model):
     ASK = "ask"
     DELEGATE = "delegate"
     DENY = "deny"
+    JUSTIFY = "justify"
     RECOMMEND = "recommend"
     WAIT = "wait"
-    TBD = "tbd"
     def __init__(self):  # noqa: E501
         """MessageTypeEnum - a model defined in Swagger
 

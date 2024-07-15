@@ -24,7 +24,6 @@ class EntityTypeEnum(Model):
     COMMANDER = "commander"
     EVERYBODY = "everybody"
     MEDIC = "medic"
-    TBD = "tbd"
     def __init__(self):  # noqa: E501
         """EntityTypeEnum - a model defined in Swagger
 
