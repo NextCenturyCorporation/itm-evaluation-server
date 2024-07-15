@@ -331,8 +331,7 @@ class ITMSession:
         try:
             self.state = deepcopy(self.itm_scenario.isd.current_scene.state)
             ITMScenario.clear_hidden_data(self.state)
-            if self.kdma_training:
-                self.state.meta_info = MetaInfo(scene_id=self.itm_scenario.isd.current_scene.id, probe_response=None)
+            self.state.meta_info = MetaInfo(scene_id=self.itm_scenario.isd.current_scene.id, probe_response=None)
             scenario = Scenario(
                 id=self.itm_scenario.id,
                 name=self.itm_scenario.name,
@@ -353,7 +352,7 @@ class ITMSession:
                     self.history.add_history(
                         "TA1 Session ID", {}, ta1_session_id
                     )
-                    logging.info("Got new session_id from TA1.", ta1_session_id)
+                    logging.info("Got new session_id '%s' from TA1.", ta1_session_id)
                 except:
                     logging.exception("Exception communicating with TA1; is the TA1 server running?  Ending session.")
                     self._end_session() # Exception here ends the session
