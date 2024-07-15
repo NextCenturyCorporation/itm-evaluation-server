@@ -490,8 +490,8 @@ class ITMSession:
             while len(self.itm_scenarios) < max_scenarios:
                 random_index = random.randint(0, num_read_scenarios - 1)
                 self.itm_scenarios.append(deepcopy(self.itm_scenarios[random_index]))
-
-        logging.info('Loaded %d total scenarios from %s.', len(self.itm_scenarios), ITMSession.SCENARIO_DIRECTORY)
+                
+        logging.info('Loaded %d total scenarios from %s.', len(self.itm_scenarios), f"swagger_server/itm/data/{ITMSession.EVALUATION_TYPE}/test/" if self.session_type == 'test' else ITMSession.SCENARIO_DIRECTORY)
         self.current_scenario_index = 0
 
         return self.session_id

@@ -1,6 +1,6 @@
 import os
 from os.path import exists
-from configparser import ConfigParser, NoOptionError
+from configparser import ConfigParser
 from dataclasses import dataclass
 from typing import Optional
 

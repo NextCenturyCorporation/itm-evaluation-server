@@ -32,7 +32,7 @@ Rename `config.ini.template` file to `config.ini`.
 
 The following properties can be configured:
 - `EVALUATION_TYPE` 
-    - default is `dryrun`
+    - default is `dryrun` but `metrics` is also supported
 - `SCENARIO_DIRECTORY`
     - default is `swagger_server/itm/data/%(EVALUATION_TYPE)s/scenarios/`
 
