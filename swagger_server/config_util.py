@@ -1,6 +1,6 @@
 import os
 from os.path import exists
-from configparser import ConfigParser,NoOptionError
+from configparser import ConfigParser, NoOptionError
 from dataclasses import dataclass
 from typing import Optional
 
@@ -24,13 +24,13 @@ def check_ini():
     if exists(final_path):
         keys = ("EVALUATION_TYPE", "SCENARIO_DIRECTORY")
         for option in keys:
-            if option in ini["DEFAULT"]:#checks if "option" key exists in "default" section
+            if option in ini["DEFAULT"]: # checks if "option" key exists in "default" section
                 key_value = ini.get("DEFAULT", option)
-                keys_values.setdefault(option,key_value)
+                keys_values.setdefault(option, key_value)
             else: 
-                raise Exception(f"We couldn't find this key in your file:{option}")
+                raise Exception(f"Couldn't find key {option} in this file")
     else:
         raise FileNotFoundError(f"Couldn't find file: {os.path.abspath(final_path)}")
             
-    return config_data(True,keys_values,final_path)
+    return config_data(True, keys_values, final_path)
 
