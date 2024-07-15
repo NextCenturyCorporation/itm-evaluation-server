@@ -25,6 +25,19 @@ On Windows, the method to activate depends on the shell:
 - PowerShell: `venv\Scripts\Activate.ps1`
 - cmd.exe: `venv\Scripts\activate.bat`
 
+
+## Configuration
+
+Rename `config.ini.template` file to `config.ini`. 
+
+The following properties can be configured:
+- `EVALUATION_TYPE` 
+    - default is `dryrun` but `metrics` is also supported
+- `SCENARIO_DIRECTORY`
+    - default is `swagger_server/itm/data/%(EVALUATION_TYPE)s/scenarios/`
+
+*NOTE:* the trailing **`s`** in `.../data/%(EVALUATION_TYPE)s/...` is needed for string interpolation to work properly.
+
 ## Usage
 To run the server, please execute the following from the root directory:
 
