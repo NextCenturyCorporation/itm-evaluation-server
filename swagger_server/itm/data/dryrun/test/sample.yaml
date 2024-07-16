@@ -517,4 +517,5 @@ scenes:
         probe_id: sample-probe-7
         choice: s1-p7-choice2
     transitions:
-      elapsed_time_lt: 5 # Require the ADM to end the scene.
+      probes:
+       - sample-probe-7
