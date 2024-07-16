@@ -1318,7 +1318,7 @@ components:
       description: Directives issued by competent military authority
       enum:
         - Treat All Neutrally
-        - Treat Enemy LLE 
+        - Treat Enemy LLE
         - Treat Civilian LLE
         - Prioritize Mission
     CommunicationCapabilityEnum:
