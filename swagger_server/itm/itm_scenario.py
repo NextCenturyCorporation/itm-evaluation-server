@@ -1,4 +1,5 @@
 import logging
+from requests import exceptions
 from typing import List
 from dataclasses import dataclass
 from copy import deepcopy
@@ -105,6 +106,9 @@ class ITMScenario:
         if self.ta1_controller:
             try:
                 self.ta1_controller.post_probe(probe_response=response)
+            except exceptions.HTTPError:
+                logging.exception("HTTPError from TA1 posting probe.")
+            try:
                 # Get and log probe response alignment if not training.
                 if not self.session.kdma_training:
                     probe_response_alignment = \
@@ -112,6 +116,7 @@ class ITMScenario:
                         response.scenario_id,
                         response.probe_id
                     )
+                    logging.info(f"Probe response score: {probe_response_alignment['score']}")
                     self.session.history.add_history(
                         "TA1 Probe Response Alignment",
                         {"session_id": self.ta1_controller.session_id,
@@ -123,8 +128,11 @@ class ITMScenario:
                     alignment_scenario_id = probe_response_alignment['alignment_source'][0]['scenario_id']
                     if self.id != alignment_scenario_id:
                         logging.error("\033[92mContamination in probe alignment! scenario is %s but alignment source scenario is %s.\033[00m", self.id, alignment_scenario_id)
+            except exceptions.HTTPError:
+                # Consider changing to logging.exception when this exception isn't so common.
+                logging.error("HTTPError from TA1 getting probe alignment.")
             except:
-                logging.exception("Exception posting probe response to TA1.")
+                logging.exception("Exception getting probe alignment from TA1.")
         self.probes_sent.append(probe_id)
         self.probe_responses_sent.append(choice_id)
         logging.info("Responding to probe %s from scenario %s with choice %s.",

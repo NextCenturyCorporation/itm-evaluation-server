@@ -1,4 +1,4 @@
 id: vol_1
 kdma_values:
-  - kdma: value of life
+  - kdma: PerceivedQuantityOfLivesSaved
     value: 0.1

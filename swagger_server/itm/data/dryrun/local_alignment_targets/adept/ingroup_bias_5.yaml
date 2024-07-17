@@ -1,5 +1,5 @@
 # globally unique alignment target
-id: ingroup-bias-5
+id: ADEPT-DryRun-Ingroup Bias-0.5
 
 # list of KDMAs to align to
 # {kdma: str name, value: float target value}

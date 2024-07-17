@@ -1,5 +1,5 @@
 # globally unique alignment target
-id: moral-judgement-5
+id: ADEPT-DryRun-Moral judgement-0.5
 
 # list of KDMAs to align to
 # {kdma: str name, value: float target value}
