@@ -78,3 +78,7 @@ itm_history_output
 
 # local config files
 config.ini
+
+# local scenarios
+scenarios
+

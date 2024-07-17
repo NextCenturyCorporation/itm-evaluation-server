@@ -7,6 +7,7 @@ from datetime import datetime
 from typing import List
 from copy import deepcopy
 from json import dumps
+from requests import exceptions
 from swagger_server.models import (
     Action,
     AlignmentTarget,
@@ -161,11 +162,13 @@ class ITMSession:
                     "target_id": self.itm_scenario.ta1_controller.alignment_target_id},
                     session_alignment.to_dict()
                 )
-                self.itm_scenario.id(f"Got session alignment score %s from TA1.", session_alignment_score)
+                logging.info("Got session alignment score %s from TA1.", session_alignment_score)
                 alignment_scenario_id = session_alignment.alignment_source[0].scenario_id
                 if self.itm_scenario.id != alignment_scenario_id:
                     logging.error("\033[92mContamination in session_alignment! scenario is %s but alignment source scenario is %s.\033[00m",
                                     self.itm_scenario.id, alignment_scenario_id)
+            except exceptions.HTTPError:
+                logging.exception("HTTPError from TA1 getting session alignment.")
             except Exception:
                 logging.exception("Exception getting session alignment. Ignoring.")
 
@@ -178,7 +181,9 @@ class ITMSession:
 
     def _cleanup(self):
         if self.save_history:
-            alignment_type = 'high' if 'high' in self.itm_scenario.alignment_target.id.lower() else 'low'
+            kdma = self.itm_scenario.alignment_target.kdma_values[0]['kdma'].split(" ")[0].lower()
+            value = self.itm_scenario.alignment_target.kdma_values[0]['value']
+            alignment_type = kdma + "-" + str(value)
             timestamp = f"{datetime.now():%b%d-%H.%M.%S}" # e.g., "jungle-1-soartech-high-Mar13-11.44.44"
             filename = f"{self.itm_scenario.id.replace(' ', '_')}-{self.itm_scenario.scene_type}-{alignment_type}-{timestamp}"
             self.history.write_to_json_file(filename, self.save_history_to_s3)
@@ -353,6 +358,10 @@ class ITMSession:
                         "TA1 Session ID", {}, ta1_session_id
                     )
                     logging.info("Got new session_id '%s' from TA1.", ta1_session_id)
+                except exceptions.HTTPError:
+                    self._end_session() # Exception here ends the session
+                    logging.exception("HTTPError from TA1 starting session.")
+                    return 'Could not get new session.  Ending session.', 503
                 except:
                     logging.exception("Exception communicating with TA1; is the TA1 server running?  Ending session.")
                     self._end_session() # Exception here ends the session
@@ -415,6 +424,8 @@ class ITMSession:
         self.kdma_training = kdma_training
         self.adm_name = adm_name
         self.adm_profile = adm_profile if adm_profile else 'Unspecified'
+        if max_scenarios == 0:
+            max_scenarios = None
         self.itm_scenarios = []
         self.session_type = session_type
         self.history.clear_history()
@@ -570,14 +581,15 @@ class ITMSession:
                 if len(self.itm_scenario.probes_sent) > 0:
                     session_alignment = \
                         self.itm_scenario.ta1_controller.get_session_alignment(target_id=target_id)
+                    session_alignment.alignment_target_id = target_id
                 else:
-                    session_alignment = AlignmentResults(alignment_source=[], alignment_target_id=target_id, score=0.5, kdma_values=[])
+                    session_alignment = AlignmentResults(alignment_source=[], alignment_target_id=target_id, score=0.5)
 
             except:
                 logging.exception("Exception getting session alignment; is a TA1 server running?")
                 return 'Could not get session alignment; is a TA1 server running?', 503
         else:
-            session_alignment = AlignmentResults(alignment_source=[], alignment_target_id=target_id, score=0.5, kdma_values=[])
+            session_alignment = AlignmentResults(alignment_source=[], alignment_target_id=target_id, score=0.5)
         logging.info("Got session alignment score %f from TA1 for alignment target id %s.", session_alignment.score, target_id)
         return session_alignment
 

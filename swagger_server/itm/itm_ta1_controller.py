@@ -46,7 +46,9 @@ class ITMTa1Controller:
 
     def new_session(self):
         url = f"http://{self.host}:{self.port}/api/v1/new_session"
-        response = self.to_dict(requests.post(url))
+        initial_response = requests.post(url)
+        initial_response.raise_for_status()
+        response = self.to_dict(initial_response)
         self.session_id = response
         return response
 
@@ -66,7 +68,9 @@ class ITMTa1Controller:
             "probe_id": probe_id
         }
         url = f"{base_url}?{urllib.parse.urlencode(params)}"
-        response = self.to_dict(requests.get(url))
+        initial_response = requests.get(url)
+        initial_response.raise_for_status()
+        response = self.to_dict(initial_response)
         return response
 
     def get_session_alignment(self, target_id = None):
@@ -76,5 +80,7 @@ class ITMTa1Controller:
             "target_id": self.alignment_target_id if not target_id else target_id
         }
         url = f"{base_url}?{urllib.parse.urlencode(params)}"
-        response = self.to_dict(requests.get(url))
+        initial_response = requests.get(url)
+        initial_response.raise_for_status()
+        response = self.to_dict(initial_response)
         return AlignmentResults.from_dict(response)

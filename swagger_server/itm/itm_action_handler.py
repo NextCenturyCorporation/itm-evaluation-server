@@ -211,7 +211,7 @@ class ITMActionHandler:
                 return False, f'Malformed {action.action_type} Action: action_id `{action.action_id}` is not a valid action_id from the current scene', 400
         elif action.action_type == ActionTypeEnum.MOVE_TO:
             # Can only target unseen characters
-            if not action.intent_action and not character.unseen:
+            if not character.unseen:
                 return False, f'Can only perform {action.action_type} action with unseen characters, but `{action.character_id}` is not unseen', 400
         elif action.action_type == ActionTypeEnum.MOVE_TO_EVAC:
             # Requires aid_id parameter
