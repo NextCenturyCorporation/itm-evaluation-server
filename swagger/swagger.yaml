@@ -1318,7 +1318,7 @@ components:
       description: Directives issued by competent military authority
       enum:
         - Treat All Neutrally
-        - Treat Enemy LLE 
+        - Treat Enemy LLE
         - Treat Civilian LLE
         - Prioritize Mission
     CommunicationCapabilityEnum:
@@ -1525,7 +1525,6 @@ components:
         - inform
         - order
         - recommend
-        - tbd
     EntityTypeEnum:
       type: string
       description: an enumeration of available entity types; can be a subject or object
@@ -1536,7 +1535,6 @@ components:
         - commander
         - everybody
         - medic
-        - tbd
     MessageTypeEnum:
       type: string
       description: an enumeration of available message types
@@ -1545,9 +1543,9 @@ components:
         - ask
         - delegate
         - deny
+        - justify
         - recommend
         - wait
-        - tbd
     SupplyTypeEnum:
       type: string
       description: an enumeration of available supply types

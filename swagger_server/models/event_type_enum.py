@@ -23,7 +23,6 @@ class EventTypeEnum(Model):
     INFORM = "inform"
     ORDER = "order"
     RECOMMEND = "recommend"
-    TBD = "tbd"
     def __init__(self):  # noqa: E501
         """EventTypeEnum - a model defined in Swagger
 
