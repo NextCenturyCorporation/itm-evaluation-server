@@ -5,7 +5,7 @@ from random import shuffle
 from inspect import signature
 from typing import List
 from swagger_server.models import (
-    Action, ActionMapping, ActionTypeEnum, Character, Conditions, Scene, SemanticTypeEnum, State, Supplies, SupplyTypeEnum
+    Action, ActionMapping, ActionTypeEnum, Conditions, Scene, SemanticTypeEnum, State, Supplies, SupplyTypeEnum
 )
 from swagger_server.util import get_swagger_class_enum_values
 

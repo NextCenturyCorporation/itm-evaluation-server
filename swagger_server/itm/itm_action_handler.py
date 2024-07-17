@@ -51,6 +51,14 @@ class ITMActionHandler:
         if source.unstructured_postassess:
             target.unstructured = source.unstructured_postassess
 
+    def __pulse_ox_available(self):
+        """
+            Check the current state to see if a pulse oximeter is available.
+        """
+        return any(supply.type == SupplyTypeEnum.PULSE_OXIMETER and supply.quantity >= 1
+            for supply in self.session.state.supplies
+        )
+
     def __successful_treatment(self, treatment: str, injury_name: str, location: str) -> bool:
         # NOTE: Asthmatic, Ear Bleed, Traumatic Brain Injury, Open Abdominal Wound, and Internal injuries are currently untreatable.
         # This logic is in sync with the current ITM Simulator, but may diverge at a later date.
@@ -145,6 +153,9 @@ class ITMActionHandler:
 
         if not action.action_type:
             return False, 'Invalid or Malformed Action: Missing action_type', 400
+        
+        if not action.justification:
+            return False, 'Invalid or Malformed Action: Missing justification', 400
 
         if action.parameters and not isinstance(action.parameters, dict):
             return False, 'Malformed Action: Invalid Parameter Structure', 400
@@ -200,23 +211,19 @@ class ITMActionHandler:
                 return False, f'Malformed {action.action_type} Action: action_id `{action.action_id}` is not a valid action_id from the current scene', 400
         elif action.action_type == ActionTypeEnum.MOVE_TO:
             # Can only target unseen characters
-            if not action.intent_action and not character.unseen:
+            if not character.unseen:
                 return False, f'Can only perform {action.action_type} action with unseen characters, but `{action.character_id}` is not unseen', 400
         elif action.action_type == ActionTypeEnum.MOVE_TO_EVAC:
             # Requires aid_id parameter
             if not action.parameters or not 'aid_id' in action.parameters:
                 return False, f'Malformed {action.action_type} Action: Missing `aid_id` parameter', 400
-        elif action.action_type == ActionTypeEnum.CHECK_BLOOD_OXYGEN or action.action_type == ActionTypeEnum.CHECK_ALL_VITALS:
-            pulse_ox_available = any(
-                supply.type == SupplyTypeEnum.PULSE_OXIMETER and supply.quantity >= 1
-                for supply in self.session.state.supplies
-                )
-            if not pulse_ox_available:
+        elif action.action_type == ActionTypeEnum.CHECK_BLOOD_OXYGEN:
+            if not self.__pulse_ox_available():
                 return False, f'Cannot perform {action.action_type} when no {SupplyTypeEnum.PULSE_OXIMETER} is available.', 400
         elif action.action_type in [ActionTypeEnum.CHECK_PULSE, ActionTypeEnum.CHECK_RESPIRATION, ActionTypeEnum.SITREP]:
             pass # Character was already checked
         elif action.action_type == ActionTypeEnum.DIRECT_MOBILE_CHARACTERS or action.action_type == ActionTypeEnum.END_SCENE \
-                or action.action_type == ActionTypeEnum.SEARCH:
+                or action.action_type == ActionTypeEnum.SEARCH or action.action_type == ActionTypeEnum.CHECK_ALL_VITALS:
             pass # Requires nothing
         else:
             return False, f'Invalid action_type `{action.action_type}`', 400
@@ -232,6 +239,8 @@ class ITMActionHandler:
 
 
     def _visit_patient(self, patient: Character, patient_template: Character):
+        if patient.visited:
+            return # short-circuit
         patient.vitals.ambulatory = patient_template.vitals.ambulatory
         patient.vitals.avpu = patient_template.vitals.avpu
         patient.vitals.breathing = patient_template.vitals.breathing
@@ -318,7 +327,9 @@ class ITMActionHandler:
         """
         for isd_character in self.current_scene.state.characters:
             if isd_character.id == character.id:
-                character.vitals = isd_character.vitals
+                character.vitals = deepcopy(isd_character.vitals)
+                if not self.__pulse_ox_available():
+                    character.vitals.spo2 = None
                 self._reveal_injuries(isd_character, character)
                 character.visited = True
                 return self.times_dict[ActionTypeEnum.CHECK_ALL_VITALS]

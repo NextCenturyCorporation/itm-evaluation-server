@@ -7,7 +7,6 @@ from typing import List, Dict  # noqa: F401
 
 from swagger_server.models.base_model_ import Model
 from swagger_server.models.alignment_source import AlignmentSource  # noqa: F401,E501
-from swagger_server.models.kdma_value import KDMAValue  # noqa: F401,E501
 from swagger_server import util
 
 
@@ -16,7 +15,7 @@ class AlignmentResults(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, alignment_source: List[AlignmentSource]=None, alignment_target_id: str=None, score: float=None, kdma_values: List[KDMAValue]=None):  # noqa: E501
+    def __init__(self, alignment_source: List[AlignmentSource]=None, alignment_target_id: str=None, score: float=None):  # noqa: E501
         """AlignmentResults - a model defined in Swagger
 
         :param alignment_source: The alignment_source of this AlignmentResults.  # noqa: E501
@@ -25,26 +24,21 @@ class AlignmentResults(Model):
         :type alignment_target_id: str
         :param score: The score of this AlignmentResults.  # noqa: E501
         :type score: float
-        :param kdma_values: The kdma_values of this AlignmentResults.  # noqa: E501
-        :type kdma_values: List[KDMAValue]
         """
         self.swagger_types = {
             'alignment_source': List[AlignmentSource],
             'alignment_target_id': str,
-            'score': float,
-            'kdma_values': List[KDMAValue]
+            'score': float
         }
 
         self.attribute_map = {
             'alignment_source': 'alignment_source',
             'alignment_target_id': 'alignment_target_id',
-            'score': 'score',
-            'kdma_values': 'kdma_values'
+            'score': 'score'
         }
         self._alignment_source = alignment_source
         self._alignment_target_id = alignment_target_id
         self._score = score
-        self._kdma_values = kdma_values
 
     @classmethod
     def from_dict(cls, dikt) -> 'AlignmentResults':
@@ -129,28 +123,3 @@ class AlignmentResults(Model):
             raise ValueError("Invalid value for `score`, must not be `None`")  # noqa: E501
 
         self._score = score
-
-    @property
-    def kdma_values(self) -> List[KDMAValue]:
-        """Gets the kdma_values of this AlignmentResults.
-
-        Computed KDMA profile from results  # noqa: E501
-
-        :return: The kdma_values of this AlignmentResults.
-        :rtype: List[KDMAValue]
-        """
-        return self._kdma_values
-
-    @kdma_values.setter
-    def kdma_values(self, kdma_values: List[KDMAValue]):
-        """Sets the kdma_values of this AlignmentResults.
-
-        Computed KDMA profile from results  # noqa: E501
-
-        :param kdma_values: The kdma_values of this AlignmentResults.
-        :type kdma_values: List[KDMAValue]
-        """
-        if kdma_values is None:
-            raise ValueError("Invalid value for `kdma_values`, must not be `None`")  # noqa: E501
-
-        self._kdma_values = kdma_values

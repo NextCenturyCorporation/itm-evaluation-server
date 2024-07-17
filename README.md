@@ -25,6 +25,30 @@ On Windows, the method to activate depends on the shell:
 - PowerShell: `venv\Scripts\Activate.ps1`
 - cmd.exe: `venv\Scripts\activate.bat`
 
+
+## Configuration
+
+Rename `config.ini.template` file to `config.ini`. 
+
+The following properties can be configured:
+- `EVALUATION_TYPE` 
+    - default is `dryrun` but `metrics` is also supported
+- `SCENARIO_DIRECTORY`
+    - default is `swagger_server/itm/data/%(EVALUATION_TYPE)s/scenarios/`
+
+*NOTE:* the trailing **`s`** in `.../data/%(EVALUATION_TYPE)s/...` is needed for string interpolation to work properly.
+
+### Scenario filename convention
+Scenario files must be named in the following format to be read by the server at runtime (without punctuation except the indicated hyphens).
+This is the same convention used in the metrics evaluation:
+- `<EVALUATION_TYPE>-<ta1name>-[eval|train]-<id>.yaml`
+
+Please note:
+1. `EVALUATION_TYPE` is the value of the configuration variable defined in `config.ini`;
+2. `ta1name` is either `soartech` or `adept`;
+3. Use `eval` for evaluation scenarios and `train` for training scenarios; and
+4. The `id` should be derived from the scenario ID in the YAML file, although it isn't required, e.g., `qol`, `MJ2`, `urban`, etc.
+
 ## Usage
 To run the server, please execute the following from the root directory:
 
