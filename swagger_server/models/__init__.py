@@ -15,9 +15,7 @@ from swagger_server.models.base_model_ import Model
 from swagger_server.models.blood_oxygen_enum import BloodOxygenEnum
 from swagger_server.models.breathing_level_enum import BreathingLevelEnum
 from swagger_server.models.character import Character
-from swagger_server.models.character_relationship import CharacterRelationship
 from swagger_server.models.character_role_enum import CharacterRoleEnum
-from swagger_server.models.character_tag import CharacterTag
 from swagger_server.models.character_tag_enum import CharacterTagEnum
 from swagger_server.models.civilian_presence_enum import CivilianPresenceEnum
 from swagger_server.models.communication_capability_enum import CommunicationCapabilityEnum
@@ -26,8 +24,6 @@ from swagger_server.models.conditions_character_vitals import ConditionsCharacte
 from swagger_server.models.decision_environment import DecisionEnvironment
 from swagger_server.models.demographic_sex_enum import DemographicSexEnum
 from swagger_server.models.demographics import Demographics
-from swagger_server.models.demographics_rank import DemographicsRank
-from swagger_server.models.demographics_sex import DemographicsSex
 from swagger_server.models.directness_enum import DirectnessEnum
 from swagger_server.models.entity_type_enum import EntityTypeEnum
 from swagger_server.models.environment import Environment
@@ -37,7 +33,6 @@ from swagger_server.models.fauna_type_enum import FaunaTypeEnum
 from swagger_server.models.flora_type_enum import FloraTypeEnum
 from swagger_server.models.heart_rate_enum import HeartRateEnum
 from swagger_server.models.injury import Injury
-from swagger_server.models.injury_location import InjuryLocation
 from swagger_server.models.injury_location_enum import InjuryLocationEnum
 from swagger_server.models.injury_severity_enum import InjurySeverityEnum
 from swagger_server.models.injury_status_enum import InjuryStatusEnum
@@ -56,7 +51,6 @@ from swagger_server.models.military_rank_enum import MilitaryRankEnum
 from swagger_server.models.military_rank_title_enum import MilitaryRankTitleEnum
 from swagger_server.models.mission import Mission
 from swagger_server.models.mission_importance_enum import MissionImportanceEnum
-from swagger_server.models.mission_type import MissionType
 from swagger_server.models.mission_type_enum import MissionTypeEnum
 from swagger_server.models.movement_restriction_enum import MovementRestrictionEnum
 from swagger_server.models.oxygen_levels_enum import OxygenLevelsEnum
@@ -87,6 +81,4 @@ from swagger_server.models.threat_state import ThreatState
 from swagger_server.models.threat_type_enum import ThreatTypeEnum
 from swagger_server.models.visibility_type_enum import VisibilityTypeEnum
 from swagger_server.models.vitals import Vitals
-from swagger_server.models.vitals_breathing import VitalsBreathing
-from swagger_server.models.vitals_mental_status import VitalsMentalStatus
 from swagger_server.models.weather_type_enum import WeatherTypeEnum
