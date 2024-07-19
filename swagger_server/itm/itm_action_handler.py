@@ -5,8 +5,8 @@ from swagger_server.models import (
     ActionTypeEnum,
     AvpuLevelEnum,
     Character,
-    CharacterTag,
-    InjuryLocation,
+    CharacterTagEnum,
+    InjuryLocationEnum,
     InjuryStatusEnum,
     InjuryTypeEnum,
     MentalStatusEnum,
@@ -181,7 +181,7 @@ class ITMActionHandler:
         if action.action_type == ActionTypeEnum.APPLY_TREATMENT:
             # Apply treatment requires a character id and parameters (treatment and location)
             # treatment and location
-            valid_locations = get_swagger_class_enum_values(InjuryLocation)
+            valid_locations = get_swagger_class_enum_values(InjuryLocationEnum)
             if not action.parameters or not 'treatment' in action.parameters or not 'location' in action.parameters:
                 return False, f'Malformed Action: Missing parameters for {action.action_type}', 400
             elif 'location' in action.parameters and action.parameters['location'] not in valid_locations:
@@ -200,7 +200,7 @@ class ITMActionHandler:
             if not action.parameters or not 'category' in action.parameters:
                 return False, f'Malformed {action.action_type} Action: Missing `category` parameter', 400
             else:
-                allowed_values = get_swagger_class_enum_values(CharacterTag)
+                allowed_values = get_swagger_class_enum_values(CharacterTagEnum)
                 tag = action.parameters.get('category')
                 if not tag in allowed_values:
                     return False, f'Malformed {action.action_type} Action: Invalid Tag `{tag}`', 400
