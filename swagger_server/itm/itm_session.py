@@ -353,7 +353,8 @@ class ITMSession:
 
             if self.ta1_integration:
                 try:
-                    ta1_session_id = self.itm_scenario.ta1_controller.new_session()
+                    user_id = f"{self.session_id}_{self.itm_scenario.id}" if self.itm_scenario.scene_type == 'soartech' else None
+                    ta1_session_id = self.itm_scenario.ta1_controller.new_session(user_id)
                     self.history.add_history(
                         "TA1 Session ID", {}, ta1_session_id
                     )
@@ -370,7 +371,7 @@ class ITMSession:
             # Get alignment target; was previously obtained either from TA1 or from local configuration.
             if not self.kdma_training:
                 alignment_target = self.itm_scenario.alignment_target
-                logging.info("Using alignment target %s.", alignment_target)
+                logging.info("Using alignment target %s.", alignment_target.id)
                 self.history.add_history(
                     "Alignment Target",
                     {"session_id": self.itm_scenario.ta1_controller.session_id if self.ta1_integration else None,

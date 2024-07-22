@@ -19,6 +19,7 @@ class ITMTa1Controller:
         self.alignment_target_id = alignment_target_id
         self.alignment_target = alignment_target
         self.host, self.port = ITMTa1Controller.get_contact_info(scene_type=scene_type)
+        #self.user_id = None #str(uuid.uuid4()) if scene_type == 'soartech' else None
 
     @staticmethod
     def get_contact_info(scene_type):
@@ -44,8 +45,11 @@ class ITMTa1Controller:
     def to_dict(self, response):
         return json.loads(response.content.decode('utf-8'))
 
-    def new_session(self):
+    def new_session(self, user_id=None):
         url = f"http://{self.host}:{self.port}/api/v1/new_session"
+        if user_id:
+            params = {"user_id": user_id}
+            url = f"{url}?{urllib.parse.urlencode(params)}"
         initial_response = requests.post(url)
         initial_response.raise_for_status()
         response = self.to_dict(initial_response)
