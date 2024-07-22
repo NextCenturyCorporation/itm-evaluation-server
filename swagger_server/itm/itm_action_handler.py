@@ -118,6 +118,9 @@ class ITMActionHandler:
                 return treatment == SupplyTypeEnum.SPLINT
             case InjuryTypeEnum.CHEST_COLLAPSE:
                 return treatment == SupplyTypeEnum.DECOMPRESSION_NEEDLE
+            case InjuryTypeEnum.ABRASION:
+                if 'face' in location:
+                    return treatment == SupplyTypeEnum.PRESSURE_BANDAGE
             case InjuryTypeEnum.LACERATION:
                 if 'thigh' in location:
                     return treatment == SupplyTypeEnum.TOURNIQUET
