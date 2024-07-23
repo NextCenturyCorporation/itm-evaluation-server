@@ -66,6 +66,7 @@ class ITMActionHandler:
             Head Injuries
             Face Laceration: Pressure bandage
             Face Shrapnel: Nasopharyngeal airway
+            Face Abrasion: Pressure bandage
             Ear Bleed: None
             Traumatic Brain Injury: None
 
@@ -80,8 +81,10 @@ class ITMActionHandler:
             Arm Injuries
             Forearm Laceration: Pressure bandage
             Forearm Burn: Burn Dressing
+            Forearm Abrasion: Pressure bandage
             Bicep Burn: Burn Dressing
             Bicep Puncture: Tourniquet
+            Bicep Abrasion: Pressure bandage
             Shoulder Puncture: Hemostatic gauze
             Broken Shoulder: Splint
 
@@ -102,12 +105,14 @@ class ITMActionHandler:
             Thigh Laceration: Tourniquet
             Thigh Amputation: Tourniquet
             Thigh Burn: Burn Dressing
+            Thigh Abrasion: Pressure bandage
             Calf Amputation: Tourniquet
             Broken Leg: Splint
             Calf Burn: Burn Dressing
             Calf Laceration: Pressure bandage
             Calf Shrapnel: Pressure bandage
             Calf Puncture: Tourniquet
+            Calf Abrasion: Pressure bandage
         """
         match injury_name:
             case InjuryTypeEnum.AMPUTATION:
@@ -119,8 +124,7 @@ class ITMActionHandler:
             case InjuryTypeEnum.CHEST_COLLAPSE:
                 return treatment == SupplyTypeEnum.DECOMPRESSION_NEEDLE
             case InjuryTypeEnum.ABRASION:
-                if 'face' in location:
-                    return treatment == SupplyTypeEnum.PRESSURE_BANDAGE
+                return treatment == SupplyTypeEnum.PRESSURE_BANDAGE
             case InjuryTypeEnum.LACERATION:
                 if 'thigh' in location:
                     return treatment == SupplyTypeEnum.TOURNIQUET
