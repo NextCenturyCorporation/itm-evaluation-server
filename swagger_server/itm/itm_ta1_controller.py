@@ -19,7 +19,6 @@ class ITMTa1Controller:
         self.alignment_target_id = alignment_target_id
         self.alignment_target = alignment_target
         self.host, self.port = ITMTa1Controller.get_contact_info(scene_type=scene_type)
-        #self.user_id = None #str(uuid.uuid4()) if scene_type == 'soartech' else None
 
     @staticmethod
     def get_contact_info(scene_type):
