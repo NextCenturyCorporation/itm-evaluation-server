@@ -4,8 +4,8 @@ import time
 from swagger_server.models.action import Action  # noqa: E501
 from ..itm import ITMSession
 
-MAX_SESSIONS = 50     # Hard limit on simultaneously active sessions
-SESSION_TIMEOUT = 60 * 60 * 24  # 24 hour timeout in seconds
+MAX_SESSIONS = 250     # Hard limit on simultaneously active sessions
+SESSION_TIMEOUT = 60 * 60 * 1  # 1 hour timeout in seconds
 itm_sessions = {}     # one for each active adm_name
 session_mapping = {}  # maps session_id to adm_name and last active time
 ITMSession.initialize()
@@ -107,6 +107,7 @@ def _reclaim_old_session():
             itm_sessions.pop(session_dict["adm_name"])  # Clear out old unused session
             session_mapping.pop(session_id)             # From both places
             return ITMSession()
+    return None
 
 def start_session(adm_name, session_type, adm_profile=None, kdma_training=False, max_scenarios=None):  # noqa: E501
     """Start a new session

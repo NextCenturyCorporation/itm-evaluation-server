@@ -6,6 +6,7 @@ from datetime import date, datetime  # noqa: F401
 from typing import List, Dict  # noqa: F401
 
 from swagger_server.models.base_model_ import Model
+from swagger_server.models.kde_data import KDEData  # noqa: F401,E501
 from swagger_server import util
 
 
@@ -14,25 +15,30 @@ class KDMAValue(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, kdma: str=None, value: float=None):  # noqa: E501
+    def __init__(self, kdma: str=None, value: float=None, kdes: Dict[str, KDEData]=None):  # noqa: E501
         """KDMAValue - a model defined in Swagger
 
         :param kdma: The kdma of this KDMAValue.  # noqa: E501
         :type kdma: str
         :param value: The value of this KDMAValue.  # noqa: E501
         :type value: float
+        :param kdes: The kdes of this KDMAValue.  # noqa: E501
+        :type kdes: Dict[str, KDEData]
         """
         self.swagger_types = {
             'kdma': str,
-            'value': float
+            'value': float,
+            'kdes': Dict[str, KDEData]
         }
 
         self.attribute_map = {
             'kdma': 'kdma',
-            'value': 'value'
+            'value': 'value',
+            'kdes': 'kdes'
         }
         self._kdma = kdma
         self._value = value
+        self._kdes = kdes
 
     @classmethod
     def from_dict(cls, dikt) -> 'KDMAValue':
@@ -49,7 +55,7 @@ class KDMAValue(Model):
     def kdma(self) -> str:
         """Gets the kdma of this KDMAValue.
 
-        KDMA name  # noqa: E501
+        Name of KDMA  # noqa: E501
 
         :return: The kdma of this KDMAValue.
         :rtype: str
@@ -60,7 +66,7 @@ class KDMAValue(Model):
     def kdma(self, kdma: str):
         """Sets the kdma of this KDMAValue.
 
-        KDMA name  # noqa: E501
+        Name of KDMA  # noqa: E501
 
         :param kdma: The kdma of this KDMAValue.
         :type kdma: str
@@ -74,7 +80,7 @@ class KDMAValue(Model):
     def value(self) -> float:
         """Gets the value of this KDMAValue.
 
-        target alignment value  # noqa: E501
+        Numeric score for a given KDMA, 0-1 scale  # noqa: E501
 
         :return: The value of this KDMAValue.
         :rtype: float
@@ -85,12 +91,33 @@ class KDMAValue(Model):
     def value(self, value: float):
         """Sets the value of this KDMAValue.
 
-        target alignment value  # noqa: E501
+        Numeric score for a given KDMA, 0-1 scale  # noqa: E501
 
         :param value: The value of this KDMAValue.
         :type value: float
         """
-        if value is None:
-            raise ValueError("Invalid value for `value`, must not be `None`")  # noqa: E501
 
         self._value = value
+
+    @property
+    def kdes(self) -> Dict[str, KDEData]:
+        """Gets the kdes of this KDMAValue.
+
+        A character id with an indicator of how mission-critical that character is  # noqa: E501
+
+        :return: The kdes of this KDMAValue.
+        :rtype: Dict[str, KDEData]
+        """
+        return self._kdes
+
+    @kdes.setter
+    def kdes(self, kdes: Dict[str, KDEData]):
+        """Sets the kdes of this KDMAValue.
+
+        A character id with an indicator of how mission-critical that character is  # noqa: E501
+
+        :param kdes: The kdes of this KDMAValue.
+        :type kdes: Dict[str, KDEData]
+        """
+
+        self._kdes = kdes

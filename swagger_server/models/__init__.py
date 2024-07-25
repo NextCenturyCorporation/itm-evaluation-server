@@ -39,6 +39,7 @@ from swagger_server.models.injury_status_enum import InjuryStatusEnum
 from swagger_server.models.injury_trigger_enum import InjuryTriggerEnum
 from swagger_server.models.injury_type_enum import InjuryTypeEnum
 from swagger_server.models.intent_enum import IntentEnum
+from swagger_server.models.kde_data import KDEData
 from swagger_server.models.kdma_value import KDMAValue
 from swagger_server.models.lighting_type_enum import LightingTypeEnum
 from swagger_server.models.medical_policies_enum import MedicalPoliciesEnum
