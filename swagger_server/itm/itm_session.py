@@ -181,8 +181,10 @@ class ITMSession:
 
     def _cleanup(self):
         if self.save_history:
-            kdma = self.itm_scenario.alignment_target.kdma_values[0]['kdma'].split(" ")[0].lower()
-            value = self.itm_scenario.alignment_target.kdma_values[0]['value']
+            kdma = self.itm_scenario.alignment_target.kdma_values[0].kdma.split(" ")[0].lower()
+            value = self.itm_scenario.alignment_target.kdma_values[0].value
+            if not value:
+                value = self.itm_scenario.alignment_target.id
             alignment_type = kdma + "-" + str(value)
             timestamp = f"{datetime.now():%b%d-%H.%M.%S}" # e.g., "jungle-1-soartech-high-Mar13-11.44.44"
             filename = f"{self.itm_scenario.id.replace(' ', '_')}-{self.itm_scenario.scene_type}-{alignment_type}-{timestamp}"
