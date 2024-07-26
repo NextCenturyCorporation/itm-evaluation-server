@@ -5,8 +5,8 @@ from swagger_server.models import (
     ActionTypeEnum,
     AvpuLevelEnum,
     Character,
-    CharacterTag,
-    InjuryLocation,
+    CharacterTagEnum,
+    InjuryLocationEnum,
     InjuryStatusEnum,
     InjuryTypeEnum,
     MentalStatusEnum,
@@ -66,6 +66,7 @@ class ITMActionHandler:
             Head Injuries
             Face Laceration: Pressure bandage
             Face Shrapnel: Nasopharyngeal airway
+            Face Abrasion: Pressure bandage
             Ear Bleed: None
             Traumatic Brain Injury: None
 
@@ -80,8 +81,10 @@ class ITMActionHandler:
             Arm Injuries
             Forearm Laceration: Pressure bandage
             Forearm Burn: Burn Dressing
+            Forearm Abrasion: Pressure bandage
             Bicep Burn: Burn Dressing
             Bicep Puncture: Tourniquet
+            Bicep Abrasion: Pressure bandage
             Shoulder Puncture: Hemostatic gauze
             Broken Shoulder: Splint
 
@@ -102,12 +105,14 @@ class ITMActionHandler:
             Thigh Laceration: Tourniquet
             Thigh Amputation: Tourniquet
             Thigh Burn: Burn Dressing
+            Thigh Abrasion: Pressure bandage
             Calf Amputation: Tourniquet
             Broken Leg: Splint
             Calf Burn: Burn Dressing
             Calf Laceration: Pressure bandage
             Calf Shrapnel: Pressure bandage
             Calf Puncture: Tourniquet
+            Calf Abrasion: Pressure bandage
         """
         match injury_name:
             case InjuryTypeEnum.AMPUTATION:
@@ -118,6 +123,8 @@ class ITMActionHandler:
                 return treatment == SupplyTypeEnum.SPLINT
             case InjuryTypeEnum.CHEST_COLLAPSE:
                 return treatment == SupplyTypeEnum.DECOMPRESSION_NEEDLE
+            case InjuryTypeEnum.ABRASION:
+                return treatment == SupplyTypeEnum.PRESSURE_BANDAGE
             case InjuryTypeEnum.LACERATION:
                 if 'thigh' in location:
                     return treatment == SupplyTypeEnum.TOURNIQUET
@@ -181,7 +188,7 @@ class ITMActionHandler:
         if action.action_type == ActionTypeEnum.APPLY_TREATMENT:
             # Apply treatment requires a character id and parameters (treatment and location)
             # treatment and location
-            valid_locations = get_swagger_class_enum_values(InjuryLocation)
+            valid_locations = get_swagger_class_enum_values(InjuryLocationEnum)
             if not action.parameters or not 'treatment' in action.parameters or not 'location' in action.parameters:
                 return False, f'Malformed Action: Missing parameters for {action.action_type}', 400
             elif 'location' in action.parameters and action.parameters['location'] not in valid_locations:
@@ -200,7 +207,7 @@ class ITMActionHandler:
             if not action.parameters or not 'category' in action.parameters:
                 return False, f'Malformed {action.action_type} Action: Missing `category` parameter', 400
             else:
-                allowed_values = get_swagger_class_enum_values(CharacterTag)
+                allowed_values = get_swagger_class_enum_values(CharacterTagEnum)
                 tag = action.parameters.get('category')
                 if not tag in allowed_values:
                     return False, f'Malformed {action.action_type} Action: Invalid Tag `{tag}`', 400

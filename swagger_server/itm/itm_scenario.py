@@ -116,7 +116,7 @@ class ITMScenario:
                         response.scenario_id,
                         response.probe_id
                     )
-                    logging.info(f"Probe response score: {probe_response_alignment['score']}")
+                    logging.info(f"Probe alignment score: {probe_response_alignment['score']}")
                     self.session.history.add_history(
                         "TA1 Probe Response Alignment",
                         {"session_id": self.ta1_controller.session_id,

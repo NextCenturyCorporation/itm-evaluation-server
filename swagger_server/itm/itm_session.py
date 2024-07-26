@@ -181,8 +181,10 @@ class ITMSession:
 
     def _cleanup(self):
         if self.save_history:
-            kdma = self.itm_scenario.alignment_target.kdma_values[0]['kdma'].split(" ")[0].lower()
-            value = self.itm_scenario.alignment_target.kdma_values[0]['value']
+            kdma = self.itm_scenario.alignment_target.kdma_values[0].kdma.split(" ")[0].lower()
+            value = self.itm_scenario.alignment_target.kdma_values[0].value
+            if not value:
+                value = self.itm_scenario.alignment_target.id
             alignment_type = kdma + "-" + str(value)
             timestamp = f"{datetime.now():%b%d-%H.%M.%S}" # e.g., "jungle-1-soartech-high-Mar13-11.44.44"
             filename = f"{self.itm_scenario.id.replace(' ', '_')}-{self.itm_scenario.scene_type}-{alignment_type}-{timestamp}"
@@ -353,7 +355,8 @@ class ITMSession:
 
             if self.ta1_integration:
                 try:
-                    ta1_session_id = self.itm_scenario.ta1_controller.new_session()
+                    user_id = f"{self.session_id}_{self.itm_scenario.id}" if self.itm_scenario.scene_type == 'soartech' else None
+                    ta1_session_id = self.itm_scenario.ta1_controller.new_session(user_id)
                     self.history.add_history(
                         "TA1 Session ID", {}, ta1_session_id
                     )
@@ -370,7 +373,7 @@ class ITMSession:
             # Get alignment target; was previously obtained either from TA1 or from local configuration.
             if not self.kdma_training:
                 alignment_target = self.itm_scenario.alignment_target
-                logging.info("Using alignment target %s.", alignment_target)
+                logging.info("Using alignment target %s.", alignment_target.id)
                 self.history.add_history(
                     "Alignment Target",
                     {"session_id": self.itm_scenario.ta1_controller.session_id if self.ta1_integration else None,
@@ -533,6 +536,53 @@ class ITMSession:
         return self.take_or_intend_action(body, True)
 
 
+    def prevalidate_action(self, adm_action: Action) -> str:
+        """
+        Ensure that an ADM's version of a given action (by action_id) matches the scene's.
+
+        Args:
+            adm_action: the Action that the ADM sent
+
+        Returns:
+            Either an error string, or None if prevalidation passes
+        """
+        scene_mapping = None
+        for mapping in self.itm_scenario.isd.current_scene.action_mappings:
+            if mapping.action_id == adm_action.action_id:
+                scene_mapping = mapping
+                break
+
+        # If the ADM action is not from an action_mapping, then pre-validation doesn't apply and there's no error.
+        if not scene_mapping:
+            return None
+
+        # If we found the action in the action mappings, validate the adm action against it
+        scene_action = Action(action_id=scene_mapping.action_id,
+                              action_type=scene_mapping.action_type,
+                              intent_action=scene_mapping.intent_action,
+                              character_id=scene_mapping.character_id,
+                              parameters=scene_mapping.parameters
+                              )
+
+        if adm_action.action_type != scene_action.action_type:
+            return f"ADM action_type ({adm_action.action_type}) doesn't match scene ({scene_action.action_type}) for action_id '{adm_action.action_id}'."
+        if adm_action.intent_action != scene_action.intent_action:
+            return f"ADM intent_action ({adm_action.intent_action}) doesn't match scene ({scene_action.intent_action}) for action_id '{adm_action.action_id}'."
+        if scene_action.character_id and adm_action.character_id != scene_action.character_id:
+            return f"ADM character_id ({adm_action.character_id}) doesn't match scene ({scene_action.character_id}) for action_id '{adm_action.action_id}'."
+        if scene_action.parameters:
+            for key in scene_action.parameters.keys():
+                if not adm_action.parameters:
+                    return f"Action parameter '{key}' missing from ADM action for action_id '{adm_action.action_id}'."
+                scene_value = scene_action.parameters.get(key)
+                adm_value = adm_action.parameters.get(key)
+                if scene_value and adm_value != scene_value:
+                    return f"ADM value for parameter '{key}' doesn't match scene for action_id '{adm_action.action_id}': ({adm_value} != {scene_value})."
+
+        # Everything passes
+        return None
+
+
     def take_or_intend_action(self, adm_action: Action, intent_only) -> State:
         """
         Take or intend an action within a scenario
@@ -552,6 +602,11 @@ class ITMSession:
         elif adm_action.parameters:
             message += f" with parameters {adm_action.parameters}"
         logging.info(message + '.')
+
+        # Pre-validate action.  This ensures the ADM didn't change a pre-configured action in ways it shouldn't
+        prevalidation_error = self.prevalidate_action(adm_action)
+        if prevalidation_error:
+            return prevalidation_error, 400
 
         # Validate the right type of action (taken or intended)
         if intent_only and not adm_action.intent_action:
