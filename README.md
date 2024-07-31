@@ -35,6 +35,22 @@ The following properties can be configured:
     - default is `dryrun` but `metrics` is also supported
 - `SCENARIO_DIRECTORY`
     - default is `swagger_server/itm/data/%(EVALUATION_TYPE)s/scenarios/`
+- `ADEPT_PORT`
+    - default is 8081
+- `ADEPT_HOSTNAME`
+    - default is `None`
+- `SOARTECH_PORT`
+    - default is 8084
+- `SOARTECH_HOSTNAME`
+    - default is `None`
+- `SAVE_HISTORY`
+    - default is `False`
+- `HISTORY_DIRECTORY`
+    - default is `itm_history_output`
+- `SAVE_HISTORY_TO_S3`
+    - default is `False`
+- `HISTORY_S3_BUCKET`
+    - default is `itm-ui-assets`
 
 *NOTE:* the trailing **`s`** in `.../data/%(EVALUATION_TYPE)s/...` is needed for string interpolation to work properly.
 

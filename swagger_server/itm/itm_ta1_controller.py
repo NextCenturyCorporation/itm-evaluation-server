@@ -5,16 +5,29 @@ import urllib
 from swagger_server.models.probe_response import ProbeResponse  # noqa: F401,E501
 from swagger_server.models.alignment_results import AlignmentResults  # noqa: F401,E501
 from swagger_server.models.alignment_target import AlignmentTarget  # noqa: F401,E501
+from swagger_server import config_util
+
 
 class ITMTa1Controller:
+    
+    config_util.check_ini()
+    config = config_util.read_ini()[0]
+    
     ADEPT_PORT = os.getenv("ADEPT_PORT")
     if (ADEPT_PORT is None or ADEPT_PORT == ""):
-        ADEPT_PORT = '8081'
+        ADEPT_PORT = config['DEFAULT']['ADEPT_PORT']
     SOARTECH_PORT = os.getenv("SOARTECH_PORT")
     if (SOARTECH_PORT is None or SOARTECH_PORT == ""):
-        SOARTECH_PORT = '8084'
-
-    def __init__(self, alignment_target_id, scene_type, alignment_target = None):
+        SOARTECH_PORT = config['DEFAULT']['SOARTECH_PORT']
+        
+    ADEPT_HOSTNAME = os.getenv("ADEPT_HOSTNAME")
+    if (ADEPT_HOSTNAME is None or ADEPT_HOSTNAME == ""):
+        ADEPT_HOSTNAME = config['DEFAULT']['ADEPT_HOSTNAME']
+    SOARTECH_HOSTNAME = os.getenv("SOARTECH_HOSTNAME")
+    if (SOARTECH_HOSTNAME is None or SOARTECH_HOSTNAME == ""):
+        SOARTECH_HOSTNAME = config["DEFAULT"]["SOARTECH_HOSTNAME"]
+    
+    def __init__(self, alignment_target_id, scene_type, config, alignment_target = None):
         self.session_id = ''
         self.alignment_target_id = alignment_target_id
         self.alignment_target = alignment_target
@@ -23,7 +36,7 @@ class ITMTa1Controller:
     @staticmethod
     def get_contact_info(scene_type):
         port = ITMTa1Controller.ADEPT_PORT if scene_type == 'adept' else ITMTa1Controller.SOARTECH_PORT
-        host =  os.getenv("ADEPT_HOSTNAME") if scene_type == 'adept' else os.getenv("SOARTECH_HOSTNAME")
+        host =  ITMTa1Controller.ADEPT_HOSTNAME if scene_type == 'adept' else ITMTa1Controller.SOARTECH_HOSTNAME
         if host is None or host == "":
             host = "localhost"
         return host, port
