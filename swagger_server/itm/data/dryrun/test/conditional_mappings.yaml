@@ -240,9 +240,37 @@ scenes:
     action_mapping:
       - action_id: sitrep
         action_type: SITREP
-        unstructured: Get situation report
-        probe_id: irrelevant
-        choice: irrelevant
+        unstructured: Get a general situation report
+        probe_id: sitrep_probe
+        choice: general
+        # Probe response fires if neither of the other sitrep actions was taken
+        probe_condition_semantics: not
+        probe_conditions:
+          actions:
+            - [sitrep_shooter]
+            - [sitrep_victim]
+      - action_id: sitrep_shooter
+        action_type: SITREP
+        unstructured: Get situation report on the shooter
+        character_id: Shooter
+        probe_id: sitrep_probe
+        choice: shooter
+        # Probe response fires if the generic sitrep action wasn't already taken
+        probe_condition_semantics: not
+        probe_conditions:
+          actions:
+            - [sitrep]
+      - action_id: sitrep_victim
+        action_type: SITREP
+        unstructured: Get situation report on the victim
+        character_id: Victim
+        probe_id: sitrep_probe
+        choice: victim
+        # Probe response fires if the generic sitrep action wasn't already taken
+        probe_condition_semantics: not
+        probe_conditions:
+          actions:
+            - [sitrep]
     restricted_actions:
       - CHECK_BLOOD_OXYGEN
       - CHECK_PULSE
