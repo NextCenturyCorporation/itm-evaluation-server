@@ -445,6 +445,8 @@ class ITMSession:
         if kdma_training:
             self.ta1_integration = True
             self.return_scenario_history = True
+        if session_type == 'test':
+            self.ta1_integration = False
 
         self.history.add_history(
                 "Start Session",

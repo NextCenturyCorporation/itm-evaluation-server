@@ -1,4 +1,4 @@
-id: vol_5
+id: vol-synth-LowExtreme
 kdma_values:
   - kdma: PerceivedQuantityOfLivesSaved
-    value: 0.5
+    value: 0.1

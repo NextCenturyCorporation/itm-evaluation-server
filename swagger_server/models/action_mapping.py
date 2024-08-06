@@ -18,7 +18,7 @@ class ActionMapping(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, action_id: str=None, action_type: ActionTypeEnum=None, unstructured: str=None, repeatable: bool=False, character_id: str=None, intent_action: bool=False, threat_state: ThreatState=None, parameters: Dict[str, str]=None, probe_id: str=None, choice: str=None, next_scene: str=None, kdma_association: Dict[str, float]=None, condition_semantics: SemanticTypeEnum=None, conditions: Conditions=None):  # noqa: E501
+    def __init__(self, action_id: str=None, action_type: ActionTypeEnum=None, unstructured: str=None, repeatable: bool=False, character_id: str=None, intent_action: bool=False, threat_state: ThreatState=None, parameters: Dict[str, str]=None, probe_id: str=None, choice: str=None, next_scene: str=None, kdma_association: Dict[str, float]=None, action_condition_semantics: SemanticTypeEnum=None, action_conditions: Conditions=None, probe_condition_semantics: SemanticTypeEnum=None, probe_conditions: Conditions=None):  # noqa: E501
         """ActionMapping - a model defined in Swagger
 
         :param action_id: The action_id of this ActionMapping.  # noqa: E501
@@ -45,10 +45,14 @@ class ActionMapping(Model):
         :type next_scene: str
         :param kdma_association: The kdma_association of this ActionMapping.  # noqa: E501
         :type kdma_association: Dict[str, float]
-        :param condition_semantics: The condition_semantics of this ActionMapping.  # noqa: E501
-        :type condition_semantics: SemanticTypeEnum
-        :param conditions: The conditions of this ActionMapping.  # noqa: E501
-        :type conditions: Conditions
+        :param action_condition_semantics: The action_condition_semantics of this ActionMapping.  # noqa: E501
+        :type action_condition_semantics: SemanticTypeEnum
+        :param action_conditions: The action_conditions of this ActionMapping.  # noqa: E501
+        :type action_conditions: Conditions
+        :param probe_condition_semantics: The probe_condition_semantics of this ActionMapping.  # noqa: E501
+        :type probe_condition_semantics: SemanticTypeEnum
+        :param probe_conditions: The probe_conditions of this ActionMapping.  # noqa: E501
+        :type probe_conditions: Conditions
         """
         self.swagger_types = {
             'action_id': str,
@@ -63,8 +67,10 @@ class ActionMapping(Model):
             'choice': str,
             'next_scene': str,
             'kdma_association': Dict[str, float],
-            'condition_semantics': SemanticTypeEnum,
-            'conditions': Conditions
+            'action_condition_semantics': SemanticTypeEnum,
+            'action_conditions': Conditions,
+            'probe_condition_semantics': SemanticTypeEnum,
+            'probe_conditions': Conditions
         }
 
         self.attribute_map = {
@@ -80,8 +86,10 @@ class ActionMapping(Model):
             'choice': 'choice',
             'next_scene': 'next_scene',
             'kdma_association': 'kdma_association',
-            'condition_semantics': 'condition_semantics',
-            'conditions': 'conditions'
+            'action_condition_semantics': 'action_condition_semantics',
+            'action_conditions': 'action_conditions',
+            'probe_condition_semantics': 'probe_condition_semantics',
+            'probe_conditions': 'probe_conditions'
         }
         self._action_id = action_id
         self._action_type = action_type
@@ -95,8 +103,10 @@ class ActionMapping(Model):
         self._choice = choice
         self._next_scene = next_scene
         self._kdma_association = kdma_association
-        self._condition_semantics = condition_semantics
-        self._conditions = conditions
+        self._action_condition_semantics = action_condition_semantics
+        self._action_conditions = action_conditions
+        self._probe_condition_semantics = probe_condition_semantics
+        self._probe_conditions = probe_conditions
 
     @classmethod
     def from_dict(cls, dikt) -> 'ActionMapping':
@@ -392,43 +402,85 @@ class ActionMapping(Model):
         self._kdma_association = kdma_association
 
     @property
-    def condition_semantics(self) -> SemanticTypeEnum:
-        """Gets the condition_semantics of this ActionMapping.
+    def action_condition_semantics(self) -> SemanticTypeEnum:
+        """Gets the action_condition_semantics of this ActionMapping.
 
 
-        :return: The condition_semantics of this ActionMapping.
+        :return: The action_condition_semantics of this ActionMapping.
         :rtype: SemanticTypeEnum
         """
-        return self._condition_semantics
+        return self._action_condition_semantics
 
-    @condition_semantics.setter
-    def condition_semantics(self, condition_semantics: SemanticTypeEnum):
-        """Sets the condition_semantics of this ActionMapping.
+    @action_condition_semantics.setter
+    def action_condition_semantics(self, action_condition_semantics: SemanticTypeEnum):
+        """Sets the action_condition_semantics of this ActionMapping.
 
 
-        :param condition_semantics: The condition_semantics of this ActionMapping.
-        :type condition_semantics: SemanticTypeEnum
+        :param action_condition_semantics: The action_condition_semantics of this ActionMapping.
+        :type action_condition_semantics: SemanticTypeEnum
         """
 
-        self._condition_semantics = condition_semantics
+        self._action_condition_semantics = action_condition_semantics
 
     @property
-    def conditions(self) -> Conditions:
-        """Gets the conditions of this ActionMapping.
+    def action_conditions(self) -> Conditions:
+        """Gets the action_conditions of this ActionMapping.
 
 
-        :return: The conditions of this ActionMapping.
+        :return: The action_conditions of this ActionMapping.
         :rtype: Conditions
         """
-        return self._conditions
+        return self._action_conditions
 
-    @conditions.setter
-    def conditions(self, conditions: Conditions):
-        """Sets the conditions of this ActionMapping.
+    @action_conditions.setter
+    def action_conditions(self, action_conditions: Conditions):
+        """Sets the action_conditions of this ActionMapping.
 
 
-        :param conditions: The conditions of this ActionMapping.
-        :type conditions: Conditions
+        :param action_conditions: The action_conditions of this ActionMapping.
+        :type action_conditions: Conditions
         """
 
-        self._conditions = conditions
+        self._action_conditions = action_conditions
+
+    @property
+    def probe_condition_semantics(self) -> SemanticTypeEnum:
+        """Gets the probe_condition_semantics of this ActionMapping.
+
+
+        :return: The probe_condition_semantics of this ActionMapping.
+        :rtype: SemanticTypeEnum
+        """
+        return self._probe_condition_semantics
+
+    @probe_condition_semantics.setter
+    def probe_condition_semantics(self, probe_condition_semantics: SemanticTypeEnum):
+        """Sets the probe_condition_semantics of this ActionMapping.
+
+
+        :param probe_condition_semantics: The probe_condition_semantics of this ActionMapping.
+        :type probe_condition_semantics: SemanticTypeEnum
+        """
+
+        self._probe_condition_semantics = probe_condition_semantics
+
+    @property
+    def probe_conditions(self) -> Conditions:
+        """Gets the probe_conditions of this ActionMapping.
+
+
+        :return: The probe_conditions of this ActionMapping.
+        :rtype: Conditions
+        """
+        return self._probe_conditions
+
+    @probe_conditions.setter
+    def probe_conditions(self, probe_conditions: Conditions):
+        """Sets the probe_conditions of this ActionMapping.
+
+
+        :param probe_conditions: The probe_conditions of this ActionMapping.
+        :type probe_conditions: Conditions
+        """
+
+        self._probe_conditions = probe_conditions
