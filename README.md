@@ -38,11 +38,11 @@ The following properties can be configured:
 - `ADEPT_PORT`
     - default is 8081
 - `ADEPT_HOSTNAME`
-    - default is `None`
+    - default is `localhost`
 - `SOARTECH_PORT`
     - default is 8084
 - `SOARTECH_HOSTNAME`
-    - default is `None`
+    - default is `localhost`
 - `SAVE_HISTORY`
     - default is `False`
 - `HISTORY_DIRECTORY`
@@ -114,10 +114,6 @@ Can write the above command as $TA3_PORT:$TA3_PORT however, this will not work i
 ## Manual runs on separate instances
 If running the command instead of docker set the environment variables for:
 - TA3_HOSTNAME (default: localhost)
-- SOARTECH_HOSTNAME (default: localhost)
-- ADEPT_HOSTNAME (default: localhost)
-- ADEPT_PORT (default:8081)
-- SOARTECH_PORT (default:8084)
 - TA3_PORT (default:8080)
 
 ## Updating models

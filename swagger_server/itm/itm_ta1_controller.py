@@ -13,19 +13,11 @@ class ITMTa1Controller:
     config_util.check_ini()
     config = config_util.read_ini()[0]
     
-    ADEPT_PORT = os.getenv("ADEPT_PORT")
-    if (ADEPT_PORT is None or ADEPT_PORT == ""):
-        ADEPT_PORT = config['DEFAULT']['ADEPT_PORT']
-    SOARTECH_PORT = os.getenv("SOARTECH_PORT")
-    if (SOARTECH_PORT is None or SOARTECH_PORT == ""):
-        SOARTECH_PORT = config['DEFAULT']['SOARTECH_PORT']
-        
-    ADEPT_HOSTNAME = os.getenv("ADEPT_HOSTNAME")
-    if (ADEPT_HOSTNAME is None or ADEPT_HOSTNAME == ""):
-        ADEPT_HOSTNAME = config['DEFAULT']['ADEPT_HOSTNAME']
-    SOARTECH_HOSTNAME = os.getenv("SOARTECH_HOSTNAME")
-    if (SOARTECH_HOSTNAME is None or SOARTECH_HOSTNAME == ""):
-        SOARTECH_HOSTNAME = config["DEFAULT"]["SOARTECH_HOSTNAME"]
+    
+    ADEPT_PORT = config['DEFAULT']['ADEPT_PORT']
+    SOARTECH_PORT = config['DEFAULT']['SOARTECH_PORT']
+    ADEPT_HOSTNAME = config['DEFAULT']['ADEPT_HOSTNAME']
+    SOARTECH_HOSTNAME = config["DEFAULT"]["SOARTECH_HOSTNAME"]
     
     def __init__(self, alignment_target_id, scene_type, config, alignment_target = None):
         self.session_id = ''
