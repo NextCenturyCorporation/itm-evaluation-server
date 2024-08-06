@@ -437,8 +437,6 @@ class ITMSession:
 
         ta1_names = []
         if self.session_type == 'eval':
-            self.save_history = True
-            self.save_history_to_s3 = True
             self.ta1_integration = True
             max_scenarios = None
             ta1_names = ['soartech', 'adept']

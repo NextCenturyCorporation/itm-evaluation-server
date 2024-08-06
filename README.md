@@ -35,20 +35,16 @@ The following properties can be configured:
     - default is `dryrun` but `metrics` is also supported
 - `SCENARIO_DIRECTORY`
     - default is `swagger_server/itm/data/%(EVALUATION_TYPE)s/scenarios/`
-- `ADEPT_PORT`
-    - default is 8081
-- `ADEPT_HOSTNAME`
-    - default is `localhost`
-- `SOARTECH_PORT`
-    - default is 8084
-- `SOARTECH_HOSTNAME`
-    - default is `localhost`
+- `SOARTECH_URL`
+    - default is `http://10.216.38.125:8084`
+- `ADEPT_URL`
+    - default is `http://10.216.38.70:8080`
 - `SAVE_HISTORY`
-    - default is `False`
+    - default is `True`
 - `HISTORY_DIRECTORY`
     - default is `itm_history_output`
 - `SAVE_HISTORY_TO_S3`
-    - default is `False`
+    - default is `True`
 - `HISTORY_S3_BUCKET`
     - default is `itm-ui-assets`
 
@@ -113,7 +109,6 @@ Can write the above command as $TA3_PORT:$TA3_PORT however, this will not work i
 
 ## Manual runs on separate instances
 If running the command instead of docker set the environment variables for:
-- TA3_HOSTNAME (default: localhost)
 - TA3_PORT (default:8080)
 
 ## Updating models

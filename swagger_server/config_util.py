@@ -22,7 +22,7 @@ def check_ini():
     ini = parser_path[0]
     final_path = parser_path[1]
     if exists(final_path):
-        keys = ("EVALUATION_TYPE", "SCENARIO_DIRECTORY", "ADEPT_PORT", "ADEPT_HOSTNAME", "SOARTECH_PORT", "SOARTECH_HOSTNAME", "SAVE_HISTORY", "SAVE_HISTORY_TO_S3", "HISTORY_DIRECTORY", "HISTORY_S3_BUCKET")
+        keys = ("EVALUATION_TYPE", "SCENARIO_DIRECTORY", "ADEPT_URL", "SOARTECH_URL", "SAVE_HISTORY", "SAVE_HISTORY_TO_S3", "HISTORY_DIRECTORY", "HISTORY_S3_BUCKET")
         for option in keys:
             if option in ini["DEFAULT"]: # checks if "option" key exists in "default" section
                 key_value = ini.get("DEFAULT", option)

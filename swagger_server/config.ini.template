@@ -6,14 +6,20 @@
 EVALUATION_TYPE=dryrun
 SCENARIO_DIRECTORY=swagger_server/itm/data/%(EVALUATION_TYPE)s/scenarios/
 
-ADEPT_PORT=8081
-ADEPT_HOSTNAME=localhost
+; Local Default URLs 
+; ADEPT_URL="http://localhost:8081" 
+; SOARTECH_URL="http://localhost:8084"
 
-SOARTECH_PORT=8084
-SOARTECH_HOSTNAME=localhost
+; AWS TA1 Default Servers
+; ADEPT_URL="https://darpaitm.caci.com/adept"
+; SOARTECH_URL="https://darpaitm.caci.com/soartech"
 
-SAVE_HISTORY=False
+; Prod Default URLs
+SOARTECH_URL=http://10.216.38.125:8084
+ADEPT_URL=http://10.216.38.70:8080
+
+SAVE_HISTORY=True
+SAVE_HISTORY_TO_S3=True
+
 HISTORY_DIRECTORY=itm_history_output
-
-SAVE_HISTORY_TO_S3=False
 HISTORY_S3_BUCKET=itm-ui-assets
