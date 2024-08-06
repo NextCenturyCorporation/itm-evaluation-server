@@ -1,6 +1,5 @@
 import requests
 import json
-import os
 import urllib
 from swagger_server.models.probe_response import ProbeResponse  # noqa: F401,E501
 from swagger_server.models.alignment_results import AlignmentResults  # noqa: F401,E501
@@ -9,11 +8,8 @@ from swagger_server import config_util
 
 
 class ITMTa1Controller:
-    
     config_util.check_ini()
     config = config_util.read_ini()[0]
-    
-    
     ADEPT_URL = config['DEFAULT']['ADEPT_URL']
     SOARTECH_URL = config['DEFAULT']['SOARTECH_URL']
     
@@ -30,6 +26,7 @@ class ITMTa1Controller:
         if host_port is None or host_port == "":
             host_port = "localhost"
         return host_port
+
     @staticmethod
     def get_alignment_data(scene_type):
         host_port = ITMTa1Controller.get_contact_info(scene_type=scene_type)
