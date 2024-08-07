@@ -453,6 +453,24 @@ components:
           description: Measured alignment, 0 (completely unaligned) - 1 (completely aligned).
           minimum: 0
           maximum: 1
+        kdma_values:
+          title: KDMA Values
+          description: Computed KDMA profile from results
+          type: array
+          items:
+            "$ref": "#/components/schemas/KDMA_Value"
+    KDMAProfile:
+      title: Computed KDMA Profile (SoarTech)
+      required:
+        - computed_kdma_profile
+      type: object
+      description: KDMA Profile
+      properties:
+        computed_kdma_profile:
+          title: Computed KDMA Profile
+          type: array
+          items:
+            "$ref": "#/components/schemas/KDMA_Value"
     AlignmentSource:
       title: AlignmentSource
       required:

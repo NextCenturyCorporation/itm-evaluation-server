@@ -4,6 +4,8 @@ import urllib
 from swagger_server.models.probe_response import ProbeResponse  # noqa: F401,E501
 from swagger_server.models.alignment_results import AlignmentResults  # noqa: F401,E501
 from swagger_server.models.alignment_target import AlignmentTarget  # noqa: F401,E501
+from swagger_server.models.kdma_profile import KDMAProfile  # noqa: F401,E501
+from swagger_server.models.kdma_value import KDMAValue  # noqa: F401,E501
 from swagger_server import config_util
 
 
@@ -13,16 +15,17 @@ class ITMTa1Controller:
     ADEPT_URL = config['DEFAULT']['ADEPT_URL']
     SOARTECH_URL = config['DEFAULT']['SOARTECH_URL']
     
-    def __init__(self, alignment_target_id, scene_type, config, alignment_target = None):
+    def __init__(self, alignment_target_id, scene_type, alignment_target = None):
         self.session_id = ''
         self.alignment_target_id = alignment_target_id
         self.alignment_target = alignment_target
+        self.scene_type = scene_type
         self.url = ITMTa1Controller.get_contact_info(scene_type=scene_type)
 
     @staticmethod
     def get_contact_info(scene_type):
         host_port = ITMTa1Controller.ADEPT_URL if scene_type == 'adept' else ITMTa1Controller.SOARTECH_URL
-        # Technically this `if` block should never be hit since configs are mandatory but just in case
+        # Technically this `if` block should never evaluate to True since configs are mandatory, but just in case.
         if host_port is None or host_port == "":
             host_port = "localhost"
         return host_port
@@ -36,11 +39,13 @@ class ITMTa1Controller:
         alignments = []
         for alignment_target_id in alignment_target_ids:
           url = f"{host_port}/api/v1/alignment_target/{alignment_target_id}"
-          alignment_target = json.loads(requests.get(url).content.decode('utf-8'))
+          response = requests.get(url)
+          alignment_target = ITMTa1Controller.to_dict(response)
           alignments.append(AlignmentTarget.from_dict(alignment_target))
         return alignments
 
-    def to_dict(self, response):
+    @staticmethod
+    def to_dict(response):
         return json.loads(response.content.decode('utf-8'))
 
     def new_session(self, user_id=None):
@@ -85,4 +90,25 @@ class ITMTa1Controller:
         initial_response = requests.get(url)
         initial_response.raise_for_status()
         response = self.to_dict(initial_response)
-        return AlignmentResults.from_dict(response)
+        alignment_results :AlignmentResults = AlignmentResults.from_dict(response)
+
+        # Need to get KDMAs from a separate endpoint.
+        base_url = f"{self.url}/api/v1/computed_kdma_profile"
+        params = {
+            "session_id": self.session_id
+        }
+        url = f"{base_url}?{urllib.parse.urlencode(params)}"
+        initial_response = requests.get(url)
+        initial_response.raise_for_status()
+        response = self.to_dict(initial_response)
+        # KDMAs are represented slightly differently between the two TA1s.
+        if self.scene_type == 'adept':
+            kdmas = []
+            for kdma_value in response:
+                kdmas.append(KDMAValue.from_dict(kdma_value))
+        else:
+            kdma_profile :KDMAProfile = KDMAProfile.from_dict(response)
+            kdmas = kdma_profile.computed_kdma_profile
+
+        alignment_results.kdma_values = kdmas
+        return alignment_results

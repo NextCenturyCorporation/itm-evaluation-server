@@ -119,7 +119,6 @@ class ITMSession:
             ITMSession.ta1_controllers[ta1_name] = [
                 ITMTa1Controller(alignment_target_id=alignment_target.id,
                                  scene_type=ta1_name,
-                                 config = ITMSession.config,
                                  alignment_target=alignment_target,)
                                  for alignment_target in ITMSession.alignment_data[ta1_name]
                                  ]
