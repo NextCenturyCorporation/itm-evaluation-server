@@ -11,14 +11,13 @@ class ITMHistory:
     Class for managing ADM action history.
     """
 
-    def __init__(self):
+    def __init__(self, config):
         """
         Initialize an instance of ITMHistory.
         """
         self.history = []
-        self.filepath = 'itm_history_output' + os.sep
-        # TODO: Centralize settings
-        self.save_history_bucket = "itm-ui-assets"
+        self.filepath = config["DEFAULT"]["HISTORY_DIRECTORY"] + os.sep
+        self.save_history_bucket = config["DEFAULT"]["HISTORY_S3_BUCKET"]
 
     def clear_history(self):
         self.history.clear()
