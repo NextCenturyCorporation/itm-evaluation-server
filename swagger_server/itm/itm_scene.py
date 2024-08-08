@@ -63,8 +63,10 @@ class ITMScene:
             "choice": x.choice,
             "parameters": x.parameters,
             "kdma_association": x.kdma_association,
-            "conditions": json.loads(str(x.conditions).replace("'", '"').replace("None", '"None"')),
-            "condition_semantics": x.condition_semantics,
+            "action_conditions": json.loads(str(x.action_conditions).replace("'", '"').replace("None", '"None"')),
+            "action_condition_semantics": x.action_condition_semantics,
+            "probe_conditions": json.loads(str(x.probe_conditions).replace("'", '"').replace("None", '"None"')),
+            "probe_condition_semantics": x.probe_condition_semantics,
             "next_scene": x.next_scene
         }
         return to_obj
@@ -100,6 +102,13 @@ class ITMScene:
         return json.dumps(to_obj, indent=4)
 
 
+    def __expose_action(self, mapping: ActionMapping, session_state: State):
+        if not mapping.action_id in self.actions_taken or mapping.repeatable:
+            if self.conditions_met(mapping.action_conditions, session_state, mapping.action_condition_semantics):
+                return True
+        return False
+
+
     def get_available_actions(self, state: State) -> List[Action]:
         actions :List[Action] = [
             Action(
@@ -112,7 +121,7 @@ class ITMScene:
                 parameters=mapping.parameters,
                 kdma_association=mapping.kdma_association if self.training else None
             )
-            for mapping in self.action_mappings if (not mapping.action_id in self.actions_taken) or mapping.repeatable
+            for mapping in self.action_mappings if self.__expose_action(mapping, state)
         ]
 
         # When all actions are intent actions, don't add unmapped action types.
@@ -135,8 +144,8 @@ class ITMScene:
         #TODO: uncomment when tagging configuration is supported (ITM-217)
         #valid_action_types.remove(ActionTypeEnum.TAG_CHARACTER)
         current_action_types = []
-        for action in actions:
-            current_action_types.append(action.action_type)
+        for mapping in self.action_mappings:
+            current_action_types.append(mapping.action_type)
         new_action_types = \
             [action_type for action_type in valid_action_types if action_type not in current_action_types if action_type not in self.restricted_actions]
         # Don't add actions that require a pulse ox if there is no pulse ox available.
@@ -147,8 +156,6 @@ class ITMScene:
         if not pulse_ox_available:
             if ActionTypeEnum.CHECK_BLOOD_OXYGEN in new_action_types:
                 new_action_types.remove(ActionTypeEnum.CHECK_BLOOD_OXYGEN)
-            if ActionTypeEnum.CHECK_ALL_VITALS in new_action_types:
-                new_action_types.remove(ActionTypeEnum.CHECK_ALL_VITALS)
 
         for action_type in new_action_types:
             actions.append(Action(
@@ -178,7 +185,7 @@ class ITMScene:
                 found_mapping = True
                 next_scene_id = mapping.next_scene
                 # Respond to probes if conditions are met.
-                if self.conditions_met(mapping.conditions, session_state, mapping.condition_semantics):
+                if self.conditions_met(mapping.probe_conditions, session_state, mapping.probe_condition_semantics):
                     self.parent_scenario.respond_to_probe(mapping.probe_id, mapping.choice, action.justification)
                 break  # action_id's are unique within a scene
 

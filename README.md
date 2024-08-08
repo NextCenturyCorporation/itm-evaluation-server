@@ -28,13 +28,27 @@ On Windows, the method to activate depends on the shell:
 
 ## Configuration
 
-Rename `config.ini.template` file to `config.ini`. 
+Rename `config.ini.template` file to `config.ini`. The default values are for the production server, so you
+will probably want to change `SOARTECH_URL`, `ADEPT_URL`, `SAVE_HISTORY`, and `SAVE_HISTORY_TO_S3`.
+See the template for likely values.
 
 The following properties can be configured:
 - `EVALUATION_TYPE` 
     - default is `dryrun` but `metrics` is also supported
 - `SCENARIO_DIRECTORY`
     - default is `swagger_server/itm/data/%(EVALUATION_TYPE)s/scenarios/`
+- `SOARTECH_URL`
+    - default is `http://10.216.38.125:8084`
+- `ADEPT_URL`
+    - default is `http://10.216.38.70:8080`
+- `SAVE_HISTORY`
+    - default is `True`
+- `HISTORY_DIRECTORY`
+    - default is `itm_history_output`
+- `SAVE_HISTORY_TO_S3`
+    - default is `True`
+- `HISTORY_S3_BUCKET`
+    - default is `itm-ui-assets`
 
 *NOTE:* the trailing **`s`** in `.../data/%(EVALUATION_TYPE)s/...` is needed for string interpolation to work properly.
 
@@ -90,18 +104,13 @@ docker run -p 8080:8080 swagger_server
 ## Running with docker on separate instances
 To run with TA1 on multiple systems set docker env vars for ADM host, Soartech Host, and ADEPT Host.
 ```bash
-docker run -d -p 8080:8080 -e "TA3_HOSTNAME=$CHANGE_ME_TO_CURRENTIP" -e "SOARTECH_HOSTNAME=$CHANGE_ME_TO_SOARTECHIP" -e "ADEPT_HOSTNAME=$CHANGE_ME_TO_ADEPTIP" -e "SOARTECH_PORT=$CHANGE_ME_TO_SOARTECH_PORT" -e "ADEPT_PORT=$CHANGE_ME_TO_ADEPT_PORT" --name itm-server itm-server
+docker run -d -p 8080:8080 --name itm-server itm-server
 ```
 ** Note, If setting TA3_PORT to anything other then the default requires the docker run command to expose those ports. 
-Can write the above command as $TA3_PORT:$TA3_PORT however, this will not work if it is not set and won't default
+Can write the above command as $TA3_PORT:$TA3_PORT however, this will not work if it is not set and won't default.
 
 ## Manual runs on separate instances
 If running the command instead of docker set the environment variables for:
-- TA3_HOSTNAME (default: localhost)
-- SOARTECH_HOSTNAME (default: localhost)
-- ADEPT_HOSTNAME (default: localhost)
-- ADEPT_PORT (default:8081)
-- SOARTECH_PORT (default:8084)
 - TA3_PORT (default:8080)
 
 ## Updating models

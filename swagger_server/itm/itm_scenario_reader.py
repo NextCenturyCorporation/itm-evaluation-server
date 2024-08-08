@@ -295,8 +295,9 @@ class ITMScenarioReader:
                 severity=injury.get('severity'),
                 source_character=injury.get('source_character'),
                 treatments_required=injury.get('treatments_required', 1),
-                #treatments_applied=injury.get('treatments_applied', 0), # Uncomment if/when sim allows partial pre-treatment
-                treatments_applied=injury.get('treatments_applied', 1) if injury.get('status') == 'treated' else 0,
+                # Uncomment if/when sim allows partial pre-treatment
+                #treatments_applied=injury.get('treatments_applied', injury.get('treatments_required', 1)) if injury.get('status') == 'treated' else injury.get('treatments_applied', 0),
+                treatments_applied=injury.get('treatments_applied', injury.get('treatments_required', 1)) if injury.get('status') == 'treated' else 0,
                 status=injury.get('status', 'visible')
             )
             for injury in character_data.get('injuries', [])
@@ -313,7 +314,7 @@ class ITMScenarioReader:
             injuries=injuries,
             vitals=self._generate_vitals(character_data.get('vitals', {})),
             visited=character_data.get('visited', False),
-            intent=character_data.get('intent', False),
+            intent=character_data.get('intent'),
             directness_of_causality=character_data.get('directness_of_causality'),
             tag=character_data.get('tag')
         )
@@ -349,8 +350,10 @@ class ITMScenarioReader:
             choice=mapping_data['choice'],
             next_scene=mapping_data.get('next_scene'),
             kdma_association=mapping_data.get('kdma_association'),
-            condition_semantics=mapping_data.get('condition_semantics', SemanticTypeEnum.AND),
-            conditions=self._generate_conditions(mapping_data.get('conditions'))
+            action_condition_semantics=mapping_data.get('action_condition_semantics', SemanticTypeEnum.AND),
+            action_conditions=self._generate_conditions(mapping_data.get('action_conditions')),
+            probe_condition_semantics=mapping_data.get('probe_condition_semantics', SemanticTypeEnum.AND),
+            probe_conditions=self._generate_conditions(mapping_data.get('probe_conditions'))
         )
         return mapping
 

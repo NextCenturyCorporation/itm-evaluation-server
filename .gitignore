@@ -80,5 +80,5 @@ itm_history_output
 config.ini
 
 # local scenarios
-scenarios
+itm_scenarios
 
