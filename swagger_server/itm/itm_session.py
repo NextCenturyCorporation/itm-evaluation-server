@@ -61,15 +61,16 @@ class ITMSession:
         # Action Handler
         self.action_handler: ITMActionHandler = ITMActionHandler(self)
         # ADM History
-        self.history: ITMHistory = ITMHistory()
+        self.history: ITMHistory = ITMHistory(ITMSession.config)
         # This determines whether the server makes calls to TA1
         self.ta1_integration = False # Default here applies to non-training, non-eval sessions
         # This determines whether the server returns history in final State after each scenario completes
         self.return_scenario_history = False
         # This determines whether the server saves history to JSON
-        self.save_history = False
+        self.save_history = ITMSession.config["DEFAULT"].getboolean("SAVE_HISTORY")
         # save_history must also be True
-        self.save_history_to_s3 = False
+        self.save_history_to_s3 = ITMSession.config["DEFAULT"].getboolean("SAVE_HISTORY_TO_S3")
+        
 
     def __deepcopy__(self, memo):
         return self # Allows us to deepcopy ITMScenarios
@@ -118,7 +119,7 @@ class ITMSession:
             ITMSession.ta1_controllers[ta1_name] = [
                 ITMTa1Controller(alignment_target_id=alignment_target.id,
                                  scene_type=ta1_name,
-                                 alignment_target=alignment_target)
+                                 alignment_target=alignment_target,)
                                  for alignment_target in ITMSession.alignment_data[ta1_name]
                                  ]
 
@@ -435,8 +436,6 @@ class ITMSession:
 
         ta1_names = []
         if self.session_type == 'eval':
-            self.save_history = True
-            self.save_history_to_s3 = True
             self.ta1_integration = True
             max_scenarios = None
             ta1_names = ['soartech', 'adept']
@@ -445,6 +444,8 @@ class ITMSession:
         if kdma_training:
             self.ta1_integration = True
             self.return_scenario_history = True
+        if session_type == 'test':
+            self.ta1_integration = False
 
         self.history.add_history(
                 "Start Session",
