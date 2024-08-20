@@ -11,12 +11,12 @@ SCENARIO_DIRECTORY=swagger_server/itm/data/%(EVALUATION_TYPE)s/scenarios/
 ; SOARTECH_URL=http://localhost:8084
 
 ; AWS TA1 Default URLs
-; ADEPT_URL=https://darpaitm.caci.com/adept
-; SOARTECH_URL=https://darpaitm.caci.com/soartech
+ADEPT_URL=https://darpaitm.caci.com/adept
+SOARTECH_URL=https://darpaitm.caci.com/soartech
 
 ; Prod Default URLs
-SOARTECH_URL=http://10.216.38.125:8084
-ADEPT_URL=http://10.216.38.101:8080
+;SOARTECH_URL=http://10.216.38.125:8084
+;ADEPT_URL=http://10.216.38.70:8080
 
 SAVE_HISTORY=True
 SAVE_HISTORY_TO_S3=True
@@ -24,54 +24,53 @@ SAVE_HISTORY_TO_S3=True
 HISTORY_DIRECTORY=itm_history_output
 HISTORY_S3_BUCKET=itm-ui-assets
 
-EVAL_NAME = "Dry Run Evaluation"
-EVAL_NUMBER = 4
+EVAL_NAME=Dry Run Evaluation
+EVAL_NUMBER=4
 
-SOARTECH_EVAL_QOL_SCENARIOS=["qol-dre-1-eval","qol-dre-2-eval","qol-dre-3-eval"]
-SOARTECH_EVAL_VOL_SCENARIOS=["vol-dre-1-eval","vol-dre-2-eval","vol-dre-3-eval"]
+SOARTECH_EVAL_QOL_SCENARIOS=qol-dre-1-eval,qol-dre-2-eval,qol-dre-3-eval
+SOARTECH_EVAL_VOL_SCENARIOS=vol-dre-1-eval,vol-dre-2-eval,vol-dre-3-eval
 
-SOARTECH_TRAIN_QOL_SCENARIOS=["qol-dre-1-train","qol-dre-2-train"]
-SOARTECH_TRAIN_VOL_SCENARIOS=["vol-dre-1-train","vol-dre-2-train"]
+SOARTECH_TRAIN_QOL_SCENARIOS=qol-dre-1-train,qol-dre-2-train
+SOARTECH_TRAIN_VOL_SCENARIOS=vol-dre-1-train,vol-dre-2-train
 
-SOARTECH_QOL_ALIGNMENT_TARGETS=["15d7b3ed-qol-low",
-    "79f47f55-qol-high",
-    "qol-prelim-emt-d29ef563",
-    "qol-prelim-paramedic-40fa52a9",
-    "qol-prelim-physician-72384131",
-    "qol-human-8022671-SplitLowMulti",
-    "qol-human-1774519-SplitEvenBinary",
-    "qol-human-6403274-SplitHighBinary",
-    "qol-human-3043871-SplitHighBinary",
-    "qol-human-2932740-HighExtreme",
-    "qol-human-6349649-SplitHighMulti",
-    "qol-human-9157688-SplitEvenBinary",
-    "qol-human-5032922-SplitLowMulti",
-    "qol-human-3447902-SplitHighMulti",
-    "qol-human-0000001-SplitEvenMulti",
-    "qol-human-7040555-SplitHighMulti",
-    "qol-synth-LowExtreme",
-    "qol-synth-HighExtreme",
-    "qol-synth-HighCluster",
-    "qol-synth-LowCluster",
-    "qol-synth-SplitLowBinary"]
+SOARTECH_QOL_ALIGNMENT_TARGETS=15d7b3ed-qol-low,
+    79f47f55-qol-high,
+    qol-prelim-emt-d29ef563,
+    qol-prelim-paramedic-40fa52a9,
+    qol-prelim-physician-72384131,
+    qol-human-8022671-SplitLowMulti,
+    qol-human-1774519-SplitEvenBinary,
+    qol-human-6403274-SplitHighBinary,
+    qol-human-3043871-SplitHighBinary,
+    qol-human-2932740-HighExtreme,
+    qol-human-6349649-SplitHighMulti,
+    qol-human-9157688-SplitEvenBinary,
+    qol-human-5032922-SplitLowMulti,
+    qol-human-3447902-SplitHighMulti,
+    qol-human-0000001-SplitEvenMulti,
+    qol-human-7040555-SplitHighMulti,
+    qol-synth-LowExtreme,
+    qol-synth-HighExtreme,
+    qol-synth-HighCluster,
+    qol-synth-LowCluster,
+    qol-synth-SplitLowBinary
 
-SOARTECH_VOL_ALIGNMENT_TARGETS=["468c49da-vol-high",
-    "8bdb186f-vol-low",
-    "vol-prelim-emt-a524e0ed",
-    "vol-prelim-paramedic-0aa94c1e",
-    "vol-prelim-physician-426a6c27",
-    "vol-human-8022671-SplitHighMulti",
-    "vol-human-1774519-SplitHighMulti",
-    "vol-human-6403274-SplitEvenBinary",
-    "vol-human-8478698-SplitLowMulti",
-    "vol-human-3043871-SplitLowMulti",
-    "vol-human-2637411-SplitEvenMulti",
-    "vol-human-2932740-SplitEvenMulti",
-    "vol-human-5032922-SplitLowMulti",
-    "vol-human-7040555-SplitEvenBinary",
-    "vol-synth-LowExtreme",
-    "vol-synth-HighExtreme",
-    "vol-synth-HighCluster",
-    "vol-synth-LowCluster",
-    "vol-synth-SplitLowBinary"]
-
+SOARTECH_VOL_ALIGNMENT_TARGETS=468c49da-vol-high,
+    8bdb186f-vol-low,
+    vol-prelim-emt-a524e0ed,
+    vol-prelim-paramedic-0aa94c1e,
+    vol-prelim-physician-426a6c27,
+    vol-human-8022671-SplitHighMulti,
+    vol-human-1774519-SplitHighMulti,
+    vol-human-6403274-SplitEvenBinary,
+    vol-human-8478698-SplitLowMulti,
+    vol-human-3043871-SplitLowMulti,
+    vol-human-2637411-SplitEvenMulti,
+    vol-human-2932740-SplitEvenMulti,
+    vol-human-5032922-SplitLowMulti,
+    vol-human-7040555-SplitEvenBinary,
+    vol-synth-LowExtreme,
+    vol-synth-HighExtreme,
+    vol-synth-HighCluster,
+    vol-synth-LowCluster,
+    vol-synth-SplitLowBinary
