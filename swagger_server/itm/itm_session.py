@@ -493,7 +493,6 @@ class ITMSession:
                 ta1_scenarios.append(itm_scenario)
 
                 if ta1_name == "soartech":
-                    #TODO: Phi, change alignement targets here, this only makes the counter correct
                     if itm_scenario.id in ITMSession.SOARTECH_EVAL_QOL_SCENARIOS:
                         for counter in range(1, len(ITMSession.SOARTECH_QOL_ALIGNMENT_TARGETS)):
                             ta1_scenarios.append(deepcopy(itm_scenario))
