@@ -708,8 +708,14 @@ class ITMSession:
         Returns:
             A list of Actions that the DM can take.
         """
+        self.history.add_history(
+            "Get Available Actions",
+            {"session_id": self.session_id, "scenario_id": scenario_id},
+            self.state.to_dict())
+        
         # Check for a valid scenario_id
         (successful, message, code) = self._check_scenario_id(scenario_id)
+                
         if not successful:
             return message, code
         if self.session_complete:
