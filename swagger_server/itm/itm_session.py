@@ -175,7 +175,7 @@ class ITMSession:
                 logging.info("Got session alignment score %s from TA1.", session_alignment_score)
                 alignment_scenario_id = session_alignment.alignment_source[0].scenario_id
                 if self.itm_scenario.id != alignment_scenario_id:
-                    logging.error("\033[92mContamination in session_alignment! scenario is %s but alignment source scenario is %s.\033[00m",
+                    logging.warning("\033[92mContamination in session_alignment! scenario is %s but alignment source scenario is %s.\033[00m",
                                     self.itm_scenario.id, alignment_scenario_id)
             except exceptions.HTTPError:
                 logging.exception("HTTPError from TA1 getting session alignment.")
