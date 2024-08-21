@@ -516,37 +516,27 @@ class ITMSession:
                         if ta1_scenarios[scenario_ctr].id in ITMSession.SOARTECH_EVAL_QOL_SCENARIOS:
                             if alignment_targets[qol_counter % (len(alignment_targets))].id in ITMSession.SOARTECH_QOL_ALIGNMENT_TARGETS:
                                 ta1_scenarios[scenario_ctr].alignment_target = alignment_targets[qol_counter % (len(alignment_targets))] 
-                                ##
-                                ta1_scenarios[scenario_ctr].set_controller(deepcopy(next((target for target in controllers if target.alignment_target_id  == ta1_scenarios[scenario_ctr].alignment_target.id), None)))
-                                ##
                                 qol_counter = qol_counter + 1
                             else:
                                 while alignment_targets[qol_counter % (len(alignment_targets))].id not in ITMSession.SOARTECH_QOL_ALIGNMENT_TARGETS:
                                     qol_counter = qol_counter + 1
                                 if alignment_targets[qol_counter % (len(alignment_targets))].id in ITMSession.SOARTECH_QOL_ALIGNMENT_TARGETS:
                                     ta1_scenarios[scenario_ctr].alignment_target = alignment_targets[qol_counter % (len(alignment_targets))] 
-                                    ##
-                                    ta1_scenarios[scenario_ctr].set_controller(deepcopy(next((target for target in controllers if target.alignment_target_id  == ta1_scenarios[scenario_ctr].alignment_target.id), None)))
-                                    ##
                                     qol_counter = qol_counter + 1
 
                         if ta1_scenarios[scenario_ctr].id in ITMSession.SOARTECH_EVAL_VOL_SCENARIOS:
                             if alignment_targets[vol_counter % (len(alignment_targets))].id in ITMSession.SOARTECH_VOL_ALIGNMENT_TARGETS:
                                 ta1_scenarios[scenario_ctr].alignment_target = alignment_targets[vol_counter % (len(alignment_targets))]
-                                ##
-                                ta1_scenarios[scenario_ctr].set_controller(deepcopy(next((target for target in controllers if target.alignment_target_id  == ta1_scenarios[scenario_ctr].alignment_target.id), None)))
-                                ##
                                 vol_counter = vol_counter + 1
                             else:
                                 while alignment_targets[vol_counter % (len(alignment_targets))].id not in ITMSession.SOARTECH_VOL_ALIGNMENT_TARGETS:
                                     vol_counter = vol_counter + 1
                                 if alignment_targets[vol_counter % (len(alignment_targets))].id in ITMSession.SOARTECH_VOL_ALIGNMENT_TARGETS:
                                     ta1_scenarios[scenario_ctr].alignment_target = alignment_targets[vol_counter % (len(alignment_targets))]
-                                    ##
-                                    ta1_scenarios[scenario_ctr].set_controller(deepcopy(next((target for target in controllers if target.alignment_target_id  == ta1_scenarios[scenario_ctr].alignment_target.id), None)))
-                                    ##
-
                                     vol_counter = vol_counter + 1
+
+                        ta1_scenarios[scenario_ctr].set_controller(deepcopy(next((target for target in controllers if target.alignment_target_id  == ta1_scenarios[scenario_ctr].alignment_target.id), None)))
+
                 else:        
                     for scenario_ctr in range(len(ta1_scenarios)):
                         ta1_scenarios[scenario_ctr].set_controller(deepcopy(controllers[scenario_ctr % (len(controllers))]))           
