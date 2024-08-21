@@ -35,6 +35,7 @@ class ITMSession:
     EVALUATION_NAME = config['DEFAULT']['EVAL_NAME']
     EVALUATION_NUMBER = config['DEFAULT']['EVAL_NUMBER']
     SCENARIO_DIRECTORY = config['DEFAULT']['SCENARIO_DIRECTORY']
+    SOARTECH_SCENARIOS = config['DEFAULT']['SOARTECH_SCENARIOS'].replace('\n','').split(',')
     SOARTECH_EVAL_QOL_SCENARIOS = config['DEFAULT']['SOARTECH_EVAL_QOL_SCENARIOS'].replace('\n','').split(',')
     SOARTECH_EVAL_VOL_SCENARIOS = config['DEFAULT']['SOARTECH_EVAL_VOL_SCENARIOS'].replace('\n','').split(',')
     SOARTECH_TRAIN_QOL_SCENARIOS = config['DEFAULT']['SOARTECH_TRAIN_QOL_SCENARIOS'].replace('\n','').split(',')
@@ -479,11 +480,16 @@ class ITMSession:
         path = f"swagger_server/itm/data/{ITMSession.EVALUATION_TYPE}/test/" if self.session_type == 'test' else f"{ITMSession.SCENARIO_DIRECTORY}/"
         num_read_scenarios = 0
         for ta1_name in ta1_names:
-            if self.session_type == 'test':
-                scenarios = ITMSession._get_file_names(path)
+            if ta1_name == "soartech":
+                scenarios = ITMSession.SOARTECH_SCENARIOS
             else:
-                scenarios = ITMSession._get_file_names(path, [ITMSession.EVALUATION_TYPE, ta1_name,
-                                                            'train' if kdma_training else 'eval'])
+                if self.session_type == 'test':
+                    scenarios = ITMSession._get_file_names(path)
+                else:
+                    scenarios = ITMSession._get_file_names(path, [ITMSession.EVALUATION_TYPE, ta1_name,
+                                                                'train' if kdma_training else 'eval'])
+                
+
             alignment_targets = [target for target in ITMSession.alignment_data[ta1_name]]
             ta1_scenarios = []
             for scenario in scenarios:
