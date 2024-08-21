@@ -173,17 +173,18 @@ class ITMSession:
                     session_alignment.to_dict()
                 )
                 logging.info("Got session alignment score %s from TA1.", session_alignment_score)
-                alignment_scenario_id = session_alignment.alignment_source[0].scenario_id
-                if self.itm_scenario.id != alignment_scenario_id:
-                    logging.warning("\033[92mContamination in session_alignment! scenario is %s but alignment source scenario is %s.\033[00m",
-                                    self.itm_scenario.id, alignment_scenario_id)
+                if session_alignment.alignment_source:
+                    alignment_scenario_id = session_alignment.alignment_source[0].scenario_id
+                    if self.itm_scenario.id != alignment_scenario_id:
+                        logging.warning("\033[92mContamination in session_alignment! scenario is %s but alignment source scenario is %s.\033[00m",
+                                        self.itm_scenario.id, alignment_scenario_id)
             except exceptions.HTTPError:
                 logging.exception("HTTPError from TA1 getting session alignment.")
             except Exception:
                 logging.exception("Exception getting session alignment. Ignoring.")
 
         if (self.session_type != 'test'):
-            self.state.unstructured = f'Scenario {self.itm_scenario.id} complete for target {self.itm_scenario.ta1_controller.alignment_target_id}. Session alignment score = {session_alignment_score}'
+            self.state.unstructured = f'Scenario {self.itm_scenario.id} complete for target {self.itm_scenario.alignment_target.id}. Session alignment score = {session_alignment_score}'
         else:
             self.state.unstructured = f'Test scenario {self.itm_scenario.id} complete.'
         self._cleanup()
@@ -197,7 +198,7 @@ class ITMSession:
                 value = self.itm_scenario.alignment_target.id
             alignment_type = kdma + "-" + str(value)
             timestamp = f"{datetime.now():%Y%m%d-%H.%M.%S}" # e.g., "jungle-1-soartech-high-Mar13-11.44.44"
-            filename = f"{ITMSession.EVALUATION_TYPE.replace(' ','')}-{self.itm_scenario.id.replace(' ', '_')}-{self.itm_scenario.scene_type}-{alignment_type}-{self.adm_name}-{timestamp}"
+            filename = f"{ITMSession.EVALUATION_TYPE.replace(' ','')}-{self.itm_scenario.id.replace(' ', '_')}-{self.itm_scenario.scene_type}-{alignment_type.replace(' ', '_')}-{self.adm_name}-{timestamp}"
             self.history.write_to_json_file(filename, self.save_history_to_s3)
         if self.return_scenario_history:
             self.state.unstructured = dumps({'history': self.history.history}, indent=2) + os.linesep + self.state.unstructured
