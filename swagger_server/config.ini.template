@@ -33,12 +33,7 @@ SOARTECH_EVAL_VOL_SCENARIOS=vol-dre-1-eval,vol-dre-2-eval,vol-dre-3-eval
 SOARTECH_TRAIN_QOL_SCENARIOS=qol-dre-1-train,qol-dre-2-train
 SOARTECH_TRAIN_VOL_SCENARIOS=vol-dre-1-train,vol-dre-2-train
 
-SOARTECH_QOL_ALIGNMENT_TARGETS=15d7b3ed-qol-low,
-    79f47f55-qol-high,
-    qol-prelim-emt-d29ef563,
-    qol-prelim-paramedic-40fa52a9,
-    qol-prelim-physician-72384131,
-    qol-human-8022671-SplitLowMulti,
+SOARTECH_QOL_ALIGNMENT_TARGETS=qol-human-8022671-SplitLowMulti,
     qol-human-1774519-SplitEvenBinary,
     qol-human-6403274-SplitHighBinary,
     qol-human-3043871-SplitHighBinary,
@@ -55,12 +50,7 @@ SOARTECH_QOL_ALIGNMENT_TARGETS=15d7b3ed-qol-low,
     qol-synth-LowCluster,
     qol-synth-SplitLowBinary
 
-SOARTECH_VOL_ALIGNMENT_TARGETS=468c49da-vol-high,
-    8bdb186f-vol-low,
-    vol-prelim-emt-a524e0ed,
-    vol-prelim-paramedic-0aa94c1e,
-    vol-prelim-physician-426a6c27,
-    vol-human-8022671-SplitHighMulti,
+SOARTECH_VOL_ALIGNMENT_TARGETS=vol-human-8022671-SplitHighMulti,
     vol-human-1774519-SplitHighMulti,
     vol-human-6403274-SplitEvenBinary,
     vol-human-8478698-SplitLowMulti,
