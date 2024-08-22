@@ -35,8 +35,8 @@ class ITMSession:
     EVALUATION_NAME = config['DEFAULT']['EVAL_NAME']
     EVALUATION_NUMBER = config['DEFAULT']['EVAL_NUMBER']
     SCENARIO_DIRECTORY = config['DEFAULT']['SCENARIO_DIRECTORY']
-    SOARTECH_EVAL_SCENARIOS = config['DEFAULT']['SOARTECH_EVAL_SCENARIOS'].replace('\n','').split(',')
-    SOARTECH_TRAIN_SCENARIOS = config['DEFAULT']['SOARTECH_TRAIN_SCENARIOS'].replace('\n','').split(',')
+    SOARTECH_EVAL_FILENAMES = config['DEFAULT']['SOARTECH_EVAL_FILENAMES'].replace('\n','').split(',')
+    SOARTECH_TRAIN_FILENAMES = config['DEFAULT']['SOARTECH_TRAIN_FILENAMES'].replace('\n','').split(',')
     SOARTECH_EVAL_QOL_SCENARIOS = config['DEFAULT']['SOARTECH_EVAL_QOL_SCENARIOS'].replace('\n','').split(',')
     SOARTECH_EVAL_VOL_SCENARIOS = config['DEFAULT']['SOARTECH_EVAL_VOL_SCENARIOS'].replace('\n','').split(',')
     SOARTECH_TRAIN_QOL_SCENARIOS = config['DEFAULT']['SOARTECH_TRAIN_QOL_SCENARIOS'].replace('\n','').split(',')
@@ -199,8 +199,9 @@ class ITMSession:
             if not value:
                 value = self.itm_scenario.alignment_target.id
             alignment_type = kdma + "-" + str(value)
-            timestamp = f"{datetime.now():%Y%m%d-%H.%M.%S}" # e.g., "jungle-1-soartech-high-Mar13-11.44.44"
-            filename = f"{ITMSession.EVALUATION_TYPE.replace(' ','')}-{self.itm_scenario.id.replace(' ', '_')}-{self.itm_scenario.scene_type}-{alignment_type.replace(' ', '_')}-{self.adm_name}-{timestamp}"
+            timestamp = f"{datetime.now():%Y%m%d-%H.%M.%S}" # e.g., 20240821-18.22.53
+            filename = f"{self.adm_profile.replace(' ','-')}-" if self.adm_profile else ''
+            filename += f"{ITMSession.EVALUATION_TYPE.replace(' ','')}-{self.itm_scenario.id.replace(' ', '_')}-{self.itm_scenario.scene_type}-{alignment_type.replace(' ', '_')}-{self.adm_name}-{timestamp}"
             self.history.write_to_json_file(filename, self.save_history_to_s3)
         if self.return_scenario_history:
             self.state.unstructured = dumps({'history': self.history.history}, indent=2) + os.linesep + self.state.unstructured
@@ -287,6 +288,11 @@ class ITMSession:
 
         if self.session_type == 'eval' and 'base' in self.adm_profile:
             logging.warning('\033[92mAn ADM with "base" in the ADM profile is requesting an alignment target during evaluation.\033[00m')
+
+        self.history.add_history(
+            "Get Alignment Target",
+            {"scenario_id": self.itm_scenario.id, "session_id": self.session_id},
+            self.itm_scenario.alignment_target.to_dict() if self.itm_scenario.alignment_target else None)
 
         return self.itm_scenario.alignment_target
 
@@ -439,7 +445,7 @@ class ITMSession:
 
         self.kdma_training = kdma_training
         self.adm_name = adm_name
-        self.adm_profile = adm_profile if adm_profile else 'Unspecified'
+        self.adm_profile = adm_profile if adm_profile else ''
         if max_scenarios == 0:
             max_scenarios = None
         self.itm_scenarios = []
@@ -485,11 +491,11 @@ class ITMSession:
                 scenarios = ITMSession._get_file_names(path)
             else:
                 if ta1_name == "soartech":
-                    scenarios = ITMSession.SOARTECH_TRAIN_SCENARIOS if kdma_training else ITMSession.SOARTECH_EVAL_SCENARIOS
+                    scenarios = ITMSession.SOARTECH_TRAIN_FILENAMES if kdma_training else ITMSession.SOARTECH_EVAL_FILENAMES
                 else:
                     scenarios = ITMSession._get_file_names(path, [ITMSession.EVALUATION_TYPE, ta1_name,
                                                             'train' if kdma_training else 'eval'])
-                
+
             alignment_targets = [target for target in ITMSession.alignment_data[ta1_name]]
             ta1_scenarios = []
             for scenario in scenarios:
@@ -498,8 +504,6 @@ class ITMSession:
                                 session=self, training=self.kdma_training)
                 itm_scenario.generate_scenario_data()
                 ta1_scenarios.append(itm_scenario)
-
-                
 
                 if ta1_name == "soartech":
                     if itm_scenario.id in (ITMSession.SOARTECH_TRAIN_QOL_SCENARIOS if kdma_training else ITMSession.SOARTECH_EVAL_QOL_SCENARIOS):
@@ -730,6 +734,11 @@ class ITMSession:
         else:
             session_alignment = AlignmentResults(alignment_source=[], alignment_target_id=target_id, score=0.5)
         logging.info("Got session alignment score %f from TA1 for alignment target id %s.", session_alignment.score, target_id)
+        self.history.add_history(
+            "Get Session Alignment",
+            {"scenario_id": self.itm_scenario.id, "session_id": self.session_id, "target_id": target_id},
+            session_alignment.to_dict() if session_alignment else None)
+
         return session_alignment
 
 
@@ -743,14 +752,9 @@ class ITMSession:
         Returns:
             A list of Actions that the DM can take.
         """
-        self.history.add_history(
-            "Get Available Actions",
-            {"session_id": self.session_id, "scenario_id": scenario_id},
-            self.state.to_dict())
-        
         # Check for a valid scenario_id
         (successful, message, code) = self._check_scenario_id(scenario_id)
-                
+
         if not successful:
             return message, code
         if self.session_complete:

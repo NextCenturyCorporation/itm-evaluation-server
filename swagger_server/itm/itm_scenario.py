@@ -78,6 +78,12 @@ class ITMScenario:
             else:
                 pass # This an error condition that will be flagged when changing scenes
 
+        response = [filtered_action.to_dict() for filtered_action in filtered_actions]
+        self.session.history.add_history(
+            "Get Available Actions",
+            {"session_id": self.session.session_id, "scenario_id": self.session.itm_scenario.id},
+            response)
+
         return filtered_actions
 
 
