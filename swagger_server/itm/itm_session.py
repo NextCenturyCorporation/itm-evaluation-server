@@ -502,10 +502,10 @@ class ITMSession:
                 
 
                 if ta1_name == "soartech":
-                    if itm_scenario.id in ITMSession.SOARTECH_TRAIN_QOL_SCENARIOS if kdma_training else ITMSession.SOARTECH_EVAL_QOL_SCENARIOS:
+                    if itm_scenario.id in (ITMSession.SOARTECH_TRAIN_QOL_SCENARIOS if kdma_training else ITMSession.SOARTECH_EVAL_QOL_SCENARIOS):
                         for counter in range(1, len(ITMSession.SOARTECH_QOL_ALIGNMENT_TARGETS)):
                             ta1_scenarios.append(deepcopy(itm_scenario))
-                    if itm_scenario.id in ITMSession.SOARTECH_TRAIN_VOL_SCENARIOS if kdma_training else ITMSession.SOARTECH_EVAL_VOL_SCENARIOS:
+                    if itm_scenario.id in (ITMSession.SOARTECH_TRAIN_VOL_SCENARIOS if kdma_training else ITMSession.SOARTECH_EVAL_VOL_SCENARIOS):
                         for counter in range(1, len(ITMSession.SOARTECH_VOL_ALIGNMENT_TARGETS)):
                             ta1_scenarios.append(deepcopy(itm_scenario))
                 else:
@@ -522,7 +522,7 @@ class ITMSession:
                     qol_counter = 0
                     vol_counter = 0
                     for scenario_ctr in range(len(ta1_scenarios)):
-                        if ta1_scenarios[scenario_ctr].id in ITMSession.SOARTECH_TRAIN_QOL_SCENARIOS if kdma_training else ITMSession.SOARTECH_EVAL_QOL_SCENARIOS:
+                        if ta1_scenarios[scenario_ctr].id in (ITMSession.SOARTECH_TRAIN_QOL_SCENARIOS if kdma_training else ITMSession.SOARTECH_EVAL_QOL_SCENARIOS):
                             if alignment_targets[qol_counter % (len(alignment_targets))].id in ITMSession.SOARTECH_QOL_ALIGNMENT_TARGETS:
                                 # ta1_scenarios[scenario_ctr].alignment_target = alignment_targets[qol_counter % (len(alignment_targets))]
                                 ta1_scenarios[scenario_ctr].set_controller(deepcopy(next((target for target in controllers if target.alignment_target_id  == alignment_targets[qol_counter % (len(alignment_targets))].id), None)))
@@ -535,7 +535,7 @@ class ITMSession:
                                     ta1_scenarios[scenario_ctr].set_controller(deepcopy(next((target for target in controllers if target.alignment_target_id  == alignment_targets[qol_counter % (len(alignment_targets))].id), None)))
                                     qol_counter = qol_counter + 1
 
-                        if ta1_scenarios[scenario_ctr].id in ITMSession.SOARTECH_TRAIN_VOL_SCENARIOS if kdma_training else ITMSession.SOARTECH_EVAL_VOL_SCENARIOS:
+                        if ta1_scenarios[scenario_ctr].id in (ITMSession.SOARTECH_TRAIN_VOL_SCENARIOS if kdma_training else ITMSession.SOARTECH_EVAL_VOL_SCENARIOS):
                             if alignment_targets[vol_counter % (len(alignment_targets))].id in ITMSession.SOARTECH_VOL_ALIGNMENT_TARGETS:
                                 # ta1_scenarios[scenario_ctr].alignment_target = alignment_targets[vol_counter % (len(alignment_targets))]
                                 ta1_scenarios[scenario_ctr].set_controller(deepcopy(next((target for target in controllers if target.alignment_target_id  == alignment_targets[vol_counter % (len(alignment_targets))].id), None)))
@@ -555,7 +555,7 @@ class ITMSession:
                     qol_counter = 0
                     vol_counter = 0
                     for scenario_ctr in range(len(ta1_scenarios)):
-                        if ta1_scenarios[scenario_ctr].id in ITMSession.SOARTECH_TRAIN_QOL_SCENARIOS if kdma_training else ITMSession.SOARTECH_EVAL_QOL_SCENARIOS:
+                        if ta1_scenarios[scenario_ctr].id in (ITMSession.SOARTECH_TRAIN_QOL_SCENARIOS if kdma_training else ITMSession.SOARTECH_EVAL_QOL_SCENARIOS):
                             if alignment_targets[qol_counter % (len(alignment_targets))].id in ITMSession.SOARTECH_QOL_ALIGNMENT_TARGETS:
                                 ta1_scenarios[scenario_ctr].alignment_target = alignment_targets[qol_counter % (len(alignment_targets))] 
                                 qol_counter = qol_counter + 1
@@ -566,7 +566,7 @@ class ITMSession:
                                     ta1_scenarios[scenario_ctr].alignment_target = alignment_targets[qol_counter % (len(alignment_targets))] 
                                     qol_counter = qol_counter + 1
 
-                        if ta1_scenarios[scenario_ctr].id in ITMSession.SOARTECH_TRAIN_VOL_SCENARIOS if kdma_training else ITMSession.SOARTECH_EVAL_VOL_SCENARIOS:
+                        if ta1_scenarios[scenario_ctr].id in (ITMSession.SOARTECH_TRAIN_VOL_SCENARIOS if kdma_training else ITMSession.SOARTECH_EVAL_VOL_SCENARIOS):
                             if alignment_targets[vol_counter % (len(alignment_targets))].id in ITMSession.SOARTECH_VOL_ALIGNMENT_TARGETS:
                                 ta1_scenarios[scenario_ctr].alignment_target = alignment_targets[vol_counter % (len(alignment_targets))]
                                 vol_counter = vol_counter + 1

@@ -27,12 +27,17 @@ HISTORY_S3_BUCKET=itm-ui-assets
 EVAL_NAME=Dry Run Evaluation
 EVAL_NUMBER=4
 
-SOARTECH_SCENARIOS=dryrun-soartech-eval-qol1.yaml,
+SOARTECH_EVAL_SCENARIOS=dryrun-soartech-eval-qol1.yaml,
     dryrun-soartech-eval-qol2.yaml,
     dryrun-soartech-eval-qol3.yaml,
     dryrun-soartech-eval-vol1.yaml, 
     dryrun-soartech-eval-vol2.yaml, 
     dryrun-soartech-eval-vol3.yaml
+
+SOARTECH_TRAIN_SCENARIOS=dryrun-soartech-train-qol1.yaml,
+    dryrun-soartech-train-qol2.yaml,
+    dryrun-soartech-train-vol1.yaml,
+    dryrun-soartech-train-vol2.yaml
 
 SOARTECH_EVAL_QOL_SCENARIOS=qol-dre-1-eval,qol-dre-2-eval,qol-dre-3-eval
 SOARTECH_EVAL_VOL_SCENARIOS=vol-dre-1-eval,vol-dre-2-eval,vol-dre-3-eval
