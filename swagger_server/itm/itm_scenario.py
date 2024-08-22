@@ -78,6 +78,12 @@ class ITMScenario:
             else:
                 pass # This an error condition that will be flagged when changing scenes
 
+        response = [filtered_action.to_dict() for filtered_action in filtered_actions]
+        self.session.history.add_history(
+            "Get Available Actions",
+            {"session_id": self.session.session_id, "scenario_id": self.session.itm_scenario.id},
+            response)
+
         return filtered_actions
 
 
@@ -116,7 +122,7 @@ class ITMScenario:
                         response.scenario_id,
                         response.probe_id
                     )
-                    logging.info(f"Probe alignment score: {probe_response_alignment['score']}")
+                    logging.info(f"Probe alignment score: {probe_response_alignment.get('score', 'nan')}")
                     self.session.history.add_history(
                         "TA1 Probe Response Alignment",
                         {"session_id": self.ta1_controller.session_id,
@@ -125,9 +131,10 @@ class ITMScenario:
                         "probe_id": response.probe_id},
                         probe_response_alignment
                     )
-                    alignment_scenario_id = probe_response_alignment['alignment_source'][0]['scenario_id']
-                    if self.id != alignment_scenario_id:
-                        logging.error("\033[92mContamination in probe alignment! scenario is %s but alignment source scenario is %s.\033[00m", self.id, alignment_scenario_id)
+                    if probe_response_alignment.get('alignment_source'):
+                        alignment_scenario_id = probe_response_alignment['alignment_source'][0]['scenario_id']
+                        if self.id != alignment_scenario_id:
+                            logging.warning("\033[92mContamination in probe alignment! scenario is %s but alignment source scenario is %s.\033[00m", self.id, alignment_scenario_id)
             except exceptions.HTTPError:
                 # Consider changing to logging.exception when this exception isn't so common.
                 logging.error("HTTPError from TA1 getting probe alignment.")

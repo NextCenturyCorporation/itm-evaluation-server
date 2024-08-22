@@ -2,6 +2,8 @@ import boto3
 import json
 import logging
 import os
+import time
+import datetime
 
 from botocore.exceptions import ClientError
 from typing import Union
@@ -18,6 +20,11 @@ class ITMHistory:
         self.history = []
         self.filepath = config["DEFAULT"]["HISTORY_DIRECTORY"] + os.sep
         self.save_history_bucket = config["DEFAULT"]["HISTORY_S3_BUCKET"]
+        self.evaluation_info = {
+            "evalName": config['DEFAULT']['EVAL_NAME'], 
+            "evalNumber": config['DEFAULT']['EVAL_NUMBER'], 
+            "created" : str(datetime.datetime.now())
+        }        
 
     def clear_history(self):
         self.history.clear()
@@ -64,7 +71,7 @@ class ITMHistory:
 
         with open(full_filepath, 'w') as file:
             # Convert Python dictionary to JSON and write to file
-            json.dump({'history': self.history}, file, indent=2)
+            json.dump({'evaluation': self.evaluation_info, 'history': self.history}, file, indent=2)
 
         if (save_to_s3):
             logging.info("Saving history to S3")
