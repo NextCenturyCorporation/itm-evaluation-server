@@ -1,4 +1,5 @@
 import json
+import logging
 from copy import deepcopy
 from swagger_server.models import (
     Action,
@@ -131,7 +132,7 @@ class ITMActionHandler:
                 else:
                     return treatment == SupplyTypeEnum.PRESSURE_BANDAGE
             case InjuryTypeEnum.PUNCTURE:
-                if 'bicep' in location or 'thigh' in location or 'calf' in location:
+                if 'forearm' in location or 'bicep' in location or 'thigh' in location or 'calf' in location:
                     return treatment == SupplyTypeEnum.TOURNIQUET
                 elif 'chest' in location:
                     return treatment == SupplyTypeEnum.VENTED_CHEST_SEAL
@@ -275,25 +276,30 @@ class ITMActionHandler:
                                  SupplyTypeEnum.IV_BAG, SupplyTypeEnum.PAIN_MEDICATIONS, SupplyTypeEnum.PULSE_OXIMETER]
         if supply_used not in doesnt_treat_injuries:
             for injury in character.injuries:
+                logging.info(f"Processing injury {injury.name} at location {injury.location} with status {injury.status} with supply {supply_used}.")
                 if injury.location == action.parameters.get('location'):
+                    logging.info(f"Found {injury.name} injury at location {injury.location}.")
                     if injury.status != InjuryStatusEnum.TREATED: # Can't attempt to treat a treated injury
+                        logging.info(f"Attempting to treat injury {injury.name} at location {injury.location} with {supply_used}.")
                         if self.__successful_treatment(supply_used, injury.name, injury.location):
                             successful_treatment = True
+                            logging.info(f"Successfully treated {injury.name} at {injury.location} with {supply_used}.")
                             injury.treatments_applied += 1
                             # Find required treatments for the injury
                             for isd_character in self.current_scene.state.characters:
                                 if isd_character.id == character.id:
                                     for isd_injury in isd_character.injuries:
-                                        if isd_injury.location == injury.location:
+                                        if isd_injury.location == injury.location and isd_injury.name == injury.name:
                                             treatments_required = isd_injury.treatments_required
                                             break
                             if injury.treatments_applied < treatments_required:
                                 injury.status = InjuryStatusEnum.PARTIALLY_TREATED
                             else:
                                 injury.status = InjuryStatusEnum.TREATED
+                            logging.info(f"Setting injury {injury.name} to status {injury.status}")
                     else:
+                        logging.info(f"Attempted retreatment of injury {injury.name} at location {injury.location}.")
                         attempted_retreatment = True
-                    break
         elif (supply_used == SupplyTypeEnum.BLANKET):
             if character.has_blanket:
                 attempted_retreatment = True
@@ -303,7 +309,7 @@ class ITMActionHandler:
         elif (supply_used != SupplyTypeEnum.PULSE_OXIMETER):
             successful_treatment = True
 
-        if attempted_retreatment: # Realize the injury is already treated, but no vital/injury discovery happens
+        if attempted_retreatment and not successful_treatment: # Realize the injury is already treated, but no vital/injury discovery happens
             return self.times_dict["treatmentTimes"]["ALREADY_TREATED"]
 
         # Increment time passed during treatment, and decrement unreusable supplies if the injury is successfully treated
@@ -312,6 +318,7 @@ class ITMActionHandler:
             if supply.type == supply_used:
                 if successful_treatment and not supply.reusable:
                     supply.quantity -= 1
+                    logging.info(f"Decrementing {supply.type} to {supply.quantity}")
                 if supply_used in self.times_dict["treatmentTimes"]:
                     time_passed = self.times_dict["treatmentTimes"][supply_used]
                 break
@@ -518,6 +525,7 @@ class ITMActionHandler:
                 time_passed = self.move_to(character)
             case ActionTypeEnum.MOVE_TO_EVAC:
                 time_passed = self.move_to_evac(character)
+                parameters['aid_id'] = action.parameters['aid_id']
             case ActionTypeEnum.SEARCH:
                 time_passed = self.search()
             case ActionTypeEnum.SITREP:
@@ -551,8 +559,24 @@ class ITMActionHandler:
             action: The action to process.
         """
 
-        # Log the intention
+        # Look up character action is applied to
+        character = next((character for character in self.session.state.characters \
+                         if character.id == action.character_id), None)
         parameters = {"action_type": action.action_type, "session_id": self.session.session_id}
+        if character:
+            parameters['character'] = action.character_id
+
+        # Add action-specific parameters
+        match action.action_type:
+            case ActionTypeEnum.APPLY_TREATMENT:
+                parameters['treatment'] = action.parameters['treatment']
+                parameters['location'] = action.parameters['location']
+            case ActionTypeEnum.MOVE_TO_EVAC:
+                parameters['aid_id'] = action.parameters['aid_id']
+            case ActionTypeEnum.TAG_CHARACTER:
+                parameters['category'] = action.parameters['category']
+
+        # Log the intention
         self.session.history.add_history("Intend Action", parameters,
                                          self.session.state.to_dict())
 
