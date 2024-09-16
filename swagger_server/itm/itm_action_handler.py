@@ -276,11 +276,11 @@ class ITMActionHandler:
                                  SupplyTypeEnum.IV_BAG, SupplyTypeEnum.PAIN_MEDICATIONS, SupplyTypeEnum.PULSE_OXIMETER]
         if supply_used not in doesnt_treat_injuries:
             for injury in character.injuries:
-                logging.info(f"Processing injury {injury.name} at location {injury.location} with status {injury.status} with supply {supply_used}.")
+                logging.debug(f"Processing injury {injury.name} at location {injury.location} with status {injury.status} with supply {supply_used}.")
                 if injury.location == action.parameters.get('location'):
-                    logging.info(f"Found {injury.name} injury at location {injury.location}.")
+                    logging.debug(f"Found {injury.name} injury at location {injury.location}.")
                     if injury.status != InjuryStatusEnum.TREATED: # Can't attempt to treat a treated injury
-                        logging.info(f"Attempting to treat injury {injury.name} at location {injury.location} with {supply_used}.")
+                        logging.debug(f"Attempting to treat injury {injury.name} at location {injury.location} with {supply_used}.")
                         if self.__successful_treatment(supply_used, injury.name, injury.location):
                             successful_treatment = True
                             logging.info(f"Successfully treated {injury.name} at {injury.location} with {supply_used}.")
@@ -296,9 +296,11 @@ class ITMActionHandler:
                                 injury.status = InjuryStatusEnum.PARTIALLY_TREATED
                             else:
                                 injury.status = InjuryStatusEnum.TREATED
-                            logging.info(f"Setting injury {injury.name} to status {injury.status}")
+                            logging.debug(f"Setting injury {injury.name} to status {injury.status}")
+                        else:
+                            logging.info(f"Unsuccessfully treated {injury.name} at {injury.location} with {supply_used}.")
                     else:
-                        logging.info(f"Attempted retreatment of injury {injury.name} at location {injury.location}.")
+                        logging.debug(f"Attempted retreatment of injury {injury.name} at location {injury.location}.")
                         attempted_retreatment = True
         elif (supply_used == SupplyTypeEnum.BLANKET):
             if character.has_blanket:
@@ -318,7 +320,7 @@ class ITMActionHandler:
             if supply.type == supply_used:
                 if successful_treatment and not supply.reusable:
                     supply.quantity -= 1
-                    logging.info(f"Decrementing {supply.type} to {supply.quantity}")
+                    logging.debug(f"Decrementing {supply.type} to {supply.quantity}")
                 if supply_used in self.times_dict["treatmentTimes"]:
                     time_passed = self.times_dict["treatmentTimes"][supply_used]
                 break
