@@ -43,6 +43,14 @@ class ITMSession:
     SOARTECH_TRAIN_VOL_SCENARIOS = config['DEFAULT']['SOARTECH_TRAIN_VOL_SCENARIOS'].replace('\n','').split(',')
     SOARTECH_QOL_ALIGNMENT_TARGETS = config['DEFAULT']['SOARTECH_QOL_ALIGNMENT_TARGETS'].replace('\n','').split(',')
     SOARTECH_VOL_ALIGNMENT_TARGETS = config['DEFAULT']['SOARTECH_VOL_ALIGNMENT_TARGETS'].replace('\n','').split(',')
+    ADEPT_EVAL_FILENAMES = config['DEFAULT']['ADEPT_EVAL_FILENAMES'].replace('\n','').split(',')
+    ADEPT_TRAIN_FILENAMES = config['DEFAULT']['ADEPT_TRAIN_FILENAMES'].replace('\n','').split(',')
+    ADEPT_EVAL_MJ_SCENARIOS = config['DEFAULT']['ADEPT_EVAL_MJ_SCENARIOS'].replace('\n','').split(',')
+    ADEPT_EVAL_IO_SCENARIOS = config['DEFAULT']['ADEPT_EVAL_IO_SCENARIOS'].replace('\n','').split(',')
+    ADEPT_TRAIN_MJ_SCENARIOS = config['DEFAULT']['ADEPT_TRAIN_MJ_SCENARIOS'].replace('\n','').split(',')
+    ADEPT_TRAIN_IO_SCENARIOS = config['DEFAULT']['ADEPT_TRAIN_IO_SCENARIOS'].replace('\n','').split(',')
+    ADEPT_MJ_ALIGNMENT_TARGETS = config['DEFAULT']['ADEPT_MJ_ALIGNMENT_TARGETS'].replace('\n','').split(',')
+    ADEPT_IO_ALIGNMENT_TARGETS = config['DEFAULT']['ADEPT_IO_ALIGNMENT_TARGETS'].replace('\n','').split(',')
 
     local_alignment_targets = {} # alignment_targets baked into server, for use when not connecting to TA1
     alignment_data = {} # maps ta1_name to list alignment_targets, used whether connecting to TA1 or not
@@ -75,7 +83,7 @@ class ITMSession:
         # ADM History
         self.history: ITMHistory = ITMHistory(ITMSession.config)
         # This determines whether the server makes calls to TA1
-        self.ta1_integration = False # Default here applies to non-training, non-eval sessions
+        self.ta1_integration = ITMSession.config["DEFAULT"].getboolean("ALWAYS_CONNECT_TO_TA1") # Default here applies to non-training, non-eval sessions
         # This determines whether the server returns history in final State after each scenario completes
         self.return_scenario_history = False
         # This determines whether the server saves history to JSON
@@ -493,8 +501,7 @@ class ITMSession:
                 if ta1_name == "soartech":
                     scenarios = ITMSession.SOARTECH_TRAIN_FILENAMES if kdma_training else ITMSession.SOARTECH_EVAL_FILENAMES
                 else:
-                    scenarios = ITMSession._get_file_names(path, [ITMSession.EVALUATION_TYPE, ta1_name,
-                                                            'train' if kdma_training else 'eval'])
+                    scenarios = ITMSession.ADEPT_TRAIN_FILENAMES if kdma_training else ITMSession.ADEPT_EVAL_FILENAMES
 
             alignment_targets = [target for target in ITMSession.alignment_data[ta1_name]]
             ta1_scenarios = []
@@ -512,7 +519,14 @@ class ITMSession:
                     if itm_scenario.id in (ITMSession.SOARTECH_TRAIN_VOL_SCENARIOS if kdma_training else ITMSession.SOARTECH_EVAL_VOL_SCENARIOS):
                         for counter in range(1, len(ITMSession.SOARTECH_VOL_ALIGNMENT_TARGETS)):
                             ta1_scenarios.append(deepcopy(itm_scenario))
-                else:
+                elif ta1_name == "adept":
+                    if itm_scenario.id in (ITMSession.ADEPT_TRAIN_MJ_SCENARIOS if kdma_training else ITMSession.ADEPT_EVAL_MJ_SCENARIOS):
+                        for counter in range(1, len(ITMSession.ADEPT_MJ_ALIGNMENT_TARGETS)):
+                            ta1_scenarios.append(deepcopy(itm_scenario))
+                    if itm_scenario.id in (ITMSession.ADEPT_TRAIN_IO_SCENARIOS if kdma_training else ITMSession.ADEPT_EVAL_IO_SCENARIOS):
+                        for counter in range(1, len(ITMSession.ADEPT_IO_ALIGNMENT_TARGETS)):
+                            ta1_scenarios.append(deepcopy(itm_scenario))
+                else: # "test" sessions
                     for counter in range(1, len(alignment_targets)):
                         ta1_scenarios.append(deepcopy(itm_scenario))
 
@@ -546,9 +560,32 @@ class ITMSession:
                                 if alignment_targets[vol_counter % (len(alignment_targets))].id in ITMSession.SOARTECH_VOL_ALIGNMENT_TARGETS:
                                     ta1_scenarios[scenario_ctr].set_controller(deepcopy(next((target for target in controllers if target.alignment_target_id  == alignment_targets[vol_counter % (len(alignment_targets))].id), None)))
                                     vol_counter = vol_counter + 1
-                else:        
+                else:
+                    mj_counter = 0
+                    io_counter = 0
                     for scenario_ctr in range(len(ta1_scenarios)):
-                        ta1_scenarios[scenario_ctr].set_controller(deepcopy(controllers[scenario_ctr % (len(controllers))]))           
+                        #TODO: Refactor this block
+                        if ta1_scenarios[scenario_ctr].id in (ITMSession.ADEPT_TRAIN_MJ_SCENARIOS if kdma_training else ITMSession.ADEPT_EVAL_MJ_SCENARIOS):
+                            if alignment_targets[mj_counter % (len(alignment_targets))].id in ITMSession.ADEPT_MJ_ALIGNMENT_TARGETS:
+                                ta1_scenarios[scenario_ctr].set_controller(deepcopy(next((target for target in controllers if target.alignment_target_id  == alignment_targets[mj_counter % (len(alignment_targets))].id), None)))
+                                mj_counter = mj_counter + 1
+                            else:
+                                while alignment_targets[mj_counter % (len(alignment_targets))].id not in ITMSession.ADEPT_MJ_ALIGNMENT_TARGETS:
+                                    mj_counter = mj_counter + 1
+                                if alignment_targets[mj_counter % (len(alignment_targets))].id in ITMSession.ADEPT_MJ_ALIGNMENT_TARGETS:
+                                    ta1_scenarios[scenario_ctr].set_controller(deepcopy(next((target for target in controllers if target.alignment_target_id  == alignment_targets[mj_counter % (len(alignment_targets))].id), None)))
+                                    mj_counter = mj_counter + 1
+
+                        if ta1_scenarios[scenario_ctr].id in (ITMSession.ADEPT_TRAIN_IO_SCENARIOS if kdma_training else ITMSession.ADEPT_EVAL_IO_SCENARIOS):
+                            if alignment_targets[io_counter % (len(alignment_targets))].id in ITMSession.ADEPT_IO_ALIGNMENT_TARGETS:
+                                ta1_scenarios[scenario_ctr].set_controller(deepcopy(next((target for target in controllers if target.alignment_target_id  == alignment_targets[io_counter % (len(alignment_targets))].id), None)))
+                                io_counter = io_counter + 1
+                            else:
+                                while alignment_targets[io_counter % (len(alignment_targets))].id not in ITMSession.ADEPT_IO_ALIGNMENT_TARGETS:
+                                    io_counter = io_counter + 1
+                                if alignment_targets[io_counter % (len(alignment_targets))].id in ITMSession.ADEPT_IO_ALIGNMENT_TARGETS:
+                                    ta1_scenarios[scenario_ctr].set_controller(deepcopy(next((target for target in controllers if target.alignment_target_id  == alignment_targets[io_counter % (len(alignment_targets))].id), None)))
+                                    io_counter = io_counter + 1
             else:
                 if ta1_name == "soartech":
                     qol_counter = 0
@@ -576,8 +613,33 @@ class ITMSession:
                                 if alignment_targets[vol_counter % (len(alignment_targets))].id in ITMSession.SOARTECH_VOL_ALIGNMENT_TARGETS:
                                     ta1_scenarios[scenario_ctr].alignment_target = alignment_targets[vol_counter % (len(alignment_targets))]
                                     vol_counter = vol_counter + 1
-                                   
-                else:
+                elif ta1_name == "adept":
+                    mj_counter = 0
+                    io_counter = 0
+                    for scenario_ctr in range(len(ta1_scenarios)):
+                        #TODO: Refactor this block
+                        if ta1_scenarios[scenario_ctr].id in (ITMSession.ADEPT_TRAIN_MJ_SCENARIOS if kdma_training else ITMSession.ADEPT_EVAL_MJ_SCENARIOS):
+                            if alignment_targets[mj_counter % (len(alignment_targets))].id in ITMSession.ADEPT_MJ_ALIGNMENT_TARGETS:
+                                ta1_scenarios[scenario_ctr].alignment_target = alignment_targets[mj_counter % (len(alignment_targets))]
+                                mj_counter = mj_counter + 1
+                            else:
+                                while alignment_targets[mj_counter % (len(alignment_targets))].id not in ITMSession.ADEPT_MJ_ALIGNMENT_TARGETS:
+                                    mj_counter = mj_counter + 1
+                                if alignment_targets[mj_counter % (len(alignment_targets))].id in ITMSession.ADEPT_MJ_ALIGNMENT_TARGETS:
+                                    ta1_scenarios[scenario_ctr].alignment_target = alignment_targets[mj_counter % (len(alignment_targets))] 
+                                    mj_counter = mj_counter + 1
+
+                        if ta1_scenarios[scenario_ctr].id in (ITMSession.ADEPT_TRAIN_IO_SCENARIOS if kdma_training else ITMSession.ADEPT_EVAL_IO_SCENARIOS):
+                            if alignment_targets[io_counter % (len(alignment_targets))].id in ITMSession.ADEPT_IO_ALIGNMENT_TARGETS:
+                                ta1_scenarios[scenario_ctr].alignment_target = alignment_targets[io_counter % (len(alignment_targets))]
+                                io_counter = io_counter + 1
+                            else:
+                                while alignment_targets[io_counter % (len(alignment_targets))].id not in ITMSession.ADEPT_IO_ALIGNMENT_TARGETS:
+                                    io_counter = io_counter + 1
+                                if alignment_targets[io_counter % (len(alignment_targets))].id in ITMSession.ADEPT_IO_ALIGNMENT_TARGETS:
+                                    ta1_scenarios[scenario_ctr].alignment_target = alignment_targets[io_counter % (len(alignment_targets))]
+                                    io_counter = io_counter + 1
+                else: # "test" sessions
                     for scenario_ctr in range(len(ta1_scenarios)):
                         ta1_scenarios[scenario_ctr].alignment_target = alignment_targets[scenario_ctr % (len(alignment_targets))]
 
