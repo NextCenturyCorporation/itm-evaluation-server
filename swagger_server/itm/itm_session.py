@@ -133,7 +133,7 @@ class ITMSession:
         for ta1_name in ta1_names:
             ITMSession.alignment_data[ta1_name] = [
                 alignment_target for alignment_target in ITMTa1Controller.get_alignment_data(ta1_name)
-                    if 'train' not in alignment_target.id
+                    if 'train' not in alignment_target.id or ta1_name == 'soartech'
             ]
             ITMSession.ta1_controllers[ta1_name] = [
                 ITMTa1Controller(alignment_target_id=alignment_target.id,
