@@ -47,37 +47,11 @@ SOARTECH_EVAL_VOL_SCENARIOS=vol-dre-1-eval,vol-dre-2-eval,vol-dre-3-eval
 SOARTECH_TRAIN_QOL_SCENARIOS=qol-dre-1-train,qol-dre-2-train
 SOARTECH_TRAIN_VOL_SCENARIOS=vol-dre-1-train,vol-dre-2-train
 
-SOARTECH_QOL_ALIGNMENT_TARGETS=qol-human-8022671-SplitLowMulti,
-    qol-human-1774519-SplitEvenBinary,
-    qol-human-6403274-SplitHighBinary,
-    qol-human-3043871-SplitHighBinary,
-    qol-human-2932740-HighExtreme,
-    qol-human-6349649-SplitHighMulti,
-    qol-human-9157688-SplitEvenBinary,
-    qol-human-5032922-SplitLowMulti,
-    qol-human-3447902-SplitHighMulti,
-    qol-human-0000001-SplitEvenMulti,
-    qol-human-7040555-SplitHighMulti,
-    qol-synth-LowExtreme,
-    qol-synth-HighExtreme,
-    qol-synth-HighCluster,
-    qol-synth-LowCluster,
-    qol-synth-SplitLowBinary
+SOARTECH_QOL_ALIGNMENT_TARGETS=qol-group-target-dre-1,
+   qol-group-target-dre-2
 
-SOARTECH_VOL_ALIGNMENT_TARGETS=vol-human-8022671-SplitHighMulti,
-    vol-human-1774519-SplitHighMulti,
-    vol-human-6403274-SplitEvenBinary,
-    vol-human-8478698-SplitLowMulti,
-    vol-human-3043871-SplitLowMulti,
-    vol-human-2637411-SplitEvenMulti,
-    vol-human-2932740-SplitEvenMulti,
-    vol-human-5032922-SplitLowMulti,
-    vol-human-7040555-SplitEvenBinary,
-    vol-synth-LowExtreme,
-    vol-synth-HighExtreme,
-    vol-synth-HighCluster,
-    vol-synth-LowCluster,
-    vol-synth-SplitLowBinary
+SOARTECH_VOL_ALIGNMENT_TARGETS=vol-group-target-dre-1,
+   vol-group-target-dre-2
 
 ADEPT_EVAL_FILENAMES=dryrun-adept-eval-MJ2.yaml,
     dryrun-adept-eval-MJ4.yaml,
@@ -95,9 +69,9 @@ ADEPT_EVAL_IO_SCENARIOS=DryRunEval-MJ2-eval,DryRunEval-MJ4-eval,DryRunEval-MJ5-e
 ADEPT_TRAIN_MJ_SCENARIOS=DryRunEval.MJ1,DryRunEval.MJ3
 ADEPT_TRAIN_IO_SCENARIOS=DryRunEval.IO1,DryRunEval.IO2,DryRunEval.IO3
 
-ADEPT_MJ_ALIGNMENT_TARGETS="ADEPT-DryRun-Moral judgement-Group-Low",
-    "ADEPT-DryRun-Moral judgement-Group-High"
+ADEPT_MJ_ALIGNMENT_TARGETS=ADEPT-DryRun-Moral judgement-Group-Low,
+    ADEPT-DryRun-Moral judgement-Group-High
 
-ADEPT_IO_ALIGNMENT_TARGETS="ADEPT-DryRun-Ingroup Bias-Group-Low",
-    "ADEPT-DryRun-Ingroup Bias-Group-High"
+ADEPT_IO_ALIGNMENT_TARGETS=ADEPT-DryRun-Ingroup Bias-Group-Low,
+    ADEPT-DryRun-Ingroup Bias-Group-High
 
