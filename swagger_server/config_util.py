@@ -12,7 +12,7 @@ class config_data:
 
 def read_ini(default_path='swagger_server/config.ini'):
     path = os.path.expanduser(default_path)
-    parser = ConfigParser()
+    parser = ConfigParser(os.environ)
     parser.read(path)
     return (parser, path)
 
@@ -22,9 +22,11 @@ def check_ini():
     ini = parser_path[0]
     final_path = parser_path[1]
     if exists(final_path):
-        keys = ("EVALUATION_TYPE", "SCENARIO_DIRECTORY", "ADEPT_URL", "SOARTECH_URL", "SAVE_HISTORY", "SAVE_HISTORY_TO_S3", "HISTORY_DIRECTORY", "HISTORY_S3_BUCKET",
+        keys = ("EVALUATION_TYPE", "SCENARIO_DIRECTORY", "ADEPT_URL", "SOARTECH_URL", "SAVE_HISTORY", "SAVE_HISTORY_TO_S3", "ALWAYS_CONNECT_TO_TA1", "HISTORY_DIRECTORY", "HISTORY_S3_BUCKET",
                 "EVAL_NAME", "EVAL_NUMBER", "SOARTECH_EVAL_QOL_SCENARIOS", "SOARTECH_EVAL_VOL_SCENARIOS", "SOARTECH_TRAIN_QOL_SCENARIOS", "SOARTECH_TRAIN_VOL_SCENARIOS",
-                "SOARTECH_QOL_ALIGNMENT_TARGETS", "SOARTECH_VOL_ALIGNMENT_TARGETS", "SOARTECH_EVAL_FILENAMES", "SOARTECH_TRAIN_FILENAMES")
+                "SOARTECH_QOL_ALIGNMENT_TARGETS", "SOARTECH_VOL_ALIGNMENT_TARGETS", "SOARTECH_EVAL_FILENAMES", "SOARTECH_TRAIN_FILENAMES",
+                "ADEPT_EVAL_MJ_SCENARIOS", "ADEPT_EVAL_IO_SCENARIOS", "ADEPT_TRAIN_MJ_SCENARIOS", "ADEPT_TRAIN_IO_SCENARIOS",
+                "ADEPT_MJ_ALIGNMENT_TARGETS", "ADEPT_IO_ALIGNMENT_TARGETS", "ADEPT_EVAL_FILENAMES", "ADEPT_TRAIN_FILENAMES")
         for option in keys:
             if option in ini["DEFAULT"]: # checks if "option" key exists in "default" section
                 key_value = ini.get("DEFAULT", option)

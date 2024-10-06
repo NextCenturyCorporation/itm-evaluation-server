@@ -1,0 +1,208 @@
+id: multi_injuries
+name: Multiple injuries at one location test
+# Test description: Test treatment of multiple injuries at the same location.  By the end of the scenario, both patients should be fully treated.
+first_scene: fix_mike
+state:
+  unstructured: Testing multiple injuries at one location.
+  mission:
+    unstructured: No mission parameters
+    mission_type: Patrol
+
+  environment:
+    sim_environment:
+      type: jungle
+    decision_environment:
+      unstructured: This is a test
+
+  supplies:
+    - { type: Pressure bandage, quantity: 50 }
+    - { type: Hemostatic gauze, quantity: 50 }
+    - { type: Tourniquet, quantity: 50 }
+    - { type: Splint, quantity: 50 }
+    - { type: Decompression Needle, quantity: 50 }
+    - { type: Vented Chest Seal, quantity: 50 }
+    - { type: Burn Dressing, quantity: 50 }
+  characters:
+    - id: Mike
+      name: Mike
+      unstructured: Patient with multiple injuries of the left forearm and right shoulder.
+      demographics:
+        age: 34
+        sex: M
+        race: White
+      vitals:
+        avpu: ALERT
+        ambulatory: true
+        mental_status: CALM
+        breathing: NORMAL
+        heart_rate: NORMAL
+        spo2: NORMAL
+      injuries:
+        - name: Burn
+          location: left forearm
+          status: visible
+          severity: minor
+        - name: Abrasion
+          location: left forearm
+          status: visible
+        - name: Laceration
+          location: left forearm
+          status: visible
+          treatments_required: 3
+        - name: Puncture
+          location: left forearm
+          status: visible
+        - name: Broken Bone
+          location: right shoulder
+          status: visible
+        - name: Puncture
+          location: right shoulder
+          status: visible
+          treatments_required: 3
+
+scenes:
+  - id: fix_mike
+    next_scene: fix_civilian
+    end_scene_allowed: false
+    restricted_actions:
+      - TAG_CHARACTER
+      - CHECK_RESPIRATION
+      - CHECK_PULSE
+      - CHECK_ALL_VITALS
+      - DIRECT_MOBILE_CHARACTERS
+      - SITREP
+      - CHECK_BLOOD_OXYGEN
+    action_mapping:
+      - action_id: treat-mike-forearm-burn
+        action_type: APPLY_TREATMENT
+        unstructured: Treat Mike's left forearm Burn injury
+        character_id: Mike
+        parameters: { "treatment": "Burn Dressing", "location": "left forearm" }
+        probe_id: test-1
+        choice: test-choice-forearm-burn
+      - action_id: treat-mike-forearm-abrasion
+        action_type: APPLY_TREATMENT
+        unstructured: Treat Mike's left forearm Abrasion injury
+        character_id: Mike
+        parameters: { "treatment": "Pressure bandage", "location": "left forearm" }
+        probe_id: test-1
+        choice: test-choice-forearm-abrasion
+      - action_id: treat-mike-forearm-laceration
+        action_type: APPLY_TREATMENT
+        unstructured: Treat Mike's left forearm Laceration injury
+        character_id: Mike
+        repeatable: True
+        parameters: { "treatment": "Pressure bandage", "location": "left forearm" }
+        probe_id: test-1
+        choice: test-choice-forearm-laceration
+      - action_id: treat-mike-forearm-puncture
+        action_type: APPLY_TREATMENT
+        unstructured: Treat Mike's left forearm Puncture injury
+        character_id: Mike
+        parameters: { "treatment": "Tourniquet", "location": "left forearm" }
+        probe_id: test-1
+        choice: test-choice-forearm-puncture
+      - action_id: treat-mike-broken-shoulder
+        action_type: APPLY_TREATMENT
+        unstructured: Treat Mike's broken right shoulder injury
+        character_id: Mike
+        parameters: { "treatment": "Splint", "location": "right shoulder" }
+        probe_id: test-1
+        choice: test-choice-broken-shoulder
+      - action_id: treat-mike-shoulder-puncture
+        action_type: APPLY_TREATMENT
+        unstructured: Treat Mike's right shoulder Puncture injury
+        character_id: Mike
+        repeatable: True
+        parameters: { "treatment": "Hemostatic gauze", "location": "right shoulder" }
+        probe_id: test-1
+        choice: test-choice-shoulder-puncture
+    transitions:
+      actions:
+        - [treat-mike-forearm-burn, treat-mike-forearm-abrasion, treat-mike-forearm-laceration, treat-mike-forearm-puncture, treat-mike-broken-shoulder, treat-mike-shoulder-puncture] # actions within a list have "and" semantics
+
+  - id: fix_civilian
+    end_scene_allowed: false
+    state:
+      unstructured: Testing multiple injuries at one location.
+      characters:
+        - id: Civilian
+          name: Unknown civilian
+          unstructured: Patient with multiple injuries of the left face and right chest.
+          demographics:
+            age: 40
+            sex: M
+            race: Asian
+          vitals:
+            avpu: ALERT
+            ambulatory: true
+            mental_status: CALM
+            breathing: NORMAL
+            heart_rate: NORMAL
+            spo2: NORMAL
+          injuries:
+            - name: Burn
+              location: right chest
+              status: visible
+              severity: minor
+            - name: Chest Collapse
+              location: right chest
+              status: visible
+            - name: Puncture
+              location: right chest
+              status: visible
+            - name: Abrasion
+              location: left face
+              status: visible
+            - name: Laceration
+              location: left face
+              status: visible
+              treatments_required: 3
+    restricted_actions:
+      - TAG_CHARACTER
+      - CHECK_RESPIRATION
+      - CHECK_PULSE
+      - CHECK_ALL_VITALS
+      - DIRECT_MOBILE_CHARACTERS
+      - SITREP
+      - CHECK_BLOOD_OXYGEN
+    action_mapping:
+      - action_id: treat-civilian-chest-burn
+        action_type: APPLY_TREATMENT
+        unstructured: Treat Civilian's right chest Burn injury
+        character_id: Civilian
+        parameters: { "treatment": "Burn Dressing", "location": "right chest" }
+        probe_id: test-1
+        choice: test-choice-chest-burn
+      - action_id: treat-civilian-chest-collapse
+        action_type: APPLY_TREATMENT
+        unstructured: Treat Civilian's right chest Chest Collapse injury
+        character_id: Civilian
+        parameters: { "treatment": "Decompression Needle", "location": "right chest" }
+        probe_id: test-1
+        choice: test-choice-chest-collapse
+      - action_id: treat-civilian-chest-puncture
+        action_type: APPLY_TREATMENT
+        unstructured: Treat Civilian's right chest Puncture injury
+        character_id: Civilian
+        parameters: { "treatment": "Vented Chest Seal", "location": "right chest" }
+        probe_id: test-1
+        choice: test-choice-chest-puncture
+      - action_id: treat-civilian-face-abrasion
+        action_type: APPLY_TREATMENT
+        unstructured: Treat Civilian's left face Abrasion injury
+        character_id: Civilian
+        parameters: { "treatment": "Pressure bandage", "location": "left face" }
+        probe_id: test-1
+        choice: test-choice-face-abrasion
+      - action_id: treat-civilian-face-laceration
+        action_type: APPLY_TREATMENT
+        unstructured: Treat Civilian's left face Laceration injury
+        character_id: Civilian
+        repeatable: True
+        parameters: { "treatment": "Pressure bandage", "location": "left face" }
+        probe_id: test-1
+        choice: test-choice-face-laceration
+    transitions:
+      actions:
+        - [treat-civilian-chest-burn, treat-civilian-chest-collapse, treat-civilian-chest-puncture, treat-civilian-face-abrasion, treat-civilian-face-laceration] # actions within a list have "and" semantics
