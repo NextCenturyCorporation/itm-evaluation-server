@@ -1,6 +1,7 @@
 import requests
 import json
 import urllib
+import builtins
 from swagger_server.models.probe_response import ProbeResponse  # noqa: F401,E501
 from swagger_server.models.alignment_results import AlignmentResults  # noqa: F401,E501
 from swagger_server.models.alignment_target import AlignmentTarget  # noqa: F401,E501
@@ -12,8 +13,10 @@ from swagger_server import config_util
 class ITMTa1Controller:
     config_util.check_ini()
     config = config_util.read_ini()[0]
-    ADEPT_URL = config['DEFAULT']['ADEPT_URL']
-    SOARTECH_URL = config['DEFAULT']['SOARTECH_URL']
+    config_group = builtins.config_group
+    
+    ADEPT_URL = config[config_group]['ADEPT_URL']
+    SOARTECH_URL = config[config_group]['SOARTECH_URL']
     
     def __init__(self, alignment_target_id, scene_type, alignment_target = None):
         self.session_id = ''

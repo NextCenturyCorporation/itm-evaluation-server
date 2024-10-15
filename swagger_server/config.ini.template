@@ -118,3 +118,78 @@ ADEPT_IO_ALIGNMENT_TARGETS=ADEPT-DryRun-Ingroup Bias-0.0,
     ADEPT-DryRun-Ingroup Bias-0.8,
     ADEPT-DryRun-Ingroup Bias-0.9,
     ADEPT-DryRun-Ingroup Bias-1.0
+
+
+[GROUP_TARGET]
+
+EVALUATION_TYPE=dryrun
+SCENARIO_DIRECTORY=swagger_server/itm/data/%(EVALUATION_TYPE)s/scenarios/
+
+; Local Default URLs 
+; ADEPT_URL=http://localhost:8081
+; SOARTECH_URL=http://localhost:8084
+
+; AWS TA1 Default URLs (access Prod AWS servers locally)
+; ADEPT_URL=https://darpaitm.caci.com/adept
+; SOARTECH_URL=https://darpaitm.caci.com/soartech
+
+; Prod Default URLs (use on production AWS only)
+SOARTECH_URL=http://10.216.38.125:8084
+ADEPT_URL=http://10.216.38.101:8080
+
+SAVE_HISTORY=True
+SAVE_HISTORY_TO_S3=True
+; This applies to `soartech` and `adept` non-training sessions
+ALWAYS_CONNECT_TO_TA1=True
+
+HISTORY_DIRECTORY=itm_history_output
+HISTORY_S3_BUCKET=itm-ui-assets
+
+EVAL_NAME=Dry Run Evaluation
+EVAL_NUMBER=4
+
+SOARTECH_EVAL_FILENAMES=dryrun-soartech-eval-qol1.yaml,
+    dryrun-soartech-eval-qol2.yaml,
+    dryrun-soartech-eval-qol3.yaml,
+    dryrun-soartech-eval-vol1.yaml, 
+    dryrun-soartech-eval-vol2.yaml, 
+    dryrun-soartech-eval-vol3.yaml
+
+SOARTECH_TRAIN_FILENAMES=dryrun-soartech-train-qol1.yaml,
+    dryrun-soartech-train-qol2.yaml,
+    dryrun-soartech-train-vol1.yaml,
+    dryrun-soartech-train-vol2.yaml
+
+SOARTECH_EVAL_QOL_SCENARIOS=qol-dre-1-eval,qol-dre-2-eval,qol-dre-3-eval
+SOARTECH_EVAL_VOL_SCENARIOS=vol-dre-1-eval,vol-dre-2-eval,vol-dre-3-eval
+
+SOARTECH_TRAIN_QOL_SCENARIOS=qol-dre-1-train,qol-dre-2-train
+SOARTECH_TRAIN_VOL_SCENARIOS=vol-dre-1-train,vol-dre-2-train
+
+SOARTECH_QOL_ALIGNMENT_TARGETS=qol-group-target-dre-1,
+   qol-group-target-dre-2
+
+SOARTECH_VOL_ALIGNMENT_TARGETS=vol-group-target-dre-1,
+   vol-group-target-dre-2
+
+ADEPT_EVAL_FILENAMES=dryrun-adept-eval-MJ2.yaml,
+    dryrun-adept-eval-MJ4.yaml,
+    dryrun-adept-eval-MJ5.yaml
+
+ADEPT_TRAIN_FILENAMES=dryrun-adept-train-MJ1.yaml,
+    dryrun-adept-train-MJ3.yaml,
+    dryrun-adept-train-IO1.yaml,
+    dryrun-adept-train-IO2.yaml,
+    dryrun-adept-train-IO3.yaml
+
+ADEPT_EVAL_MJ_SCENARIOS=DryRunEval-MJ2-eval,DryRunEval-MJ4-eval,DryRunEval-MJ5-eval
+ADEPT_EVAL_IO_SCENARIOS=DryRunEval-MJ2-eval,DryRunEval-MJ4-eval,DryRunEval-MJ5-eval
+
+ADEPT_TRAIN_MJ_SCENARIOS=DryRunEval.MJ1,DryRunEval.MJ3
+ADEPT_TRAIN_IO_SCENARIOS=DryRunEval.IO1,DryRunEval.IO2,DryRunEval.IO3
+
+ADEPT_MJ_ALIGNMENT_TARGETS=ADEPT-DryRun-Moral judgement-Group-Low,
+    ADEPT-DryRun-Moral judgement-Group-High
+
+ADEPT_IO_ALIGNMENT_TARGETS=ADEPT-DryRun-Ingroup Bias-Group-Low,
+    ADEPT-DryRun-Ingroup Bias-Group-High
