@@ -29,9 +29,9 @@ def main(args):
 
 if __name__ == '__main__':
 
-    parser = argparse.ArgumentParser(description='Specify Config Group; will default to the DEFAULT group', usage='python -m swagger_server [-h] -c CONFIG_GROUP -p PORT')
+    parser = argparse.ArgumentParser(description='Specify Config Group, will default to the DEFAULT group', usage='python -m swagger_server [-h] -c CONFIG_GROUP -p PORT')
     parser.add_argument('-c', '--config_group', dest='config_group', type=str, default="DEFAULT",  help='Specify the configuration group in config.ini used to launch the swagger server (default = DEFAULT)')
-    parser.add_argument('-p', '--port', dest='port', type=int, default=None,  help='Specify the port the Swagger Server will listen on (default = None)')
+    parser.add_argument('-p', '--port', dest='port', type=int, default=None,  help='Specify the port the Swagger Server will listen on (default = 8080)')
     args = parser.parse_args()
 
     #Checking for config_group in config.ini
