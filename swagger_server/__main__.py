@@ -17,7 +17,7 @@ if (PORT is None or PORT == ""):
 def main(args):
 
     itm_port = PORT if args.port == None else args.port
-    itm_kwargs = {'config_group' : args.config_group, 'title': 'ITM TA3 API'}
+    itm_kwargs = {'title': 'ITM TA3 API'}
 
     builtins.config_group = args.config_group
 
