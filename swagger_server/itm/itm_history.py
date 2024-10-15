@@ -4,6 +4,7 @@ import logging
 import os
 import time
 import datetime
+import builtins
 
 from botocore.exceptions import ClientError
 from typing import Union
@@ -17,12 +18,13 @@ class ITMHistory:
         """
         Initialize an instance of ITMHistory.
         """
+        config_group = builtins.config_group
         self.history = []
-        self.filepath = config["DEFAULT"]["HISTORY_DIRECTORY"] + os.sep
+        self.filepath = config[config_group]["HISTORY_DIRECTORY"] + os.sep
         self.save_history_bucket = config["DEFAULT"]["HISTORY_S3_BUCKET"]
         self.evaluation_info = {
-            "evalName": config['DEFAULT']['EVAL_NAME'], 
-            "evalNumber": config['DEFAULT']['EVAL_NUMBER'], 
+            "evalName": config[config_group]['EVAL_NAME'], 
+            "evalNumber": config[config_group]['EVAL_NUMBER'], 
             "created" : str(datetime.datetime.now())
         }        
 

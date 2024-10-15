@@ -3,6 +3,7 @@ import uuid
 import random
 import os
 import logging
+import builtins
 from datetime import datetime
 from typing import List
 from copy import deepcopy
@@ -29,28 +30,29 @@ class ITMSession:
     """
     config_util.check_ini()
     config = config_util.read_ini()[0]
+    config_group = builtins.config_group
     
     # Class variables
-    EVALUATION_TYPE = config['DEFAULT']['EVALUATION_TYPE']
-    EVALUATION_NAME = config['DEFAULT']['EVAL_NAME']
-    EVALUATION_NUMBER = config['DEFAULT']['EVAL_NUMBER']
-    SCENARIO_DIRECTORY = config['DEFAULT']['SCENARIO_DIRECTORY']
-    SOARTECH_EVAL_FILENAMES = config['DEFAULT']['SOARTECH_EVAL_FILENAMES'].replace('\n','').split(',')
-    SOARTECH_TRAIN_FILENAMES = config['DEFAULT']['SOARTECH_TRAIN_FILENAMES'].replace('\n','').split(',')
-    SOARTECH_EVAL_QOL_SCENARIOS = config['DEFAULT']['SOARTECH_EVAL_QOL_SCENARIOS'].replace('\n','').split(',')
-    SOARTECH_EVAL_VOL_SCENARIOS = config['DEFAULT']['SOARTECH_EVAL_VOL_SCENARIOS'].replace('\n','').split(',')
-    SOARTECH_TRAIN_QOL_SCENARIOS = config['DEFAULT']['SOARTECH_TRAIN_QOL_SCENARIOS'].replace('\n','').split(',')
-    SOARTECH_TRAIN_VOL_SCENARIOS = config['DEFAULT']['SOARTECH_TRAIN_VOL_SCENARIOS'].replace('\n','').split(',')
-    SOARTECH_QOL_ALIGNMENT_TARGETS = config['DEFAULT']['SOARTECH_QOL_ALIGNMENT_TARGETS'].replace('\n','').split(',')
-    SOARTECH_VOL_ALIGNMENT_TARGETS = config['DEFAULT']['SOARTECH_VOL_ALIGNMENT_TARGETS'].replace('\n','').split(',')
-    ADEPT_EVAL_FILENAMES = config['DEFAULT']['ADEPT_EVAL_FILENAMES'].replace('\n','').split(',')
-    ADEPT_TRAIN_FILENAMES = config['DEFAULT']['ADEPT_TRAIN_FILENAMES'].replace('\n','').split(',')
-    ADEPT_EVAL_MJ_SCENARIOS = config['DEFAULT']['ADEPT_EVAL_MJ_SCENARIOS'].replace('\n','').split(',')
-    ADEPT_EVAL_IO_SCENARIOS = config['DEFAULT']['ADEPT_EVAL_IO_SCENARIOS'].replace('\n','').split(',')
-    ADEPT_TRAIN_MJ_SCENARIOS = config['DEFAULT']['ADEPT_TRAIN_MJ_SCENARIOS'].replace('\n','').split(',')
-    ADEPT_TRAIN_IO_SCENARIOS = config['DEFAULT']['ADEPT_TRAIN_IO_SCENARIOS'].replace('\n','').split(',')
-    ADEPT_MJ_ALIGNMENT_TARGETS = config['DEFAULT']['ADEPT_MJ_ALIGNMENT_TARGETS'].replace('\n','').split(',')
-    ADEPT_IO_ALIGNMENT_TARGETS = config['DEFAULT']['ADEPT_IO_ALIGNMENT_TARGETS'].replace('\n','').split(',')
+    EVALUATION_TYPE = config[config_group]['EVALUATION_TYPE']
+    EVALUATION_NAME = config[config_group]['EVAL_NAME']
+    EVALUATION_NUMBER = config[config_group]['EVAL_NUMBER']
+    SCENARIO_DIRECTORY = config[config_group]['SCENARIO_DIRECTORY']
+    SOARTECH_EVAL_FILENAMES = config[config_group]['SOARTECH_EVAL_FILENAMES'].replace('\n','').split(',')
+    SOARTECH_TRAIN_FILENAMES = config[config_group]['SOARTECH_TRAIN_FILENAMES'].replace('\n','').split(',')
+    SOARTECH_EVAL_QOL_SCENARIOS = config[config_group]['SOARTECH_EVAL_QOL_SCENARIOS'].replace('\n','').split(',')
+    SOARTECH_EVAL_VOL_SCENARIOS = config[config_group]['SOARTECH_EVAL_VOL_SCENARIOS'].replace('\n','').split(',')
+    SOARTECH_TRAIN_QOL_SCENARIOS = config[config_group]['SOARTECH_TRAIN_QOL_SCENARIOS'].replace('\n','').split(',')
+    SOARTECH_TRAIN_VOL_SCENARIOS = config[config_group]['SOARTECH_TRAIN_VOL_SCENARIOS'].replace('\n','').split(',')
+    SOARTECH_QOL_ALIGNMENT_TARGETS = config[config_group]['SOARTECH_QOL_ALIGNMENT_TARGETS'].replace('\n','').split(',')
+    SOARTECH_VOL_ALIGNMENT_TARGETS = config[config_group]['SOARTECH_VOL_ALIGNMENT_TARGETS'].replace('\n','').split(',')
+    ADEPT_EVAL_FILENAMES = config[config_group]['ADEPT_EVAL_FILENAMES'].replace('\n','').split(',')
+    ADEPT_TRAIN_FILENAMES = config[config_group]['ADEPT_TRAIN_FILENAMES'].replace('\n','').split(',')
+    ADEPT_EVAL_MJ_SCENARIOS = config[config_group]['ADEPT_EVAL_MJ_SCENARIOS'].replace('\n','').split(',')
+    ADEPT_EVAL_IO_SCENARIOS = config[config_group]['ADEPT_EVAL_IO_SCENARIOS'].replace('\n','').split(',')
+    ADEPT_TRAIN_MJ_SCENARIOS = config[config_group]['ADEPT_TRAIN_MJ_SCENARIOS'].replace('\n','').split(',')
+    ADEPT_TRAIN_IO_SCENARIOS = config[config_group]['ADEPT_TRAIN_IO_SCENARIOS'].replace('\n','').split(',')
+    ADEPT_MJ_ALIGNMENT_TARGETS = config[config_group]['ADEPT_MJ_ALIGNMENT_TARGETS'].replace('\n','').split(',')
+    ADEPT_IO_ALIGNMENT_TARGETS = config[config_group]['ADEPT_IO_ALIGNMENT_TARGETS'].replace('\n','').split(',')
 
     local_alignment_targets = {} # alignment_targets baked into server, for use when not connecting to TA1
     alignment_data = {} # maps ta1_name to list alignment_targets, used whether connecting to TA1 or not
