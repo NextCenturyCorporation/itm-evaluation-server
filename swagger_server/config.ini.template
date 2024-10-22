@@ -15,7 +15,7 @@ SCENARIO_DIRECTORY=swagger_server/itm/data/%(EVALUATION_TYPE)s/scenarios/
 ; SOARTECH_URL=https://darpaitm.caci.com/soartech
 
 ; Prod Default URLs (use on production AWS only)
-SOARTECH_URL=http://10.216.38.125:8084
+SOARTECH_URL=http://10.216.38.25:8084
 ADEPT_URL=http://10.216.38.101:8080
 
 SAVE_HISTORY=True
