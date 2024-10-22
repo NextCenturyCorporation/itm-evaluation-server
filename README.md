@@ -64,15 +64,13 @@ Please note:
 3. Use `eval` for evaluation scenarios and `train` for training scenarios; and
 4. The `id` should be derived from the scenario ID in the YAML file, although it isn't required, e.g., `qol`, `MJ2`, `urban`, etc.
 
-## Usage
-To run the server, please execute the following from the root directory:
 
+## Installation and Usage
+To install the server, run:
 ```
 pip3 install -r requirements.txt
-python -m swagger_server
 ```
 
-### Installation and Usage
 To run the server, please execute from the root directory with the following usage:
 ```
 usage: python -m swagger_server [-h] [-c CONFIG_GROUP] [-p PORT]
