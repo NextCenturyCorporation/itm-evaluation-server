@@ -38,9 +38,9 @@ The following properties can be configured:
 - `SCENARIO_DIRECTORY`
     - default is `swagger_server/itm/data/%(EVALUATION_TYPE)s/scenarios/`
 - `SOARTECH_URL`
-    - default is `http://10.216.38.125:8084`
+    - default is `http://10.216.38.25:8084`
 - `ADEPT_URL`
-    - default is `http://10.216.38.70:8080`
+    - default is `http://10.216.38.101:8080`
 - `SAVE_HISTORY`
     - default is `True`
 - `HISTORY_DIRECTORY`
@@ -49,6 +49,7 @@ The following properties can be configured:
     - default is `True`
 - `HISTORY_S3_BUCKET`
     - default is `itm-ui-assets`
+- A variety of ADEPT and SoarTech properties for filenames, scenario IDs, and alignment target IDs
 
 *NOTE:* the trailing **`s`** in `.../data/%(EVALUATION_TYPE)s/...` is needed for string interpolation to work properly.
 
@@ -71,9 +72,10 @@ pip3 install -r requirements.txt
 python -m swagger_server
 ```
 
-### Optional Usage
+### Installation and Usage
+To run the server, please execute from the root directory with the following usage:
 ```
-usage: python -m swagger_server [-h] -c CONFIG_GROUP -p PORT
+usage: python -m swagger_server [-h] [-c CONFIG_GROUP] [-p PORT]
 
 Specify Config Group, will default to the DEFAULT group
 

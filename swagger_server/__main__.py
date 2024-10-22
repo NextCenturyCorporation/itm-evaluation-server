@@ -41,7 +41,7 @@ if __name__ == '__main__':
         print("The Config Group `" + args.config_group + "` does not exist in config.ini.")
         sys.exit()
 
-    print("Swagger Server launching with the `" + args.config_group + "` group (from config.ini)")
+    print("Swagger server launching with the `" + args.config_group + "` group (from config.ini)")
 
 
     main(args)
