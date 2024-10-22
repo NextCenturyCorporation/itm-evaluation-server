@@ -72,6 +72,7 @@ python -m swagger_server
 ```
 
 ### Optional Usage
+```
 usage: python -m swagger_server [-h] -c CONFIG_GROUP -p PORT
 
 Specify Config Group, will default to the DEFAULT group
@@ -79,9 +80,9 @@ Specify Config Group, will default to the DEFAULT group
 options:
   -h, --help            show this help message and exit
   -c CONFIG_GROUP, --config_group CONFIG_GROUP
-                        Specify the configuration group in config.ini used to launch the swagger server (default = DEFAULT)
-  -p PORT, --port PORT  Specify the port the Swagger Server will listen on (default = 8080)
-
+                        Specify the configuration group in config.ini used to launch the Swagger server (default = DEFAULT)
+  -p PORT, --port PORT  Specify the port the Swagger server will listen on (default = 8080)
+```
 
 You can browse the API at:
 
