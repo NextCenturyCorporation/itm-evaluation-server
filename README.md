@@ -38,9 +38,9 @@ The following properties can be configured:
 - `SCENARIO_DIRECTORY`
     - default is `swagger_server/itm/data/%(EVALUATION_TYPE)s/scenarios/`
 - `SOARTECH_URL`
-    - default is `http://10.216.38.125:8084`
+    - default is `http://10.216.38.25:8084`
 - `ADEPT_URL`
-    - default is `http://10.216.38.70:8080`
+    - default is `http://10.216.38.101:8080`
 - `SAVE_HISTORY`
     - default is `True`
 - `HISTORY_DIRECTORY`
@@ -49,6 +49,7 @@ The following properties can be configured:
     - default is `True`
 - `HISTORY_S3_BUCKET`
     - default is `itm-ui-assets`
+- A variety of ADEPT and SoarTech properties for filenames, scenario IDs, and alignment target IDs
 
 *NOTE:* the trailing **`s`** in `.../data/%(EVALUATION_TYPE)s/...` is needed for string interpolation to work properly.
 
@@ -63,12 +64,24 @@ Please note:
 3. Use `eval` for evaluation scenarios and `train` for training scenarios; and
 4. The `id` should be derived from the scenario ID in the YAML file, although it isn't required, e.g., `qol`, `MJ2`, `urban`, etc.
 
-## Usage
-To run the server, please execute the following from the root directory:
 
+## Installation and Usage
+To install the server, run:
 ```
 pip3 install -r requirements.txt
-python -m swagger_server
+```
+
+To run the server, please execute from the root directory with the following usage:
+```
+usage: python -m swagger_server [-h] [-c CONFIG_GROUP] [-p PORT]
+
+Specify Config Group, will default to the DEFAULT group
+
+options:
+  -h, --help            show this help message and exit
+  -c CONFIG_GROUP, --config_group CONFIG_GROUP
+                        Specify the configuration group in config.ini used to launch the Swagger server (default = DEFAULT)
+  -p PORT, --port PORT  Specify the port the Swagger server will listen on (default = 8080)
 ```
 
 You can browse the API at:
