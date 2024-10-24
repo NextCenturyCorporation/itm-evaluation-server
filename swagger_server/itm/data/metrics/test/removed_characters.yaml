@@ -139,14 +139,6 @@ scenes:
         character_id: Mike
         probe_id: test-probe-1
         choice: test-choice2
-      - action_id: action3
-        action_type: APPLY_TREATMENT
-        unstructured: Treat Mike's injury
-        character_id: Mike
-        # Here, the probe response is only sent if the specified treatment is made to the specified location
-        parameters: { "treatment": "Tourniquet", "location": "right forearm" }
-        probe_id: test-probe-1
-        choice: test-choice3
       - action_id: action4
         action_type: SITREP
         unstructured: Ask Civilian to provide SITREP

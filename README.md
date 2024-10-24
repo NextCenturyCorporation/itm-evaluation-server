@@ -119,18 +119,19 @@ To run with TA1 on multiple systems set docker env vars for ADM host, Soartech H
 ```bash
 docker run -d -p 8080:8080 --name itm-server itm-server
 ```
-** Note, If setting TA3_PORT to anything other then the default requires the docker run command to expose those ports. 
-Can write the above command as $TA3_PORT:$TA3_PORT however, this will not work if it is not set and won't default.
+** Note, If setting `TA3_PORT` to anything other then the default requires the docker run command to expose those ports. 
+Can write the above command as `$TA3_PORT:$TA3_PORT` however, this will not work if it is not set and won't default.
 
 ## Manual runs on separate instances
 If running the command instead of docker set the environment variables for:
-- TA3_PORT (default:8080)
+- `TA3_PORT` (default:8080)
 
 ## Updating models
 This requires JDK 8 or higher to run the gradle tool.
 
-The models in swagger_server/models are generated from the following files
-    swagger_server/swagger/swagger.yaml
-    swagger_server/swagger/ta1.yaml
+The models in swagger_server/models are generated from the following files:
+* `swagger_server/swagger/swagger.yaml`
+* `swagger_server/swagger/ta1.yaml`
+
 If these files are updated they will need to be re-generated and checked in.
 Run `./gradlew` to do this.

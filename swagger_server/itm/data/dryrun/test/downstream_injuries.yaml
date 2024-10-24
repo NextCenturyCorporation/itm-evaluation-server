@@ -1,0 +1,314 @@
+id: downstream_injuries
+name: Automatic treatment of downstream injuries
+# Test description: Tourniquet treatments on an upper arm/leg also treat downstream injuries that require a tourniquet.
+state:
+  unstructured: Testing downstream injuries.  Certain successful tourniquet treatments also treat downstream injuries.
+  mission:
+    unstructured: No mission parameters
+    mission_type: Patrol
+
+  environment:
+    sim_environment:
+      type: jungle
+    decision_environment:
+      unstructured: >
+        Testing downstream injuries.  Treating the left upstream injuries (bicep/thigh) should treat the downstream injuries
+        (forearm/wrist/calf).  Treating the right upstream injuries should NOT treat the downstream injuries.
+  supplies:
+    - { type: Tourniquet, quantity: 50 }
+  characters:
+    - id: Mike
+      name: Mike
+      unstructured: Patient with multiple injuries that require a tourniquet.
+      demographics:
+        age: 34
+        sex: M
+        race: White
+      vitals:
+        avpu: ALERT
+        ambulatory: true
+        mental_status: CALM
+        breathing: NORMAL
+        heart_rate: NORMAL
+        spo2: NORMAL
+      injuries:
+        - name: Puncture # Treating this should treat left forearm
+          location: left bicep
+          status: visible
+        - name: Puncture
+          location: left forearm
+          status: visible
+        - name: Puncture  # Treating this should NOT treat left forearm
+          location: right bicep
+          status: visible
+        - name: Puncture # Treating this should treat left calf
+          location: left thigh
+          status: visible
+        - name: Puncture
+          location: left calf
+          status: visible
+        - name: Puncture # Treating this should NOT treat left calf
+          location: right thigh
+          status: visible
+scenes:
+  - id: fix_mike
+    next_scene: fix_travis
+    end_scene_allowed: false
+    restricted_actions:
+      - TAG_CHARACTER
+      - CHECK_RESPIRATION
+      - CHECK_PULSE
+      - CHECK_ALL_VITALS
+      - DIRECT_MOBILE_CHARACTERS
+      - SITREP
+      - CHECK_BLOOD_OXYGEN
+    action_mapping:
+      - action_id: treat-mike-left-bicep
+        action_type: APPLY_TREATMENT
+        unstructured: Treat Mike's left bicep (puncture) injury
+        character_id: Mike
+        parameters: { "treatment": "Tourniquet", "location": "left bicep" }
+        probe_id: test-1
+        choice: test-mike-left-bicep
+      - action_id: treat-mike-right-bicep
+        action_type: APPLY_TREATMENT
+        unstructured: Treat Mike's right bicep (puncture) injury
+        character_id: Mike
+        parameters: { "treatment": "Tourniquet", "location": "right bicep" }
+        probe_id: test-1
+        choice: test-mike-right-bicep
+      - action_id: treat-mike-left-thigh
+        action_type: APPLY_TREATMENT
+        unstructured: Treat Mike's left thigh (puncture) injury
+        character_id: Mike
+        parameters: { "treatment": "Tourniquet", "location": "left thigh" }
+        probe_id: test-1
+        choice: test-mike-left-thigh
+      - action_id: treat-mike-right-thigh
+        action_type: APPLY_TREATMENT
+        unstructured: Treat Mike's right thigh (puncture) injury
+        character_id: Mike
+        parameters: { "treatment": "Tourniquet", "location": "right thigh" }
+        probe_id: test-1
+        choice: test-mike-right-thigh
+    transitions:
+      actions:
+        - [treat-mike-left-bicep, treat-mike-left-thigh] # actions within a list have "and" semantics
+
+  - id: fix_travis
+    next_scene: fix_andrew
+    end_scene_allowed: false
+    state:
+      unstructured: Testing multiple injuries at one location.
+      characters:
+      - id: Travis
+        name: Travis
+        unstructured: Patient with multiple injuries that require a tourniquet.
+        demographics:
+          age: 34
+          sex: M
+          race: White
+        vitals:
+          avpu: ALERT
+          ambulatory: true
+          mental_status: CALM
+          breathing: NORMAL
+          heart_rate: NORMAL
+          spo2: NORMAL
+        injuries:
+          - name: Puncture # Treating this should treat left wrist
+            location: left bicep
+            status: visible
+          - name: Amputation
+            location: left wrist
+            status: visible
+          - name: Puncture  # Treating this should NOT treat left wrist
+            location: right bicep
+            status: visible
+          - name: Puncture # Treating this should treat left calf
+            location: left thigh
+            status: visible
+          - name: Amputation
+            location: left calf
+            status: visible
+          - name: Puncture # Treating this should NOT treat left calf
+            location: right thigh
+            status: visible
+    restricted_actions:
+      - TAG_CHARACTER
+      - CHECK_RESPIRATION
+      - CHECK_PULSE
+      - CHECK_ALL_VITALS
+      - DIRECT_MOBILE_CHARACTERS
+      - SITREP
+      - CHECK_BLOOD_OXYGEN
+    action_mapping:
+      - action_id: treat-travis-left-bicep
+        action_type: APPLY_TREATMENT
+        unstructured: Treat Travis's left bicep (puncture) injury
+        character_id: Travis
+        parameters: { "treatment": "Tourniquet", "location": "left bicep" }
+        probe_id: test-1
+        choice: test-travis-left-bicep
+      - action_id: treat-travis-right-bicep
+        action_type: APPLY_TREATMENT
+        unstructured: Treat Travis's right bicep (puncture) injury
+        character_id: Travis
+        parameters: { "treatment": "Tourniquet", "location": "right bicep" }
+        probe_id: test-1
+        choice: test-travis-right-bicep
+      - action_id: treat-travis-left-thigh
+        action_type: APPLY_TREATMENT
+        unstructured: Treat Travis's left thigh (puncture) injury
+        character_id: Travis
+        parameters: { "treatment": "Tourniquet", "location": "left thigh" }
+        probe_id: test-1
+        choice: test-travis-left-thigh
+      - action_id: treat-travis-right-thigh
+        action_type: APPLY_TREATMENT
+        unstructured: Treat Travis's right thigh (puncture) injury
+        character_id: Travis
+        parameters: { "treatment": "Tourniquet", "location": "right thigh" }
+        probe_id: test-1
+        choice: test-travis-right-thigh
+    transitions:
+      actions:
+        - [treat-travis-left-bicep, treat-travis-left-thigh] # actions within a list have "and" semantics
+
+  - id: fix_andrew
+    next_scene: fix_adam
+    end_scene_allowed: false
+    state:
+      unstructured: Testing multiple injuries at one location.
+      characters:
+      - id: Andrew
+        name: Andrew
+        unstructured: Patient with multiple injuries that require a tourniquet.
+        demographics:
+          age: 34
+          sex: M
+          race: White
+        vitals:
+          avpu: ALERT
+          ambulatory: true
+          mental_status: CALM
+          breathing: NORMAL
+          heart_rate: NORMAL
+          spo2: NORMAL
+        injuries:
+          - name: Puncture # Treating this should treat left wrist
+            location: left forearm
+            status: visible
+          - name: Amputation
+            location: left wrist
+            status: visible
+          - name: Puncture  # Treating this should NOT treat left wrist
+            location: right forearm
+            status: visible
+          - name: Laceration # Treating this should treat left calf
+            location: left thigh
+            status: visible
+          - name: Puncture
+            location: left calf
+            status: visible
+          - name: Laceration # Treating this should NOT treat left calf
+            location: right thigh
+            status: visible
+    restricted_actions:
+      - TAG_CHARACTER
+      - CHECK_RESPIRATION
+      - CHECK_PULSE
+      - CHECK_ALL_VITALS
+      - DIRECT_MOBILE_CHARACTERS
+      - SITREP
+      - CHECK_BLOOD_OXYGEN
+    action_mapping:
+      - action_id: treat-andrew-left-forearm
+        action_type: APPLY_TREATMENT
+        unstructured: Treat Andrew's left forearm (puncture) injury
+        character_id: Andrew
+        parameters: { "treatment": "Tourniquet", "location": "left forearm" }
+        probe_id: test-1
+        choice: test-andrew-left-forearm
+      - action_id: treat-andrew-right-forearm
+        action_type: APPLY_TREATMENT
+        unstructured: Treat Andrew's right forearm (puncture) injury
+        character_id: Andrew
+        parameters: { "treatment": "Tourniquet", "location": "right forearm" }
+        probe_id: test-1
+        choice: test-andrew-right-forearm
+      - action_id: treat-andrew-left-thigh
+        action_type: APPLY_TREATMENT
+        unstructured: Treat Andrew's left thigh (laceration) injury
+        character_id: Andrew
+        parameters: { "treatment": "Tourniquet", "location": "left thigh" }
+        probe_id: test-1
+        choice: test-andrew-left-thigh
+      - action_id: treat-andrew-right-thigh
+        action_type: APPLY_TREATMENT
+        unstructured: Treat Andrew's right thigh (laceration) injury
+        character_id: Andrew
+        parameters: { "treatment": "Tourniquet", "location": "right thigh" }
+        probe_id: test-1
+        choice: test-andrew-right-thigh
+    transitions:
+      actions:
+        - [treat-andrew-left-forearm, treat-andrew-left-thigh] # actions within a list have "and" semantics
+
+  - id: fix_adam
+    end_scene_allowed: false
+    state:
+      unstructured: Testing multiple injuries at one location.
+      characters:
+      - id: Adam
+        name: Adam
+        unstructured: >
+          Patient with multiple injuries that require a tourniquet,
+          plus injuries where unsuccessful hemostatic gauze treatments will consume the supply.
+        demographics:
+          age: 34
+          sex: M
+          race: White
+        vitals:
+          avpu: ALERT
+          ambulatory: true
+          mental_status: CALM
+          breathing: NORMAL
+          heart_rate: NORMAL
+          spo2: NORMAL
+        injuries:
+          - name: Laceration # Treating this should treat left calf
+            location: left thigh
+            status: visible
+          - name: Amputation
+            location: left calf
+            status: visible
+          - name: Laceration # Treating this should NOT treat left calf
+            location: right thigh
+            status: visible
+    restricted_actions:
+      - TAG_CHARACTER
+      - CHECK_RESPIRATION
+      - CHECK_PULSE
+      - CHECK_ALL_VITALS
+      - DIRECT_MOBILE_CHARACTERS
+      - SITREP
+      - CHECK_BLOOD_OXYGEN
+    action_mapping:
+      - action_id: treat-adam-left-thigh
+        action_type: APPLY_TREATMENT
+        unstructured: Treat Adam's left thigh (laceration) injury
+        character_id: Adam
+        parameters: { "treatment": "Tourniquet", "location": "left thigh" }
+        probe_id: test-1
+        choice: test-adam-left-thigh
+      - action_id: treat-adam-right-thigh
+        action_type: APPLY_TREATMENT
+        unstructured: Treat Adam's right thigh (laceration) injury
+        character_id: Adam
+        parameters: { "treatment": "Tourniquet", "location": "right thigh" }
+        probe_id: test-1
+        choice: test-adam-right-thigh
+    transitions:
+      actions:
+        - [treat-adam-left-thigh, treat-adam-right-thigh] # actions within a list have "and" semantics
