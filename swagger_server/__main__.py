@@ -20,6 +20,7 @@ def main(args):
     itm_kwargs = {'title': 'ITM TA3 API'}
 
     builtins.config_group = args.config_group
+    builtins.testing = args.testing
 
     app = connexion.App(__name__, specification_dir='../swagger/')
     app.app.json_encoder = encoder.JSONEncoder
@@ -32,6 +33,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Specify Config Group, will default to the DEFAULT group', usage='python -m swagger_server [-h] -c CONFIG_GROUP -p PORT')
     parser.add_argument('-c', '--config_group', dest='config_group', type=str, default="DEFAULT",  help='Specify the configuration group in config.ini used to launch the Swagger server (default = DEFAULT)')
     parser.add_argument('-p', '--port', dest='port', type=int, default=None,  help='Specify the port the Swagger server will listen on (default = 8080)')
+    parser.add_argument('-t', '--testing', action='store_true', default=False,
+                        help='Put the server in test mode which will run standalone and not connect to TA1.')
     args = parser.parse_args()
 
     #Checking for config_group in config.ini
