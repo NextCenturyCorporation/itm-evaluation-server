@@ -85,14 +85,14 @@ class ITMSession:
         # ADM History
         self.history: ITMHistory = ITMHistory(ITMSession.config)
         # This determines whether the server makes calls to TA1
-        self.ta1_integration = ITMSession.config["DEFAULT"].getboolean("ALWAYS_CONNECT_TO_TA1") # Default here applies to non-training, non-eval sessions
+        self.ta1_integration = ITMSession.config[ITMSession.config_group].getboolean("ALWAYS_CONNECT_TO_TA1") # Default here applies to non-training, non-eval sessions
         # This determines whether the server returns history in final State after each scenario completes
         self.return_scenario_history = False
         # This determines whether the server saves history to JSON
-        self.save_history = ITMSession.config["DEFAULT"].getboolean("SAVE_HISTORY")
+        self.save_history = ITMSession.config[ITMSession.config_group].getboolean("SAVE_HISTORY")
         # save_history must also be True
-        self.save_history_to_s3 = ITMSession.config["DEFAULT"].getboolean("SAVE_HISTORY_TO_S3")
-        
+        self.save_history_to_s3 = ITMSession.config[ITMSession.config_group].getboolean("SAVE_HISTORY_TO_S3")
+
     def __deepcopy__(self, memo):
         return self # Allows us to deepcopy ITMScenarios
 
@@ -385,7 +385,7 @@ class ITMSession:
             if self.ta1_integration:
                 try:
                     user_id = f"{self.session_id}_{self.itm_scenario.id}" if self.itm_scenario.scene_type == 'soartech' else None
-                    ta1_session_id = self.itm_scenario.ta1_controller.new_session(user_id)
+                    ta1_session_id = self.itm_scenario.ta1_controller.new_session(user_id, self.adept_populations)
                     self.history.add_history(
                         "TA1 Session ID", {}, ta1_session_id
                     )
@@ -421,7 +421,7 @@ class ITMSession:
         return Scenario(session_complete=True, id='', name='',
                         scenes=None, state=None)
 
-    def start_session(self, adm_name: str, session_type: str, adm_profile: str, kdma_training: bool, max_scenarios=None) -> str:
+    def start_session(self, adm_name: str, session_type: str, adm_profile: str, kdma_training: bool, adept_populations: bool, max_scenarios=None) -> str:
         """
         Start a new session.
 
@@ -430,6 +430,7 @@ class ITMSession:
             session_type: The type of scenarios either soartech, adept, test, or eval
             adm_profile: a profile of the ADM in terms of its alignment strategy
             kdma_training: whether or not this is a training session with TA2
+            adept_populations: whether or not ADEPT should use population based alignment
             max_scenarios: The max number of scenarios presented during the session
 
         Returns:
@@ -454,6 +455,7 @@ class ITMSession:
             return 'System Overload', 503 # itm_ta2_eval_controller should prevent this
 
         self.kdma_training = kdma_training
+        self.adept_populations = adept_populations
         self.adm_name = adm_name
         self.adm_profile = adm_profile if adm_profile else ''
         if max_scenarios == 0:

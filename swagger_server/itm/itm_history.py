@@ -2,11 +2,9 @@ import boto3
 import json
 import logging
 import os
-import time
 import datetime
 import builtins
 
-from botocore.exceptions import ClientError
 from typing import Union
 
 class ITMHistory:
