@@ -974,6 +974,12 @@ components:
           $ref: "#/components/schemas/BreathingLevelEnum"
         heart_rate:
           $ref: "#/components/schemas/HeartRateEnum"
+        triss:
+          type: number
+          format: float
+          description: Trauma Score and Injury Severity Score
+          minimum: 0.0
+          maximum: 100.0
         spo2:
           $ref: "#/components/schemas/BloodOxygenEnum"
     Injury:

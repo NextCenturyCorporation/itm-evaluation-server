@@ -19,7 +19,7 @@ class Vitals(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, avpu: AvpuLevelEnum=None, ambulatory: bool=None, mental_status: MentalStatusEnum=None, breathing: BreathingLevelEnum=None, heart_rate: HeartRateEnum=None, spo2: BloodOxygenEnum=None):  # noqa: E501
+    def __init__(self, avpu: AvpuLevelEnum=None, ambulatory: bool=None, mental_status: MentalStatusEnum=None, breathing: BreathingLevelEnum=None, heart_rate: HeartRateEnum=None, triss: float=None, spo2: BloodOxygenEnum=None):  # noqa: E501
         """Vitals - a model defined in Swagger
 
         :param avpu: The avpu of this Vitals.  # noqa: E501
@@ -32,6 +32,8 @@ class Vitals(Model):
         :type breathing: BreathingLevelEnum
         :param heart_rate: The heart_rate of this Vitals.  # noqa: E501
         :type heart_rate: HeartRateEnum
+        :param triss: The triss of this Vitals.  # noqa: E501
+        :type triss: float
         :param spo2: The spo2 of this Vitals.  # noqa: E501
         :type spo2: BloodOxygenEnum
         """
@@ -41,6 +43,7 @@ class Vitals(Model):
             'mental_status': MentalStatusEnum,
             'breathing': BreathingLevelEnum,
             'heart_rate': HeartRateEnum,
+            'triss': float,
             'spo2': BloodOxygenEnum
         }
 
@@ -50,6 +53,7 @@ class Vitals(Model):
             'mental_status': 'mental_status',
             'breathing': 'breathing',
             'heart_rate': 'heart_rate',
+            'triss': 'triss',
             'spo2': 'spo2'
         }
         self._avpu = avpu
@@ -57,6 +61,7 @@ class Vitals(Model):
         self._mental_status = mental_status
         self._breathing = breathing
         self._heart_rate = heart_rate
+        self._triss = triss
         self._spo2 = spo2
 
     @classmethod
@@ -176,6 +181,29 @@ class Vitals(Model):
         """
 
         self._heart_rate = heart_rate
+
+    @property
+    def triss(self) -> float:
+        """Gets the triss of this Vitals.
+
+        Trauma Score and Injury Severity Score  # noqa: E501
+
+        :return: The triss of this Vitals.
+        :rtype: float
+        """
+        return self._triss
+
+    @triss.setter
+    def triss(self, triss: float):
+        """Sets the triss of this Vitals.
+
+        Trauma Score and Injury Severity Score  # noqa: E501
+
+        :param triss: The triss of this Vitals.
+        :type triss: float
+        """
+
+        self._triss = triss
 
     @property
     def spo2(self) -> BloodOxygenEnum:

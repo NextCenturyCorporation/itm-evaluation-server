@@ -253,6 +253,7 @@ class ITMActionHandler:
         patient.vitals.avpu = patient_template.vitals.avpu
         patient.vitals.breathing = patient_template.vitals.breathing
         patient.vitals.mental_status = patient_template.vitals.mental_status
+        patient.vitals.triss = patient_template.vitals.triss
         self._reveal_injuries(patient_template, patient)
         patient.visited = True
 
