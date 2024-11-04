@@ -32,9 +32,11 @@ EVAL_NUMBER=5
 SOARTECH_EVAL_FILENAMES=phase1-soartech-eval-qol1.yaml,
     phase1-soartech-eval-qol2.yaml,
     phase1-soartech-eval-qol3.yaml,
+    phase1-soartech-eval-qol4.yaml,
     phase1-soartech-eval-vol1.yaml,
     phase1-soartech-eval-vol2.yaml,
-    phase1-soartech-eval-vol3.yaml
+    phase1-soartech-eval-vol3.yaml,
+    phase1-soartech-eval-vol4.yaml
 
 SOARTECH_TRAIN_FILENAMES=phase1-soartech-train-qol1.yaml,
     phase1-soartech-train-qol2.yaml,
@@ -43,8 +45,8 @@ SOARTECH_TRAIN_FILENAMES=phase1-soartech-train-qol1.yaml,
     phase1-soartech-train-vol2.yaml,
     phase1-soartech-train-vol3.yaml
 
-SOARTECH_EVAL_QOL_SCENARIOS=qol-ph1-eval-1,qol-ph1-eval-2,qol-ph1-eval-3
-SOARTECH_EVAL_VOL_SCENARIOS=vol-ph1-eval-1,vol-ph1-eval-2,vol-ph1-eval-3
+SOARTECH_EVAL_QOL_SCENARIOS=qol-ph1-eval-1,qol-ph1-eval-2,qol-ph1-eval-3,qol-ph1-eval-4
+SOARTECH_EVAL_VOL_SCENARIOS=vol-ph1-eval-1,vol-ph1-eval-2,vol-ph1-eval-3,vol-ph1-eval-4
 
 SOARTECH_TRAIN_QOL_SCENARIOS=qol-ph1-train-1,qol-ph1-train-2,qol-ph1-train-3
 SOARTECH_TRAIN_VOL_SCENARIOS=vol-ph1-train-1,vol-ph1-train-2,vol-ph1-train-3
@@ -143,9 +145,11 @@ EVAL_NUMBER=5
 SOARTECH_EVAL_FILENAMES=phase1-soartech-eval-qol1.yaml,
     phase1-soartech-eval-qol2.yaml,
     phase1-soartech-eval-qol3.yaml,
+    phase1-soartech-eval-qol4.yaml,
     phase1-soartech-eval-vol1.yaml,
     phase1-soartech-eval-vol2.yaml,
-    phase1-soartech-eval-vol3.yaml
+    phase1-soartech-eval-vol3.yaml,
+    phase1-soartech-eval-vol4.yaml
 
 SOARTECH_TRAIN_FILENAMES=phase1-soartech-train-qol1.yaml,
     phase1-soartech-train-qol2.yaml,
@@ -154,8 +158,8 @@ SOARTECH_TRAIN_FILENAMES=phase1-soartech-train-qol1.yaml,
     phase1-soartech-train-vol2.yaml,
     phase1-soartech-train-vol3.yaml
 
-SOARTECH_EVAL_QOL_SCENARIOS=qol-ph1-eval-1,qol-ph1-eval-2,qol-ph1-eval-3
-SOARTECH_EVAL_VOL_SCENARIOS=vol-ph1-eval-1,vol-ph1-eval-2,vol-ph1-eval-3
+SOARTECH_EVAL_QOL_SCENARIOS=qol-ph1-eval-1,qol-ph1-eval-2,qol-ph1-eval-3,qol-ph1-eval-4
+SOARTECH_EVAL_VOL_SCENARIOS=vol-ph1-eval-1,vol-ph1-eval-2,vol-ph1-eval-3,vol-ph1-eval-4
 
 SOARTECH_TRAIN_QOL_SCENARIOS=qol-ph1-train-1,qol-ph1-train-2,qol-ph1-train-3
 SOARTECH_TRAIN_VOL_SCENARIOS=vol-ph1-train-1,vol-ph1-train-2,vol-ph1-train-3
