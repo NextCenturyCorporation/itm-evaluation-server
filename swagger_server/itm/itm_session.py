@@ -85,14 +85,14 @@ class ITMSession:
         # ADM History
         self.history: ITMHistory = ITMHistory(ITMSession.config)
         # This determines whether the server makes calls to TA1
-        self.ta1_integration = ITMSession.config["DEFAULT"].getboolean("ALWAYS_CONNECT_TO_TA1") # Default here applies to non-training, non-eval sessions
+        self.ta1_integration = ITMSession.config[ITMSession.config_group].getboolean("ALWAYS_CONNECT_TO_TA1") # Default here applies to non-training, non-eval sessions
         # This determines whether the server returns history in final State after each scenario completes
         self.return_scenario_history = False
         # This determines whether the server saves history to JSON
-        self.save_history = ITMSession.config["DEFAULT"].getboolean("SAVE_HISTORY")
+        self.save_history = ITMSession.config[ITMSession.config_group].getboolean("SAVE_HISTORY")
         # save_history must also be True
-        self.save_history_to_s3 = ITMSession.config["DEFAULT"].getboolean("SAVE_HISTORY_TO_S3")
-        
+        self.save_history_to_s3 = ITMSession.config[ITMSession.config_group].getboolean("SAVE_HISTORY_TO_S3")
+
     def __deepcopy__(self, memo):
         return self # Allows us to deepcopy ITMScenarios
 
@@ -103,6 +103,7 @@ class ITMSession:
         logging.info("Loaded local alignment targets from configuration.")
         try:
             logging.info("Loading TA1 configuration from TA1 servers...")
+            # Note: when running standalone (no TA1 servers), you may wish to comment out the next two lines:
             ITMSession.init_ta1_data(ta1_names)
             ITMSession.ta1_connected = True
             logging.info("Done.")
@@ -385,7 +386,7 @@ class ITMSession:
             if self.ta1_integration:
                 try:
                     user_id = f"{self.session_id}_{self.itm_scenario.id}" if self.itm_scenario.scene_type == 'soartech' else None
-                    ta1_session_id = self.itm_scenario.ta1_controller.new_session(user_id)
+                    ta1_session_id = self.itm_scenario.ta1_controller.new_session(user_id, self.adept_populations)
                     self.history.add_history(
                         "TA1 Session ID", {}, ta1_session_id
                     )
@@ -421,7 +422,7 @@ class ITMSession:
         return Scenario(session_complete=True, id='', name='',
                         scenes=None, state=None)
 
-    def start_session(self, adm_name: str, session_type: str, adm_profile: str, kdma_training: bool, max_scenarios=None) -> str:
+    def start_session(self, adm_name: str, session_type: str, adm_profile: str, kdma_training: bool, adept_populations: bool, max_scenarios=None) -> str:
         """
         Start a new session.
 
@@ -430,6 +431,7 @@ class ITMSession:
             session_type: The type of scenarios either soartech, adept, test, or eval
             adm_profile: a profile of the ADM in terms of its alignment strategy
             kdma_training: whether or not this is a training session with TA2
+            adept_populations: whether or not ADEPT should use population based alignment
             max_scenarios: The max number of scenarios presented during the session
 
         Returns:
@@ -454,6 +456,7 @@ class ITMSession:
             return 'System Overload', 503 # itm_ta2_eval_controller should prevent this
 
         self.kdma_training = kdma_training
+        self.adept_populations = adept_populations
         self.adm_name = adm_name
         self.adm_profile = adm_profile if adm_profile else ''
         if max_scenarios == 0:
@@ -505,7 +508,7 @@ class ITMSession:
                 else:
                     scenarios = ITMSession.ADEPT_TRAIN_FILENAMES if kdma_training else ITMSession.ADEPT_EVAL_FILENAMES
 
-            alignment_targets = [target for target in ITMSession.alignment_data[ta1_name]]
+            local_alignment_targets = ITMSession.local_alignment_targets[ta1_name]
             ta1_scenarios = []
             scenario_ctr = 0
             for scenario in scenarios:
@@ -516,20 +519,23 @@ class ITMSession:
 
                 if ta1_name == "test":
                     ta1_scenarios.append(deepcopy(itm_scenario))
-                    ta1_scenarios[scenario_ctr].alignment_target = alignment_targets[scenario_ctr % (len(alignment_targets))]
+                    ta1_scenarios[scenario_ctr].alignment_target = local_alignment_targets[scenario_ctr % (len(local_alignment_targets))]
                     scenario_ctr += 1
                 else:
                     controllers = ITMSession.ta1_controllers[ta1_name] if self.ta1_integration else None
 
-                    def __load_scenarios(alignment_targets, scenario_ctr):
-                        for target_id in alignment_targets:
-                            ta1_scenarios.append(deepcopy(itm_scenario))
-                            if self.ta1_integration:
-                                ta1_controller = deepcopy(next(controller for controller in controllers if controller.alignment_target_id == target_id), None)
-                                ta1_scenarios[scenario_ctr].set_controller(ta1_controller)
-                            else:
-                                ta1_scenarios[scenario_ctr].alignment_target = next(target for target in alignment_targets if target.id == target_id), None
-                            scenario_ctr += 1
+                    def __load_scenarios(alignment_target_ids, scenario_ctr):
+                        for target_id in alignment_target_ids:
+                            try:
+                                ta1_scenarios.append(deepcopy(itm_scenario))
+                                if self.ta1_integration:
+                                    ta1_controller = deepcopy(next(controller for controller in controllers if controller.alignment_target_id == target_id), None)
+                                    ta1_scenarios[scenario_ctr].set_controller(ta1_controller)
+                                else:
+                                    ta1_scenarios[scenario_ctr].alignment_target = deepcopy(next(target for target in local_alignment_targets if target.id == target_id), None)
+                                scenario_ctr += 1
+                            except StopIteration:
+                                logging.fatal(f"Couldn't find alignment target {target_id}.")
                         return scenario_ctr
 
                     if ta1_name == "soartech":
