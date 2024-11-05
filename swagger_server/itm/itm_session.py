@@ -103,6 +103,7 @@ class ITMSession:
         logging.info("Loaded local alignment targets from configuration.")
         try:
             logging.info("Loading TA1 configuration from TA1 servers...")
+            # Note: when running standalone (no TA1 servers), you may wish to comment out the next two lines:
             ITMSession.init_ta1_data(ta1_names)
             ITMSession.ta1_connected = True
             logging.info("Done.")
@@ -507,7 +508,7 @@ class ITMSession:
                 else:
                     scenarios = ITMSession.ADEPT_TRAIN_FILENAMES if kdma_training else ITMSession.ADEPT_EVAL_FILENAMES
 
-            alignment_targets = [target for target in ITMSession.alignment_data[ta1_name]]
+            local_alignment_targets = ITMSession.local_alignment_targets[ta1_name]
             ta1_scenarios = []
             scenario_ctr = 0
             for scenario in scenarios:
@@ -518,20 +519,23 @@ class ITMSession:
 
                 if ta1_name == "test":
                     ta1_scenarios.append(deepcopy(itm_scenario))
-                    ta1_scenarios[scenario_ctr].alignment_target = alignment_targets[scenario_ctr % (len(alignment_targets))]
+                    ta1_scenarios[scenario_ctr].alignment_target = local_alignment_targets[scenario_ctr % (len(local_alignment_targets))]
                     scenario_ctr += 1
                 else:
                     controllers = ITMSession.ta1_controllers[ta1_name] if self.ta1_integration else None
 
-                    def __load_scenarios(alignment_targets, scenario_ctr):
-                        for target_id in alignment_targets:
-                            ta1_scenarios.append(deepcopy(itm_scenario))
-                            if self.ta1_integration:
-                                ta1_controller = deepcopy(next(controller for controller in controllers if controller.alignment_target_id == target_id), None)
-                                ta1_scenarios[scenario_ctr].set_controller(ta1_controller)
-                            else:
-                                ta1_scenarios[scenario_ctr].alignment_target = next(target for target in alignment_targets if target.id == target_id), None
-                            scenario_ctr += 1
+                    def __load_scenarios(alignment_target_ids, scenario_ctr):
+                        for target_id in alignment_target_ids:
+                            try:
+                                ta1_scenarios.append(deepcopy(itm_scenario))
+                                if self.ta1_integration:
+                                    ta1_controller = deepcopy(next(controller for controller in controllers if controller.alignment_target_id == target_id), None)
+                                    ta1_scenarios[scenario_ctr].set_controller(ta1_controller)
+                                else:
+                                    ta1_scenarios[scenario_ctr].alignment_target = deepcopy(next(target for target in local_alignment_targets if target.id == target_id), None)
+                                scenario_ctr += 1
+                            except StopIteration:
+                                logging.fatal(f"Couldn't find alignment target {target_id}.")
                         return scenario_ctr
 
                     if ta1_name == "soartech":
