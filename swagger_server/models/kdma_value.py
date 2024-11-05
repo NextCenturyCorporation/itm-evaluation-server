@@ -15,29 +15,34 @@ class KDMAValue(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, kdma: str=None, value: float=None, kdes: Dict[str, KDEData]=None):  # noqa: E501
+    def __init__(self, kdma: str=None, value: float=None, scores: List[float]=None, kdes: Dict[str, KDEData]=None):  # noqa: E501
         """KDMAValue - a model defined in Swagger
 
         :param kdma: The kdma of this KDMAValue.  # noqa: E501
         :type kdma: str
         :param value: The value of this KDMAValue.  # noqa: E501
         :type value: float
+        :param scores: The scores of this KDMAValue.  # noqa: E501
+        :type scores: List[float]
         :param kdes: The kdes of this KDMAValue.  # noqa: E501
         :type kdes: Dict[str, KDEData]
         """
         self.swagger_types = {
             'kdma': str,
             'value': float,
+            'scores': List[float],
             'kdes': Dict[str, KDEData]
         }
 
         self.attribute_map = {
             'kdma': 'kdma',
             'value': 'value',
+            'scores': 'scores',
             'kdes': 'kdes'
         }
         self._kdma = kdma
         self._value = value
+        self._scores = scores
         self._kdes = kdes
 
     @classmethod
@@ -100,10 +105,33 @@ class KDMAValue(Model):
         self._value = value
 
     @property
+    def scores(self) -> List[float]:
+        """Gets the scores of this KDMAValue.
+
+        Ordered KDMA scores  # noqa: E501
+
+        :return: The scores of this KDMAValue.
+        :rtype: List[float]
+        """
+        return self._scores
+
+    @scores.setter
+    def scores(self, scores: List[float]):
+        """Sets the scores of this KDMAValue.
+
+        Ordered KDMA scores  # noqa: E501
+
+        :param scores: The scores of this KDMAValue.
+        :type scores: List[float]
+        """
+
+        self._scores = scores
+
+    @property
     def kdes(self) -> Dict[str, KDEData]:
         """Gets the kdes of this KDMAValue.
 
-        A character id with an indicator of how mission-critical that character is  # noqa: E501
+        KDE Objects representing a KDMA Measurement  # noqa: E501
 
         :return: The kdes of this KDMAValue.
         :rtype: Dict[str, KDEData]
@@ -114,7 +142,7 @@ class KDMAValue(Model):
     def kdes(self, kdes: Dict[str, KDEData]):
         """Sets the kdes of this KDMAValue.
 
-        A character id with an indicator of how mission-critical that character is  # noqa: E501
+        KDE Objects representing a KDMA Measurement  # noqa: E501
 
         :param kdes: The kdes of this KDMAValue.
         :type kdes: Dict[str, KDEData]

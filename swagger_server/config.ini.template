@@ -3,10 +3,10 @@
 
 [DEFAULT]
 
-EVALUATION_TYPE=dryrun
+EVALUATION_TYPE=phase1
 SCENARIO_DIRECTORY=swagger_server/itm/data/%(EVALUATION_TYPE)s/scenarios/
 
-; Local Default URLs 
+; Local Default URLs
 ; ADEPT_URL=http://localhost:8081
 ; SOARTECH_URL=http://localhost:8084
 
@@ -26,68 +26,60 @@ ALWAYS_CONNECT_TO_TA1=True
 HISTORY_DIRECTORY=itm_history_output
 HISTORY_S3_BUCKET=itm-ui-assets
 
-EVAL_NAME=Dry Run Evaluation
-EVAL_NUMBER=4
+EVAL_NAME=Phase 1 Evaluation
+EVAL_NUMBER=5
 
-SOARTECH_EVAL_FILENAMES=dryrun-soartech-eval-qol1.yaml,
-    dryrun-soartech-eval-qol2.yaml,
-    dryrun-soartech-eval-qol3.yaml,
-    dryrun-soartech-eval-vol1.yaml, 
-    dryrun-soartech-eval-vol2.yaml, 
-    dryrun-soartech-eval-vol3.yaml
+SOARTECH_EVAL_FILENAMES=phase1-soartech-eval-qol1.yaml,
+    phase1-soartech-eval-qol2.yaml,
+    phase1-soartech-eval-qol3.yaml,
+    phase1-soartech-eval-qol4.yaml,
+    phase1-soartech-eval-vol1.yaml,
+    phase1-soartech-eval-vol2.yaml,
+    phase1-soartech-eval-vol3.yaml,
+    phase1-soartech-eval-vol4.yaml
 
-SOARTECH_TRAIN_FILENAMES=dryrun-soartech-train-qol1.yaml,
-    dryrun-soartech-train-qol2.yaml,
-    dryrun-soartech-train-vol1.yaml,
-    dryrun-soartech-train-vol2.yaml
+SOARTECH_TRAIN_FILENAMES=phase1-soartech-train-qol1.yaml,
+    phase1-soartech-train-qol2.yaml,
+    phase1-soartech-train-qol3.yaml,
+    phase1-soartech-train-vol1.yaml,
+    phase1-soartech-train-vol2.yaml,
+    phase1-soartech-train-vol3.yaml
 
-SOARTECH_EVAL_QOL_SCENARIOS=qol-dre-1-eval,qol-dre-2-eval,qol-dre-3-eval
-SOARTECH_EVAL_VOL_SCENARIOS=vol-dre-1-eval,vol-dre-2-eval,vol-dre-3-eval
+SOARTECH_EVAL_QOL_SCENARIOS=qol-ph1-eval-1,qol-ph1-eval-2,qol-ph1-eval-3,qol-ph1-eval-4
+SOARTECH_EVAL_VOL_SCENARIOS=vol-ph1-eval-1,vol-ph1-eval-2,vol-ph1-eval-3,vol-ph1-eval-4
 
-SOARTECH_TRAIN_QOL_SCENARIOS=qol-dre-1-train,qol-dre-2-train
-SOARTECH_TRAIN_VOL_SCENARIOS=vol-dre-1-train,vol-dre-2-train
+SOARTECH_TRAIN_QOL_SCENARIOS=qol-ph1-train-1,qol-ph1-train-2,qol-ph1-train-3
+SOARTECH_TRAIN_VOL_SCENARIOS=vol-ph1-train-1,vol-ph1-train-2,vol-ph1-train-3
 
-SOARTECH_QOL_ALIGNMENT_TARGETS=qol-human-8022671-SplitLowMulti,
-    qol-human-1774519-SplitEvenBinary,
-    qol-human-6403274-SplitHighBinary,
-    qol-human-3043871-SplitHighBinary,
-    qol-human-2932740-HighExtreme,
-    qol-human-6349649-SplitHighMulti,
-    qol-human-9157688-SplitEvenBinary,
-    qol-human-5032922-SplitLowMulti,
-    qol-human-3447902-SplitHighMulti,
-    qol-human-0000001-SplitEvenMulti,
-    qol-human-7040555-SplitHighMulti,
-    qol-synth-LowExtreme,
-    qol-synth-HighExtreme,
-    qol-synth-HighCluster,
-    qol-synth-LowCluster,
-    qol-synth-SplitLowBinary
+SOARTECH_QOL_ALIGNMENT_TARGETS=qol-human-8022671-SplitLowMulti-ph1,
+    qol-human-6403274-SplitHighBinary-ph1,
+    qol-human-3043871-SplitHighBinary-ph1,
+    qol-human-5032922-SplitLowMulti-ph1,
+    qol-human-0000001-SplitEvenMulti-ph1,
+    qol-human-7040555-SplitHighMulti-ph1,
+    qol-synth-LowExtreme-ph1,
+    qol-synth-HighExtreme-ph1,
+    qol-synth-HighCluster-ph1,
+    qol-synth-LowCluster-ph1
 
-SOARTECH_VOL_ALIGNMENT_TARGETS=vol-human-8022671-SplitHighMulti,
-    vol-human-1774519-SplitHighMulti,
-    vol-human-6403274-SplitEvenBinary,
-    vol-human-8478698-SplitLowMulti,
-    vol-human-3043871-SplitLowMulti,
-    vol-human-2637411-SplitEvenMulti,
-    vol-human-2932740-SplitEvenMulti,
-    vol-human-5032922-SplitLowMulti,
-    vol-human-7040555-SplitEvenBinary,
-    vol-synth-LowExtreme,
-    vol-synth-HighExtreme,
-    vol-synth-HighCluster,
-    vol-synth-LowCluster,
-    vol-synth-SplitLowBinary
+SOARTECH_VOL_ALIGNMENT_TARGETS=vol-human-8022671-SplitHighMulti-ph1,
+    vol-human-1774519-SplitHighMulti-ph1,
+    vol-human-6403274-SplitEvenBinary-ph1,
+    vol-human-8478698-SplitLowMulti-ph1,
+    vol-human-5032922-SplitLowMulti-ph1,
+    vol-synth-LowExtreme-ph1,
+    vol-synth-HighCluster-ph1,
+    vol-synth-LowCluster-ph1
 
-ADEPT_EVAL_FILENAMES=dryrun-adept-eval-MJ2.yaml,
-    dryrun-adept-eval-MJ4.yaml,
-    dryrun-adept-eval-MJ5.yaml
+ADEPT_EVAL_FILENAMES=phase1-adept-eval-MJ2.yaml,
+    phase1-adept-eval-MJ4.yaml,
+    phase1-adept-eval-MJ5.yaml
 
-ADEPT_TRAIN_FILENAMES=dryrun-adept-train-MJ1.yaml,
-    dryrun-adept-train-MJ3.yaml,
-    dryrun-adept-train-IO1.yaml,
-    dryrun-adept-train-IO2.yaml,
-    dryrun-adept-train-IO3.yaml
+ADEPT_TRAIN_FILENAMES=phase1-adept-train-MJ1.yaml,
+    phase1-adept-train-MJ3.yaml,
+    phase1-adept-train-IO1.yaml,
+    phase1-adept-train-IO2.yaml,
+    phase1-adept-train-IO3.yaml
 
 ADEPT_EVAL_MJ_SCENARIOS=DryRunEval-MJ2-eval,DryRunEval-MJ4-eval,DryRunEval-MJ5-eval
 ADEPT_EVAL_IO_SCENARIOS=DryRunEval-MJ2-eval,DryRunEval-MJ4-eval,DryRunEval-MJ5-eval
@@ -119,13 +111,15 @@ ADEPT_IO_ALIGNMENT_TARGETS=ADEPT-DryRun-Ingroup Bias-0.0,
     ADEPT-DryRun-Ingroup Bias-0.9,
     ADEPT-DryRun-Ingroup Bias-1.0
 
+ADEPT_MJ_ALIGNMENT_DISTRIBUTION_TARGET=ADEPT-DryRun-Moral judgement-Population-All
+ADEPT_IO_ALIGNMENT_DISTRIBUTION_TARGET=ADEPT-DryRun-Ingroup Bias-Population-All
 
 [GROUP_TARGET]
 
-EVALUATION_TYPE=dryrun
+EVALUATION_TYPE=phase1
 SCENARIO_DIRECTORY=swagger_server/itm/data/%(EVALUATION_TYPE)s/scenarios/
 
-; Local Default URLs 
+; Local Default URLs
 ; ADEPT_URL=http://localhost:8081
 ; SOARTECH_URL=http://localhost:8084
 
@@ -145,42 +139,46 @@ ALWAYS_CONNECT_TO_TA1=True
 HISTORY_DIRECTORY=itm_history_output
 HISTORY_S3_BUCKET=itm-ui-assets
 
-EVAL_NAME=Dry Run Evaluation
-EVAL_NUMBER=4
+EVAL_NAME=Phase 1 Evaluation
+EVAL_NUMBER=5
 
-SOARTECH_EVAL_FILENAMES=dryrun-soartech-eval-qol1.yaml,
-    dryrun-soartech-eval-qol2.yaml,
-    dryrun-soartech-eval-qol3.yaml,
-    dryrun-soartech-eval-vol1.yaml, 
-    dryrun-soartech-eval-vol2.yaml, 
-    dryrun-soartech-eval-vol3.yaml
+SOARTECH_EVAL_FILENAMES=phase1-soartech-eval-qol1.yaml,
+    phase1-soartech-eval-qol2.yaml,
+    phase1-soartech-eval-qol3.yaml,
+    phase1-soartech-eval-qol4.yaml,
+    phase1-soartech-eval-vol1.yaml,
+    phase1-soartech-eval-vol2.yaml,
+    phase1-soartech-eval-vol3.yaml,
+    phase1-soartech-eval-vol4.yaml
 
-SOARTECH_TRAIN_FILENAMES=dryrun-soartech-train-qol1.yaml,
-    dryrun-soartech-train-qol2.yaml,
-    dryrun-soartech-train-vol1.yaml,
-    dryrun-soartech-train-vol2.yaml
+SOARTECH_TRAIN_FILENAMES=phase1-soartech-train-qol1.yaml,
+    phase1-soartech-train-qol2.yaml,
+    phase1-soartech-train-qol3.yaml,
+    phase1-soartech-train-vol1.yaml,
+    phase1-soartech-train-vol2.yaml,
+    phase1-soartech-train-vol3.yaml
 
-SOARTECH_EVAL_QOL_SCENARIOS=qol-dre-1-eval,qol-dre-2-eval,qol-dre-3-eval
-SOARTECH_EVAL_VOL_SCENARIOS=vol-dre-1-eval,vol-dre-2-eval,vol-dre-3-eval
+SOARTECH_EVAL_QOL_SCENARIOS=qol-ph1-eval-1,qol-ph1-eval-2,qol-ph1-eval-3,qol-ph1-eval-4
+SOARTECH_EVAL_VOL_SCENARIOS=vol-ph1-eval-1,vol-ph1-eval-2,vol-ph1-eval-3,vol-ph1-eval-4
 
-SOARTECH_TRAIN_QOL_SCENARIOS=qol-dre-1-train,qol-dre-2-train
-SOARTECH_TRAIN_VOL_SCENARIOS=vol-dre-1-train,vol-dre-2-train
+SOARTECH_TRAIN_QOL_SCENARIOS=qol-ph1-train-1,qol-ph1-train-2,qol-ph1-train-3
+SOARTECH_TRAIN_VOL_SCENARIOS=vol-ph1-train-1,vol-ph1-train-2,vol-ph1-train-3
 
-SOARTECH_QOL_ALIGNMENT_TARGETS=qol-group-target-dre-1,
-   qol-group-target-dre-2
+SOARTECH_QOL_ALIGNMENT_TARGETS=qol-group-target-ph1-1,
+   qol-group-target-ph1-2
 
-SOARTECH_VOL_ALIGNMENT_TARGETS=vol-group-target-dre-1,
-   vol-group-target-dre-2
+SOARTECH_VOL_ALIGNMENT_TARGETS=vol-group-target-ph1-1,
+   vol-group-target-ph1-2
 
-ADEPT_EVAL_FILENAMES=dryrun-adept-eval-MJ2.yaml,
-    dryrun-adept-eval-MJ4.yaml,
-    dryrun-adept-eval-MJ5.yaml
+ADEPT_EVAL_FILENAMES=phase1-adept-eval-MJ2.yaml,
+    phase1-adept-eval-MJ4.yaml,
+    phase1-adept-eval-MJ5.yaml
 
-ADEPT_TRAIN_FILENAMES=dryrun-adept-train-MJ1.yaml,
-    dryrun-adept-train-MJ3.yaml,
-    dryrun-adept-train-IO1.yaml,
-    dryrun-adept-train-IO2.yaml,
-    dryrun-adept-train-IO3.yaml
+ADEPT_TRAIN_FILENAMES=phase1-adept-train-MJ1.yaml,
+    phase1-adept-train-MJ3.yaml,
+    phase1-adept-train-IO1.yaml,
+    phase1-adept-train-IO2.yaml,
+    phase1-adept-train-IO3.yaml
 
 ADEPT_EVAL_MJ_SCENARIOS=DryRunEval-MJ2-eval,DryRunEval-MJ4-eval,DryRunEval-MJ5-eval
 ADEPT_EVAL_IO_SCENARIOS=DryRunEval-MJ2-eval,DryRunEval-MJ4-eval,DryRunEval-MJ5-eval
@@ -193,3 +191,6 @@ ADEPT_MJ_ALIGNMENT_TARGETS=ADEPT-DryRun-Moral judgement-Group-Low,
 
 ADEPT_IO_ALIGNMENT_TARGETS=ADEPT-DryRun-Ingroup Bias-Group-Low,
     ADEPT-DryRun-Ingroup Bias-Group-High
+
+ADEPT_MJ_ALIGNMENT_DISTRIBUTION_TARGET=ADEPT-DryRun-Moral judgement-Population-All
+ADEPT_IO_ALIGNMENT_DISTRIBUTION_TARGET=ADEPT-DryRun-Ingroup Bias-Population-All

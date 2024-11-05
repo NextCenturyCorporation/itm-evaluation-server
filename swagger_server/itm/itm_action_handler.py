@@ -40,7 +40,7 @@ class ITMActionHandler:
 
     def _reveal_injuries(self, source: Character, target: Character):
         if target.visited:
-            pass # Character could be pre-configured visited but with discoverable injuries
+            return # Visited characters have already had their injuries revealed.
 
         # Add discoverable injuries to target character (with discovered status).
         revealed_injuries = [source_injury for source_injury in source.injuries if source_injury.status == InjuryStatusEnum.DISCOVERABLE]
@@ -253,6 +253,7 @@ class ITMActionHandler:
         patient.vitals.avpu = patient_template.vitals.avpu
         patient.vitals.breathing = patient_template.vitals.breathing
         patient.vitals.mental_status = patient_template.vitals.mental_status
+        patient.vitals.triss = patient_template.vitals.triss
         self._reveal_injuries(patient_template, patient)
         patient.visited = True
 

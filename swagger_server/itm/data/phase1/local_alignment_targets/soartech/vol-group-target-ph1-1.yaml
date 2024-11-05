@@ -1,0 +1,4 @@
+id: vol-group-target-ph1-1
+kdma_values:
+  - kdma: PerceivedQuantityOfLivesSaved
+    value: 0.9

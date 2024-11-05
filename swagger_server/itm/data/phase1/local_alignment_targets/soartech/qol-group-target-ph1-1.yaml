@@ -1,0 +1,4 @@
+id: qol-group-target-ph1-1
+kdma_values:
+  - kdma: QualityOfLife
+    value: 0.9

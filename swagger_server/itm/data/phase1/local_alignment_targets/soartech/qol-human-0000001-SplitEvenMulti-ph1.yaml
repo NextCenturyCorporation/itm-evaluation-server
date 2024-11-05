@@ -1,0 +1,4 @@
+id: qol-human-0000001-SplitEvenMulti-ph1
+kdma_values:
+  - kdma: QualityOfLife
+    value: 0.1

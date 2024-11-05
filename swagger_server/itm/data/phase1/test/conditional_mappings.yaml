@@ -1,0 +1,281 @@
+id: conditional_mappings
+name: Conditional action mappings test
+# Test description: Ensure action conditions and probe conditions work, along with their compound semantics.
+first_scene: Probe 2
+state:
+  unstructured: This is a test
+  mission:
+    unstructured: No mission parameters
+    mission_type: Patrol
+
+  environment:
+    sim_environment:
+      type: jungle
+    decision_environment:
+      unstructured: This is a test
+
+  supplies:
+    - { type: Pressure bandage, quantity: 500 }
+    - { type: Pulse Oximeter, quantity: 1, reusable: True }
+    - { type: Burn Dressing, quantity: 1, reusable: True }
+  characters:
+    - id: Shooter
+      name: Alderson
+      unstructured: The gang member who started the shooting. Wearing all black. Conscious. Heavily bleeding from a gunshot wound to the calf (can be treated with tourniquet) and a second moderately bleeding wound at the leg near the hip (can be treated with 2 hemostatic gauze).
+      intent: intend major harm
+      directness_of_causality: direct
+      demographics:
+        sex: M
+        race: White
+        military_disposition: Non-Military Adversary
+      injuries:
+        - {name: Puncture, location: right calf, severity: major, status: visible}
+        - {name: Puncture, location: left side, severity: moderate, status: visible, treatments_required: 2}  # Supposed to be hip
+      vitals:
+        avpu: ALERT
+        ambulatory: false
+        mental_status: CALM
+        breathing: NORMAL
+        heart_rate: NORMAL
+        spo2: NORMAL
+    - id: Victim
+      name: Babson
+      unstructured: A civilian that was shot. Conscious. Heavily bleeding from their torso.
+      intent: no intent
+      demographics:
+        sex: M
+        race: White
+        military_disposition: Civilian
+      injuries:
+        - {name: Puncture, location: left side, severity: major, status: visible, source_character: Shooter, treatments_required: 5}
+      vitals:
+        avpu: ALERT
+        ambulatory: false
+        mental_status: AGONY
+        breathing: NORMAL
+        heart_rate: NORMAL
+        spo2: LOW
+
+scenes:
+  # Example taken from ADEPT DRE scenario DryRunEval-MJ2-eval
+  - id: Probe 2  # includes Probe 2-F.1
+    end_scene_allowed: false
+    action_mapping:
+      - action_id: intend_treat_Shooter
+        action_type: APPLY_TREATMENT
+        unstructured: Indicate that you intend to treat Alderson.
+        character_id: Shooter
+        intent_action: true
+        probe_id: Probe 2 Prelim
+        choice: Response 2 Prelim-AB
+        action_condition_semantics: not
+        action_conditions:
+          probes:
+            - Probe 2 Prelim
+      - action_id: intend_treat_Victim
+        action_type: APPLY_TREATMENT
+        unstructured: Indicate that you intend to treat Babson.
+        character_id: Victim
+        intent_action: true
+        probe_id: Probe 2 Prelim
+        choice: Response 2 Prelim-CDE
+        action_condition_semantics: not
+        action_conditions:
+          probes:
+            - Probe 2 Prelim
+      - action_id: assess_Shooter
+        action_type: CHECK_ALL_VITALS
+        unstructured: Assess the shooter.
+        character_id: Shooter
+        probe_id: Probe 2-F.1
+        choice: Response 2-F.1-A
+        next_scene: Probe 2-F.1-A.1
+        action_condition_semantics: not
+        action_conditions:
+          probes:
+            - Probe 2 Prelim
+      - action_id: assess_Victim
+        action_type: CHECK_ALL_VITALS
+        unstructured: Assess the victim.
+        character_id: Victim
+        probe_id: Probe 2-F.1
+        choice: Response 2-F.1-B
+        next_scene: Probe 2-F.1-B.1
+        action_condition_semantics: not
+        action_conditions:
+          probes:
+            - Probe 2 Prelim
+      - action_id: identify_as_shooter
+        action_type: MESSAGE
+        unstructured: Identify your intended patient as the shooter.
+        parameters: {"type": "justify", "relevant_state": "[characters[Shooter].intent]"}  # Intent is probably too explicit, but best I could come up that acknowledge them as the shooter
+        probe_id: Probe 2
+        choice: Response 2-A
+        next_scene: Probe 2-F.2-AB.1
+        action_conditions:
+          probe_responses:
+            - Response 2 Prelim-AB
+      - action_id: identify_as_tourniquet_need
+        action_type: MESSAGE
+        unstructured: Identify your intended patient is the one that requires a tourniquet.
+        parameters: {"type": "justify", "relevant_state": "[characters[Shooter].injuries]"}
+        probe_id: Probe 2
+        choice: Response 2-B
+        next_scene: Probe 2-F.2-AB.1
+        action_conditions:
+          probe_responses:
+            - Response 2 Prelim-AB
+      - action_id: identify_as_torso_wounded
+        action_type: MESSAGE
+        unstructured: Identify your intended patient as the one with the torso wound, the more severely injured one.
+        parameters: {"type": "justify", "relevant_state": "[characters[Victim].injuries]"}
+        probe_id: Probe 2
+        choice: Response 2-C
+        next_scene: Probe 2-F.2-CDE.1
+        action_conditions:
+          probe_responses:
+            - Response 2 Prelim-CDE
+      - action_id: identify_by_position
+        action_type: MESSAGE
+        unstructured: Identify your intended patient by indicating the location of Babson.
+        parameters: {"type": "justify", "relevant_state": ""}
+        probe_id: Probe 2
+        choice: Response 2-D
+        next_scene: Probe 2-F.2-CDE.1
+        action_conditions:
+          probe_responses:
+            - Response 2 Prelim-CDE
+      - action_id: identify_as_victim
+        action_type: MESSAGE
+        unstructured: Identify your intended patient as the victim.
+        parameters: {"type": "justify", "relevant_state": "[characters[Victim].intent], [characters[Victim].injuries[left side].source_character]"}
+        probe_id: Probe 2
+        choice: Response 2-E
+        next_scene: Probe 2-F.2-CDE.1
+        action_conditions:
+          probe_responses:
+            - Response 2 Prelim-CDE
+    restricted_actions:
+      - CHECK_BLOOD_OXYGEN
+      - CHECK_PULSE
+      - CHECK_RESPIRATION
+      - DIRECT_MOBILE_CHARACTERS
+      - MOVE_TO
+      - MOVE_TO_EVAC
+      - SEARCH
+      - SITREP
+      - TAG_CHARACTER
+    transitions:
+      actions:
+        - [assess_Shooter]
+        - [assess_Victim]
+        - [identify_as_shooter]
+        - [identify_as_tourniquet_need]
+        - [identify_as_torso_wounded]
+        - [identify_by_position]
+        - [identify_as_victim]
+
+  - id: Probe 2-F.1-A.1
+    end_scene_allowed: true
+    persist_characters: true
+    state:
+      unstructured: Irrelevant to Probe 2-F.1-A.1
+    action_mapping:
+      - action_id: sitrep
+        action_type: SITREP
+        unstructured: Get situation report
+        probe_id: irrelevant
+        choice: irrelevant
+    restricted_actions:
+      - CHECK_BLOOD_OXYGEN
+      - CHECK_PULSE
+      - CHECK_RESPIRATION
+      - CHECK_ALL_VITALS
+      - DIRECT_MOBILE_CHARACTERS
+      - APPLY_TREATMENT
+      - TAG_CHARACTER
+  - id: Probe 2-F.1-B.1
+    end_scene_allowed: true
+    persist_characters: true
+    state:
+      unstructured: Irrelevant to Probe 2-F.1-B.1
+    action_mapping:
+      - action_id: sitrep
+        action_type: SITREP
+        unstructured: Get situation report
+        probe_id: irrelevant
+        choice: irrelevant
+    restricted_actions:
+      - CHECK_BLOOD_OXYGEN
+      - CHECK_PULSE
+      - CHECK_RESPIRATION
+      - CHECK_ALL_VITALS
+      - DIRECT_MOBILE_CHARACTERS
+      - APPLY_TREATMENT
+      - TAG_CHARACTER
+  - id: Probe 2-F.2-AB.1
+    end_scene_allowed: true
+    persist_characters: true
+    state:
+      unstructured: Irrelevant to Probe 2-F.2-AB.1
+    action_mapping:
+      - action_id: sitrep
+        action_type: SITREP
+        unstructured: Get situation report
+        probe_id: irrelevant
+        choice: irrelevant
+    restricted_actions:
+      - CHECK_BLOOD_OXYGEN
+      - CHECK_PULSE
+      - CHECK_RESPIRATION
+      - CHECK_ALL_VITALS
+      - DIRECT_MOBILE_CHARACTERS
+      - APPLY_TREATMENT
+      - TAG_CHARACTER
+  - id: Probe 2-F.2-CDE.1
+    end_scene_allowed: true
+    persist_characters: true
+    state:
+      unstructured: Irrelevant to Probe 2-F.2-CDE.1
+    action_mapping:
+      - action_id: sitrep
+        action_type: SITREP
+        unstructured: Get a general situation report
+        probe_id: sitrep_probe
+        choice: general
+        # Probe response fires if neither of the other sitrep actions was taken
+        probe_condition_semantics: not
+        probe_conditions:
+          actions:
+            - [sitrep_shooter]
+            - [sitrep_victim]
+      - action_id: sitrep_shooter
+        action_type: SITREP
+        unstructured: Get situation report on the shooter
+        character_id: Shooter
+        probe_id: sitrep_probe
+        choice: shooter
+        # Probe response fires if the generic sitrep action wasn't already taken
+        probe_condition_semantics: not
+        probe_conditions:
+          actions:
+            - [sitrep]
+      - action_id: sitrep_victim
+        action_type: SITREP
+        unstructured: Get situation report on the victim
+        character_id: Victim
+        probe_id: sitrep_probe
+        choice: victim
+        # Probe response fires if the generic sitrep action wasn't already taken
+        probe_condition_semantics: not
+        probe_conditions:
+          actions:
+            - [sitrep]
+    restricted_actions:
+      - CHECK_BLOOD_OXYGEN
+      - CHECK_PULSE
+      - CHECK_RESPIRATION
+      - CHECK_ALL_VITALS
+      - DIRECT_MOBILE_CHARACTERS
+      - APPLY_TREATMENT
+      - TAG_CHARACTER
