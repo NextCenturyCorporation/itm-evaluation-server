@@ -976,7 +976,9 @@ components:
         triss:
           type: number
           format: float
-          description: Trauma Score and Injury Severity Score
+          description: >
+            Trauma and Injury Severity Score, a calculation that combines patient vitals and injury severity to predict
+            a patient's probability of survival
           minimum: 0.0
           maximum: 100.0
         spo2:
