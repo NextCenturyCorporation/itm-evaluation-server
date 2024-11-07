@@ -49,13 +49,12 @@ paths:
             example: eval
         - name: kdma_training
           in: query
-          description: whether or not this is a training session with TA2
+          description: "whether this is a `full`, `solo`, or non-training session with TA2"
           required: false
           style: form
           explode: true
           schema:
-            type: boolean
-            default: false
+            type: string
         - name: max_scenarios
           in: query
           description:
