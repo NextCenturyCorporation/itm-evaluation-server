@@ -34,15 +34,18 @@ class ITMScenario:
     # Hide vitals (if not already visited) and hidden injuries
     @staticmethod
     def clear_hidden_data(state :State):
-        initially_hidden_injuries = [InjuryStatusEnum.HIDDEN, InjuryStatusEnum.DISCOVERABLE]
         for character in state.characters:
-            character.injuries[:] = \
-                [injury for injury in character.injuries if injury.status not in initially_hidden_injuries]
-            for injury in character.injuries:
-                injury.treatments_required = None
-            if not character.visited:
+            if character.visited:
+                character.injuries[:] = \
+                    [injury for injury in character.injuries if injury.status != InjuryStatusEnum.HIDDEN]
+            else:
+                initially_hidden_injuries = [InjuryStatusEnum.HIDDEN, InjuryStatusEnum.DISCOVERABLE]
+                character.injuries[:] = \
+                    [injury for injury in character.injuries if injury.status not in initially_hidden_injuries]
                 character.unstructured_postassess = None
                 character.vitals = Vitals()
+        for injury in character.injuries:
+            injury.treatments_required = None
 
 
     def generate_scenario_data(self):
@@ -115,8 +118,8 @@ class ITMScenario:
             except exceptions.HTTPError:
                 logging.exception("HTTPError from TA1 posting probe.")
             try:
-                # Get and log probe response alignment if not training.
-                if not self.session.kdma_training:
+                # Get and log probe response alignment if neither training nor an adept population alignment session.
+                if not self.session.kdma_training and not self.session.adept_populations:
                     probe_response_alignment = \
                         self.ta1_controller.get_probe_response_alignment(
                         response.scenario_id,
