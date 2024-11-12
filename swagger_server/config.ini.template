@@ -87,7 +87,7 @@ ADEPT_EVAL_IO_SCENARIOS=DryRunEval-MJ2-eval,DryRunEval-MJ4-eval,DryRunEval-MJ5-e
 ADEPT_TRAIN_MJ_SCENARIOS=DryRunEval.MJ1,DryRunEval.MJ3
 ADEPT_TRAIN_IO_SCENARIOS=DryRunEval.IO1,DryRunEval.IO2,DryRunEval.IO3
 
-ADEPT_MJ_ALIGNMENT_TARGETS=ADEPT-ADEPT-DryRun-Moral judgement-0.2,
+ADEPT_MJ_ALIGNMENT_TARGETS=ADEPT-DryRun-Moral judgement-0.2,
     ADEPT-DryRun-Moral judgement-0.3,
     ADEPT-DryRun-Moral judgement-0.4,
     ADEPT-DryRun-Moral judgement-0.5,
