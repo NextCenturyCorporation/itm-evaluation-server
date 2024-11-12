@@ -109,7 +109,7 @@ def _reclaim_old_session():
             return ITMSession()
     return None
 
-def start_session(adm_name, session_type, adm_profile=None, kdma_training=False, max_scenarios=None):  # noqa: E501
+def start_session(adm_name, session_type, adm_profile=None, kdma_training=None, max_scenarios=None):  # noqa: E501
     """Start a new session
 
     Get unique session id for grouping answers from a collection of scenarios/probes together # noqa: E501
@@ -120,8 +120,8 @@ def start_session(adm_name, session_type, adm_profile=None, kdma_training=False,
     :type session_type: str
     :param adm_profile: a profile of the ADM in terms of its alignment strategy
     :type adm_profile: str
-    :param kdma_training: whether or not this is a training session with TA2
-    :type kdma_training: bool
+    :param kdma_training: whether this is a `full`, `solo`, or non-training session with TA2
+    :type kdma_training: str
     :param max_scenarios: the maximum number of scenarios requested, supported only in `test` sessions
     :type max_scenarios: int
 
@@ -152,7 +152,7 @@ def start_session(adm_name, session_type, adm_profile=None, kdma_training=False,
         adm_name=adm_name,
         session_type=session_type,
         adm_profile=adm_profile if adm_profile != 'None' else None,
-        kdma_training=kdma_training,
+        kdma_training=kdma_training if kdma_training != 'None' else None,
         adept_populations=True,
         max_scenarios=max_scenarios
     )

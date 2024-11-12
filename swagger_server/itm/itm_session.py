@@ -72,7 +72,7 @@ class ITMSession:
 
         self.session_type = ''
         self.using_max_scenarios = False
-        self.kdma_training = False
+        self.kdma_training = None
 
         self.session_complete = False
         self.state: State = None
@@ -216,6 +216,7 @@ class ITMSession:
             self.history.write_to_json_file(filename, self.save_history_to_s3)
         if self.return_scenario_history:
             self.state.unstructured = dumps({'history': self.history.history}, indent=2) + os.linesep + self.state.unstructured
+            self.state.unstructured = "Full session history"
         self.history.clear_history()
 
 
@@ -422,7 +423,7 @@ class ITMSession:
         return Scenario(session_complete=True, id='', name='',
                         scenes=None, state=None)
 
-    def start_session(self, adm_name: str, session_type: str, adm_profile: str, kdma_training: bool, adept_populations: bool, max_scenarios=None) -> str:
+    def start_session(self, adm_name: str, session_type: str, adm_profile: str, adept_populations: bool, kdma_training: str=None, max_scenarios=None) -> str:
         """
         Start a new session.
 
@@ -430,8 +431,8 @@ class ITMSession:
             adm_name: The ADM name associated with the session.
             session_type: The type of scenarios either soartech, adept, test, or eval
             adm_profile: a profile of the ADM in terms of its alignment strategy
-            kdma_training: whether or not this is a training session with TA2
             adept_populations: whether or not ADEPT should use population based alignment
+            kdma_training: whether this is a `full`, `solo`, or non-training session with TA2
             max_scenarios: The max number of scenarios presented during the session
 
         Returns:
@@ -473,8 +474,8 @@ class ITMSession:
         else:
             ta1_names.append(self.session_type)
         if kdma_training:
-            self.ta1_integration = True
             self.return_scenario_history = True
+            self.ta1_integration = kdma_training == 'full'
         if session_type == 'test':
             self.ta1_integration = False
 
@@ -689,8 +690,8 @@ class ITMSession:
 
 
     def get_session_alignment(self, target_id: str) -> AlignmentResults:
-        if not self.kdma_training:
-            return 'Session alignment can only be requested during a training session', 403
+        if not self.kdma_training == 'full':
+            return 'Session alignment can only be requested during a full training session', 403
 
         session_alignment :AlignmentResults = None
         if self.ta1_integration:

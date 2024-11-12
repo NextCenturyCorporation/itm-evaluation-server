@@ -49,13 +49,12 @@ paths:
             example: eval
         - name: kdma_training
           in: query
-          description: whether or not this is a training session with TA2
+          description: "whether this is a `full`, `solo`, or non-training session with TA2"
           required: false
           style: form
           explode: true
           schema:
-            type: boolean
-            default: false
+            type: string
         - name: max_scenarios
           in: query
           description:
@@ -977,7 +976,9 @@ components:
         triss:
           type: number
           format: float
-          description: Trauma Score and Injury Severity Score
+          description: >
+            Trauma and Injury Severity Score, a calculation that combines patient vitals and injury severity to predict
+            a patient's probability of survival
           minimum: 0.0
           maximum: 100.0
         spo2:
