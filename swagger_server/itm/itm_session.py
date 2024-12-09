@@ -355,7 +355,7 @@ class ITMSession:
                     break
                 index += 1
             if self.itm_scenario is None:
-                return f'Scenario ID `{scenario_id}` does not exist as {"a training" if self.kdma_training else "an eval"} scenario for `{self.session_type}`', 404
+                return f'Scenario ID `{scenario_id}` does not exist as {"a training" if self.kdma_training else "an eval"} scenario for `{self.session_type}`. Check your TA3 server configuration?', 404
             if self.itm_scenario.isd.current_scene.state is None:
                 return self._end_session() # We have already run the specified scenario to completion
         else:
@@ -516,7 +516,11 @@ class ITMSession:
                 itm_scenario = \
                     ITMScenario(yaml_path=f'{path}{scenario}',
                                 session=self, training=self.kdma_training)
-                itm_scenario.generate_scenario_data()
+                try:
+                    itm_scenario.generate_scenario_data()
+                except FileNotFoundError as fnfe:
+                    logging.fatal("Could not read filename '%s.'  Check your TA3 server configuration?", fnfe.filename)
+                    return f"Could not read filename '{fnfe.filename}.'  Check your TA3 server configuration?", 503
 
                 if ta1_name == "test":
                     ta1_scenarios.append(deepcopy(itm_scenario))
@@ -535,20 +539,24 @@ class ITMSession:
                                 else:
                                     ta1_scenarios[scenario_ctr].alignment_target = deepcopy(next(target for target in local_alignment_targets if target.id == target_id), None)
                                 scenario_ctr += 1
-                            except StopIteration:
-                                logging.fatal(f"Couldn't find alignment target {target_id}.")
+                            except StopIteration as si:
+                                logging.fatal(f"Couldn't find alignment target {target_id}. Check your TA3 server configuration?")
+                                raise si
                         return scenario_ctr
 
-                    if ta1_name == "soartech":
-                        if itm_scenario.id in (ITMSession.SOARTECH_TRAIN_QOL_SCENARIOS if kdma_training else ITMSession.SOARTECH_EVAL_QOL_SCENARIOS):
-                            scenario_ctr = __load_scenarios(ITMSession.SOARTECH_QOL_ALIGNMENT_TARGETS, scenario_ctr)
-                        if itm_scenario.id in (ITMSession.SOARTECH_TRAIN_VOL_SCENARIOS if kdma_training else ITMSession.SOARTECH_EVAL_VOL_SCENARIOS):
-                            scenario_ctr = __load_scenarios(ITMSession.SOARTECH_VOL_ALIGNMENT_TARGETS, scenario_ctr)
-                    elif ta1_name == "adept":
-                        if itm_scenario.id in (ITMSession.ADEPT_TRAIN_MJ_SCENARIOS if kdma_training else ITMSession.ADEPT_EVAL_MJ_SCENARIOS):
-                            scenario_ctr = __load_scenarios(ITMSession.ADEPT_MJ_ALIGNMENT_TARGETS, scenario_ctr)
-                        if itm_scenario.id in (ITMSession.ADEPT_TRAIN_IO_SCENARIOS if kdma_training else ITMSession.ADEPT_EVAL_IO_SCENARIOS):
-                            scenario_ctr = __load_scenarios(ITMSession.ADEPT_IO_ALIGNMENT_TARGETS, scenario_ctr)
+                    try:
+                        if ta1_name == "soartech":
+                            if itm_scenario.id in (ITMSession.SOARTECH_TRAIN_QOL_SCENARIOS if kdma_training else ITMSession.SOARTECH_EVAL_QOL_SCENARIOS):
+                                scenario_ctr = __load_scenarios(ITMSession.SOARTECH_QOL_ALIGNMENT_TARGETS, scenario_ctr)
+                            if itm_scenario.id in (ITMSession.SOARTECH_TRAIN_VOL_SCENARIOS if kdma_training else ITMSession.SOARTECH_EVAL_VOL_SCENARIOS):
+                                scenario_ctr = __load_scenarios(ITMSession.SOARTECH_VOL_ALIGNMENT_TARGETS, scenario_ctr)
+                        elif ta1_name == "adept":
+                            if itm_scenario.id in (ITMSession.ADEPT_TRAIN_MJ_SCENARIOS if kdma_training else ITMSession.ADEPT_EVAL_MJ_SCENARIOS):
+                                scenario_ctr = __load_scenarios(ITMSession.ADEPT_MJ_ALIGNMENT_TARGETS, scenario_ctr)
+                            if itm_scenario.id in (ITMSession.ADEPT_TRAIN_IO_SCENARIOS if kdma_training else ITMSession.ADEPT_EVAL_IO_SCENARIOS):
+                                scenario_ctr = __load_scenarios(ITMSession.ADEPT_IO_ALIGNMENT_TARGETS, scenario_ctr)
+                    except Exception as e:
+                        return f"Problem loading TA3 server configuration.", 503
 
             self.itm_scenarios.extend(ta1_scenarios)
             num_read_scenarios += len(ta1_scenarios)
