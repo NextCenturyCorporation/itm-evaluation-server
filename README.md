@@ -73,15 +73,14 @@ pip3 install -r requirements.txt
 
 To run the server, please execute from the root directory with the following usage:
 ```
-usage: python -m swagger_server [-h] [-c CONFIG_GROUP] [-p PORT]
-
-Specify Config Group, will default to the DEFAULT group
+usage: python -m swagger_server [-h] [-t] [-c CONFIG_GROUP] [-p PORT]
 
 options:
   -h, --help            show this help message and exit
   -c CONFIG_GROUP, --config_group CONFIG_GROUP
-                        Specify the configuration group in config.ini used to launch the Swagger server (default = DEFAULT)
+                        Specify the configuration group in `config.ini` used to launch the Swagger server (default = DEFAULT)
   -p PORT, --port PORT  Specify the port the Swagger server will listen on (default = 8080)
+  -t, --testing         Put the server in test mode which will run standalone and not connect to TA1.
 ```
 
 You can browse the API at:

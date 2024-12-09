@@ -101,14 +101,16 @@ class ITMSession:
         logging.basicConfig(level=logging.INFO, format='%(levelname)s %(asctime)s %(message)s', datefmt='%m-%d %I:%M:%S')
         ta1_names = ITMSession.init_local_data()
         logging.info("Loaded local alignment targets from configuration.")
-        try:
-            logging.info("Loading TA1 configuration from TA1 servers...")
-            # Note: when running standalone (no TA1 servers), you may wish to comment out the next two lines:
-            ITMSession.init_ta1_data(ta1_names)
-            ITMSession.ta1_connected = True
-            logging.info("Done.")
-        except:
-            logging.warning("Could not initialize TA1 data. Running standalone with local alignment targets.")
+        if not builtins.testing:
+            try:
+                logging.info("Loading TA1 configuration from TA1 servers...")
+                ITMSession.init_ta1_data2(ta1_names)
+                ITMSession.ta1_connected = True
+                logging.info("Done.")
+            except:
+                logging.warning("Could not initialize TA1 data. Running standalone with local alignment targets.")
+        else:
+            logging.info("Running server in testing mode; no connection to TA1 servers.")
 
         # If we couldn't use data from TA1, initialize with local data.
         if not ITMSession.ta1_connected:
@@ -132,6 +134,23 @@ class ITMSession:
     @staticmethod
     def init_ta1_data(ta1_names):
         # Populate alignment_data from ITMTa1Controller.get_alignment_data
+        # Populate ta1_controllers from alignment_data
+        for ta1_name in ta1_names:
+            ITMSession.alignment_data[ta1_name] = [
+                alignment_target for alignment_target in ITMTa1Controller.get_alignment_data(ta1_name)
+                    if 'train' not in alignment_target.id or ta1_name == 'soartech'
+            ]
+            ITMSession.ta1_controllers[ta1_name] = [
+                ITMTa1Controller(alignment_target_id=alignment_target.id,
+                                 scene_type=ta1_name,
+                                 alignment_target=alignment_target,)
+                                 for alignment_target in ITMSession.alignment_data[ta1_name]
+                                 ]
+
+
+    @staticmethod
+    def init_ta1_data2(ta1_names):
+        # Populate alignment_data from ITMTa1Controller.get_alignment_targets
         # Populate ta1_controllers from alignment_data
         for ta1_name in ta1_names:
             ITMSession.alignment_data[ta1_name] = [
