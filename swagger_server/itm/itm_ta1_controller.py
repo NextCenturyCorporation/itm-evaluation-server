@@ -36,6 +36,7 @@ class ITMTa1Controller:
             host_port = "localhost"
         return host_port
 
+    # Note: this method is currently unused but remains valid from an API perspective; and we might want to use it someday.
     @staticmethod
     def get_alignment_data(scene_type):
         host_port = ITMTa1Controller.get_contact_info(scene_type=scene_type)

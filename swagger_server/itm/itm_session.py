@@ -13,13 +13,13 @@ from swagger_server.models import (
     Action,
     AlignmentTarget,
     AlignmentResults,
+    KDMAValue,
     Scenario,
     State,
     MetaInfo
 )
 from .itm_scenario import ITMScenario
 from .itm_action_handler import ITMActionHandler
-from .itm_alignment_target_reader import ITMAlignmentTargetReader
 from .itm_ta1_controller import ITMTa1Controller
 from .itm_history import ITMHistory
 from swagger_server import config_util
@@ -37,6 +37,7 @@ class ITMSession:
     EVALUATION_NAME = config[config_group]['EVAL_NAME']
     EVALUATION_NUMBER = config[config_group]['EVAL_NUMBER']
     SCENARIO_DIRECTORY = config[config_group]['SCENARIO_DIRECTORY']
+    ALL_TA1_NAMES = config[config_group]['ALL_TA1_NAMES'].replace('\n','').split(',')
     SOARTECH_EVAL_FILENAMES = config[config_group]['SOARTECH_EVAL_FILENAMES'].replace('\n','').split(',')
     SOARTECH_TRAIN_FILENAMES = config[config_group]['SOARTECH_TRAIN_FILENAMES'].replace('\n','').split(',')
     SOARTECH_EVAL_QOL_SCENARIOS = config[config_group]['SOARTECH_EVAL_QOL_SCENARIOS'].replace('\n','').split(',')
@@ -54,10 +55,18 @@ class ITMSession:
     ADEPT_MJ_ALIGNMENT_TARGETS = config[config_group]['ADEPT_MJ_ALIGNMENT_TARGETS'].replace('\n','').split(',')
     ADEPT_IO_ALIGNMENT_TARGETS = config[config_group]['ADEPT_IO_ALIGNMENT_TARGETS'].replace('\n','').split(',')
 
-    local_alignment_targets = {} # alignment_targets baked into server, for use when not connecting to TA1
-    alignment_data = {} # maps ta1_name to list alignment_targets, used whether connecting to TA1 or not
-    ta1_controllers = {} # map of ta1_names to lists of ta1_controllers
-    ta1_connected = False # have we successfully connected to TA1?
+    # maps alignment id to list alignment_targets, as limited by configuration; used whether connecting to TA1 or not
+    alignment_data = {}
+    # have we successfully connected to TA1?
+    ta1_connected = False
+    # maps ta1_name to list of alignment target IDs obtained from the TA1 server
+    alignment_ids = {}
+    # This determines whether the server makes calls to TA1
+    ta1_integration = not builtins.testing
+    # This determines whether the server saves history to JSON
+    save_history = config[config_group].getboolean("SAVE_HISTORY")
+    # save_history must also be True
+    save_history_to_s3 = config[config_group].getboolean("SAVE_HISTORY_TO_S3")
 
 
     def __init__(self):
@@ -84,14 +93,8 @@ class ITMSession:
         self.action_handler: ITMActionHandler = ITMActionHandler(self)
         # ADM History
         self.history: ITMHistory = ITMHistory(ITMSession.config)
-        # This determines whether the server makes calls to TA1
-        self.ta1_integration = ITMSession.config[ITMSession.config_group].getboolean("ALWAYS_CONNECT_TO_TA1") # Default here applies to non-training, non-eval sessions
         # This determines whether the server returns history in final State after each scenario completes
         self.return_scenario_history = False
-        # This determines whether the server saves history to JSON
-        self.save_history = ITMSession.config[ITMSession.config_group].getboolean("SAVE_HISTORY")
-        # save_history must also be True
-        self.save_history_to_s3 = ITMSession.config[ITMSession.config_group].getboolean("SAVE_HISTORY_TO_S3")
 
     def __deepcopy__(self, memo):
         return self # Allows us to deepcopy ITMScenarios
@@ -99,70 +102,43 @@ class ITMSession:
     @staticmethod
     def initialize():
         logging.basicConfig(level=logging.INFO, format='%(levelname)s %(asctime)s %(message)s', datefmt='%m-%d %I:%M:%S')
-        ta1_names = ITMSession.init_local_data()
-        logging.info("Loaded local alignment targets from configuration.")
-        if not builtins.testing:
+        if ITMSession.ta1_integration:
             try:
                 logging.info("Loading TA1 configuration from TA1 servers...")
-                ITMSession.init_ta1_data2(ta1_names)
+                ITMSession.init_ta1_data(ITMSession.ALL_TA1_NAMES)
                 ITMSession.ta1_connected = True
                 logging.info("Done.")
             except:
-                logging.warning("Could not initialize TA1 data. Running standalone with local alignment targets.")
+                logging.warning("Could not initialize TA1 data. Running standalone.")
         else:
             logging.info("Running server in testing mode; no connection to TA1 servers.")
-
-        # If we couldn't use data from TA1, initialize with local data.
-        if not ITMSession.ta1_connected:
-            for ta1_name in ta1_names:
-                ITMSession.alignment_data[ta1_name] = ITMSession.local_alignment_targets[ta1_name]
-
-
-    @staticmethod
-    def init_local_data():
-        path = f"swagger_server/itm/data/{ITMSession.EVALUATION_TYPE}/local_alignment_targets/"
-        ta1_names = ITMSession._get_sub_directory_names(path)
-        for ta1_name in ta1_names:
-            targets = ITMSession._get_file_names(path + ta1_name)
-            ITMSession.local_alignment_targets[ta1_name] = []
-            for target in targets:
-                target_reader = ITMAlignmentTargetReader(f"{path}{ta1_name}/{target}")
-                ITMSession.local_alignment_targets[ta1_name].append(target_reader.alignment_target)
-        return ta1_names
 
 
     @staticmethod
     def init_ta1_data(ta1_names):
-        # Populate alignment_data from ITMTa1Controller.get_alignment_data
-        # Populate ta1_controllers from alignment_data
+        # Populate alignment_data_ids from ITMTa1Controller.get_alignment_target_ids
         for ta1_name in ta1_names:
-            ITMSession.alignment_data[ta1_name] = [
-                alignment_target for alignment_target in ITMTa1Controller.get_alignment_data(ta1_name)
-                    if 'train' not in alignment_target.id or ta1_name == 'soartech'
+            ITMSession.alignment_ids[ta1_name] = [
+                alignment_target_id for alignment_target_id in ITMTa1Controller.get_alignment_target_ids(ta1_name)
+                    if 'train' not in alignment_target_id or ta1_name == 'soartech'
             ]
-            ITMSession.ta1_controllers[ta1_name] = [
-                ITMTa1Controller(alignment_target_id=alignment_target.id,
-                                 scene_type=ta1_name,
-                                 alignment_target=alignment_target,)
-                                 for alignment_target in ITMSession.alignment_data[ta1_name]
-                                 ]
 
 
-    @staticmethod
-    def init_ta1_data2(ta1_names):
-        # Populate alignment_data from ITMTa1Controller.get_alignment_targets
-        # Populate ta1_controllers from alignment_data
-        for ta1_name in ta1_names:
-            ITMSession.alignment_data[ta1_name] = [
-                alignment_target for alignment_target in ITMTa1Controller.get_alignment_data(ta1_name)
-                    if 'train' not in alignment_target.id or ta1_name == 'soartech'
-            ]
-            ITMSession.ta1_controllers[ta1_name] = [
-                ITMTa1Controller(alignment_target_id=alignment_target.id,
-                                 scene_type=ta1_name,
-                                 alignment_target=alignment_target,)
-                                 for alignment_target in ITMSession.alignment_data[ta1_name]
-                                 ]
+    def load_alignment_target(self, target_id, ta1_name):
+        alignment_target = ITMSession.alignment_data.get(target_id)
+        if alignment_target: # Previously retrieved specified alignment target
+            return alignment_target
+        if self.ta1_integration:
+            if target_id not in ITMSession.alignment_ids[ta1_name]:
+                logging.fatal(f"Cannot get alignment target {target_id} because it is not defined by {ta1_name}. Check configuration.")
+                raise Exception("Undefined alignment target")
+            else:
+                logging.info(f"Loading alignment target {target_id} from TA1 {ta1_name}.")
+                alignment_target = ITMTa1Controller.get_alignment_target(ta1_name, target_id)
+        else:
+            alignment_target = AlignmentTarget(target_id, [KDMAValue(kdma='Test_KDMA', value=0.5)])
+        ITMSession.alignment_data[target_id] = alignment_target
+        return alignment_target
 
 
     def _check_scenario_id(self, scenario_id: str) -> None:
@@ -234,8 +210,10 @@ class ITMSession:
             filename += f"{ITMSession.EVALUATION_TYPE.replace(' ','')}-{self.itm_scenario.id.replace(' ', '_')}-{self.itm_scenario.scene_type}-{alignment_type.replace(' ', '_')}-{self.adm_name}-{timestamp}"
             self.history.write_to_json_file(filename, self.save_history_to_s3)
         if self.return_scenario_history:
-            self.state.unstructured = dumps({'history': self.history.history}, indent=2) + os.linesep + self.state.unstructured
-            self.state.unstructured = "Full session history"
+            if builtins.testing:
+                self.state.unstructured = "Full session history"
+            else:
+                self.state.unstructured = dumps({'history': self.history.history}, indent=2) + os.linesep + self.state.unstructured
         self.history.clear_history()
 
 
@@ -280,22 +258,6 @@ class ITMSession:
                 filespecs.append(item)
         return filespecs
 
-    @staticmethod
-    def _get_sub_directory_names(directory):
-        """
-        Return the names of all of the subdirectories inside of the
-        parameter directory.
-
-        Args:
-            directory: The directory to search inside of for subdirectories.
-        """
-
-        directories = []
-        for item in os.listdir(directory):
-            item_path = os.path.join(directory, item)
-            if os.path.isdir(item_path):
-                directories.append(item)
-        return directories
 
     def get_alignment_target(self, scenario_id: str) -> AlignmentTarget:
         """
@@ -420,7 +382,7 @@ class ITMSession:
                     self._end_session() # Exception here ends the session
                     return 'Exception communicating with TA1; is the TA1 server running?  Ending session.', 503
 
-            # Get alignment target; was previously obtained either from TA1 or from local configuration.
+            # Get alignment target; was previously obtained from TA1 unless testing.
             if not self.kdma_training:
                 alignment_target = self.itm_scenario.alignment_target
                 logging.info("Using alignment target %s.", alignment_target.id)
@@ -489,7 +451,7 @@ class ITMSession:
         if self.session_type == 'eval':
             self.ta1_integration = True
             max_scenarios = None
-            ta1_names = ['soartech', 'adept']
+            ta1_names = ITMSession.ALL_TA1_NAMES
         else:
             ta1_names.append(self.session_type)
         if kdma_training:
@@ -512,6 +474,7 @@ class ITMSession:
                 logging.info("Attempting just-in-time connection to TA1.")
                 ITMSession.init_ta1_data(ta1_names)
                 ITMSession.ta1_connected = True
+                logging.info("Just-in-time connection succeeded.")
             except:
                 logging.exception("Exception communicating with TA1; is the TA1 server running?  Ending session.")
                 self._end_session() # Exception here ends the session
@@ -528,7 +491,6 @@ class ITMSession:
                 else:
                     scenarios = ITMSession.ADEPT_TRAIN_FILENAMES if kdma_training else ITMSession.ADEPT_EVAL_FILENAMES
 
-            local_alignment_targets = ITMSession.local_alignment_targets[ta1_name]
             ta1_scenarios = []
             scenario_ctr = 0
             for scenario in scenarios:
@@ -543,24 +505,22 @@ class ITMSession:
 
                 if ta1_name == "test":
                     ta1_scenarios.append(deepcopy(itm_scenario))
-                    ta1_scenarios[scenario_ctr].alignment_target = local_alignment_targets[scenario_ctr % (len(local_alignment_targets))]
+                    ta1_scenarios[scenario_ctr].alignment_target = AlignmentTarget('Test_Target_ID', [KDMAValue(kdma='Test_KDMA', value=0.5)])
                     scenario_ctr += 1
                 else:
-                    controllers = ITMSession.ta1_controllers[ta1_name] if self.ta1_integration else None
-
                     def __load_scenarios(alignment_target_ids, scenario_ctr):
                         for target_id in alignment_target_ids:
                             try:
                                 ta1_scenarios.append(deepcopy(itm_scenario))
+                                alignment_target = self.load_alignment_target(target_id, ta1_name)
+                                ta1_scenarios[scenario_ctr].alignment_target = alignment_target
                                 if self.ta1_integration:
-                                    ta1_controller = deepcopy(next(controller for controller in controllers if controller.alignment_target_id == target_id), None)
-                                    ta1_scenarios[scenario_ctr].set_controller(ta1_controller)
-                                else:
-                                    ta1_scenarios[scenario_ctr].alignment_target = deepcopy(next(target for target in local_alignment_targets if target.id == target_id), None)
+                                    ta1_scenarios[scenario_ctr].set_controller( # Always create a new controller for each scenario.
+                                        ITMTa1Controller(target_id, ta1_name, alignment_target))
                                 scenario_ctr += 1
-                            except StopIteration as si:
-                                logging.fatal(f"Couldn't find alignment target {target_id}. Check your TA3 server configuration?")
-                                raise si
+                            except Exception as e:
+                                logging.fatal(f"Couldn't obtain alignment target '{target_id}'. Check your TA3 server configuration or connection to TA1.")
+                                raise e
                         return scenario_ctr
 
                     try:

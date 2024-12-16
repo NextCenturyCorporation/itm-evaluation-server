@@ -34,7 +34,7 @@ See the template for likely values.
 
 The following properties can be configured:
 - `EVALUATION_TYPE` 
-    - default is `dryrun` but `metrics` is also supported
+    - default is `phase1` but `dryrun` and `metrics` are also supported
 - `SCENARIO_DIRECTORY`
     - default is `swagger_server/itm/data/%(EVALUATION_TYPE)s/scenarios/`
 - `SOARTECH_URL`
@@ -49,6 +49,8 @@ The following properties can be configured:
     - default is `True`
 - `HISTORY_S3_BUCKET`
     - default is `itm-ui-assets`
+- `ALL_TA1_NAMES`
+    - default is `adept,soartech`
 - A variety of ADEPT and SoarTech properties for filenames, scenario IDs, and alignment target IDs
 
 *NOTE:* the trailing **`s`** in `.../data/%(EVALUATION_TYPE)s/...` is needed for string interpolation to work properly.
