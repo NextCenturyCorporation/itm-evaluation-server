@@ -119,7 +119,7 @@ class ITMScenario:
                 logging.exception("HTTPError from TA1 posting probe.")
             try:
                 # Get and log probe response alignment if neither training nor an adept population alignment session.
-                if not self.session.kdma_training and not self.session.adept_populations:
+                if not self.session.kdma_training and (self.scene_type == 'soartech' or not self.session.adept_populations):
                     probe_response_alignment = \
                         self.ta1_controller.get_probe_response_alignment(
                         response.scenario_id,
