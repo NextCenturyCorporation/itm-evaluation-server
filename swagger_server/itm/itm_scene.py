@@ -197,16 +197,6 @@ class ITMScene:
             self.conditions_met(self.transitions, session_state, self.transition_semantics):
                 self.parent_scenario.change_scene(next_scene_id)
 
-    def _probe_condition_met(self, probe_conditions :List[str]) -> bool:
-        if not probe_conditions:
-            return True
-        return all(probe in self.parent_scenario.probes_sent for probe in probe_conditions)
-
-    def _probe_response_condition_met(self, probe_response_conditions :List[str]) -> bool:
-        if not probe_response_conditions:
-            return True
-        return all(probe in self.parent_scenario.probe_responses_sent for probe in probe_response_conditions)
-
     def _elapsed_gt_condition_met(self, elapsed_gt, session_state :State) -> bool:
         if elapsed_gt is None:
             return True
@@ -217,16 +207,25 @@ class ITMScene:
             return True
         return session_state.elapsed_time < elapsed_lt
 
-    # Each list of actions is true if all specified actions have been taken.
-    # Return True if the any of the specified lists of actions are true.
-    # That is, multiple action lists have "or" semantics.
-    def _actions_condition_met(self, actions_condition) -> bool:
-        if not actions_condition:
+    # Return True if the any of the specified lists of entities are in the comparison list.
+    # That is, multiple lists have "or" semantics.
+    def _list_conditions_met(self, list_of_lists_condition, comparison_list: list) -> bool:
+        if not list_of_lists_condition:
             return True
-        for action_list in actions_condition:
-            if all(action in self.actions_taken for action in action_list):
+        for inner_list in list_of_lists_condition:
+            if all(list_entry in comparison_list for list_entry in inner_list):
                 return True
         return False
+
+    # Each list of actions is true if all specified actions have been taken.
+    def _actions_condition_met(self, actions_condition) -> bool:
+        return self._list_conditions_met(actions_condition, self.actions_taken)
+
+    def _probe_condition_met(self, probe_conditions) -> bool:
+        return self._list_conditions_met(probe_conditions, self.parent_scenario.probes_sent)
+
+    def _probe_response_condition_met(self, probe_response_conditions) -> bool:
+        return self._list_conditions_met(probe_response_conditions, self.parent_scenario.probe_responses_sent)
 
     # True if any of the specified supplies is <= the specified quantity
     def _supply_condition_met(self, supply_conditions :List[Supplies], session_state :State) -> bool:

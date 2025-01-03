@@ -71,7 +71,7 @@ scenes:
         action_condition_semantics: not
         action_conditions:
           probes:
-            - Probe 2 Prelim
+            - [Probe 2 Prelim]
       - action_id: intend_treat_Victim
         action_type: APPLY_TREATMENT
         unstructured: Indicate that you intend to treat Babson.
@@ -82,7 +82,7 @@ scenes:
         action_condition_semantics: not
         action_conditions:
           probes:
-            - Probe 2 Prelim
+            - [Probe 2 Prelim]
       - action_id: assess_Shooter
         action_type: CHECK_ALL_VITALS
         unstructured: Assess the shooter.
@@ -93,7 +93,7 @@ scenes:
         action_condition_semantics: not
         action_conditions:
           probes:
-            - Probe 2 Prelim
+            - [Probe 2 Prelim]
       - action_id: assess_Victim
         action_type: CHECK_ALL_VITALS
         unstructured: Assess the victim.
@@ -104,7 +104,7 @@ scenes:
         action_condition_semantics: not
         action_conditions:
           probes:
-            - Probe 2 Prelim
+            - [Probe 2 Prelim]
       - action_id: identify_as_shooter
         action_type: MESSAGE
         unstructured: Identify your intended patient as the shooter.
@@ -114,7 +114,7 @@ scenes:
         next_scene: Probe 2-F.2-AB.1
         action_conditions:
           probe_responses:
-            - Response 2 Prelim-AB
+            - [Response 2 Prelim-AB]
       - action_id: identify_as_tourniquet_need
         action_type: MESSAGE
         unstructured: Identify your intended patient is the one that requires a tourniquet.
@@ -124,7 +124,7 @@ scenes:
         next_scene: Probe 2-F.2-AB.1
         action_conditions:
           probe_responses:
-            - Response 2 Prelim-AB
+            - [Response 2 Prelim-AB]
       - action_id: identify_as_torso_wounded
         action_type: MESSAGE
         unstructured: Identify your intended patient as the one with the torso wound, the more severely injured one.
@@ -134,7 +134,7 @@ scenes:
         next_scene: Probe 2-F.2-CDE.1
         action_conditions:
           probe_responses:
-            - Response 2 Prelim-CDE
+            - [Response 2 Prelim-CDE]
       - action_id: identify_by_position
         action_type: MESSAGE
         unstructured: Identify your intended patient by indicating the location of Babson.
@@ -144,7 +144,7 @@ scenes:
         next_scene: Probe 2-F.2-CDE.1
         action_conditions:
           probe_responses:
-            - Response 2 Prelim-CDE
+            - [Response 2 Prelim-CDE]
       - action_id: identify_as_victim
         action_type: MESSAGE
         unstructured: Identify your intended patient as the victim.
@@ -154,7 +154,7 @@ scenes:
         next_scene: Probe 2-F.2-CDE.1
         action_conditions:
           probe_responses:
-            - Response 2 Prelim-CDE
+            - [Response 2 Prelim-CDE]
     restricted_actions:
       - CHECK_BLOOD_OXYGEN
       - CHECK_PULSE

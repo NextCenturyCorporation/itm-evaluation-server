@@ -249,7 +249,7 @@ scenes:
         # Action mapping action_conditions are configured just like scene transitions below.  If the condition is met, the action mapping appears in the list for ADMs.
         action_conditions:
           elapsed_time_lt: 100
-          probe_responses: [s1-p1-choice2]
+          probe_responses: [[s1-p1-choice2]]
         probe_condition_semantics: not # 'not' semantics means that the probe is fired if all of the conditions are false
         # Action mapping probe_conditions are configured just like scene transitions below.  If the condition is met, the probe response is sent.
         probe_conditions:
@@ -305,10 +305,9 @@ scenes:
         - [mike-vitals, treat-mike, mike-sitrep] # actions within a list have "and" semantics
         - [civ-vitals, treat-civ, civ-sitrep]
       probes: # Specifying this would mean that the scene would end when the specified probe_id(s) are answered
-        - sample-probe-1
-        - sample-probe-2
-      probe_responses:
-        - s1-p2-choice3 # Specifying this would mean that the scene would end when the specified probe repoonse was given
+        - [sample-probe-1, sample-probe-2]
+      probe_responses: # Specifying this would mean that the scene would end when the specified probe response was given
+        - [s1-p2-choice3]
       character_vitals:
         - character_id: Mike
           vitals: # Or semantics; specify another character_vitals if you want a conjunction of vital criteria
@@ -478,7 +477,7 @@ scenes:
         choice: s1-p5-choice5
     transitions:
       probes:
-       - sample-probe-5
+       - [sample-probe-5]
   - id: revisit_civilian
     end_scene_allowed: false
     next_scene: justify
@@ -508,7 +507,7 @@ scenes:
         choice: s1-p6-choice2
     transitions:
       probes:
-       - sample-probe-6
+       - [sample-probe-6]
   - id: justify
     end_scene_allowed: true
     persist_characters: true
@@ -532,4 +531,4 @@ scenes:
         choice: s1-p7-choice2
     transitions:
       probes:
-       - sample-probe-7
+       - [sample-probe-7]

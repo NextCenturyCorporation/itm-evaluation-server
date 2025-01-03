@@ -16,7 +16,7 @@ class Conditions(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, elapsed_time_lt: int=None, elapsed_time_gt: int=None, actions: List[List[str]]=None, probes: List[str]=None, probe_responses: List[str]=None, character_vitals: List[ConditionsCharacterVitals]=None, supplies: List[Supplies]=None):  # noqa: E501
+    def __init__(self, elapsed_time_lt: int=None, elapsed_time_gt: int=None, actions: List[List[str]]=None, probes: List[List[str]]=None, probe_responses: List[List[str]]=None, character_vitals: List[ConditionsCharacterVitals]=None, supplies: List[Supplies]=None):  # noqa: E501
         """Conditions - a model defined in Swagger
 
         :param elapsed_time_lt: The elapsed_time_lt of this Conditions.  # noqa: E501
@@ -26,9 +26,9 @@ class Conditions(Model):
         :param actions: The actions of this Conditions.  # noqa: E501
         :type actions: List[List[str]]
         :param probes: The probes of this Conditions.  # noqa: E501
-        :type probes: List[str]
+        :type probes: List[List[str]]
         :param probe_responses: The probe_responses of this Conditions.  # noqa: E501
-        :type probe_responses: List[str]
+        :type probe_responses: List[List[str]]
         :param character_vitals: The character_vitals of this Conditions.  # noqa: E501
         :type character_vitals: List[ConditionsCharacterVitals]
         :param supplies: The supplies of this Conditions.  # noqa: E501
@@ -38,8 +38,8 @@ class Conditions(Model):
             'elapsed_time_lt': int,
             'elapsed_time_gt': int,
             'actions': List[List[str]],
-            'probes': List[str],
-            'probe_responses': List[str],
+            'probes': List[List[str]],
+            'probe_responses': List[List[str]],
             'character_vitals': List[ConditionsCharacterVitals],
             'supplies': List[Supplies]
         }
@@ -142,47 +142,47 @@ class Conditions(Model):
         self._actions = actions
 
     @property
-    def probes(self) -> List[str]:
+    def probes(self) -> List[List[str]]:
         """Gets the probes of this Conditions.
 
-        True if the specified list of probe_ids have been answered  # noqa: E501
+        True if any of the specified lists of probe_ids have been answered; multiple probe ID lists have \"or\" semantics; multiple probe IDs within a list have \"and\" semantics  # noqa: E501
 
         :return: The probes of this Conditions.
-        :rtype: List[str]
+        :rtype: List[List[str]]
         """
         return self._probes
 
     @probes.setter
-    def probes(self, probes: List[str]):
+    def probes(self, probes: List[List[str]]):
         """Sets the probes of this Conditions.
 
-        True if the specified list of probe_ids have been answered  # noqa: E501
+        True if any of the specified lists of probe_ids have been answered; multiple probe ID lists have \"or\" semantics; multiple probe IDs within a list have \"and\" semantics  # noqa: E501
 
         :param probes: The probes of this Conditions.
-        :type probes: List[str]
+        :type probes: List[List[str]]
         """
 
         self._probes = probes
 
     @property
-    def probe_responses(self) -> List[str]:
+    def probe_responses(self) -> List[List[str]]:
         """Gets the probe_responses of this Conditions.
 
-        True if the specified list of probe responses (choice) have been sent  # noqa: E501
+        True if any of the specified lists of probe responses (choices) have been sent; multiple choice ID lists have \"or\" semantics; multiple choice IDs within a list have \"and\" semantics  # noqa: E501
 
         :return: The probe_responses of this Conditions.
-        :rtype: List[str]
+        :rtype: List[List[str]]
         """
         return self._probe_responses
 
     @probe_responses.setter
-    def probe_responses(self, probe_responses: List[str]):
+    def probe_responses(self, probe_responses: List[List[str]]):
         """Sets the probe_responses of this Conditions.
 
-        True if the specified list of probe responses (choice) have been sent  # noqa: E501
+        True if any of the specified lists of probe responses (choices) have been sent; multiple choice ID lists have \"or\" semantics; multiple choice IDs within a list have \"and\" semantics  # noqa: E501
 
         :param probe_responses: The probe_responses of this Conditions.
-        :type probe_responses: List[str]
+        :type probe_responses: List[List[str]]
         """
 
         self._probe_responses = probe_responses
