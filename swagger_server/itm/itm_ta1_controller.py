@@ -36,6 +36,7 @@ class ITMTa1Controller:
             host_port = "localhost"
         return host_port
 
+    # Note: this method is currently unused but remains valid from an API perspective; and we might want to use it someday.
     @staticmethod
     def get_alignment_data(scene_type):
         host_port = ITMTa1Controller.get_contact_info(scene_type=scene_type)
@@ -49,6 +50,21 @@ class ITMTa1Controller:
           alignment_target = ITMTa1Controller.to_dict(response)
           alignments.append(AlignmentTarget.from_dict(alignment_target))
         return alignments
+
+    @staticmethod
+    def get_alignment_target_ids(scene_type):
+        host_port = ITMTa1Controller.get_contact_info(scene_type=scene_type)
+        target_id_path = 'alignment_target_ids' if scene_type == 'adept' else 'alignment_targets'
+        url = f"{host_port}/api/v1/{target_id_path}"
+        return json.loads(requests.get(url).content.decode('utf-8'))
+
+    @staticmethod
+    def get_alignment_target(scene_type, alignment_target_id):
+        host_port = ITMTa1Controller.get_contact_info(scene_type=scene_type)
+        url = f"{host_port}/api/v1/alignment_target/{alignment_target_id}"
+        response = requests.get(url)
+        alignment_target = ITMTa1Controller.to_dict(response)
+        return AlignmentTarget.from_dict(alignment_target)
 
     @staticmethod
     def to_dict(response):

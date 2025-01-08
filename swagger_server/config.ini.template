@@ -20,8 +20,7 @@ ADEPT_URL=http://10.216.38.101:8080
 
 SAVE_HISTORY=True
 SAVE_HISTORY_TO_S3=True
-; This applies to `soartech` and `adept` non-training sessions
-ALWAYS_CONNECT_TO_TA1=True
+ALL_TA1_NAMES=adept,soartech
 
 HISTORY_DIRECTORY=itm_history_output
 HISTORY_S3_BUCKET=itm-ui-assets
@@ -125,8 +124,7 @@ ADEPT_URL=http://10.216.38.101:8080
 
 SAVE_HISTORY=True
 SAVE_HISTORY_TO_S3=True
-; This applies to `soartech` and `adept` non-training sessions
-ALWAYS_CONNECT_TO_TA1=True
+ALL_TA1_NAMES=adept,soartech
 
 HISTORY_DIRECTORY=itm_history_output
 HISTORY_S3_BUCKET=itm-ui-assets
