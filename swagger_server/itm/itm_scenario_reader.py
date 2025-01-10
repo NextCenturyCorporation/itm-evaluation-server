@@ -362,10 +362,14 @@ class ITMScenarioReader:
         if conditions_data is None:
             return None
         actions = []
+        probes = []
+        probe_responses = []
         for action_list in conditions_data.get('actions', []):
             actions.append([action for action in action_list])
-        probes = [probe for probe in conditions_data.get('probes', [])]
-        probe_responses = [probe_response for probe_response in conditions_data.get('probe_responses', [])]
+        for probe_list in conditions_data.get('probes', []):
+            probes.append([probe for probe in probe_list])
+        for probe_responses_list in conditions_data.get('probe_responses', []):
+            probe_responses.append([probe_response for probe_response in probe_responses_list])
         character_vitals = [
             ConditionsCharacterVitals(
                 character_id=char_vitals['character_id'],

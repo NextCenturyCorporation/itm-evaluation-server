@@ -1197,19 +1197,23 @@ components:
             items:
               type: string
         probes:
+          description: True if any of the specified lists of probe_ids have been answered; multiple probe ID lists have "or" semantics; multiple probe IDs within a list have "and" semantics
           type: array
-          description: True if the specified list of probe_ids have been answered
           items:
-            type: string
-          example:
-            - adept-september-demo-probe-1
+            type: array
+            items:
+              type: string
+              example:
+              - adept-probe-1
         probe_responses:
+          description: True if any of the specified lists of probe responses (choices) have been sent; multiple choice ID lists have "or" semantics; multiple choice IDs within a list have "and" semantics
           type: array
-          description: True if the specified list of probe responses (choice) have been sent
           items:
-            type: string
-          example:
-            - adept-september-demo-probe-1-choice2
+            type: array
+            items:
+              type: string
+              example:
+              - adept-probe-1-choice2
         character_vitals:
           type: array
           description: True if any of the specified collection of vital values have been met for the specified character_id

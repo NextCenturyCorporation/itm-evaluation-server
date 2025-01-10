@@ -74,7 +74,7 @@ scenes:
     transition_semantics: or
     transitions:
       elapsed_time_gt: 5000
-      probe_responses: [go_back_from_scene3]
+      probe_responses: [[go_back_from_scene3]]
   - id: test_scene5
     state:
       unstructured: This is a scene5
@@ -98,7 +98,7 @@ scenes:
     transition_semantics: or
     transitions:
       elapsed_time_gt: 5000
-      probe_responses: [go_back_from_scene5]
+      probe_responses: [[go_back_from_scene5]]
   - id: test_scene1
     next_scene: test_scene2
     end_scene_allowed: false
@@ -120,7 +120,7 @@ scenes:
     transition_semantics: or
     transitions:
       elapsed_time_gt: 5000
-      probe_responses: [go_back_from_scene1]
+      probe_responses: [[go_back_from_scene1]]
   - id: test_scene4
     state:
       unstructured: This is a scene4
@@ -145,7 +145,7 @@ scenes:
     transition_semantics: or
     transitions:
       elapsed_time_gt: 5000
-      probe_responses: [go_back_from_scene4]
+      probe_responses: [[go_back_from_scene4]]
   - id: test_scene2
     state:
       unstructured: This is a scene2
@@ -186,4 +186,4 @@ scenes:
     transition_semantics: or
     transitions:
       elapsed_time_gt: 5000
-      probe_responses: [go_back_from_scene2]
+      probe_responses: [[go_back_from_scene2]]
