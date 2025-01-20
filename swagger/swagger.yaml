@@ -558,14 +558,12 @@ components:
       example:
         value: 0.8
         kdma: mission
-    State:
+    BasicState:
+      type: object
       required:
         - unstructured
-        - environment
-        - supplies
         - characters
-      type: object
-      description: the current tactical & environmental state of the scenario and of its characters
+      description: Basic state for the scene or scenario
       properties:
         unstructured:
           type: string
@@ -576,31 +574,39 @@ components:
           example: 10
         meta_info:
           $ref: "#/components/schemas/MetaInfo"
-        scenario_complete:
-          type: boolean
-          description: set to true if the scenario is complete; subsequent calls involving
-            that scenario will return an error code
-        mission:
-          $ref: "#/components/schemas/Mission"
-        environment:
-          $ref: "#/components/schemas/Environment"
-        threat_state:
-          $ref: "#/components/schemas/ThreatState"
         events:
           type: array
           description: A list of scenario events to inform decision-making
           items:
             $ref: "#/components/schemas/Event"
+        threat_state:
+          $ref: "#/components/schemas/ThreatState"
+        characters:
+          type: array
+          description: A list of characters in the scene
+          items:
+            $ref: "#/components/schemas/Character"
+        scenario_complete:
+          type: boolean
+          description: set to true if the scenario is complete; subsequent calls involving that scenario will return an error code
+    State:
+      allOf: # Combines the BasicState and the domain-level state
+        - $ref: "#/components/schemas/BasicState"
+      required:
+        - environment
+        - supplies
+      type: object
+      description: the current tactical & environmental state of the scenario and of its characters
+      properties:
+        mission:
+          $ref: "#/components/schemas/Mission"
+        environment:
+          $ref: "#/components/schemas/Environment"
         supplies:
           type: array
           description: A list of supplies available to the medic
           items:
             $ref: "#/components/schemas/Supplies"
-        characters:
-          type: array
-          description: A list of characters in the scene, including injured patients, civilians, medics, etc.
-          items:
-            $ref: "#/components/schemas/Character"
     MetaInfo:
       type: object
       description: Includes meta info to assist with debugging. Only provided during training sessions.
@@ -767,7 +773,7 @@ components:
         - unstructured
         - threats
       type: object
-      description: Description of the current threat to the characters, including the medic
+      description: Description of the current threat to the characters
       properties:
         unstructured:
           type: string
@@ -854,14 +860,14 @@ components:
         type: Tourniquet
         quantity: 4
         reusable: false
-    Character:
+    BasicCharacter:
       required:
         - id
         - name
         - unstructured
         - demographics
       type: object
-      description: a character in the scene, including injured patients, civilians, medics, etc.
+      description: a character in the scene
       properties:
         id:
           type: string
@@ -875,6 +881,20 @@ components:
           type: string
           description: Natural language, plain text description of the character
           example: 22 YO male Marine hit by an IED. Puncture wound on the left side of the neck.
+        demographics:
+          $ref: "#/components/schemas/Demographics"
+        rapport:
+          $ref: "#/components/schemas/RapportEnum"
+        unseen:
+          type: boolean
+          description: whether or not this character is visible in the scene or merely heard or reported about from a nearby location
+          default: false
+    Character:
+      allOf: # Combines the BasicCharacter and the domain-level character
+        - $ref: "#/components/schemas/BasicCharacter"
+      type: object
+      description: a character in the scene, including injured patients, civilians, medics, etc.
+      properties:
         unstructured_postassess:
           type: string
           description: unstructured description updated after character assessment
@@ -883,18 +903,10 @@ components:
           type: boolean
           description: whether or not this character has a blanket (either wrapped around or underneath)
           default: false
-        unseen:
-          type: boolean
-          description: whether or not this character is visible in the scene or merely heard or reported about from a nearby location
-          default: false
         intent:
           $ref: "#/components/schemas/IntentEnum"
         directness_of_causality:
           $ref: "#/components/schemas/DirectnessEnum"
-        rapport:
-          $ref: "#/components/schemas/RapportEnum"
-        demographics:
-          $ref: "#/components/schemas/Demographics"
         injuries:
           type: array
           description: A list of Injuries for the character
@@ -908,7 +920,7 @@ components:
           default: false
         tag:
           $ref: "#/components/schemas/CharacterTagEnum"
-    Demographics:
+    BasicDemographics:
       required:
         - sex
         - race
@@ -925,6 +937,14 @@ components:
           $ref: "#/components/schemas/DemographicSexEnum"
         race:
           $ref: "#/components/schemas/RaceEnum"
+        role:
+          $ref: "#/components/schemas/CharacterRoleEnum"
+    Demographics:
+      allOf: # Combines the BasicDemographics and the domain-level demographics
+        - $ref: "#/components/schemas/BasicDemographics"
+      type: object
+      description: Basic properties about the character
+      properties:
         military_disposition:
           $ref: "#/components/schemas/MilitaryDispositionEnum"
         military_branch:
@@ -943,8 +963,6 @@ components:
               level: skilled
             - skill_type: Medical
               level: novice
-        role:
-          $ref: "#/components/schemas/CharacterRoleEnum"
         mission_importance:
           $ref: "#/components/schemas/MissionImportanceEnum"
     Skills:
@@ -1177,7 +1195,7 @@ components:
           $ref: "#/components/schemas/SemanticTypeEnum"
         probe_conditions:
           $ref: "#/components/schemas/Conditions"
-    Conditions:
+    BasicConditions:
       type: object
       description: Conditions that specify whether to transition to the next scene or send a probe response
       properties:
@@ -1210,6 +1228,12 @@ components:
             type: string
           example:
             - adept-september-demo-probe-1-choice2
+    Conditions:
+      allOf: # Combines the Conditions and the domain-level conditions
+        - $ref: "#/components/schemas/BasicConditions"
+      type: object
+      description: Conditions that specify whether to transition to the next scene or send a probe response
+      properties:
         character_vitals:
           type: array
           description: True if any of the specified collection of vital values have been met for the specified character_id

@@ -6,6 +6,7 @@ from datetime import date, datetime  # noqa: F401
 from typing import List, Dict  # noqa: F401
 
 from swagger_server.models.base_model_ import Model
+from swagger_server.models.basic_state import BasicState  # noqa: F401,E501
 from swagger_server.models.character import Character  # noqa: F401,E501
 from swagger_server.models.environment import Environment  # noqa: F401,E501
 from swagger_server.models.event import Event  # noqa: F401,E501
@@ -21,7 +22,7 @@ class State(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, unstructured: str=None, elapsed_time: int=None, meta_info: MetaInfo=None, scenario_complete: bool=None, mission: Mission=None, environment: Environment=None, threat_state: ThreatState=None, events: List[Event]=None, supplies: List[Supplies]=None, characters: List[Character]=None):  # noqa: E501
+    def __init__(self, unstructured: str=None, elapsed_time: int=None, meta_info: MetaInfo=None, events: List[Event]=None, threat_state: ThreatState=None, characters: List[Character]=None, scenario_complete: bool=None, mission: Mission=None, environment: Environment=None, supplies: List[Supplies]=None):  # noqa: E501
         """State - a model defined in Swagger
 
         :param unstructured: The unstructured of this State.  # noqa: E501
@@ -30,56 +31,56 @@ class State(Model):
         :type elapsed_time: int
         :param meta_info: The meta_info of this State.  # noqa: E501
         :type meta_info: MetaInfo
+        :param events: The events of this State.  # noqa: E501
+        :type events: List[Event]
+        :param threat_state: The threat_state of this State.  # noqa: E501
+        :type threat_state: ThreatState
+        :param characters: The characters of this State.  # noqa: E501
+        :type characters: List[Character]
         :param scenario_complete: The scenario_complete of this State.  # noqa: E501
         :type scenario_complete: bool
         :param mission: The mission of this State.  # noqa: E501
         :type mission: Mission
         :param environment: The environment of this State.  # noqa: E501
         :type environment: Environment
-        :param threat_state: The threat_state of this State.  # noqa: E501
-        :type threat_state: ThreatState
-        :param events: The events of this State.  # noqa: E501
-        :type events: List[Event]
         :param supplies: The supplies of this State.  # noqa: E501
         :type supplies: List[Supplies]
-        :param characters: The characters of this State.  # noqa: E501
-        :type characters: List[Character]
         """
         self.swagger_types = {
             'unstructured': str,
             'elapsed_time': int,
             'meta_info': MetaInfo,
+            'events': List[Event],
+            'threat_state': ThreatState,
+            'characters': List[Character],
             'scenario_complete': bool,
             'mission': Mission,
             'environment': Environment,
-            'threat_state': ThreatState,
-            'events': List[Event],
-            'supplies': List[Supplies],
-            'characters': List[Character]
+            'supplies': List[Supplies]
         }
 
         self.attribute_map = {
             'unstructured': 'unstructured',
             'elapsed_time': 'elapsed_time',
             'meta_info': 'meta_info',
+            'events': 'events',
+            'threat_state': 'threat_state',
+            'characters': 'characters',
             'scenario_complete': 'scenario_complete',
             'mission': 'mission',
             'environment': 'environment',
-            'threat_state': 'threat_state',
-            'events': 'events',
-            'supplies': 'supplies',
-            'characters': 'characters'
+            'supplies': 'supplies'
         }
         self._unstructured = unstructured
         self._elapsed_time = elapsed_time
         self._meta_info = meta_info
+        self._events = events
+        self._threat_state = threat_state
+        self._characters = characters
         self._scenario_complete = scenario_complete
         self._mission = mission
         self._environment = environment
-        self._threat_state = threat_state
-        self._events = events
         self._supplies = supplies
-        self._characters = characters
 
     @classmethod
     def from_dict(cls, dikt) -> 'State':
@@ -162,6 +163,75 @@ class State(Model):
         self._meta_info = meta_info
 
     @property
+    def events(self) -> List[Event]:
+        """Gets the events of this State.
+
+        A list of scenario events to inform decision-making  # noqa: E501
+
+        :return: The events of this State.
+        :rtype: List[Event]
+        """
+        return self._events
+
+    @events.setter
+    def events(self, events: List[Event]):
+        """Sets the events of this State.
+
+        A list of scenario events to inform decision-making  # noqa: E501
+
+        :param events: The events of this State.
+        :type events: List[Event]
+        """
+
+        self._events = events
+
+    @property
+    def threat_state(self) -> ThreatState:
+        """Gets the threat_state of this State.
+
+
+        :return: The threat_state of this State.
+        :rtype: ThreatState
+        """
+        return self._threat_state
+
+    @threat_state.setter
+    def threat_state(self, threat_state: ThreatState):
+        """Sets the threat_state of this State.
+
+
+        :param threat_state: The threat_state of this State.
+        :type threat_state: ThreatState
+        """
+
+        self._threat_state = threat_state
+
+    @property
+    def characters(self) -> List[Character]:
+        """Gets the characters of this State.
+
+        A list of characters in the scene  # noqa: E501
+
+        :return: The characters of this State.
+        :rtype: List[Character]
+        """
+        return self._characters
+
+    @characters.setter
+    def characters(self, characters: List[Character]):
+        """Sets the characters of this State.
+
+        A list of characters in the scene  # noqa: E501
+
+        :param characters: The characters of this State.
+        :type characters: List[Character]
+        """
+        if characters is None:
+            raise ValueError("Invalid value for `characters`, must not be `None`")  # noqa: E501
+
+        self._characters = characters
+
+    @property
     def scenario_complete(self) -> bool:
         """Gets the scenario_complete of this State.
 
@@ -229,50 +299,6 @@ class State(Model):
         self._environment = environment
 
     @property
-    def threat_state(self) -> ThreatState:
-        """Gets the threat_state of this State.
-
-
-        :return: The threat_state of this State.
-        :rtype: ThreatState
-        """
-        return self._threat_state
-
-    @threat_state.setter
-    def threat_state(self, threat_state: ThreatState):
-        """Sets the threat_state of this State.
-
-
-        :param threat_state: The threat_state of this State.
-        :type threat_state: ThreatState
-        """
-
-        self._threat_state = threat_state
-
-    @property
-    def events(self) -> List[Event]:
-        """Gets the events of this State.
-
-        A list of scenario events to inform decision-making  # noqa: E501
-
-        :return: The events of this State.
-        :rtype: List[Event]
-        """
-        return self._events
-
-    @events.setter
-    def events(self, events: List[Event]):
-        """Sets the events of this State.
-
-        A list of scenario events to inform decision-making  # noqa: E501
-
-        :param events: The events of this State.
-        :type events: List[Event]
-        """
-
-        self._events = events
-
-    @property
     def supplies(self) -> List[Supplies]:
         """Gets the supplies of this State.
 
@@ -296,28 +322,3 @@ class State(Model):
             raise ValueError("Invalid value for `supplies`, must not be `None`")  # noqa: E501
 
         self._supplies = supplies
-
-    @property
-    def characters(self) -> List[Character]:
-        """Gets the characters of this State.
-
-        A list of characters in the scene, including injured patients, civilians, medics, etc.  # noqa: E501
-
-        :return: The characters of this State.
-        :rtype: List[Character]
-        """
-        return self._characters
-
-    @characters.setter
-    def characters(self, characters: List[Character]):
-        """Sets the characters of this State.
-
-        A list of characters in the scene, including injured patients, civilians, medics, etc.  # noqa: E501
-
-        :param characters: The characters of this State.
-        :type characters: List[Character]
-        """
-        if characters is None:
-            raise ValueError("Invalid value for `characters`, must not be `None`")  # noqa: E501
-
-        self._characters = characters

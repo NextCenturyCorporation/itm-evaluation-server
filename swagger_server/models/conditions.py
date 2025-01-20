@@ -6,6 +6,7 @@ from datetime import date, datetime  # noqa: F401
 from typing import List, Dict  # noqa: F401
 
 from swagger_server.models.base_model_ import Model
+from swagger_server.models.basic_conditions import BasicConditions  # noqa: F401,E501
 from swagger_server.models.conditions_character_vitals import ConditionsCharacterVitals  # noqa: F401,E501
 from swagger_server.models.supplies import Supplies  # noqa: F401,E501
 from swagger_server import util

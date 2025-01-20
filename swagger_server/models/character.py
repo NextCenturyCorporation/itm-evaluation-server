@@ -6,6 +6,7 @@ from datetime import date, datetime  # noqa: F401
 from typing import List, Dict  # noqa: F401
 
 from swagger_server.models.base_model_ import Model
+from swagger_server.models.basic_character import BasicCharacter  # noqa: F401,E501
 from swagger_server.models.character_tag_enum import CharacterTagEnum  # noqa: F401,E501
 from swagger_server.models.demographics import Demographics  # noqa: F401,E501
 from swagger_server.models.directness_enum import DirectnessEnum  # noqa: F401,E501
@@ -21,7 +22,7 @@ class Character(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, id: str=None, name: str=None, unstructured: str=None, unstructured_postassess: str=None, has_blanket: bool=False, unseen: bool=False, intent: IntentEnum=None, directness_of_causality: DirectnessEnum=None, rapport: RapportEnum=None, demographics: Demographics=None, injuries: List[Injury]=None, vitals: Vitals=None, visited: bool=False, tag: CharacterTagEnum=None):  # noqa: E501
+    def __init__(self, id: str=None, name: str=None, unstructured: str=None, demographics: Demographics=None, rapport: RapportEnum=None, unseen: bool=False, unstructured_postassess: str=None, has_blanket: bool=False, intent: IntentEnum=None, directness_of_causality: DirectnessEnum=None, injuries: List[Injury]=None, vitals: Vitals=None, visited: bool=False, tag: CharacterTagEnum=None):  # noqa: E501
         """Character - a model defined in Swagger
 
         :param id: The id of this Character.  # noqa: E501
@@ -30,20 +31,20 @@ class Character(Model):
         :type name: str
         :param unstructured: The unstructured of this Character.  # noqa: E501
         :type unstructured: str
+        :param demographics: The demographics of this Character.  # noqa: E501
+        :type demographics: Demographics
+        :param rapport: The rapport of this Character.  # noqa: E501
+        :type rapport: RapportEnum
+        :param unseen: The unseen of this Character.  # noqa: E501
+        :type unseen: bool
         :param unstructured_postassess: The unstructured_postassess of this Character.  # noqa: E501
         :type unstructured_postassess: str
         :param has_blanket: The has_blanket of this Character.  # noqa: E501
         :type has_blanket: bool
-        :param unseen: The unseen of this Character.  # noqa: E501
-        :type unseen: bool
         :param intent: The intent of this Character.  # noqa: E501
         :type intent: IntentEnum
         :param directness_of_causality: The directness_of_causality of this Character.  # noqa: E501
         :type directness_of_causality: DirectnessEnum
-        :param rapport: The rapport of this Character.  # noqa: E501
-        :type rapport: RapportEnum
-        :param demographics: The demographics of this Character.  # noqa: E501
-        :type demographics: Demographics
         :param injuries: The injuries of this Character.  # noqa: E501
         :type injuries: List[Injury]
         :param vitals: The vitals of this Character.  # noqa: E501
@@ -57,13 +58,13 @@ class Character(Model):
             'id': str,
             'name': str,
             'unstructured': str,
+            'demographics': Demographics,
+            'rapport': RapportEnum,
+            'unseen': bool,
             'unstructured_postassess': str,
             'has_blanket': bool,
-            'unseen': bool,
             'intent': IntentEnum,
             'directness_of_causality': DirectnessEnum,
-            'rapport': RapportEnum,
-            'demographics': Demographics,
             'injuries': List[Injury],
             'vitals': Vitals,
             'visited': bool,
@@ -74,13 +75,13 @@ class Character(Model):
             'id': 'id',
             'name': 'name',
             'unstructured': 'unstructured',
+            'demographics': 'demographics',
+            'rapport': 'rapport',
+            'unseen': 'unseen',
             'unstructured_postassess': 'unstructured_postassess',
             'has_blanket': 'has_blanket',
-            'unseen': 'unseen',
             'intent': 'intent',
             'directness_of_causality': 'directness_of_causality',
-            'rapport': 'rapport',
-            'demographics': 'demographics',
             'injuries': 'injuries',
             'vitals': 'vitals',
             'visited': 'visited',
@@ -89,13 +90,13 @@ class Character(Model):
         self._id = id
         self._name = name
         self._unstructured = unstructured
+        self._demographics = demographics
+        self._rapport = rapport
+        self._unseen = unseen
         self._unstructured_postassess = unstructured_postassess
         self._has_blanket = has_blanket
-        self._unseen = unseen
         self._intent = intent
         self._directness_of_causality = directness_of_causality
-        self._rapport = rapport
-        self._demographics = demographics
         self._injuries = injuries
         self._vitals = vitals
         self._visited = visited
@@ -188,6 +189,73 @@ class Character(Model):
         self._unstructured = unstructured
 
     @property
+    def demographics(self) -> Demographics:
+        """Gets the demographics of this Character.
+
+
+        :return: The demographics of this Character.
+        :rtype: Demographics
+        """
+        return self._demographics
+
+    @demographics.setter
+    def demographics(self, demographics: Demographics):
+        """Sets the demographics of this Character.
+
+
+        :param demographics: The demographics of this Character.
+        :type demographics: Demographics
+        """
+        if demographics is None:
+            raise ValueError("Invalid value for `demographics`, must not be `None`")  # noqa: E501
+
+        self._demographics = demographics
+
+    @property
+    def rapport(self) -> RapportEnum:
+        """Gets the rapport of this Character.
+
+
+        :return: The rapport of this Character.
+        :rtype: RapportEnum
+        """
+        return self._rapport
+
+    @rapport.setter
+    def rapport(self, rapport: RapportEnum):
+        """Sets the rapport of this Character.
+
+
+        :param rapport: The rapport of this Character.
+        :type rapport: RapportEnum
+        """
+
+        self._rapport = rapport
+
+    @property
+    def unseen(self) -> bool:
+        """Gets the unseen of this Character.
+
+        whether or not this character is visible in the scene or merely heard or reported about from a nearby location  # noqa: E501
+
+        :return: The unseen of this Character.
+        :rtype: bool
+        """
+        return self._unseen
+
+    @unseen.setter
+    def unseen(self, unseen: bool):
+        """Sets the unseen of this Character.
+
+        whether or not this character is visible in the scene or merely heard or reported about from a nearby location  # noqa: E501
+
+        :param unseen: The unseen of this Character.
+        :type unseen: bool
+        """
+
+        self._unseen = unseen
+
+    @property
     def unstructured_postassess(self) -> str:
         """Gets the unstructured_postassess of this Character.
 
@@ -234,29 +302,6 @@ class Character(Model):
         self._has_blanket = has_blanket
 
     @property
-    def unseen(self) -> bool:
-        """Gets the unseen of this Character.
-
-        whether or not this character is visible in the scene or merely heard or reported about from a nearby location  # noqa: E501
-
-        :return: The unseen of this Character.
-        :rtype: bool
-        """
-        return self._unseen
-
-    @unseen.setter
-    def unseen(self, unseen: bool):
-        """Sets the unseen of this Character.
-
-        whether or not this character is visible in the scene or merely heard or reported about from a nearby location  # noqa: E501
-
-        :param unseen: The unseen of this Character.
-        :type unseen: bool
-        """
-
-        self._unseen = unseen
-
-    @property
     def intent(self) -> IntentEnum:
         """Gets the intent of this Character.
 
@@ -297,50 +342,6 @@ class Character(Model):
         """
 
         self._directness_of_causality = directness_of_causality
-
-    @property
-    def rapport(self) -> RapportEnum:
-        """Gets the rapport of this Character.
-
-
-        :return: The rapport of this Character.
-        :rtype: RapportEnum
-        """
-        return self._rapport
-
-    @rapport.setter
-    def rapport(self, rapport: RapportEnum):
-        """Sets the rapport of this Character.
-
-
-        :param rapport: The rapport of this Character.
-        :type rapport: RapportEnum
-        """
-
-        self._rapport = rapport
-
-    @property
-    def demographics(self) -> Demographics:
-        """Gets the demographics of this Character.
-
-
-        :return: The demographics of this Character.
-        :rtype: Demographics
-        """
-        return self._demographics
-
-    @demographics.setter
-    def demographics(self, demographics: Demographics):
-        """Sets the demographics of this Character.
-
-
-        :param demographics: The demographics of this Character.
-        :type demographics: Demographics
-        """
-        if demographics is None:
-            raise ValueError("Invalid value for `demographics`, must not be `None`")  # noqa: E501
-
-        self._demographics = demographics
 
     @property
     def injuries(self) -> List[Injury]:

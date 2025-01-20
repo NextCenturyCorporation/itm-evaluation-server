@@ -6,6 +6,7 @@ from datetime import date, datetime  # noqa: F401
 from typing import List, Dict  # noqa: F401
 
 from swagger_server.models.base_model_ import Model
+from swagger_server.models.basic_demographics import BasicDemographics  # noqa: F401,E501
 from swagger_server.models.character_role_enum import CharacterRoleEnum  # noqa: F401,E501
 from swagger_server.models.demographic_sex_enum import DemographicSexEnum  # noqa: F401,E501
 from swagger_server.models.military_branch_enum import MilitaryBranchEnum  # noqa: F401,E501
@@ -23,7 +24,7 @@ class Demographics(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, age: int=None, sex: DemographicSexEnum=None, race: RaceEnum=None, military_disposition: MilitaryDispositionEnum=None, military_branch: MilitaryBranchEnum=None, rank: MilitaryRankEnum=None, rank_title: MilitaryRankTitleEnum=None, skills: List[Skills]=None, role: CharacterRoleEnum=None, mission_importance: MissionImportanceEnum=None):  # noqa: E501
+    def __init__(self, age: int=None, sex: DemographicSexEnum=None, race: RaceEnum=None, role: CharacterRoleEnum=None, military_disposition: MilitaryDispositionEnum=None, military_branch: MilitaryBranchEnum=None, rank: MilitaryRankEnum=None, rank_title: MilitaryRankTitleEnum=None, skills: List[Skills]=None, mission_importance: MissionImportanceEnum=None):  # noqa: E501
         """Demographics - a model defined in Swagger
 
         :param age: The age of this Demographics.  # noqa: E501
@@ -32,6 +33,8 @@ class Demographics(Model):
         :type sex: DemographicSexEnum
         :param race: The race of this Demographics.  # noqa: E501
         :type race: RaceEnum
+        :param role: The role of this Demographics.  # noqa: E501
+        :type role: CharacterRoleEnum
         :param military_disposition: The military_disposition of this Demographics.  # noqa: E501
         :type military_disposition: MilitaryDispositionEnum
         :param military_branch: The military_branch of this Demographics.  # noqa: E501
@@ -42,8 +45,6 @@ class Demographics(Model):
         :type rank_title: MilitaryRankTitleEnum
         :param skills: The skills of this Demographics.  # noqa: E501
         :type skills: List[Skills]
-        :param role: The role of this Demographics.  # noqa: E501
-        :type role: CharacterRoleEnum
         :param mission_importance: The mission_importance of this Demographics.  # noqa: E501
         :type mission_importance: MissionImportanceEnum
         """
@@ -51,12 +52,12 @@ class Demographics(Model):
             'age': int,
             'sex': DemographicSexEnum,
             'race': RaceEnum,
+            'role': CharacterRoleEnum,
             'military_disposition': MilitaryDispositionEnum,
             'military_branch': MilitaryBranchEnum,
             'rank': MilitaryRankEnum,
             'rank_title': MilitaryRankTitleEnum,
             'skills': List[Skills],
-            'role': CharacterRoleEnum,
             'mission_importance': MissionImportanceEnum
         }
 
@@ -64,23 +65,23 @@ class Demographics(Model):
             'age': 'age',
             'sex': 'sex',
             'race': 'race',
+            'role': 'role',
             'military_disposition': 'military_disposition',
             'military_branch': 'military_branch',
             'rank': 'rank',
             'rank_title': 'rank_title',
             'skills': 'skills',
-            'role': 'role',
             'mission_importance': 'mission_importance'
         }
         self._age = age
         self._sex = sex
         self._race = race
+        self._role = role
         self._military_disposition = military_disposition
         self._military_branch = military_branch
         self._rank = rank
         self._rank_title = rank_title
         self._skills = skills
-        self._role = role
         self._mission_importance = mission_importance
 
     @classmethod
@@ -162,6 +163,27 @@ class Demographics(Model):
             raise ValueError("Invalid value for `race`, must not be `None`")  # noqa: E501
 
         self._race = race
+
+    @property
+    def role(self) -> CharacterRoleEnum:
+        """Gets the role of this Demographics.
+
+
+        :return: The role of this Demographics.
+        :rtype: CharacterRoleEnum
+        """
+        return self._role
+
+    @role.setter
+    def role(self, role: CharacterRoleEnum):
+        """Sets the role of this Demographics.
+
+
+        :param role: The role of this Demographics.
+        :type role: CharacterRoleEnum
+        """
+
+        self._role = role
 
     @property
     def military_disposition(self) -> MilitaryDispositionEnum:
@@ -269,27 +291,6 @@ class Demographics(Model):
         """
 
         self._skills = skills
-
-    @property
-    def role(self) -> CharacterRoleEnum:
-        """Gets the role of this Demographics.
-
-
-        :return: The role of this Demographics.
-        :rtype: CharacterRoleEnum
-        """
-        return self._role
-
-    @role.setter
-    def role(self, role: CharacterRoleEnum):
-        """Sets the role of this Demographics.
-
-
-        :param role: The role of this Demographics.
-        :type role: CharacterRoleEnum
-        """
-
-        self._role = role
 
     @property
     def mission_importance(self) -> MissionImportanceEnum:
