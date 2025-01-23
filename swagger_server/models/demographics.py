@@ -6,7 +6,7 @@ from datetime import date, datetime  # noqa: F401
 from typing import List, Dict  # noqa: F401
 
 from swagger_server.models.base_model_ import Model
-from swagger_server.models.basic_demographics import BasicDemographics  # noqa: F401,E501
+from swagger_server.models.base_demographics import BaseDemographics  # noqa: F401,E501
 from swagger_server.models.character_role_enum import CharacterRoleEnum  # noqa: F401,E501
 from swagger_server.models.demographic_sex_enum import DemographicSexEnum  # noqa: F401,E501
 from swagger_server.models.military_branch_enum import MilitaryBranchEnum  # noqa: F401,E501

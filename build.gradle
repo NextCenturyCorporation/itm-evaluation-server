@@ -12,7 +12,7 @@ repositories {
 
 dependencies {
     swaggerCodegen 'org.slf4j:slf4j-simple:1.7.36'
-    swaggerCodegen 'io.swagger.codegen.v3:swagger-codegen-cli:3.0.46'
+    swaggerCodegen 'io.swagger.codegen.v3:swagger-codegen-cli:3.0.66'
 }
 
 defaultTasks 'clean', 'generateSwaggerCode', 'postGeneration'

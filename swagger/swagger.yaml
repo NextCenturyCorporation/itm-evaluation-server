@@ -558,12 +558,12 @@ components:
       example:
         value: 0.8
         kdma: mission
-    BasicState:
+    BaseState:
       type: object
       required:
         - unstructured
         - characters
-      description: Basic state for the scene or scenario
+      description: Base state for the scene or scenario
       properties:
         unstructured:
           type: string
@@ -590,8 +590,8 @@ components:
           type: boolean
           description: set to true if the scenario is complete; subsequent calls involving that scenario will return an error code
     State:
-      allOf: # Combines the BasicState and the domain-level state
-        - $ref: "#/components/schemas/BasicState"
+      allOf: # Combines the BaseState and the domain-level state
+        - $ref: "#/components/schemas/BaseState"
       required:
         - environment
         - supplies
@@ -860,7 +860,7 @@ components:
         type: Tourniquet
         quantity: 4
         reusable: false
-    BasicCharacter:
+    BaseCharacter:
       required:
         - id
         - name
@@ -890,8 +890,8 @@ components:
           description: whether or not this character is visible in the scene or merely heard or reported about from a nearby location
           default: false
     Character:
-      allOf: # Combines the BasicCharacter and the domain-level character
-        - $ref: "#/components/schemas/BasicCharacter"
+      allOf: # Combines the BaseCharacter and the domain-level character
+        - $ref: "#/components/schemas/BaseCharacter"
       type: object
       description: a character in the scene, including injured patients, civilians, medics, etc.
       properties:
@@ -920,7 +920,7 @@ components:
           default: false
         tag:
           $ref: "#/components/schemas/CharacterTagEnum"
-    BasicDemographics:
+    BaseDemographics:
       required:
         - sex
         - race
@@ -940,8 +940,8 @@ components:
         role:
           $ref: "#/components/schemas/CharacterRoleEnum"
     Demographics:
-      allOf: # Combines the BasicDemographics and the domain-level demographics
-        - $ref: "#/components/schemas/BasicDemographics"
+      allOf: # Combines the BaseDemographics and the domain-level demographics
+        - $ref: "#/components/schemas/BaseDemographics"
       type: object
       description: Basic properties about the character
       properties:
@@ -1195,7 +1195,7 @@ components:
           $ref: "#/components/schemas/SemanticTypeEnum"
         probe_conditions:
           $ref: "#/components/schemas/Conditions"
-    BasicConditions:
+    BaseConditions:
       type: object
       description: Conditions that specify whether to transition to the next scene or send a probe response
       properties:
@@ -1230,7 +1230,7 @@ components:
             - adept-september-demo-probe-1-choice2
     Conditions:
       allOf: # Combines the Conditions and the domain-level conditions
-        - $ref: "#/components/schemas/BasicConditions"
+        - $ref: "#/components/schemas/BaseConditions"
       type: object
       description: Conditions that specify whether to transition to the next scene or send a probe response
       properties:
@@ -1564,9 +1564,14 @@ components:
         - ground evac
         - water evac
         - unknown evac
-    ThreatTypeEnum:
+    BaseThreatTypeEnum:
       type: string
       description: the type or nature of the threat
+      enum:
+        - Unknown
+    DomainThreatTypeEnum:
+      type: string
+      description: the domain-specific type or nature of the threat
       enum:
         - Civil unrest
         - Drone activity
@@ -1577,8 +1582,13 @@ components:
         - Mines
         - Poisonous vegetation
         - Predators
-        - Unknown
         - Unstable structure
+    ThreatTypeEnum:
+      oneOf: # Combines the BaseThreatTypeEnum and the domain-level theat type enum
+        - $ref: "#/components/schemas/BaseThreatTypeEnum"
+        - $ref: "#/components/schemas/DomainThreatTypeEnum"
+      type: string
+      description: the type or nature of the threat
     ThreatSeverityEnum:
       type: string
       description: how dangerous and/or imminent the threat is
@@ -1784,9 +1794,14 @@ components:
         - Chief Master Sergeant
         - Chief Master Sergeant of the Space Force
         - Chief of Space Operations
-    CharacterRoleEnum:
+    BaseCharacterRoleEnum:
       type: string
-      description: The primary role a character has in the mission, in terms of the skills they possess
+      description: The primary role a character has in the scene
+      enum:
+        - Unknown
+    DomainCharacterRoleEnum:
+      type: string
+      description: The primary role a character has in the scene
       enum:
         - Infantry
         - SEAL
@@ -1795,6 +1810,12 @@ components:
         - Medical
         - Specialist
         - Communications
+    CharacterRoleEnum:
+      oneOf: # Combines the BaseCharacterRoleEnum and the domain-level theat type enum
+        - $ref: "#/components/schemas/BaseCharacterRoleEnum"
+        - $ref: "#/components/schemas/DomainCharacterRoleEnum"
+      type: string
+      description: The primary role a character has in the mission, in terms of the skills they possess
     IntentEnum:
       type: string
       description: The intent of the character
@@ -1974,7 +1995,7 @@ components:
         - and
         - or
         - not
-    ActionTypeEnum:
+    DomainActionTypeEnum:
       type: string
       description: An action type [recognized by the ADM Server](https://github.com/NextCenturyCorporation/itm-evaluation-client?tab=readme-ov-file#available-actions)
       enum:
@@ -1984,13 +2005,22 @@ components:
         - CHECK_PULSE
         - CHECK_RESPIRATION
         - DIRECT_MOBILE_CHARACTERS
-        - END_SCENE
-        - MESSAGE
-        - MOVE_TO
         - MOVE_TO_EVAC
-        - SEARCH
         - SITREP
         - TAG_CHARACTER
+    BaseActionTypeEnum:
+      type: string
+      description: An action type [recognized by the ADM Server](https://github.com/NextCenturyCorporation/itm-evaluation-client?tab=readme-ov-file#available-actions)
+      enum:
+        - END_SCENE
+        - MOVE_TO
+        - MESSAGE
+        - SEARCH
+    ActionTypeEnum:
+      type: string
+      oneOf:
+        - $ref: '#/components/schemas/BaseActionTypeEnum'
+        - $ref: '#/components/schemas/DomainActionTypeEnum'
     BloodOxygenEnum:
       type: string
       description: A description of the percentage of oxygen in someone's blood, as measured by a pulse oximeter
