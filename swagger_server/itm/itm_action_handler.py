@@ -72,6 +72,7 @@ class ITMActionHandler:
             Traumatic Brain Injury: None
 
             Neck Injuries
+            Neck Laceration: Hemostatic gauze
             Neck Puncture: Hemostatic gauze
             Neck Burn: Burn Dressing 
 
@@ -85,8 +86,10 @@ class ITMActionHandler:
             Forearm Burn: Burn Dressing
             Forearm Abrasion: Pressure bandage
             Bicep Burn: Burn Dressing
+            Bicep Laceration: Tourniquet
             Bicep Puncture: Tourniquet
             Bicep Abrasion: Pressure bandage
+            Shoulder Laceration: Tourniquet
             Shoulder Puncture: Hemostatic gauze
             Broken Shoulder: Splint
 
@@ -94,10 +97,11 @@ class ITMActionHandler:
             Asthmatic: None
             Chest Burn: Burn Dressing
             Chest Collapse: Decompression Needle
+            Chest Laceration: Hemostatic gauze
             Chest Puncture: Vented Chest Seal
 
             Stomach Injuries
-            Stomach Laceration: Pressure bandage
+            Stomach Laceration: Hemostatic gauze
             Stomach Puncture: Hemostatic gauze
             Side Puncture: Hemostatic gauze
             Open Abdominal Wound: None
@@ -128,8 +132,10 @@ class ITMActionHandler:
             case InjuryTypeEnum.ABRASION:
                 return treatment == SupplyTypeEnum.PRESSURE_BANDAGE
             case InjuryTypeEnum.LACERATION:
-                if 'thigh' in location:
+                if 'thigh' in location or 'bicep' in location or 'shoulder' in location:
                     return treatment == SupplyTypeEnum.TOURNIQUET
+                elif 'stomach' in location or 'chest' in location or 'neck' in location:
+                    return treatment == SupplyTypeEnum.HEMOSTATIC_GAUZE
                 else:
                     return treatment == SupplyTypeEnum.PRESSURE_BANDAGE
             case InjuryTypeEnum.PUNCTURE:
@@ -367,10 +373,7 @@ class ITMActionHandler:
                         logging.debug(f"Attempted retreatment of injury {injury.name} at location {injury.location}.")
                         attempted_retreatment = True
             if not successful_treatment:
-                if supply_used == SupplyTypeEnum.DECOMPRESSION_NEEDLE:
-                    # Decompression needles can be placed anywhere in any quantity, even if there's no injury, consuming supplies.
-                    consumed_supply = True
-                elif supply_used == SupplyTypeEnum.NASOPHARYNGEAL_AIRWAY:
+                if supply_used == SupplyTypeEnum.NASOPHARYNGEAL_AIRWAY:
                     # Airways can be placed in the nose even if there's no injury, consuming supplies.
                     # Only one airway should be able to be placed per nostril, see ITM-643.
                     consumed_supply = treatment_location == InjuryLocationEnum.RIGHT_FACE or InjuryLocationEnum.LEFT_FACE
