@@ -9,6 +9,7 @@ from swagger_server.models.base_model_ import Model
 from swagger_server.models.base_demographics import BaseDemographics  # noqa: F401,E501
 from swagger_server.models.character_role_enum import CharacterRoleEnum  # noqa: F401,E501
 from swagger_server.models.demographic_sex_enum import DemographicSexEnum  # noqa: F401,E501
+from swagger_server.models.domain_demographics import DomainDemographics  # noqa: F401,E501
 from swagger_server.models.military_branch_enum import MilitaryBranchEnum  # noqa: F401,E501
 from swagger_server.models.military_disposition_enum import MilitaryDispositionEnum  # noqa: F401,E501
 from swagger_server.models.military_rank_enum import MilitaryRankEnum  # noqa: F401,E501

@@ -7,7 +7,8 @@ from typing import List, Dict  # noqa: F401
 
 from swagger_server.models.base_model_ import Model
 from swagger_server.models.base_conditions import BaseConditions  # noqa: F401,E501
-from swagger_server.models.conditions_character_vitals import ConditionsCharacterVitals  # noqa: F401,E501
+from swagger_server.models.domain_conditions import DomainConditions  # noqa: F401,E501
+from swagger_server.models.domain_conditions_character_vitals import DomainConditionsCharacterVitals  # noqa: F401,E501
 from swagger_server.models.supplies import Supplies  # noqa: F401,E501
 from swagger_server import util
 
@@ -17,7 +18,7 @@ class Conditions(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, elapsed_time_lt: int=None, elapsed_time_gt: int=None, actions: List[List[str]]=None, probes: List[str]=None, probe_responses: List[str]=None, character_vitals: List[ConditionsCharacterVitals]=None, supplies: List[Supplies]=None):  # noqa: E501
+    def __init__(self, elapsed_time_lt: int=None, elapsed_time_gt: int=None, actions: List[List[str]]=None, probes: List[str]=None, probe_responses: List[str]=None, character_vitals: List[DomainConditionsCharacterVitals]=None, supplies: List[Supplies]=None):  # noqa: E501
         """Conditions - a model defined in Swagger
 
         :param elapsed_time_lt: The elapsed_time_lt of this Conditions.  # noqa: E501
@@ -31,7 +32,7 @@ class Conditions(Model):
         :param probe_responses: The probe_responses of this Conditions.  # noqa: E501
         :type probe_responses: List[str]
         :param character_vitals: The character_vitals of this Conditions.  # noqa: E501
-        :type character_vitals: List[ConditionsCharacterVitals]
+        :type character_vitals: List[DomainConditionsCharacterVitals]
         :param supplies: The supplies of this Conditions.  # noqa: E501
         :type supplies: List[Supplies]
         """
@@ -41,7 +42,7 @@ class Conditions(Model):
             'actions': List[List[str]],
             'probes': List[str],
             'probe_responses': List[str],
-            'character_vitals': List[ConditionsCharacterVitals],
+            'character_vitals': List[DomainConditionsCharacterVitals],
             'supplies': List[Supplies]
         }
 
@@ -189,24 +190,24 @@ class Conditions(Model):
         self._probe_responses = probe_responses
 
     @property
-    def character_vitals(self) -> List[ConditionsCharacterVitals]:
+    def character_vitals(self) -> List[DomainConditionsCharacterVitals]:
         """Gets the character_vitals of this Conditions.
 
         True if any of the specified collection of vital values have been met for the specified character_id  # noqa: E501
 
         :return: The character_vitals of this Conditions.
-        :rtype: List[ConditionsCharacterVitals]
+        :rtype: List[DomainConditionsCharacterVitals]
         """
         return self._character_vitals
 
     @character_vitals.setter
-    def character_vitals(self, character_vitals: List[ConditionsCharacterVitals]):
+    def character_vitals(self, character_vitals: List[DomainConditionsCharacterVitals]):
         """Sets the character_vitals of this Conditions.
 
         True if any of the specified collection of vital values have been met for the specified character_id  # noqa: E501
 
         :param character_vitals: The character_vitals of this Conditions.
-        :type character_vitals: List[ConditionsCharacterVitals]
+        :type character_vitals: List[DomainConditionsCharacterVitals]
         """
 
         self._character_vitals = character_vitals

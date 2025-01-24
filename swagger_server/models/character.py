@@ -10,6 +10,7 @@ from swagger_server.models.base_character import BaseCharacter  # noqa: F401,E50
 from swagger_server.models.character_tag_enum import CharacterTagEnum  # noqa: F401,E501
 from swagger_server.models.demographics import Demographics  # noqa: F401,E501
 from swagger_server.models.directness_enum import DirectnessEnum  # noqa: F401,E501
+from swagger_server.models.domain_character import DomainCharacter  # noqa: F401,E501
 from swagger_server.models.injury import Injury  # noqa: F401,E501
 from swagger_server.models.intent_enum import IntentEnum  # noqa: F401,E501
 from swagger_server.models.rapport_enum import RapportEnum  # noqa: F401,E501

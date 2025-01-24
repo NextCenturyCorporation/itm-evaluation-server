@@ -589,9 +589,7 @@ components:
         scenario_complete:
           type: boolean
           description: set to true if the scenario is complete; subsequent calls involving that scenario will return an error code
-    State:
-      allOf: # Combines the BaseState and the domain-level state
-        - $ref: "#/components/schemas/BaseState"
+    DomainState:
       required:
         - environment
         - supplies
@@ -607,6 +605,12 @@ components:
           description: A list of supplies available to the medic
           items:
             $ref: "#/components/schemas/Supplies"
+    State:
+      allOf: # Combines the BaseState and the domain-level state
+        - $ref: "#/components/schemas/DomainState"
+        - $ref: "#/components/schemas/BaseState"
+      type: object
+      description: The complete state of the scene or scenario
     MetaInfo:
       type: object
       description: Includes meta info to assist with debugging. Only provided during training sessions.
@@ -889,9 +893,7 @@ components:
           type: boolean
           description: whether or not this character is visible in the scene or merely heard or reported about from a nearby location
           default: false
-    Character:
-      allOf: # Combines the BaseCharacter and the domain-level character
-        - $ref: "#/components/schemas/BaseCharacter"
+    DomainCharacter:
       type: object
       description: a character in the scene, including injured patients, civilians, medics, etc.
       properties:
@@ -920,6 +922,12 @@ components:
           default: false
         tag:
           $ref: "#/components/schemas/CharacterTagEnum"
+    Character:
+      allOf: # Combines the BaseCharacter and the domain-level character
+        - $ref: "#/components/schemas/DomainCharacter"
+        - $ref: "#/components/schemas/BaseCharacter"
+      type: object
+      description: a character in the scene
     BaseDemographics:
       required:
         - sex
@@ -939,11 +947,9 @@ components:
           $ref: "#/components/schemas/RaceEnum"
         role:
           $ref: "#/components/schemas/CharacterRoleEnum"
-    Demographics:
-      allOf: # Combines the BaseDemographics and the domain-level demographics
-        - $ref: "#/components/schemas/BaseDemographics"
+    DomainDemographics:
       type: object
-      description: Basic properties about the character
+      description: Basic domain-specific properties about the character
       properties:
         military_disposition:
           $ref: "#/components/schemas/MilitaryDispositionEnum"
@@ -965,6 +971,12 @@ components:
               level: novice
         mission_importance:
           $ref: "#/components/schemas/MissionImportanceEnum"
+    Demographics:
+      allOf: # Combines the BaseDemographics and the domain-level demographics
+        - $ref: "#/components/schemas/DomainDemographics"
+        - $ref: "#/components/schemas/BaseDemographics"
+      type: object
+      description: Basic properties about the character
     Skills:
       required:
         - skill_type
@@ -1220,19 +1232,17 @@ components:
           items:
             type: string
           example:
-            - adept-september-demo-probe-1
+            - probe-1
         probe_responses:
           type: array
           description: True if the specified list of probe responses (choice) have been sent
           items:
             type: string
           example:
-            - adept-september-demo-probe-1-choice2
-    Conditions:
-      allOf: # Combines the Conditions and the domain-level conditions
-        - $ref: "#/components/schemas/BaseConditions"
+            - probe-1-choice2
+    DomainConditions:
       type: object
-      description: Conditions that specify whether to transition to the next scene or send a probe response
+      description: Domain-specific conditions that specify whether to transition to the next scene or send a probe response
       properties:
         character_vitals:
           type: array
@@ -1256,6 +1266,12 @@ components:
             $ref: "#/components/schemas/Supplies"
           example:
             - { type: Tourniquet, quantity: 1, reusable: False }
+    Conditions:
+      allOf: # Combines the BaseConditions and the domain-level conditions
+        - $ref: "#/components/schemas/DomainConditions"
+        - $ref: "#/components/schemas/BaseConditions"
+      type: object
+      description: Conditions that specify whether to transition to the next scene or send a probe response
     ProbeConfig:
       type: object
       description: Probe configuration for use by TA1
@@ -1284,7 +1300,7 @@ components:
           example:
             - {
                 character_id: Mike,
-                probe_id: adept-september-demo-probe-3,
+                probe_id: probe-3,
                 minimal: s1-p3-choice1,
                 delayed: s1-p3-choice2,
                 immediate: s1-p3-choice3,
@@ -1811,7 +1827,7 @@ components:
         - Specialist
         - Communications
     CharacterRoleEnum:
-      oneOf: # Combines the BaseCharacterRoleEnum and the domain-level theat type enum
+      oneOf: # Combines the BaseCharacterRoleEnum and the domain-level character role enum
         - $ref: "#/components/schemas/BaseCharacterRoleEnum"
         - $ref: "#/components/schemas/DomainCharacterRoleEnum"
       type: string
@@ -2018,7 +2034,7 @@ components:
         - SEARCH
     ActionTypeEnum:
       type: string
-      oneOf:
+      oneOf: # Combines the BaseActionTypeEnum and the domain-level action type enum
         - $ref: '#/components/schemas/BaseActionTypeEnum'
         - $ref: '#/components/schemas/DomainActionTypeEnum'
     BloodOxygenEnum:
