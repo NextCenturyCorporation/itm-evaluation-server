@@ -130,9 +130,10 @@ If running the command instead of docker set the environment variables for:
 ## Updating models
 This requires JDK 8 or higher to run the gradle tool.
 
-The models in swagger_server/models are generated from the following files:
+The models in swagger_server/models are generated from the following file:
 * `swagger_server/swagger/swagger.yaml`
-* `swagger_server/swagger/ta1.yaml`
 
-If these files are updated they will need to be re-generated and checked in.
+If this file is updated it will need to be re-generated and checked in.
 Run `./gradlew` to do this.
+
+**NOTE**: When you regenerate models, this will remove the allowed enum values in `action_type_enum.py`, `character_role_enum.py`, and `threat_type_enum.py`.  If you make changes to these model objects (presumably by adding enums), you'll need to undo the generated changes and add your new enum values manually.  See [this OpenAPI issue](https://github.com/OAI/OpenAPI-Specification/issues/1552) for background info.
