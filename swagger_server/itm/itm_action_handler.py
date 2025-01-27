@@ -72,20 +72,24 @@ class ITMActionHandler:
             Traumatic Brain Injury: None
 
             Neck Injuries
+            Neck Laceration: Hemostatic gauze
             Neck Puncture: Hemostatic gauze
             Neck Burn: Burn Dressing 
 
-            Hand Injuries
+            Wrist Injuries
             Wrist Amputation: Tourniquet
             Hand (Palm) Laceration: Pressure bandage
 
             Arm Injuries
+            Forearm Puncture: Tourniquet
             Forearm Laceration: Pressure bandage
             Forearm Burn: Burn Dressing
             Forearm Abrasion: Pressure bandage
             Bicep Burn: Burn Dressing
+            Bicep Laceration: Tourniquet
             Bicep Puncture: Tourniquet
             Bicep Abrasion: Pressure bandage
+            Shoulder Laceration: Hemostatic gauze
             Shoulder Puncture: Hemostatic gauze
             Broken Shoulder: Splint
 
@@ -93,10 +97,11 @@ class ITMActionHandler:
             Asthmatic: None
             Chest Burn: Burn Dressing
             Chest Collapse: Decompression Needle
+            Chest Laceration: Hemostatic gauze
             Chest Puncture: Vented Chest Seal
 
             Stomach Injuries
-            Stomach Laceration: Pressure bandage
+            Stomach Laceration: Hemostatic gauze
             Stomach Puncture: Hemostatic gauze
             Side Puncture: Hemostatic gauze
             Open Abdominal Wound: None
@@ -127,12 +132,14 @@ class ITMActionHandler:
             case InjuryTypeEnum.ABRASION:
                 return treatment == SupplyTypeEnum.PRESSURE_BANDAGE
             case InjuryTypeEnum.LACERATION:
-                if 'thigh' in location:
+                if location in ['thigh', 'bicep']:
                     return treatment == SupplyTypeEnum.TOURNIQUET
+                elif location in ['stomach', 'chest', 'neck', 'shoulder']:
+                    return treatment == SupplyTypeEnum.HEMOSTATIC_GAUZE
                 else:
                     return treatment == SupplyTypeEnum.PRESSURE_BANDAGE
             case InjuryTypeEnum.PUNCTURE:
-                if 'forearm' in location or 'bicep' in location or 'thigh' in location or 'calf' in location:
+                if location in ['forearm', 'bicep', 'thigh', 'calf']:
                     return treatment == SupplyTypeEnum.TOURNIQUET
                 elif 'chest' in location:
                     return treatment == SupplyTypeEnum.VENTED_CHEST_SEAL
@@ -257,6 +264,77 @@ class ITMActionHandler:
         self._reveal_injuries(patient_template, patient)
         patient.visited = True
 
+    # Certain unsuccessful treatments still use supplies
+    def __check_unsuccessful_treatment(self, supply_used, injury_name, location):
+        if supply_used == SupplyTypeEnum.HEMOSTATIC_GAUZE:
+            # Certain misapplications of hemostatic cause will consume the gauze but not treat the injury.
+            if injury_name in [InjuryTypeEnum.ABRASION, InjuryTypeEnum.LACERATION, InjuryTypeEnum.SHRAPNEL]:
+                return True
+            elif injury_name == InjuryTypeEnum.PUNCTURE:
+                return 'bicep' in location or 'forearm' in location or 'thigh' in location or 'calf' in location
+        return False
+
+    def __check_downstream_injuries(self, character_id, all_injuries, treated_injury):
+        """
+        Certain successful tourniquet treatments also treat downstream injuries.
+
+        Args:
+            character_id: The id of the character being treated
+            all_injuries: The full list of character injuries
+            treated_injury: The injury that was treated in the current action
+        """
+        IRRELEVANT = 'irrelevant'
+        treated_part = 'bicep' if 'bicep' in treated_injury.location else 'thigh' if 'thigh' in treated_injury.location \
+            else 'forearm' if 'forearm' in treated_injury.location else IRRELEVANT
+        treated_injury_type = 'puncture' if treated_injury.name == InjuryTypeEnum.PUNCTURE \
+            else 'laceration' if treated_injury.name == InjuryTypeEnum.LACERATION else IRRELEVANT
+        if treated_part is IRRELEVANT or treated_injury_type is IRRELEVANT:
+            return # Doesn't apply
+        treated_side = 'right' if 'right' in treated_injury.location else 'left'
+        downstream_injury = None
+
+        for injury in all_injuries:
+            name = 'puncture' if injury.name == InjuryTypeEnum.PUNCTURE \
+                else 'amputation' if injury.name == InjuryTypeEnum.AMPUTATION else IRRELEVANT
+            side = 'right' if 'right' in injury.location else 'left'
+            part = 'forearm' if 'forearm' in injury.location else 'wrist' if 'wrist' in injury.location \
+                else 'calf' if 'calf' in injury.location else IRRELEVANT
+            if side != treated_side or part is IRRELEVANT or name is IRRELEVANT:
+                continue # Doesn't apply
+
+            if treated_part == 'bicep' and treated_injury_type == 'puncture':
+                # Applying a tourniquet to a bicep puncture also treats a forearm puncture or wrist amputation.
+                if (part == 'forearm' and name == 'puncture') or (part == 'wrist' and name == 'amputation'):
+                    downstream_injury = injury
+            elif treated_part == 'forearm' and treated_injury_type == 'puncture':
+                # Applying a tourniquet to a forearm puncture also treats a wrist amputation.
+                if part == 'wrist' and name == 'amputation':
+                    downstream_injury = injury
+            elif treated_part == 'thigh' and (treated_injury_type == 'puncture' or treated_injury_type == 'laceration'):
+                # Applying a tourniquet to a thigh also treats a calf puncture or calf amputation
+                if part == 'calf' and name in ['puncture', 'amputation']:
+                    downstream_injury = injury
+
+        if downstream_injury:
+            self.__treat_injury(character_id, downstream_injury, SupplyTypeEnum.TOURNIQUET)
+
+
+    def __treat_injury(self, character_id, injury, supply_used):
+        logging.info(f"Successfully treated {injury.name} at {injury.location} with {supply_used}.")
+        injury.treatments_applied += 1
+        # Find required treatments for the injury
+        for isd_character in self.current_scene.state.characters:
+            if isd_character.id == character_id:
+                for isd_injury in isd_character.injuries:
+                    if isd_injury.location == injury.location and isd_injury.name == injury.name:
+                        treatments_required = isd_injury.treatments_required
+                        break
+        if injury.treatments_applied < treatments_required:
+            injury.status = InjuryStatusEnum.PARTIALLY_TREATED
+        else:
+            injury.status = InjuryStatusEnum.TREATED
+        logging.debug(f"Setting injury {injury.name} to status {injury.status}")
+
 
     def apply_treatment(self, action: Action, character: Character):
         """
@@ -269,8 +347,10 @@ class ITMActionHandler:
         """
         # If the treatment treats the injury at the specified location, then change its status to treated.
         supply_used = action.parameters.get('treatment')
+        treatment_location = action.parameters.get('location')
         attempted_retreatment = False
         successful_treatment = False
+        consumed_supply = False
         # Note: Anything added to doesnt_treat_injuries is assumed to be automatically successful, which decrements the supply.
         #       If this is not the case, then add an elif branch below (like BLANKET).
         doesnt_treat_injuries = [SupplyTypeEnum.BLANKET, SupplyTypeEnum.BLOOD, SupplyTypeEnum.EPI_PEN, SupplyTypeEnum.FENTANYL_LOLLIPOP, \
@@ -278,31 +358,26 @@ class ITMActionHandler:
         if supply_used not in doesnt_treat_injuries:
             for injury in character.injuries:
                 logging.debug(f"Processing injury {injury.name} at location {injury.location} with status {injury.status} with supply {supply_used}.")
-                if injury.location == action.parameters.get('location'):
+                if injury.location == treatment_location:
                     logging.debug(f"Found {injury.name} injury at location {injury.location}.")
                     if injury.status != InjuryStatusEnum.TREATED: # Can't attempt to treat a treated injury
                         logging.debug(f"Attempting to treat injury {injury.name} at location {injury.location} with {supply_used}.")
                         if self.__successful_treatment(supply_used, injury.name, injury.location):
                             successful_treatment = True
-                            logging.info(f"Successfully treated {injury.name} at {injury.location} with {supply_used}.")
-                            injury.treatments_applied += 1
-                            # Find required treatments for the injury
-                            for isd_character in self.current_scene.state.characters:
-                                if isd_character.id == character.id:
-                                    for isd_injury in isd_character.injuries:
-                                        if isd_injury.location == injury.location and isd_injury.name == injury.name:
-                                            treatments_required = isd_injury.treatments_required
-                                            break
-                            if injury.treatments_applied < treatments_required:
-                                injury.status = InjuryStatusEnum.PARTIALLY_TREATED
-                            else:
-                                injury.status = InjuryStatusEnum.TREATED
-                            logging.debug(f"Setting injury {injury.name} to status {injury.status}")
+                            self.__treat_injury(character.id, injury, supply_used)
+                            if supply_used == SupplyTypeEnum.TOURNIQUET:
+                                self.__check_downstream_injuries(character.id, character.injuries, injury)
                         else:
                             logging.info(f"Unsuccessfully treated {injury.name} at {injury.location} with {supply_used}.")
+                            consumed_supply = self.__check_unsuccessful_treatment(supply_used, injury.name, injury.location)
                     else:
                         logging.debug(f"Attempted retreatment of injury {injury.name} at location {injury.location}.")
                         attempted_retreatment = True
+            if not successful_treatment:
+                if supply_used == SupplyTypeEnum.NASOPHARYNGEAL_AIRWAY:
+                    # Airways can be placed in the nose even if there's no injury, consuming supplies.
+                    # Only one airway should be able to be placed per nostril, see ITM-643.
+                    consumed_supply = treatment_location == InjuryLocationEnum.RIGHT_FACE or InjuryLocationEnum.LEFT_FACE
         elif (supply_used == SupplyTypeEnum.BLANKET):
             if character.has_blanket:
                 attempted_retreatment = True
@@ -319,7 +394,7 @@ class ITMActionHandler:
         time_passed = 0
         for supply in self.session.state.supplies:
             if supply.type == supply_used:
-                if successful_treatment and not supply.reusable:
+                if (successful_treatment or consumed_supply) and not supply.reusable:
                     supply.quantity -= 1
                     logging.debug(f"Decrementing {supply.type} to {supply.quantity}")
                 if supply_used in self.times_dict["treatmentTimes"]:
@@ -354,7 +429,7 @@ class ITMActionHandler:
 
     def check_blood_oxygen(self, character: Character):
         """
-        Process checking the blood oxygen level (Sp02) of the specified character.
+        Process checking the blood oxygen level (spo2) of the specified character.
 
         Args:
             character: The character to check.
