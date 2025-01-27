@@ -89,7 +89,7 @@ class ITMActionHandler:
             Bicep Laceration: Tourniquet
             Bicep Puncture: Tourniquet
             Bicep Abrasion: Pressure bandage
-            Shoulder Laceration: Tourniquet
+            Shoulder Laceration: Hemostatic gauze
             Shoulder Puncture: Hemostatic gauze
             Broken Shoulder: Splint
 
@@ -132,14 +132,14 @@ class ITMActionHandler:
             case InjuryTypeEnum.ABRASION:
                 return treatment == SupplyTypeEnum.PRESSURE_BANDAGE
             case InjuryTypeEnum.LACERATION:
-                if 'thigh' in location or 'bicep' in location or 'shoulder' in location:
+                if location in ['thigh', 'bicep']:
                     return treatment == SupplyTypeEnum.TOURNIQUET
-                elif 'stomach' in location or 'chest' in location or 'neck' in location:
+                elif location in ['stomach', 'chest', 'neck', 'shoulder']:
                     return treatment == SupplyTypeEnum.HEMOSTATIC_GAUZE
                 else:
                     return treatment == SupplyTypeEnum.PRESSURE_BANDAGE
             case InjuryTypeEnum.PUNCTURE:
-                if 'forearm' in location or 'bicep' in location or 'thigh' in location or 'calf' in location:
+                if location in ['forearm', 'bicep', 'thigh', 'calf']:
                     return treatment == SupplyTypeEnum.TOURNIQUET
                 elif 'chest' in location:
                     return treatment == SupplyTypeEnum.VENTED_CHEST_SEAL
@@ -283,22 +283,23 @@ class ITMActionHandler:
             all_injuries: The full list of character injuries
             treated_injury: The injury that was treated in the current action
         """
+        IRRELEVANT = 'irrelevant'
         treated_part = 'bicep' if 'bicep' in treated_injury.location else 'thigh' if 'thigh' in treated_injury.location \
-            else 'forearm' if 'forearm' in treated_injury.location else 'irrelevant'
+            else 'forearm' if 'forearm' in treated_injury.location else IRRELEVANT
         treated_injury_type = 'puncture' if treated_injury.name == InjuryTypeEnum.PUNCTURE \
-            else 'laceration' if treated_injury.name == InjuryTypeEnum.LACERATION else 'irrelevant'
-        if treated_part == 'irrelevant' or treated_injury_type == 'irrelevant':
+            else 'laceration' if treated_injury.name == InjuryTypeEnum.LACERATION else IRRELEVANT
+        if treated_part is IRRELEVANT or treated_injury_type is IRRELEVANT:
             return # Doesn't apply
         treated_side = 'right' if 'right' in treated_injury.location else 'left'
         downstream_injury = None
 
         for injury in all_injuries:
             name = 'puncture' if injury.name == InjuryTypeEnum.PUNCTURE \
-                else 'amputation' if injury.name == InjuryTypeEnum.AMPUTATION else 'irrelevant'
+                else 'amputation' if injury.name == InjuryTypeEnum.AMPUTATION else IRRELEVANT
             side = 'right' if 'right' in injury.location else 'left'
             part = 'forearm' if 'forearm' in injury.location else 'wrist' if 'wrist' in injury.location \
-                else 'calf' if 'calf' in injury.location else 'irrelevant'
-            if side != treated_side or part == 'irrelevant' or name == 'irrelevant':
+                else 'calf' if 'calf' in injury.location else IRRELEVANT
+            if side != treated_side or part is IRRELEVANT or name is IRRELEVANT:
                 continue # Doesn't apply
 
             if treated_part == 'bicep' and treated_injury_type == 'puncture':
