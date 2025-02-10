@@ -558,14 +558,12 @@ components:
       example:
         value: 0.8
         kdma: mission
-    State:
+    BaseState:
+      type: object
       required:
         - unstructured
-        - environment
-        - supplies
         - characters
-      type: object
-      description: the current tactical & environmental state of the scenario and of its characters
+      description: Base state for the scene or scenario
       properties:
         unstructured:
           type: string
@@ -576,31 +574,43 @@ components:
           example: 10
         meta_info:
           $ref: "#/components/schemas/MetaInfo"
-        scenario_complete:
-          type: boolean
-          description: set to true if the scenario is complete; subsequent calls involving
-            that scenario will return an error code
-        mission:
-          $ref: "#/components/schemas/Mission"
-        environment:
-          $ref: "#/components/schemas/Environment"
-        threat_state:
-          $ref: "#/components/schemas/ThreatState"
         events:
           type: array
           description: A list of scenario events to inform decision-making
           items:
             $ref: "#/components/schemas/Event"
+        threat_state:
+          $ref: "#/components/schemas/ThreatState"
+        characters:
+          type: array
+          description: A list of characters in the scene
+          items:
+            $ref: "#/components/schemas/Character"
+        scenario_complete:
+          type: boolean
+          description: set to true if the scenario is complete; subsequent calls involving that scenario will return an error code
+    DomainState:
+      required:
+        - environment
+        - supplies
+      type: object
+      description: the current tactical & environmental state of the scenario and of its characters
+      properties:
+        mission:
+          $ref: "#/components/schemas/Mission"
+        environment:
+          $ref: "#/components/schemas/Environment"
         supplies:
           type: array
           description: A list of supplies available to the medic
           items:
             $ref: "#/components/schemas/Supplies"
-        characters:
-          type: array
-          description: A list of characters in the scene, including injured patients, civilians, medics, etc.
-          items:
-            $ref: "#/components/schemas/Character"
+    State:
+      allOf: # Combines the BaseState and the domain-level state
+        - $ref: "#/components/schemas/DomainState"
+        - $ref: "#/components/schemas/BaseState"
+      type: object
+      description: The complete state of the scene or scenario
     MetaInfo:
       type: object
       description: Includes meta info to assist with debugging. Only provided during training sessions.
@@ -767,7 +777,7 @@ components:
         - unstructured
         - threats
       type: object
-      description: Description of the current threat to the characters, including the medic
+      description: Description of the current threat to the characters
       properties:
         unstructured:
           type: string
@@ -854,14 +864,14 @@ components:
         type: Tourniquet
         quantity: 4
         reusable: false
-    Character:
+    BaseCharacter:
       required:
         - id
         - name
         - unstructured
         - demographics
       type: object
-      description: a character in the scene, including injured patients, civilians, medics, etc.
+      description: a character in the scene
       properties:
         id:
           type: string
@@ -875,6 +885,18 @@ components:
           type: string
           description: Natural language, plain text description of the character
           example: 22 YO male Marine hit by an IED. Puncture wound on the left side of the neck.
+        demographics:
+          $ref: "#/components/schemas/Demographics"
+        rapport:
+          $ref: "#/components/schemas/RapportEnum"
+        unseen:
+          type: boolean
+          description: whether or not this character is visible in the scene or merely heard or reported about from a nearby location
+          default: false
+    DomainCharacter:
+      type: object
+      description: a character in the scene, including injured patients, civilians, medics, etc.
+      properties:
         unstructured_postassess:
           type: string
           description: unstructured description updated after character assessment
@@ -883,18 +905,10 @@ components:
           type: boolean
           description: whether or not this character has a blanket (either wrapped around or underneath)
           default: false
-        unseen:
-          type: boolean
-          description: whether or not this character is visible in the scene or merely heard or reported about from a nearby location
-          default: false
         intent:
           $ref: "#/components/schemas/IntentEnum"
         directness_of_causality:
           $ref: "#/components/schemas/DirectnessEnum"
-        rapport:
-          $ref: "#/components/schemas/RapportEnum"
-        demographics:
-          $ref: "#/components/schemas/Demographics"
         injuries:
           type: array
           description: A list of Injuries for the character
@@ -908,7 +922,13 @@ components:
           default: false
         tag:
           $ref: "#/components/schemas/CharacterTagEnum"
-    Demographics:
+    Character:
+      allOf: # Combines the BaseCharacter and the domain-level character
+        - $ref: "#/components/schemas/DomainCharacter"
+        - $ref: "#/components/schemas/BaseCharacter"
+      type: object
+      description: a character in the scene
+    BaseDemographics:
       required:
         - sex
         - race
@@ -925,6 +945,12 @@ components:
           $ref: "#/components/schemas/DemographicSexEnum"
         race:
           $ref: "#/components/schemas/RaceEnum"
+        role:
+          $ref: "#/components/schemas/CharacterRoleEnum"
+    DomainDemographics:
+      type: object
+      description: Basic domain-specific properties about the character
+      properties:
         military_disposition:
           $ref: "#/components/schemas/MilitaryDispositionEnum"
         military_branch:
@@ -943,10 +969,14 @@ components:
               level: skilled
             - skill_type: Medical
               level: novice
-        role:
-          $ref: "#/components/schemas/CharacterRoleEnum"
         mission_importance:
           $ref: "#/components/schemas/MissionImportanceEnum"
+    Demographics:
+      allOf: # Combines the BaseDemographics and the domain-level demographics
+        - $ref: "#/components/schemas/DomainDemographics"
+        - $ref: "#/components/schemas/BaseDemographics"
+      type: object
+      description: Basic properties about the character
     Skills:
       required:
         - skill_type
@@ -1177,7 +1207,7 @@ components:
           $ref: "#/components/schemas/SemanticTypeEnum"
         probe_conditions:
           $ref: "#/components/schemas/Conditions"
-    Conditions:
+    BaseConditions:
       type: object
       description: Conditions that specify whether to transition to the next scene or send a probe response
       properties:
@@ -1202,14 +1232,18 @@ components:
           items:
             type: string
           example:
-            - adept-september-demo-probe-1
+            - probe-1
         probe_responses:
           type: array
           description: True if the specified list of probe responses (choice) have been sent
           items:
             type: string
           example:
-            - adept-september-demo-probe-1-choice2
+            - probe-1-choice2
+    DomainConditions:
+      type: object
+      description: Domain-specific conditions that specify whether to transition to the next scene or send a probe response
+      properties:
         character_vitals:
           type: array
           description: True if any of the specified collection of vital values have been met for the specified character_id
@@ -1232,6 +1266,12 @@ components:
             $ref: "#/components/schemas/Supplies"
           example:
             - { type: Tourniquet, quantity: 1, reusable: False }
+    Conditions:
+      allOf: # Combines the BaseConditions and the domain-level conditions
+        - $ref: "#/components/schemas/DomainConditions"
+        - $ref: "#/components/schemas/BaseConditions"
+      type: object
+      description: Conditions that specify whether to transition to the next scene or send a probe response
     ProbeConfig:
       type: object
       description: Probe configuration for use by TA1
@@ -1260,7 +1300,7 @@ components:
           example:
             - {
                 character_id: Mike,
-                probe_id: adept-september-demo-probe-3,
+                probe_id: probe-3,
                 minimal: s1-p3-choice1,
                 delayed: s1-p3-choice2,
                 immediate: s1-p3-choice3,
@@ -1540,9 +1580,14 @@ components:
         - ground evac
         - water evac
         - unknown evac
-    ThreatTypeEnum:
+    BaseThreatTypeEnum:
       type: string
       description: the type or nature of the threat
+      enum:
+        - Unknown
+    DomainThreatTypeEnum:
+      type: string
+      description: the domain-specific type or nature of the threat
       enum:
         - Civil unrest
         - Drone activity
@@ -1553,8 +1598,13 @@ components:
         - Mines
         - Poisonous vegetation
         - Predators
-        - Unknown
         - Unstable structure
+    ThreatTypeEnum:
+      oneOf: # Combines the BaseThreatTypeEnum and the domain-level theat type enum
+        - $ref: "#/components/schemas/BaseThreatTypeEnum"
+        - $ref: "#/components/schemas/DomainThreatTypeEnum"
+      type: string
+      description: the type or nature of the threat
     ThreatSeverityEnum:
       type: string
       description: how dangerous and/or imminent the threat is
@@ -1760,9 +1810,14 @@ components:
         - Chief Master Sergeant
         - Chief Master Sergeant of the Space Force
         - Chief of Space Operations
-    CharacterRoleEnum:
+    BaseCharacterRoleEnum:
       type: string
-      description: The primary role a character has in the mission, in terms of the skills they possess
+      description: The primary role a character has in the scene
+      enum:
+        - Unknown
+    DomainCharacterRoleEnum:
+      type: string
+      description: The primary role a character has in the scene
       enum:
         - Infantry
         - SEAL
@@ -1771,6 +1826,12 @@ components:
         - Medical
         - Specialist
         - Communications
+    CharacterRoleEnum:
+      oneOf: # Combines the BaseCharacterRoleEnum and the domain-level character role enum
+        - $ref: "#/components/schemas/BaseCharacterRoleEnum"
+        - $ref: "#/components/schemas/DomainCharacterRoleEnum"
+      type: string
+      description: The primary role a character has in the mission, in terms of the skills they possess
     IntentEnum:
       type: string
       description: The intent of the character
@@ -1950,7 +2011,7 @@ components:
         - and
         - or
         - not
-    ActionTypeEnum:
+    DomainActionTypeEnum:
       type: string
       description: An action type [recognized by the ADM Server](https://github.com/NextCenturyCorporation/itm-evaluation-client?tab=readme-ov-file#available-actions)
       enum:
@@ -1960,13 +2021,22 @@ components:
         - CHECK_PULSE
         - CHECK_RESPIRATION
         - DIRECT_MOBILE_CHARACTERS
-        - END_SCENE
-        - MESSAGE
-        - MOVE_TO
         - MOVE_TO_EVAC
-        - SEARCH
         - SITREP
         - TAG_CHARACTER
+    BaseActionTypeEnum:
+      type: string
+      description: An action type [recognized by the ADM Server](https://github.com/NextCenturyCorporation/itm-evaluation-client?tab=readme-ov-file#available-actions)
+      enum:
+        - END_SCENE
+        - MOVE_TO
+        - MESSAGE
+        - SEARCH
+    ActionTypeEnum:
+      type: string
+      oneOf: # Combines the BaseActionTypeEnum and the domain-level action type enum
+        - $ref: '#/components/schemas/BaseActionTypeEnum'
+        - $ref: '#/components/schemas/DomainActionTypeEnum'
     BloodOxygenEnum:
       type: string
       description: A description of the percentage of oxygen in someone's blood, as measured by a pulse oximeter
