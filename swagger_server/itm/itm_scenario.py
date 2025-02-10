@@ -4,16 +4,15 @@ from typing import List
 from dataclasses import dataclass
 from copy import deepcopy
 from swagger_server.models import (
-    Action, AlignmentTarget, InjuryStatusEnum, ProbeResponse, State, Vitals
+    Action, AlignmentTarget, ProbeResponse, State
 )
-from .itm_scenario_reader import ITMScenarioReader
 from .itm_scene import ITMScene
 from .itm_ta1_controller import ITMTa1Controller
 
 @dataclass
 class ITMScenarioData:
     scenes: List[ITMScene] = None
-    current_scene :ITMScene = None
+    current_scene: ITMScene = None
 
 class ITMScenario:
 
@@ -26,33 +25,20 @@ class ITMScenario:
         self.probes_sent = []
         self.probe_responses_sent = []
         from.itm_session import ITMSession
-        self.session :ITMSession = session
-        self.isd :ITMScenarioData
+        self.session: ITMSession = session
+        self.isd: ITMScenarioData
         self.id=''
         self.name=''
 
-    # Hide vitals (if not already visited) and hidden injuries
     @staticmethod
-    def clear_hidden_data(state :State):
-        for character in state.characters:
-            if character.visited:
-                character.injuries[:] = \
-                    [injury for injury in character.injuries if injury.status != InjuryStatusEnum.HIDDEN]
-            else:
-                initially_hidden_injuries = [InjuryStatusEnum.HIDDEN, InjuryStatusEnum.DISCOVERABLE]
-                character.injuries[:] = \
-                    [injury for injury in character.injuries if injury.status not in initially_hidden_injuries]
-                character.unstructured_postassess = None
-                character.vitals = Vitals()
-        for injury in character.injuries:
-            injury.treatments_required = None
-
+    def clear_hidden_data(state: State):
+        pass
 
     def generate_scenario_data(self):
         # isd is short for ITM Scenario Data
         isd = ITMScenarioData()
 
-        scenario_reader = ITMScenarioReader(self.yaml_path)
+        scenario_reader = self.session.domain_config.get_scenario_reader(self.yaml_path)
         (scenario, isd.scenes) = \
             scenario_reader.read_scenario_from_yaml()
         isd.current_scene = [scene for scene in isd.scenes if scene.id == scenario.first_scene][0]
@@ -64,12 +50,13 @@ class ITMScenario:
         self.id = scenario.id
         self.name = scenario.name
 
-    def set_controller(self, controller :ITMTa1Controller):
+    def set_controller(self, controller: ITMTa1Controller):
         self.ta1_controller = controller
         self.alignment_target = controller.alignment_target
 
     def get_available_actions(self) -> List[Action]:
-        current_character_ids = {character.id for character in self.isd.current_scene.state.characters}
+        current_character_ids = [character.id for character in self.isd.current_scene.state.characters]
+        logging.info(f'Current chars: {current_character_ids}')
         actions = self.isd.current_scene.get_available_actions(self.session.state)
 
         # safe guarding that an action with character id of a removed character doesn't slip through the cracks
@@ -169,8 +156,7 @@ class ITMScenario:
         previous_scene_characters = self.isd.current_scene.state.characters
         self.isd.current_scene = next_scene[0]
         self.session.action_handler.set_scene(self.isd.current_scene)
-        current_state :State = self.session.state
-        target_state :State = self.isd.current_scene.state
+        target_state: State = self.isd.current_scene.state
 
         # If the scene has no action mappings, then the scenario ends.
         if self.isd.current_scene.action_mappings == []:
@@ -188,16 +174,20 @@ class ITMScenario:
             target_state.to_dict() if target_state else None
         )
 
+        # Merge state from the new scene into the current state.
+        self.merge_state(self.session.state, target_state, previous_scene_characters)
+
+
+    def merge_state(self, current_state: State, target_state: State, previous_scene_characters: List):
         '''
-        Merge state from new scene into session.state.  Approach:
+        Merge basic state from new scene into current state.  Approach:
         0. Abort if no state to merge
         1. Replace or supplement `characters` structure based on configuration.
            1a. Remove `removed_characters`, even if in configured scene state.
-        2. For `supplies`, add or update any specified supplies.
-        3. For everything else, replace any specified (non-None) values
-           3a. Lists are copied whole (e.g., `character_importance`, `aid`, `threats`).
-        4. Clear hidden data (e.g., character vitals)
-        5. Update MetaInfo with new scene ID
+        2. For everything else, replace any specified (non-None) values
+           2a. Lists are copied whole (e.g., `threats`).
+        3. Clear hidden data
+        4. Update MetaInfo with new scene ID
         '''
         # Rule 0: Abort if no state to merge
         if not target_state:
@@ -237,7 +227,7 @@ class ITMScenario:
                 target_state.characters = previous_scene_characters
 
             # 1a. Remove `removed_characters`, even if in configured scene state.
-            if getattr(self.isd.current_scene, 'removed_characters', None) and len(self.isd.current_scene.removed_characters) > 0:                
+            if getattr(self.isd.current_scene, 'removed_characters', None) and len(self.isd.current_scene.removed_characters) > 0:
                 current_state.characters = [
                     character for character in current_state.characters
                     if character.id not in self.isd.current_scene.removed_characters
@@ -250,38 +240,17 @@ class ITMScenario:
         else:
             current_state.characters = deepcopy(target_state.characters)
 
-        # Rule 2: For `supplies`, add or update any specified supplies.
-        if target_state.supplies:
-            target_types = []
-            current_types = []
-            for target_supply in target_state.supplies:
-                target_types.append(target_supply.type)
-                for current_supply in current_state.supplies:
-                    current_types.append(current_supply.type)
-                    if target_supply.type == current_supply.type:
-                        current_supply.quantity = target_supply.quantity
-                        current_supply.reusable = target_supply.reusable
-            new_types = [new_type for new_type in target_types if new_type not in current_types]
-            new_supplies = [new_supply for new_supply in target_state.supplies if new_supply.type in new_types]
-            current_state.supplies.extend(deepcopy(new_supplies))
-
-        # Rule 3: For everything else except Events, replace any specified (non-None) values. Events are always replaced.
-        # Lists are copied whole (e.g., `character_importance`, `aid`, `threats`).
+        # Rule 2: For everything else, replace any specified (non-None) values. Events are always replaced.
+        # Lists are copied whole (e.g., `threats`).
         if target_state.unstructured:
             current_state.unstructured = target_state.unstructured
         current_state.threat_state = self.update_property(current_state.threat_state, target_state.threat_state)
-        current_state.mission = self.update_property(current_state.mission, target_state.mission)
         current_state.events = deepcopy(target_state.events)
-        if target_state.environment:
-            current_state.environment.sim_environment = \
-                self.update_property(current_state.environment.sim_environment, target_state.environment.sim_environment)
-            current_state.environment.decision_environment = \
-                self.update_property(current_state.environment.decision_environment, target_state.environment.decision_environment)
-        
-        # 4. Clear hidden data (e.g., character vitals)
-        ITMScenario.clear_hidden_data(current_state)
 
-        # 5. Update MetaInfo with new scene ID
+        # 3. Clear hidden data
+        self.clear_hidden_data(current_state)
+
+        # 4. Update MetaInfo with new scene ID
         current_state.meta_info.scene_id = self.isd.current_scene.id
 
 

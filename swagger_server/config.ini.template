@@ -5,6 +5,8 @@
 
 EVALUATION_TYPE=phase1
 SCENARIO_DIRECTORY=swagger_server/itm/data/%(EVALUATION_TYPE)s/scenarios/
+DEFAULT_DOMAIN=triage
+SUPPORTED_DOMAINS=triage
 
 ; Local Default URLs
 ; ADEPT_URL=http://localhost:8081
@@ -26,7 +28,7 @@ HISTORY_DIRECTORY=itm_history_output
 HISTORY_S3_BUCKET=itm-ui-assets
 
 EVAL_NAME=Phase 1 Evaluation
-EVAL_NUMBER=5
+EVAL_NUMBER=6
 
 SOARTECH_EVAL_FILENAMES=phase1-soartech-eval-qol2.yaml,
     phase1-soartech-eval-qol3.yaml,
@@ -109,6 +111,8 @@ ADEPT_IO_ALIGNMENT_DISTRIBUTION_TARGET=ADEPT-DryRun-Ingroup Bias-Population-All
 
 EVALUATION_TYPE=phase1
 SCENARIO_DIRECTORY=swagger_server/itm/data/%(EVALUATION_TYPE)s/scenarios/
+DEFAULT_DOMAIN=triage
+SUPPORTED_DOMAINS=triage
 
 ; Local Default URLs
 ; ADEPT_URL=http://localhost:8081
@@ -130,7 +134,7 @@ HISTORY_DIRECTORY=itm_history_output
 HISTORY_S3_BUCKET=itm-ui-assets
 
 EVAL_NAME=Phase 1 Evaluation
-EVAL_NUMBER=5
+EVAL_NUMBER=6
 
 SOARTECH_EVAL_FILENAMES=phase1-soartech-eval-qol2.yaml,
     phase1-soartech-eval-qol3.yaml,

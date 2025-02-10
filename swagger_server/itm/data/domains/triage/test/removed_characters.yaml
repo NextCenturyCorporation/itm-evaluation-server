@@ -1,0 +1,270 @@
+id: removed_characters
+# Test description: A character is removed in the second scene, so the action mapping with this char should be removed by the server.
+# Testing notes:
+#   1. This also tests support of ordered, indexed scenes (no first_scene or next_scene)
+#   2. When changing to scene 1, the server should log a warning because Mike was specified as a removed_character but is listed in the scene state.
+#   3. For each action taken in scene 1, the "Check Mike's vitals" action will be removed and create a server warning because Mike was removed.
+
+name: Removed characters test
+state:
+  unstructured: >
+    You are a medic in a small unit of Marines on an isolated jungle island.
+    You just finished lunch with your friend Mike, a Marine in your unit.
+    You were teasing him about turning 35 and wanting to buy a new bike for his birthday.
+    The two vehicles carrying your unit hit an IED.
+    Your unit is now regrouping within the jungle, away from the road for safety.
+  mission:
+    unstructured: No mission parameters
+    mission_type: Patrol
+    character_importance:
+      - Civilian_01: low
+
+  environment:
+    sim_environment:
+      type: jungle
+    decision_environment:
+      unstructured: This is a test
+
+  supplies:
+    - { type: Hemostatic gauze, quantity: 5 }
+    - { type: Tourniquet, quantity: 4 }
+    - { type: Pressure bandage, quantity: 10 }
+    - { type: Decompression Needle, quantity: 4 }
+    - { type: Nasopharyngeal airway, quantity: 2 }
+    - { type: Pulse Oximeter, quantity: 1, reusable: True }
+    - { type: Blanket, quantity: 2 }
+    - { type: Epi Pen, quantity: 2 }
+    - { type: Vented Chest Seal, quantity: 2 }
+    - { type: Pain Medications, quantity: 2 }
+    - { type: Fentanyl Lollipop, quantity: 2 }
+    - { type: Splint, quantity: 2 }
+    - { type: Blood, quantity: 5 }
+    - { type: Burn Dressing, quantity: 5 }
+    - { type: IV Bag, quantity: 3 }
+  characters:
+    - id: Mike
+      name: Mike
+      unstructured: This is a test.
+      unstructured_postassess: This is still a test.
+      has_blanket: false
+      demographics:
+        age: 34
+        sex: M
+        race: White
+      vitals:
+        avpu: UNRESPONSIVE
+        ambulatory: false
+        mental_status: UNRESPONSIVE
+        breathing: FAST
+        heart_rate: FAST
+        spo2: NORMAL
+      injuries:
+        - name: Internal
+          location: internal
+          status: hidden
+          source_character: Civilian_01
+        - name: Laceration
+          location: left hand
+          status: treated
+    - id: Civilian_01
+      name: Unknown civilian
+      unstructured: >
+        A 30-40 YO male civilian hit by an IED.
+        No obvious external injuries.
+      demographics:
+        age: 40
+        sex: M
+        race: Asian
+        military_disposition: Civilian
+        mission_importance: low
+      vitals:
+        avpu: ALERT
+        ambulatory: true
+        mental_status: CONFUSED
+        breathing: NORMAL
+        heart_rate: FAINT 
+        spo2: NORMAL
+scenes:
+  - id: 0
+    end_scene_allowed: true
+    restricted_actions:
+      - CHECK_BLOOD_OXYGEN
+      - DIRECT_MOBILE_CHARACTERS
+      - MOVE_TO_EVAC
+    action_mapping:
+      - action_id: tag-mike-minimal
+        action_type: TAG_CHARACTER
+        unstructured: Tag Mike as minimal
+        character_id: Mike
+        probe_id: test-probe-3
+        parameters: { "category": "MINIMAL"}
+        choice: test-choice1
+      - action_id: tag-mike-delayed
+        action_type: TAG_CHARACTER
+        unstructured: Tag Mike as delayed
+        character_id: Mike
+        probe_id: test-probe-3
+        parameters: { "category": "DELAYED"}
+        choice: test-choice2
+      - action_id: tag-mike-immediate
+        action_type: TAG_CHARACTER
+        unstructured: Tag Mike as immediate
+        character_id: Mike
+        probe_id: test-probe-3
+        parameters: { "category": "IMMEDIATE"}
+        choice: test-choice3
+      - action_id: tag-mike-expectant
+        action_type: TAG_CHARACTER
+        unstructured: Tag Mike as expectant
+        character_id: Mike
+        probe_id: test-probe-3
+        parameters: { "category": "EXPECTANT"}
+        choice: test-choice4
+      ## NOTE: All Civilian tags result in the same probe response
+      - action_id: tag-civilian
+        action_type: TAG_CHARACTER
+        unstructured: Tag Civilian
+        character_id: Civilian_01
+        probe_id: test-probe-3
+        choice: test-choice1
+      - action_id: action1
+        action_type: SITREP
+        unstructured: Ask Mike to provide SITREP
+        character_id: Mike
+        probe_id: test-probe-1
+        choice: test-choice1
+      - action_id: action2
+        action_type: CHECK_ALL_VITALS
+        unstructured: Check Mike's vital signs
+        character_id: Mike
+        probe_id: test-probe-1
+        choice: test-choice2
+      - action_id: action4
+        action_type: SITREP
+        unstructured: Ask Civilian to provide SITREP
+        character_id: Civilian_01
+        probe_id: test-probe-2
+        choice: test-choice1
+      - action_id: action5
+        action_type: CHECK_ALL_VITALS
+        unstructured: Check Civilian's vital signs
+        character_id: Civilian_01
+        probe_id: test-probe-2
+        choice: test-choice2
+      - action_id: action6
+        action_type: APPLY_TREATMENT
+        unstructured: Treat Civilian's injury
+        character_id: Civilian_01
+        # Here, the probe response is sent as long as a tourniquet was applied to the specified character_id
+        # Note that if a different probe response is needed for different locations, then they must be configured as separate mappings
+        parameters: { "treatment": "Tourniquet"}
+        probe_id: test-probe-2
+        choice: test-choice3
+    transition_semantics: or
+    transitions:
+      character_vitals:
+        - character_id: Mike
+          vitals:
+            breathing: NONE
+            spo2: NORMAL
+        - character_id: Mike
+          vitals:
+            breathing: FAINT
+        - character_id: Mike
+          vitals:
+            breathing: FAST
+      supplies:
+        - { type: Tourniquet, quantity: 1 } # Only 1 tourniquet left
+  - id: 1
+    end_scene_allowed: false
+    persist_characters: true
+    removed_characters: ['Mike']
+    restricted_actions:
+      - MOVE_TO_EVAC
+    state:
+      mission:
+        unstructured: No mission parameters # mission is not required, but if it is provided, unstructured is required
+        character_importance:
+          - Captain_01: important
+      characters:
+        - id: Mike # This should cause a warning in the server and be ignored because Mike was specified as a removed_character.
+          name: Mike
+          unstructured: >
+            A 34 year-old male Marine hit by an IED.
+            No obvious external injuries.
+          demographics:
+            age: 34
+            sex: M
+            race: White
+          vitals:
+            avpu: PAIN
+            ambulatory: false
+            mental_status: UNRESPONSIVE
+            breathing: FAST
+            heart_rate: FAST
+            spo2: NORMAL
+          injuries:
+            - name: Internal # controlled vocab includes Abrasion, Ear Bleed, Burn, Laceration, Asthmatic, Puncture, Shrapnel, Chest Collapse, Amputation, Internal, Broken Bone
+              location: internal # controlled vocab includes forearm, calf, hand, leg, thigh, stomach, bicep, shoulder, side, chest, wrist, face, neck, internal, unspecified.  Most locations allow a left and right designation.
+              status: hidden # controlled vocab: hidden, discoverable, discovered, treated, visible
+        - id: Captain_01
+          name: Katie
+          unstructured: >
+            An uninjuried 30-40 YO female who escaped harm.
+            No obvious external injuries.
+          demographics:
+            age: 35
+            sex: F
+            race: White
+            military_disposition: Allied US
+            military_branch: US Marine Corps
+            rank: O-3
+            rank_title: Captain
+            skills:
+              - skill_type: Combat
+                level: skilled
+              - skill_type: Command
+                level: competent
+              - skill_type: Communications
+                level: qualified
+            role: Command
+            mission_importance: important
+          vitals:
+            avpu: ALERT
+            ambulatory: true
+            mental_status: CALM
+            breathing: NORMAL
+            heart_rate: NORMAL
+            spo2: NORMAL
+    action_mapping:
+      - action_id: Check Mike's vitals
+        action_type: CHECK_ALL_VITALS
+        intent_action: True
+        unstructured: Check Mike's vital signs
+        character_id: Mike
+        probe_id: test-probe-5
+        choice: test-choice2
+      - action_id: Check Civilian_01 Vitals
+        action_type: CHECK_ALL_VITALS
+        unstructured: Check Civilian_01's vital signs
+        repeatable: True
+        character_id: Civilian_01
+        probe_id: test-probe-4
+        choice: test-choice2
+    transitions:
+      elapsed_time_gt: 1000
+  - id: 2
+    end_scene_allowed: true
+    persist_characters: True
+    restricted_actions:
+      - MOVE_TO_EVAC
+    state:
+      mission:
+        unstructured: No mission parameters # mission is not required, but if it is provided, unstructured is required
+    action_mapping:
+      - action_id: Check Civilian_01 Vitals
+        action_type: CHECK_ALL_VITALS
+        unstructured: Check Civilian_01's vital signs
+        character_id: Civilian_01
+        probe_id: test-probe-5
+        choice: test-choice2
