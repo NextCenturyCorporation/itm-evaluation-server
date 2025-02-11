@@ -410,7 +410,7 @@ class ITMSession:
         return Scenario(session_complete=True, id='', name='',
                         scenes=None, state=None)
 
-    def start_session(self, adm_name: str, session_type: str, adm_profile: str, adept_populations: bool, domain: str=DEFAULT_DOMAIN, kdma_training: str=None, max_scenarios=None) -> str:
+    def start_session(self, adm_name: str, session_type: str, adm_profile: str, adept_populations: bool, domain: str, kdma_training: str=None, max_scenarios=None) -> str:
         """
         Start a new session.
 
@@ -434,14 +434,16 @@ class ITMSession:
                 400
             )
 
-        if domain not in self.SUPPORTED_DOMAINS:
+        # Set up domain
+        if domain is None:
+            domain = ITMSession.DEFAULT_DOMAIN
+        elif domain not in self.SUPPORTED_DOMAINS:
             return f"Unsupported domain `{domain}`", 400
-        else:
-            self.domain = domain
-            self.domain_config = ITMDomainConfigFactory.create_domain_factory(domain)
-            if not self.domain_config:
-                return f"No config class found for domain `{domain}`", 400
-            self.action_handler = self.domain_config.get_action_handler(self)
+        self.domain = domain
+        self.domain_config = ITMDomainConfigFactory.create_domain_factory(domain)
+        if not self.domain_config:
+            return f"No config class found for domain `{domain}`", 400
+        self.action_handler = self.domain_config.get_action_handler(self)
 
         # Re-use current session for same ADM after a client crash
         if self.session_id is None:
@@ -483,6 +485,7 @@ class ITMSession:
                 {"session_id": self.session_id,
                 "adm_name": self.adm_name,
                 "adm_profile": self.adm_profile,
+                "domain": self.domain,
                 "session_type": session_type},
                 self.session_id)
 
@@ -579,7 +582,7 @@ class ITMSession:
                 random_index = random.randint(0, num_read_scenarios - 1)
                 self.itm_scenarios.append(deepcopy(self.itm_scenarios[random_index]))
 
-        logging.info('Loaded %d total scenarios from %s.', len(self.itm_scenarios), scenario_path)
+        logging.info("Loaded %d total scenarios from '%s'.", len(self.itm_scenarios), scenario_path)
         self.current_scenario_index = 0
 
         return self.session_id
