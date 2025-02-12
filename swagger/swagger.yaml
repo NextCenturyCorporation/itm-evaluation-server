@@ -413,7 +413,7 @@ components:
         - name
         - state
       type: object
-      description: a triage scenario requiring decisions by a medic
+      description: a scenario requiring decisions by a decision-maker
       properties:
         id:
           type: string
@@ -421,7 +421,6 @@ components:
         name:
           type: string
           description: human-readable scenario name, not necessarily unique
-          example: IED Explosion
         first_scene:
           type: string
           description: indicates the first/opening scene ID in the scenario
@@ -513,13 +512,6 @@ components:
           description: list of KDMAs to align to
           items:
             $ref: "#/components/schemas/KDMA_Value"
-      example:
-        kdma_values:
-          - value: 0.8
-            kdma: mission
-          - value: 0.5
-            kdma: fairness
-        id: id
     KDE_Data:
       type: object
       description: KDE Objects representing a KDMA Measurement
@@ -542,7 +534,6 @@ components:
         kdma:
           type: string
           description: Name of KDMA
-          example: mission
         value:
           type: number
           format: float
@@ -563,9 +554,6 @@ components:
           description: KDE Objects representing a KDMA Measurement
           additionalProperties:
             $ref: "#/components/schemas/KDE_Data"
-      example:
-        value: 0.8
-        kdma: mission
     BaseState:
       type: object
       required:
@@ -785,22 +773,21 @@ components:
         - unstructured
         - threats
       type: object
-      description: Description of the current threat to the characters
+      description: Description of the current risks or threats to the characters
       properties:
         unstructured:
           type: string
-          description: Natural language, plain text description of environmental threats
-          example: No additional threats are detected
+          description: Natural language, plain text description of environmental risks or threats
         threats:
           type: array
           description: A list of pairs of threat types with a severity descriptor
           items:
             $ref: "#/components/schemas/Threat"
       example:
-        unstructured: Gunfire can be heard in the surrounding area
+        unstructured: Gunshots have been reported in the surrounding area
         threats:
           - type: gunfire
-            severity: severe
+            severity: moderate
     Threat:
       required:
         - threat_type
@@ -842,13 +829,11 @@ components:
           description: An array of relevant state for the Event
           items:
             description: >
-              string paths within the `State` object, in which indexed lists are context-sensitive:
-              for an aid or a character, it's the id;
-              for a supply, it's the type;
+              string paths within the `State` object, in which indexed lists are context-sensitive and usually domain-specific:
+              for a character, it's the id;
               for a threat, it's the threat_type;
-              for an injury, it's the location
             type: string
-            example: environment.decision_environment.aid[civilian_facility].max_transport
+            example: threat_state.threats[gunshots].threat_type
     Supplies:
       required:
         - quantity
@@ -884,7 +869,6 @@ components:
         id:
           type: string
           description: A unique character ID throughout the scenario
-          example: Soldier_01
         name:
           type: string
           description: display name, as in a dashboard
@@ -892,7 +876,7 @@ components:
         unstructured:
           type: string
           description: Natural language, plain text description of the character
-          example: 22 YO male Marine hit by an IED. Puncture wound on the left side of the neck.
+          example: 22-year-old male with brown hair
         demographics:
           $ref: "#/components/schemas/Demographics"
         rapport:
@@ -903,7 +887,7 @@ components:
           default: false
     DomainCharacter:
       type: object
-      description: a character in the scene, including injured patients, civilians, medics, etc.
+      description: a character in the scene, which might be domain-specific
       properties:
         unstructured_postassess:
           type: string
@@ -1094,7 +1078,7 @@ components:
           items:
             $ref: "#/components/schemas/ActionTypeEnum"
           example:
-            - CHECK_ALL_VITALS
+            - SEARCH
         transition_semantics:
           $ref: "#/components/schemas/SemanticTypeEnum"
         transitions:
@@ -1119,7 +1103,6 @@ components:
         unstructured:
           type: string
           description: Natural language, plain text description of the action
-          example: "Check Mike's pulse."
         character_id:
           type: string
           description: The ID of the character being acted upon
@@ -1131,12 +1114,10 @@ components:
           additionalProperties:
             type: string
           example:
-            - treatment: Tourniquet
-            - location: right forearm
+            - character_id: Mike
         justification:
           type: string
           description: A justification of the action taken
-          example: Character is the VIP of the scenario
         kdma_association:
           type: object
           additionalProperties:
@@ -1145,8 +1126,6 @@ components:
             minimum: 0.0
             maximum: 1.0
           description: KDMA associations for this choice, if provided by TA1
-          example:
-            - Mission: 0.8
     ActionMapping:
       required:
         - action_id
@@ -1166,7 +1145,6 @@ components:
         unstructured:
           type: string
           description: Natural language, plain text description of the action
-          example: "Check Mike's pulse."
         repeatable:
           type: boolean
           default: false
@@ -1186,8 +1164,7 @@ components:
           additionalProperties:
             type: string
           example:
-            - treatment: Tourniquet
-            - location: right forearm
+            - character_id: Mike
         probe_id:
           type: string
           description: A valid probe_id from the appropriate TA1
@@ -1205,8 +1182,6 @@ components:
             minimum: 0.0
             maximum: 1.0
           description: KDMA associations for this choice, if provided by TA1
-          example:
-            - Mission: 0.8
         action_condition_semantics:
           $ref: "#/components/schemas/SemanticTypeEnum"
         action_conditions:
@@ -1860,7 +1835,7 @@ components:
         - none
     RapportEnum:
       type: string
-      description: A measure of closeness or affinity towards the player/medic
+      description: A measure of closeness or affinity towards the decision-maker
       enum:
         - loathing
         - dislike
