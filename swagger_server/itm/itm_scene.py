@@ -5,7 +5,7 @@ from random import shuffle
 from inspect import signature
 from typing import List
 from swagger_server.models import (
-    Action, ActionMapping, ActionTypeEnum, Conditions, Scene, SemanticTypeEnum, State, Supplies, SupplyTypeEnum
+    Action, ActionMapping, ActionTypeEnum, Conditions, Scene, SemanticTypeEnum, State
 )
 from swagger_server.util import get_swagger_class_enum_values
 
@@ -17,23 +17,23 @@ class ITMScene:
     # Denotes that the scenario should end after this scene
     END_SCENARIO_SENTINEL = '__END_SCENARIO__'
 
-    def __init__(self, scene :Scene):
+    def __init__(self, scene: Scene):
         """
         Initialize an instance of ITMScene.
         """
         self.id = scene.id
-        self.state :State = scene.state # State updates for the scene, including a new cast of characters
+        self.state: State = scene.state # State updates for the scene, including a new cast of characters
         self.end_scene_allowed = scene.end_scene_allowed
         self.persist_characters = scene.persist_characters
         self.removed_characters = scene.removed_characters
-        self.action_mappings :List[ActionMapping] = scene.action_mapping
+        self.action_mappings: List[ActionMapping] = scene.action_mapping
         self.actions_taken = []
-        self.restricted_actions :List[ActionTypeEnum] = scene.restricted_actions
-        self.transition_semantics :SemanticTypeEnum = scene.transition_semantics
-        self.transitions :Conditions = scene.transitions
+        self.restricted_actions: List[ActionTypeEnum] = scene.restricted_actions
+        self.transition_semantics: SemanticTypeEnum = scene.transition_semantics
+        self.transitions: Conditions = scene.transitions
         self.training = False
         from .itm_scenario import ITMScenario
-        self.parent_scenario :ITMScenario = None
+        self.parent_scenario: ITMScenario = None
 
         logging.debug('--> Setting next scenes for scene %s.', self.id)
         # Initialize action mapping next scenes, relying on scene-level default if necessary
@@ -49,7 +49,7 @@ class ITMScene:
             logging.debug('mapping id %s has next scene of %s.', mapping.action_id, mapping.next_scene)
 
 
-    def to_obj(self, x :ActionMapping):
+    def to_obj(self, x: ActionMapping):
         '''
         Override method to pretty-print action mapping
         '''
@@ -104,13 +104,13 @@ class ITMScene:
 
     def __expose_action(self, mapping: ActionMapping, session_state: State):
         if not mapping.action_id in self.actions_taken or mapping.repeatable:
-            if self.conditions_met(mapping.action_conditions, session_state, mapping.action_condition_semantics):
+            if self._conditions_met(mapping.action_conditions, session_state, mapping.action_condition_semantics):
                 return True
         return False
 
 
     def get_available_actions(self, state: State) -> List[Action]:
-        actions :List[Action] = [
+        actions: List[Action] = [
             Action(
                 action_id=mapping.action_id,
                 action_type=mapping.action_type,
@@ -130,34 +130,9 @@ class ITMScene:
             return actions
 
         # Add most unmapped action types that aren't explicitly restricted.
-        valid_action_types = get_swagger_class_enum_values(ActionTypeEnum)
-        valid_action_types.remove(ActionTypeEnum.END_SCENE)
-        valid_action_types.remove(ActionTypeEnum.SEARCH) # This requires support in configuration, so don't add it.
-        valid_action_types.remove(ActionTypeEnum.MESSAGE) # This must be pre-configured, so don't add it.
-        # Only add MOVE_TO if there are unseen characters.
-        if not any(character.unseen for character in state.characters):
-            valid_action_types.remove(ActionTypeEnum.MOVE_TO)
-        # Only add MOVE_TO_EVAC if there is an evacuation available.
-        if state.environment.decision_environment is None or state.environment.decision_environment.aid is None \
-            or state.environment.decision_environment.aid == []:
-            valid_action_types.remove(ActionTypeEnum.MOVE_TO_EVAC)
-        #TODO: uncomment when tagging configuration is supported (ITM-217)
-        #valid_action_types.remove(ActionTypeEnum.TAG_CHARACTER)
-        current_action_types = []
-        for mapping in self.action_mappings:
-            current_action_types.append(mapping.action_type)
-        new_action_types = \
-            [action_type for action_type in valid_action_types if action_type not in current_action_types if action_type not in self.restricted_actions]
-        # Don't add actions that require a pulse ox if there is no pulse ox available.
-        pulse_ox_available = any(
-            supply.type == SupplyTypeEnum.PULSE_OXIMETER and supply.quantity >= 1
-            for supply in state.supplies
-        )
-        if not pulse_ox_available:
-            if ActionTypeEnum.CHECK_BLOOD_OXYGEN in new_action_types:
-                new_action_types.remove(ActionTypeEnum.CHECK_BLOOD_OXYGEN)
+        valid_action_types = self.get_valid_action_types(state)
 
-        for action_type in new_action_types:
+        for action_type in valid_action_types:
             actions.append(Action(
                 action_id=action_type.lower(),
                 action_type=action_type,
@@ -165,7 +140,7 @@ class ITMScene:
             ))
 
         # Add "end scene" action if configured and not already added as an action mapping.
-        if self.end_scene_allowed and ActionTypeEnum.END_SCENE not in current_action_types:
+        if self.end_scene_allowed and ActionTypeEnum.END_SCENE not in valid_action_types:
             actions.append(Action(action_id="end_scene_action", action_type=ActionTypeEnum.END_SCENE, unstructured="End the scene"))
 
         # Let's not be TOO predictable
@@ -173,7 +148,24 @@ class ITMScene:
         return actions
 
 
-    def action_taken(self, action :Action, session_state :State):
+    def get_valid_action_types(self, state: State):
+        # Start with the list of all action types, and remove from there.
+        valid_action_types = get_swagger_class_enum_values(ActionTypeEnum)
+        valid_action_types.remove(ActionTypeEnum.END_SCENE)
+        valid_action_types.remove(ActionTypeEnum.SEARCH) # This requires support in configuration, so don't add it.
+        valid_action_types.remove(ActionTypeEnum.MESSAGE) # This must be pre-configured, so don't add it.
+        # Only add MOVE_TO if there are unseen characters.
+        if not any(character.unseen for character in state.characters):
+            valid_action_types.remove(ActionTypeEnum.MOVE_TO)
+
+        mapping_action_types = []
+        for mapping in self.action_mappings:
+            mapping_action_types.append(mapping.action_type)
+        return \
+            [action_type for action_type in valid_action_types if action_type not in mapping_action_types if action_type not in self.restricted_actions]
+
+
+    def action_taken(self, action: Action, session_state: State):
         self.actions_taken.append(action.action_id)
         found_mapping = False
         next_scene_id = None
@@ -185,7 +177,7 @@ class ITMScene:
                 found_mapping = True
                 next_scene_id = mapping.next_scene
                 # Respond to probes if conditions are met.
-                if self.conditions_met(mapping.probe_conditions, session_state, mapping.probe_condition_semantics):
+                if self._conditions_met(mapping.probe_conditions, session_state, mapping.probe_condition_semantics):
                     self.parent_scenario.respond_to_probe(mapping.probe_id, mapping.choice, action.justification)
                 break  # action_id's are unique within a scene
 
@@ -194,25 +186,25 @@ class ITMScene:
 
         # Determine if we should transition to the next scene.
         if action.action_type == ActionTypeEnum.END_SCENE or \
-            self.conditions_met(self.transitions, session_state, self.transition_semantics):
+            self._conditions_met(self.transitions, session_state, self.transition_semantics):
                 self.parent_scenario.change_scene(next_scene_id)
 
-    def _probe_condition_met(self, probe_conditions :List[str]) -> bool:
+    def _probe_condition_met(self, probe_conditions: List[str]) -> bool:
         if not probe_conditions:
             return True
         return all(probe in self.parent_scenario.probes_sent for probe in probe_conditions)
 
-    def _probe_response_condition_met(self, probe_response_conditions :List[str]) -> bool:
+    def _probe_response_condition_met(self, probe_response_conditions: List[str]) -> bool:
         if not probe_response_conditions:
             return True
         return all(probe in self.parent_scenario.probe_responses_sent for probe in probe_response_conditions)
 
-    def _elapsed_gt_condition_met(self, elapsed_gt, session_state :State) -> bool:
+    def _elapsed_gt_condition_met(self, elapsed_gt, session_state: State) -> bool:
         if elapsed_gt is None:
             return True
         return session_state.elapsed_time > elapsed_gt
 
-    def _elapsed_lt_condition_met(self, elapsed_lt, session_state :State) -> bool:
+    def _elapsed_lt_condition_met(self, elapsed_lt, session_state: State) -> bool:
         if elapsed_lt is None:
             return True
         return session_state.elapsed_time < elapsed_lt
@@ -228,63 +220,6 @@ class ITMScene:
                 return True
         return False
 
-    # True if any of the specified supplies is <= the specified quantity
-    def _supply_condition_met(self, supply_conditions :List[Supplies], session_state :State) -> bool:
-        if not supply_conditions:
-            return True
-        supply_conditions_met = any(
-            state_supply.quantity <= supply_condition.quantity
-            for supply_condition in supply_conditions
-            for state_supply in session_state.supplies
-            if supply_condition.type == state_supply.type
-        )
-        return supply_conditions_met
-
-    # True if all vitals values of the source are equal to the target
-    def _vital_condition_met(self, source_vitals, target_vitals) -> bool:
-        for attr in source_vitals.attribute_map.keys():
-            target_value = getattr(target_vitals, attr)
-            if target_value is not None:
-                source_value = getattr(source_vitals, attr)
-                numeric_vital = isinstance(target_value, (float, int))
-                if (not numeric_vital) and (target_value != source_value) or \
-                    numeric_vital and (target_value < source_value):
-                    return False
-        return True
-
-    # True if the any of the specified collection of vital values have been met for the specified character_id
-    # Each list entry is true if all vitals values have been met by the specified character_id
-    def _vitals_condition_met(self, vital_conditions :List, session_state :State) -> bool:
-        if not vital_conditions:
-            return True
-        for vital_condition in vital_conditions:
-            # Find the character in both the session state and scene (template) state
-            session_character = None
-            for session_character_lcv in session_state.characters:
-                if session_character_lcv.id == vital_condition.character_id:
-                    session_character = session_character_lcv
-                    break
-            scene_character = None
-            for scene_character_lcv in self.state.characters:
-                if scene_character_lcv.id == vital_condition.character_id:
-                    scene_character = scene_character_lcv
-                    break
-            if not session_character:
-                logging.warning("\033[92mcharacter_vitals condition specified character %s that is not in the State\033[00m", vital_condition.character_id)
-                return False
-            if not scene_character:
-                logging.warning("\033[92mcharacter_vitals condition specified character %s that is not in the Scene\033[00m", vital_condition.character_id)
-                return False
-
-            # Copy any undiscovered vitals from the scene (template) character's vitals
-            source_vitals = copy.copy(session_character.vitals)
-            for attr in source_vitals.attribute_map.keys():
-                if getattr(source_vitals, attr) is None:
-                    setattr(source_vitals, attr, getattr(scene_character.vitals, attr))
-            # If a vital_condition evaluates to true, then entire character_vitals condition is true
-            if self._vital_condition_met(source_vitals, vital_condition.vitals):
-                return True
-        return False
 
     # First returned value is whether to short-circuit conditions checking;
     # Second returned value is whether the condition was met
@@ -313,7 +248,11 @@ class ITMScene:
         return False, semantics == SemanticTypeEnum.AND
 
 
-    def conditions_met(self, conditions :Conditions, session_state: State, semantics) -> bool:
+    def evaluate_domain_conditions(self, conditions: Conditions, semantics, session_state: State):
+        return False, semantics == SemanticTypeEnum.AND
+
+
+    def _conditions_met(self, conditions: Conditions, session_state: State, semantics) -> bool:
         if not conditions:
             return True
         (short_circuit, probe_condition_met) = \
@@ -336,14 +275,10 @@ class ITMScene:
              self._evaluate_condition(conditions.actions, self._actions_condition_met, semantics)
         if short_circuit:
             return actions_condition_met
-        (short_circuit, supply_condition_met) = \
-             self._evaluate_condition(conditions.supplies, self._supply_condition_met, semantics, session_state)
+        (short_circuit, domain_conditions_met) = \
+            self.evaluate_domain_conditions(conditions, semantics, session_state)
         if short_circuit:
-            return supply_condition_met
-        (short_circuit, vitals_condition_met) = \
-             self._evaluate_condition(conditions.character_vitals, self._vitals_condition_met, semantics, session_state)
-        if short_circuit:
-            return vitals_condition_met
+            return domain_conditions_met
 
         if (semantics == SemanticTypeEnum.AND):
             return True # if we didn't short-circuit, then all supplied conditions are True

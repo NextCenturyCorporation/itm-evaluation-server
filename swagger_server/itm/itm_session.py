@@ -22,6 +22,7 @@ from .itm_scenario import ITMScenario
 from .itm_action_handler import ITMActionHandler
 from .itm_ta1_controller import ITMTa1Controller
 from .itm_history import ITMHistory
+from .itm_domain_config import ITMDomainConfig, ITMDomainConfigFactory
 from swagger_server import config_util
 
 class ITMSession:
@@ -31,11 +32,13 @@ class ITMSession:
     config_util.check_ini()
     config = config_util.read_ini()[0]
     config_group = builtins.config_group
-    
+
     # Class variables
     EVALUATION_TYPE = config[config_group]['EVALUATION_TYPE']
     EVALUATION_NAME = config[config_group]['EVAL_NAME']
     EVALUATION_NUMBER = config[config_group]['EVAL_NUMBER']
+    DEFAULT_DOMAIN = config[config_group]['DEFAULT_DOMAIN']
+    SUPPORTED_DOMAINS = config[config_group]['SUPPORTED_DOMAINS']
     SCENARIO_DIRECTORY = config[config_group]['SCENARIO_DIRECTORY']
     ALL_TA1_NAMES = config[config_group]['ALL_TA1_NAMES'].replace('\n','').split(',')
     SOARTECH_EVAL_FILENAMES = config[config_group]['SOARTECH_EVAL_FILENAMES'].replace('\n','').split(',')
@@ -80,6 +83,7 @@ class ITMSession:
         self.time_elapsed_realtime = 0
 
         self.session_type = ''
+        self.domain = ''
         self.using_max_scenarios = False
         self.kdma_training = None
 
@@ -89,8 +93,10 @@ class ITMSession:
         self.itm_scenarios = []
         self.itm_scenario: ITMScenario = None
 
+        # Domain config
+        self.domain_config: ITMDomainConfig = None
         # Action Handler
-        self.action_handler: ITMActionHandler = ITMActionHandler(self)
+        self.action_handler: ITMActionHandler = None
         # ADM History
         self.history: ITMHistory = ITMHistory(ITMSession.config)
         # This determines whether the server returns history in final State after each scenario completes
@@ -171,7 +177,7 @@ class ITMSession:
         session_alignment_score = None
         if self.ta1_integration:
             try:
-                session_alignment :AlignmentResults = \
+                session_alignment: AlignmentResults = \
                     self.itm_scenario.ta1_controller.get_session_alignment()
                 session_alignment_score = session_alignment.score
                 self.history.add_history(
@@ -349,7 +355,7 @@ class ITMSession:
 
         try:
             self.state = deepcopy(self.itm_scenario.isd.current_scene.state)
-            ITMScenario.clear_hidden_data(self.state)
+            self.itm_scenario.clear_hidden_data(self.state)
             self.state.meta_info = MetaInfo(scene_id=self.itm_scenario.isd.current_scene.id, probe_response=None)
             scenario = Scenario(
                 id=self.itm_scenario.id,
@@ -361,7 +367,7 @@ class ITMSession:
             self.current_scenario_index += 1
             self.history.add_history(
                 "Start Scenario",
-                {"session_id": self.session_id, "adm_name": self.adm_name, "adm_profile" : self.adm_profile},
+                {"session_id": self.session_id, "adm_name": self.adm_name, "adm_profile": self.adm_profile},
                 scenario.to_dict())
             logging.info("Scenario %s starting.", self.itm_scenario.id)
 
@@ -404,7 +410,7 @@ class ITMSession:
         return Scenario(session_complete=True, id='', name='',
                         scenes=None, state=None)
 
-    def start_session(self, adm_name: str, session_type: str, adm_profile: str, adept_populations: bool, kdma_training: str=None, max_scenarios=None) -> str:
+    def start_session(self, adm_name: str, session_type: str, adm_profile: str, adept_populations: bool, domain: str, kdma_training: str=None, max_scenarios=None) -> str:
         """
         Start a new session.
 
@@ -413,7 +419,10 @@ class ITMSession:
             session_type: The type of scenarios either soartech, adept, test, or eval
             adm_profile: a profile of the ADM in terms of its alignment strategy
             adept_populations: whether or not ADEPT should use population based alignment
-            kdma_training: whether this is a `full`, `solo`, or non-training session with TA2
+            domain: the session domain, as selected from the configured SUPPORTED_DOMAINS;
+                defaults to the configured DEFAULT_DOMAIN
+            kdma_training: whether this is a `full`, `solo`, or non-training session with TA2;
+                default to non-training
             max_scenarios: The max number of scenarios presented during the session
 
         Returns:
@@ -425,13 +434,24 @@ class ITMSession:
                 400
             )
 
+        # Set up domain
+        if domain is None:
+            domain = ITMSession.DEFAULT_DOMAIN
+        elif domain not in self.SUPPORTED_DOMAINS:
+            return f"Unsupported domain `{domain}`", 400
+        self.domain = domain
+        self.domain_config = ITMDomainConfigFactory.create_domain_factory(domain)
+        if not self.domain_config:
+            return f"No config class found for domain `{domain}`", 400
+        self.action_handler = self.domain_config.get_action_handler(self)
+
         # Re-use current session for same ADM after a client crash
         if self.session_id is None:
             self.session_id = str(uuid.uuid4())
         elif self.adm_name == adm_name:
             logging.info("Re-using session %s for ADM %s", self.session_id, self.adm_name)
             self.history.add_history(
-                "Abort Session", {"session_id": self.session_id, "adm_name": self.adm_name}, None)
+                "Abort Session", {"session_id": self.session_id, "adm_name": self.adm_name, "domain": self.domain}, None)
             self.__init__()
             self.session_id = str(uuid.uuid4()) # but assign new session_id for clarity in logs/history
         else:
@@ -465,6 +485,7 @@ class ITMSession:
                 {"session_id": self.session_id,
                 "adm_name": self.adm_name,
                 "adm_profile": self.adm_profile,
+                "domain": self.domain,
                 "session_type": session_type},
                 self.session_id)
 
@@ -480,11 +501,18 @@ class ITMSession:
                 self._end_session() # Exception here ends the session
                 return 'Exception communicating with TA1; is the TA1 server running?  Ending session.', 503
 
-        path = f"swagger_server/itm/data/{ITMSession.EVALUATION_TYPE}/test/" if self.session_type == 'test' else f"{ITMSession.SCENARIO_DIRECTORY}/"
+        # Get scenario path based on evaluation type and number
+        if self.session_type != 'test':
+            scenario_path = f"{ITMSession.SCENARIO_DIRECTORY}/"
+        elif ITMSession.EVALUATION_NUMBER <= '5': # through Phase 1
+            scenario_path = f"swagger_server/itm/data/{ITMSession.EVALUATION_TYPE}/test/"
+        else: # after Phase 1
+            scenario_path = f"swagger_server/itm/data/domains/{domain}/test/"
+
         num_read_scenarios = 0
         for ta1_name in ta1_names:
             if self.session_type == 'test':
-                scenarios = ITMSession._get_file_names(path)
+                scenarios = ITMSession._get_file_names(scenario_path)
             else:
                 if ta1_name == "soartech":
                     scenarios = ITMSession.SOARTECH_TRAIN_FILENAMES if kdma_training else ITMSession.SOARTECH_EVAL_FILENAMES
@@ -495,7 +523,7 @@ class ITMSession:
             scenario_ctr = 0
             for scenario in scenarios:
                 itm_scenario = \
-                    ITMScenario(yaml_path=f'{path}{scenario}',
+                    self.domain_config.get_scenario(yaml_path=f'{scenario_path}{scenario}',
                                 session=self, training=self.kdma_training)
                 try:
                     itm_scenario.generate_scenario_data()
@@ -553,8 +581,8 @@ class ITMSession:
             while len(self.itm_scenarios) < max_scenarios:
                 random_index = random.randint(0, num_read_scenarios - 1)
                 self.itm_scenarios.append(deepcopy(self.itm_scenarios[random_index]))
-                
-        logging.info('Loaded %d total scenarios from %s.', len(self.itm_scenarios), f"swagger_server/itm/data/{ITMSession.EVALUATION_TYPE}/test/" if self.session_type == 'test' else ITMSession.SCENARIO_DIRECTORY)
+
+        logging.info("Loaded %d total scenarios from '%s'.", len(self.itm_scenarios), scenario_path)
         self.current_scenario_index = 0
 
         return self.session_id
@@ -680,7 +708,7 @@ class ITMSession:
         if not self.kdma_training == 'full':
             return 'Session alignment can only be requested during a full training session', 403
 
-        session_alignment :AlignmentResults = None
+        session_alignment: AlignmentResults = None
         if self.ta1_integration:
             try:
                 if len(self.itm_scenario.probes_sent) > 0:
