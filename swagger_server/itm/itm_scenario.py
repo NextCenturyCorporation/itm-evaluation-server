@@ -18,7 +18,6 @@ class ITMScenario:
 
     def __init__(self, yaml_path, session, training = False) -> None:
         self.yaml_path = yaml_path
-        self.scene_type = 'adept' if 'adept' in self.yaml_path else 'soartech'
         self.training = training
         self.alignment_target: AlignmentTarget = None
         self.ta1_controller: ITMTa1Controller = None
@@ -105,8 +104,8 @@ class ITMScenario:
             except exceptions.HTTPError:
                 logging.exception("HTTPError from TA1 posting probe.")
             try:
-                # Get and log probe response alignment if neither training nor an adept population alignment session.
-                if not self.session.kdma_training and (self.scene_type == 'soartech' or not self.session.adept_populations):
+                # Get and log probe response alignment if not training and TA1 supports it.
+                if not self.session.kdma_training and self.ta1_controller.supports_probe_alignment():
                     probe_response_alignment = \
                         self.ta1_controller.get_probe_response_alignment(
                         response.scenario_id,

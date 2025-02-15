@@ -114,8 +114,9 @@ class ITMSession:
                 ITMSession.init_ta1_data(ITMSession.ALL_TA1_NAMES)
                 ITMSession.ta1_connected = True
                 logging.info("Done.")
-            except:
+            except Exception as e:
                 logging.warning("Could not initialize TA1 data. Running standalone.")
+                logging.exception(e)
         else:
             logging.info("Running server in testing mode; no connection to TA1 servers.")
 
@@ -373,8 +374,8 @@ class ITMSession:
 
             if self.ta1_integration:
                 try:
-                    user_id = f"{self.session_id}_{self.itm_scenario.id}" if self.itm_scenario.scene_type == 'soartech' else None
-                    ta1_session_id = self.itm_scenario.ta1_controller.new_session(user_id, self.adept_populations)
+                    user_id = f"{self.session_id}_{self.itm_scenario.id}"
+                    ta1_session_id = self.itm_scenario.ta1_controller.new_session(context=user_id)
                     self.history.add_history(
                         "TA1 Session ID", {}, ta1_session_id
                     )
@@ -410,7 +411,7 @@ class ITMSession:
         return Scenario(session_complete=True, id='', name='',
                         scenes=None, state=None)
 
-    def start_session(self, adm_name: str, session_type: str, adm_profile: str, adept_populations: bool, domain: str, kdma_training: str=None, max_scenarios=None) -> str:
+    def start_session(self, adm_name: str, session_type: str, adm_profile: str, domain: str, kdma_training: str=None, max_scenarios=None) -> str:
         """
         Start a new session.
 
@@ -418,7 +419,6 @@ class ITMSession:
             adm_name: The ADM name associated with the session.
             session_type: The type of scenarios either soartech, adept, test, or eval
             adm_profile: a profile of the ADM in terms of its alignment strategy
-            adept_populations: whether or not ADEPT should use population based alignment
             domain: the session domain, as selected from the configured SUPPORTED_DOMAINS;
                 defaults to the configured DEFAULT_DOMAIN
             kdma_training: whether this is a `full`, `solo`, or non-training session with TA2;
@@ -458,7 +458,6 @@ class ITMSession:
             return 'System Overload', 503 # itm_ta2_eval_controller should prevent this
 
         self.kdma_training = kdma_training
-        self.adept_populations = adept_populations
         self.adm_name = adm_name
         self.adm_profile = adm_profile if adm_profile else ''
         if max_scenarios == 0:
@@ -544,7 +543,8 @@ class ITMSession:
                                 ta1_scenarios[scenario_ctr].alignment_target = alignment_target
                                 if self.ta1_integration:
                                     ta1_scenarios[scenario_ctr].set_controller( # Always create a new controller for each scenario.
-                                        ITMTa1Controller(target_id, ta1_name, alignment_target))
+                                        ITMTa1Controller.create_controller(ta1_name, target_id, alignment_target))
+                                        #ITMTa1Controller(target_id, ta1_name, alignment_target))
                                 scenario_ctr += 1
                             except Exception as e:
                                 logging.fatal(f"Couldn't obtain alignment target '{target_id}'. Check your TA3 server configuration or connection to TA1.")
@@ -563,6 +563,7 @@ class ITMSession:
                             if itm_scenario.id in (ITMSession.ADEPT_TRAIN_IO_SCENARIOS if kdma_training else ITMSession.ADEPT_EVAL_IO_SCENARIOS):
                                 scenario_ctr = __load_scenarios(ITMSession.ADEPT_IO_ALIGNMENT_TARGETS, scenario_ctr)
                     except Exception as e:
+                        logging.exception(e)
                         return f"Problem loading TA3 server configuration.", 503
 
             self.itm_scenarios.extend(ta1_scenarios)
