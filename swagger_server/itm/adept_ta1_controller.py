@@ -8,6 +8,14 @@ class AdeptTA1Controller(ITMTa1Controller):
 
     ADEPT_MJ_ALIGNMENT_DISTRIBUTION_TARGET = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_MJ_ALIGNMENT_DISTRIBUTION_TARGET']
     ADEPT_IO_ALIGNMENT_DISTRIBUTION_TARGET = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_IO_ALIGNMENT_DISTRIBUTION_TARGET']
+    ADEPT_EVAL_FILENAMES = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_EVAL_FILENAMES'].replace('\n','').split(',')
+    ADEPT_TRAIN_FILENAMES = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_TRAIN_FILENAMES'].replace('\n','').split(',')
+    ADEPT_EVAL_MJ_SCENARIOS = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_EVAL_MJ_SCENARIOS'].replace('\n','').split(',')
+    ADEPT_EVAL_IO_SCENARIOS = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_EVAL_IO_SCENARIOS'].replace('\n','').split(',')
+    ADEPT_TRAIN_MJ_SCENARIOS = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_TRAIN_MJ_SCENARIOS'].replace('\n','').split(',')
+    ADEPT_TRAIN_IO_SCENARIOS = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_TRAIN_IO_SCENARIOS'].replace('\n','').split(',')
+    ADEPT_MJ_ALIGNMENT_TARGETS = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_MJ_ALIGNMENT_TARGETS'].replace('\n','').split(',')
+    ADEPT_IO_ALIGNMENT_TARGETS = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_IO_ALIGNMENT_TARGETS'].replace('\n','').split(',')
 
     def __init__(self, alignment_target_id, alignment_target = None):
         super().__init__(self.get_ta1name(), alignment_target_id, alignment_target)
@@ -29,6 +37,19 @@ class AdeptTA1Controller(ITMTa1Controller):
     def get_alignment_target_path(alignment_target_id: str) -> str:
           return f"{AdeptTA1Controller.get_server_url()}/api/v1/alignment_target/{alignment_target_id}"
 
+    @staticmethod
+    def get_filenames(kdma_training) -> list[str]:
+        return AdeptTA1Controller.ADEPT_TRAIN_FILENAMES if kdma_training else AdeptTA1Controller.ADEPT_EVAL_FILENAMES
+
+    @staticmethod
+    def get_target_ids(itm_scenario) -> list[str]:
+        target_ids: list[str] = []
+        if itm_scenario.id in (AdeptTA1Controller.ADEPT_TRAIN_MJ_SCENARIOS if itm_scenario.training else AdeptTA1Controller.ADEPT_EVAL_MJ_SCENARIOS):
+            target_ids.extend(AdeptTA1Controller.ADEPT_MJ_ALIGNMENT_TARGETS)
+        if itm_scenario.id in (AdeptTA1Controller.ADEPT_TRAIN_IO_SCENARIOS if itm_scenario.training else AdeptTA1Controller.ADEPT_EVAL_IO_SCENARIOS):
+            target_ids.extend(AdeptTA1Controller.ADEPT_IO_ALIGNMENT_TARGETS)
+        return target_ids
+
     def supports_probe_alignment(self) -> bool:
         return not self.adept_populations
 
@@ -48,7 +69,7 @@ class AdeptTA1Controller(ITMTa1Controller):
             kdmas.append(KDMAValue.from_dict(kdma_value))
         return kdmas
 
-    def get_session_alignment_path(self, target_id :str = None) -> str:
+    def get_session_alignment_path(self, target_id: str = None) -> str:
         if self.adept_populations:
             base_url = f"{self.url}/api/v1/alignment/compare_sessions_population"
             actual_target_id = self.alignment_target_id if not target_id else target_id

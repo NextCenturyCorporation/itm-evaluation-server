@@ -14,7 +14,7 @@ class ITMTa1Controller(ABC):
     config = config_util.read_ini()[0]
     config_group = builtins.config_group
 
-    def __init__(self, scene_type :str, alignment_target_id, alignment_target = None):
+    def __init__(self, scene_type: str, alignment_target_id, alignment_target = None):
         self.session_id = ''
         self.alignment_target_id = alignment_target_id
         self.alignment_target = alignment_target
@@ -23,7 +23,7 @@ class ITMTa1Controller(ABC):
     @staticmethod
     def create_controller(scene_type, alignment_target_id=None, alignment_target=None):
         try:
-            klass :ITMTa1Controller = ITMTa1Controller.__get_static_ref(scene_type)
+            klass: ITMTa1Controller = ITMTa1Controller.__get_static_ref(scene_type)
             instance = klass(alignment_target_id, alignment_target)
             #instance = klass(*args, **kwargs)
             return instance
@@ -32,12 +32,12 @@ class ITMTa1Controller(ABC):
             return None
 
     @staticmethod
-    def __get_static_ref(scene_type :str):
+    def __get_static_ref(scene_type: str):
         module = import_module(f"swagger_server.itm.{scene_type}_ta1_controller")
         return getattr(module, f"{scene_type.capitalize()}TA1Controller")
 
     @staticmethod
-    def get_contact_info(ta1_name :str) -> str:
+    def get_contact_info(ta1_name: str) -> str:
         url = ITMTa1Controller.config[ITMTa1Controller.config_group][f"{ta1_name.upper()}_URL"]
         # Technically this `if` block should never evaluate to True since configs are mandatory, but just in case.
         if url is None or url == "":
@@ -61,7 +61,7 @@ class ITMTa1Controller(ABC):
 
     @staticmethod
     @abstractmethod
-    def get_alignment_target_path(alignment_target_id :str) -> str:
+    def get_alignment_target_path(alignment_target_id: str) -> str:
         ...
 
     def supports_probe_alignment() -> bool:
@@ -72,7 +72,7 @@ class ITMTa1Controller(ABC):
         ...
 
     @abstractmethod
-    def get_session_alignment_path(self, target_id :str = None) -> str:
+    def get_session_alignment_path(self, target_id: str = None) -> str:
         ...
 
     @staticmethod
@@ -80,15 +80,32 @@ class ITMTa1Controller(ABC):
     def get_kdmas(response) -> any:
         ...
 
+    @staticmethod
+    @abstractmethod
+    def get_filenames(kdma_training):
+        ...
+
+    @staticmethod
+    def get_filenames(ta1_name, kdma_training):
+        return ITMTa1Controller.__get_static_ref(ta1_name).get_filenames(kdma_training)
+
+    @staticmethod
+    @abstractmethod
+    def get_target_ids(itm_scenario) -> list[str]:
+        ...
+
+    @staticmethod
+    def get_target_ids(ta1_name: str, itm_scenario) -> list[str]:
+        return ITMTa1Controller.__get_static_ref(ta1_name).get_target_ids(itm_scenario)
+
     # Note: this method is currently unused but remains valid from an API perspective; and we might want to use it someday.
     @staticmethod
     def get_alignment_data(scene_type):
         alignment_target_ids = ITMTa1Controller.get_alignment_target_ids(scene_type)
         alignments = []
-        ta1_class :ITMTa1Controller = ITMTa1Controller.__get_static_ref(scene_type)
+        ta1_class: ITMTa1Controller = ITMTa1Controller.__get_static_ref(scene_type)
         for alignment_target_id in alignment_target_ids:
           url = ta1_class.get_alignment_target_path(alignment_target_id)
-          #url = ITMTa1Controller.get_alignment_target_path(alignment_target_id)
           response = requests.get(url)
           alignment_target = ITMTa1Controller.to_dict(response)
           alignments.append(AlignmentTarget.from_dict(alignment_target))
@@ -96,14 +113,13 @@ class ITMTa1Controller(ABC):
 
     @staticmethod
     def get_alignment_target_ids(scene_type):
-        ta1_class :ITMTa1Controller = ITMTa1Controller.__get_static_ref(scene_type)
+        ta1_class: ITMTa1Controller = ITMTa1Controller.__get_static_ref(scene_type)
         url = ta1_class.get_alignment_ids_path()
-        #url = ITMTa1Controller.get_alignment_ids_path()
         return json.loads(requests.get(url).content.decode('utf-8'))
 
     @staticmethod
     def get_alignment_target(scene_type, alignment_target_id):
-        ta1_class :ITMTa1Controller = ITMTa1Controller.__get_static_ref(scene_type)
+        ta1_class: ITMTa1Controller = ITMTa1Controller.__get_static_ref(scene_type)
         url = ta1_class.get_alignment_target_path(alignment_target_id)
         response = requests.get(url)
         alignment_target = ITMTa1Controller.to_dict(response)
@@ -139,7 +155,7 @@ class ITMTa1Controller(ABC):
         initial_response = requests.get(url)
         initial_response.raise_for_status()
         response = self.to_dict(initial_response)
-        alignment_results :AlignmentResults = AlignmentResults.from_dict(response)
+        alignment_results: AlignmentResults = AlignmentResults.from_dict(response)
 
         # Need to get KDMAs from a separate endpoint.
         alignment_results.kdma_values = self.get_kdmas(response)
