@@ -147,7 +147,7 @@ Run `./gradlew` to do this.
 ## Adding a domain
 To add a domain, you'll need to:
 1. Update the YAML definition of certain domain-specific versions of the model and define nested state;
-2. Implement domain-specific versions of certain ITM server classes;
+2. Implement a domain-specific version of certain ITM server classes;
 3. Create domain-specific tests;
 4. Create and update configuration; and
 5. Document your domain actions in the `itm-client-evaluation` repository.
@@ -184,7 +184,7 @@ Create a directory, `swagger_server/itm/domains/<domainname>`, and implement the
 Create a directory, `swagger_server/itm/data/domains/<domainname>/test` and add domain-specific tests, and/or domain-specific variants of existing tests.
 
 ### Create and update configuration
-Make the following changes to configuration:
+Make the following changes to configuration (`config.ini.template`, replicated in `config.ini`):
 - Create a file, `<domainname>ActionTimes.json>` in `swagger_server/itm/data/domains/<domainname>/` with a dictionary of domain-specific action types and simulated time (in seconds) for a given action to be performed.
 - Update the `SUPPORTED_DOMAINS` and (if desired) `DEFAULT_DOMAIN` keywords in `config.ini.template` and `config.ini` at the root level.
 
@@ -193,3 +193,19 @@ You should document your domain for multiple audiences, including scenario write
 - In the [TA3 client repository](https://github.com/NextCenturyCorporation/itm-evaluation-client), create a new file at the root level, `README-<domainname>.md`, a Markdown file with a description of domain-specific actions and FAQs.  The audience is primarily ADM writers.
 - Consider writing a document [like this](https://nextcentury.atlassian.net/wiki/spaces/ITMC/pages/3041951763/Scenario+YAML+Documentation) that documents every property in the domain-specific state, including controlled vocabulary, data type, and how to use each field.
 - If the domain uses a wide variety of controlled vocabulary, consider writing [a glossary](https://nextcentury.atlassian.net/wiki/download/attachments/3041951763/ITM%20Scenario%20Glossary%20(Phase%201%20Final).pdf?api=v2) that documents each property and possible value.
+
+## Adding a TA1
+To add a TA1, you'll need to create and update configuration and implement a domain-specific version of certain ITM server classes.
+You'll also have to update the [TA3 client repository](https://github.com/NextCenturyCorporation/itm-evaluation-client) if you want to
+be able to use its sample clients.  See its README for details.
+
+### Create and update configuration
+Make the following changes to configuration (`config.ini.template`, replicated in `config.ini`):
+- Add a new all-lowercase ta1 name to `ALL_TA1_NAMES`.
+- Define the following variables in both the `DEFAULT` and `GROUP_TARGET` configuration groups:
+  - `<TA1>_EVAL_FILENAMES`, `<TA1>_TRAIN_FILENAMES`
+  - For each KDMA, define `<TA1>_EVAL_<KDMA>_SCENARIOS`, `<TA1>_TRAIN_<KDMA>_SCENARIOS`, and `<TA1>_<KDMA>_ALIGNMENT_TARGETS`.
+
+### Implement domain-specific classes
+In the directory `swagger_server/itm/ta1`, create a child class `<TA1name>Ta1Controller` of `ITMTa1Controller`, and implement all abstract methods (e.g., `get_ta1name`, `get_alignment_ids_path`, and `new_session`, among others).  Override any `ITMTa1Controller` methods as necessary.
+Add code to get the configuration values defined above (see current TA1 controllers for examples).  Depending how extensive/different your TA1 server is from current cases, you may need to make changes to `ITMTa1Controller`.

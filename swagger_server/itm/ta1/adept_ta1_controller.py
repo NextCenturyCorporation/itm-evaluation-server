@@ -4,7 +4,7 @@ from swagger_server.models import KDMAValue
 from .itm_ta1_controller import ITMTa1Controller
 
 
-class AdeptTA1Controller(ITMTa1Controller):
+class AdeptTa1Controller(ITMTa1Controller):
 
     ADEPT_MJ_ALIGNMENT_DISTRIBUTION_TARGET = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_MJ_ALIGNMENT_DISTRIBUTION_TARGET']
     ADEPT_IO_ALIGNMENT_DISTRIBUTION_TARGET = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_IO_ALIGNMENT_DISTRIBUTION_TARGET']
@@ -23,7 +23,7 @@ class AdeptTA1Controller(ITMTa1Controller):
 
     @staticmethod
     def get_server_url() -> str:
-        return ITMTa1Controller.get_contact_info(AdeptTA1Controller.get_ta1name())
+        return ITMTa1Controller.get_contact_info(AdeptTa1Controller.get_ta1name())
 
     @staticmethod
     def get_ta1name() -> str:
@@ -31,23 +31,23 @@ class AdeptTA1Controller(ITMTa1Controller):
 
     @staticmethod
     def get_alignment_ids_path() -> str:
-        return f"{AdeptTA1Controller.get_server_url()}/api/v1/alignment_target_ids"
+        return f"{AdeptTa1Controller.get_server_url()}/api/v1/alignment_target_ids"
 
     @staticmethod
     def get_alignment_target_path(alignment_target_id: str) -> str:
-          return f"{AdeptTA1Controller.get_server_url()}/api/v1/alignment_target/{alignment_target_id}"
+          return f"{AdeptTa1Controller.get_server_url()}/api/v1/alignment_target/{alignment_target_id}"
 
     @staticmethod
     def get_filenames(kdma_training) -> list[str]:
-        return AdeptTA1Controller.ADEPT_TRAIN_FILENAMES if kdma_training else AdeptTA1Controller.ADEPT_EVAL_FILENAMES
+        return AdeptTa1Controller.ADEPT_TRAIN_FILENAMES if kdma_training else AdeptTa1Controller.ADEPT_EVAL_FILENAMES
 
     @staticmethod
     def get_target_ids(itm_scenario) -> list[str]:
         target_ids: list[str] = []
-        if itm_scenario.id in (AdeptTA1Controller.ADEPT_TRAIN_MJ_SCENARIOS if itm_scenario.training else AdeptTA1Controller.ADEPT_EVAL_MJ_SCENARIOS):
-            target_ids.extend(AdeptTA1Controller.ADEPT_MJ_ALIGNMENT_TARGETS)
-        if itm_scenario.id in (AdeptTA1Controller.ADEPT_TRAIN_IO_SCENARIOS if itm_scenario.training else AdeptTA1Controller.ADEPT_EVAL_IO_SCENARIOS):
-            target_ids.extend(AdeptTA1Controller.ADEPT_IO_ALIGNMENT_TARGETS)
+        if itm_scenario.id in (AdeptTa1Controller.ADEPT_TRAIN_MJ_SCENARIOS if itm_scenario.training else AdeptTa1Controller.ADEPT_EVAL_MJ_SCENARIOS):
+            target_ids.extend(AdeptTa1Controller.ADEPT_MJ_ALIGNMENT_TARGETS)
+        if itm_scenario.id in (AdeptTa1Controller.ADEPT_TRAIN_IO_SCENARIOS if itm_scenario.training else AdeptTa1Controller.ADEPT_EVAL_IO_SCENARIOS):
+            target_ids.extend(AdeptTa1Controller.ADEPT_IO_ALIGNMENT_TARGETS)
         return target_ids
 
     def supports_probe_alignment(self) -> bool:

@@ -4,7 +4,7 @@ from swagger_server.models import KDMAProfile
 from .itm_ta1_controller import ITMTa1Controller
 
 
-class SoartechTA1Controller(ITMTa1Controller):
+class SoartechTa1Controller(ITMTa1Controller):
 
     SOARTECH_EVAL_FILENAMES = ITMTa1Controller.config[ITMTa1Controller.config_group]['SOARTECH_EVAL_FILENAMES'].replace('\n','').split(',')
     SOARTECH_TRAIN_FILENAMES = ITMTa1Controller.config[ITMTa1Controller.config_group]['SOARTECH_TRAIN_FILENAMES'].replace('\n','').split(',')
@@ -20,7 +20,7 @@ class SoartechTA1Controller(ITMTa1Controller):
 
     @staticmethod
     def get_server_url() -> str:
-        return ITMTa1Controller.get_contact_info(SoartechTA1Controller.get_ta1name())
+        return ITMTa1Controller.get_contact_info(SoartechTa1Controller.get_ta1name())
 
     @staticmethod
     def get_ta1name() -> str:
@@ -28,23 +28,23 @@ class SoartechTA1Controller(ITMTa1Controller):
 
     @staticmethod
     def get_alignment_ids_path() -> str:
-        return f"{SoartechTA1Controller.get_server_url()}/api/v1/alignment_targets"
+        return f"{SoartechTa1Controller.get_server_url()}/api/v1/alignment_targets"
 
     @staticmethod
     def get_alignment_target_path(alignment_target_id: str) -> str:
-          return f"{SoartechTA1Controller.get_server_url()}/api/v1/alignment_target/{alignment_target_id}"
+          return f"{SoartechTa1Controller.get_server_url()}/api/v1/alignment_target/{alignment_target_id}"
 
     @staticmethod
     def get_filenames(kdma_training) -> list[str]:
-        return SoartechTA1Controller.SOARTECH_TRAIN_FILENAMES if kdma_training else SoartechTA1Controller.SOARTECH_EVAL_FILENAMES
+        return SoartechTa1Controller.SOARTECH_TRAIN_FILENAMES if kdma_training else SoartechTa1Controller.SOARTECH_EVAL_FILENAMES
 
     @staticmethod
     def get_target_ids(itm_scenario) -> list[str]:
         target_ids: list[str] = []
-        if itm_scenario.id in (SoartechTA1Controller.SOARTECH_TRAIN_QOL_SCENARIOS if itm_scenario.training else SoartechTA1Controller.SOARTECH_EVAL_QOL_SCENARIOS):
-            target_ids.extend(SoartechTA1Controller.SOARTECH_QOL_ALIGNMENT_TARGETS)
-        if itm_scenario.id in (SoartechTA1Controller.SOARTECH_TRAIN_VOL_SCENARIOS if itm_scenario.training else SoartechTA1Controller.SOARTECH_EVAL_VOL_SCENARIOS):
-            target_ids.extend(SoartechTA1Controller.SOARTECH_VOL_ALIGNMENT_TARGETS)
+        if itm_scenario.id in (SoartechTa1Controller.SOARTECH_TRAIN_QOL_SCENARIOS if itm_scenario.training else SoartechTa1Controller.SOARTECH_EVAL_QOL_SCENARIOS):
+            target_ids.extend(SoartechTa1Controller.SOARTECH_QOL_ALIGNMENT_TARGETS)
+        if itm_scenario.id in (SoartechTa1Controller.SOARTECH_TRAIN_VOL_SCENARIOS if itm_scenario.training else SoartechTa1Controller.SOARTECH_EVAL_VOL_SCENARIOS):
+            target_ids.extend(SoartechTa1Controller.SOARTECH_VOL_ALIGNMENT_TARGETS)
         return target_ids
 
     def new_session(self, context=None) -> any:

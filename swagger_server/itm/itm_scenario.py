@@ -7,7 +7,7 @@ from swagger_server.models import (
     Action, AlignmentTarget, ProbeResponse, State
 )
 from .itm_scene import ITMScene
-from .itm_ta1_controller import ITMTa1Controller
+from swagger_server.itm.ta1.itm_ta1_controller import ITMTa1Controller
 
 @dataclass
 class ITMScenarioData:

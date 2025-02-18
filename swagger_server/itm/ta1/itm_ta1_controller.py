@@ -25,7 +25,6 @@ class ITMTa1Controller(ABC):
         try:
             klass: ITMTa1Controller = ITMTa1Controller.__get_static_ref(scene_type)
             instance = klass(alignment_target_id, alignment_target)
-            #instance = klass(*args, **kwargs)
             return instance
         except (ImportError, AttributeError, TypeError) as e:
             print(f"Error instantiating '{scene_type}' TA1 controller from factory: {e}")
@@ -33,8 +32,8 @@ class ITMTa1Controller(ABC):
 
     @staticmethod
     def __get_static_ref(scene_type: str):
-        module = import_module(f"swagger_server.itm.{scene_type}_ta1_controller")
-        return getattr(module, f"{scene_type.capitalize()}TA1Controller")
+        module = import_module(f"swagger_server.itm.ta1.{scene_type}_ta1_controller")
+        return getattr(module, f"{scene_type.capitalize()}Ta1Controller")
 
     @staticmethod
     def get_contact_info(ta1_name: str) -> str:

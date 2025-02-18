@@ -20,7 +20,7 @@ from swagger_server.models import (
 )
 from .itm_scenario import ITMScenario
 from .itm_action_handler import ITMActionHandler
-from .itm_ta1_controller import ITMTa1Controller
+from swagger_server.itm.ta1.itm_ta1_controller import ITMTa1Controller
 from .itm_history import ITMHistory
 from .itm_domain_config import ITMDomainConfig, ITMDomainConfigFactory
 from swagger_server import config_util
