@@ -400,10 +400,10 @@ class ITMSession:
 
         Args:
             adm_name: The ADM name associated with the session.
-            session_type: The type of scenarios either one of the configured TA1 names, test, or eval
+            session_type: The type of session: either one of the configured TA1 names, `test`, or `eval`
             adm_profile: a profile of the ADM in terms of its alignment strategy
-            domain: the session domain, as selected from the configured SUPPORTED_DOMAINS;
-                defaults to the configured DEFAULT_DOMAIN
+            domain: the session domain, as selected from the configured `SUPPORTED_DOMAINS`;
+                defaults to the configured `DEFAULT_DOMAIN`
             kdma_training: whether this is a `full`, `solo`, or non-training session with TA2;
                 default to non-training
             max_scenarios: The max number of scenarios presented during the session
