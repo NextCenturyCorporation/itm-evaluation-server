@@ -156,7 +156,6 @@ def start_session(adm_name, session_type, adm_profile=None, domain=None, kdma_tr
         adm_profile=adm_profile if adm_profile != 'None' else None,
         domain=domain if domain != 'None' else None,
         kdma_training=kdma_training if kdma_training != 'None' else None,
-        adept_populations=True,
         max_scenarios=max_scenarios
     )
     session_mapping[session_id] = {"adm_name": adm_name, "last_accessed": time.time()}

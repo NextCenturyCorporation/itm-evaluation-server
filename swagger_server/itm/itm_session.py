@@ -20,7 +20,7 @@ from swagger_server.models import (
 )
 from .itm_scenario import ITMScenario
 from .itm_action_handler import ITMActionHandler
-from .itm_ta1_controller import ITMTa1Controller
+from swagger_server.itm.ta1.itm_ta1_controller import ITMTa1Controller
 from .itm_history import ITMHistory
 from .itm_domain_config import ITMDomainConfig, ITMDomainConfigFactory
 from swagger_server import config_util
@@ -41,22 +41,6 @@ class ITMSession:
     SUPPORTED_DOMAINS = config[config_group]['SUPPORTED_DOMAINS']
     SCENARIO_DIRECTORY = config[config_group]['SCENARIO_DIRECTORY']
     ALL_TA1_NAMES = config[config_group]['ALL_TA1_NAMES'].replace('\n','').split(',')
-    SOARTECH_EVAL_FILENAMES = config[config_group]['SOARTECH_EVAL_FILENAMES'].replace('\n','').split(',')
-    SOARTECH_TRAIN_FILENAMES = config[config_group]['SOARTECH_TRAIN_FILENAMES'].replace('\n','').split(',')
-    SOARTECH_EVAL_QOL_SCENARIOS = config[config_group]['SOARTECH_EVAL_QOL_SCENARIOS'].replace('\n','').split(',')
-    SOARTECH_EVAL_VOL_SCENARIOS = config[config_group]['SOARTECH_EVAL_VOL_SCENARIOS'].replace('\n','').split(',')
-    SOARTECH_TRAIN_QOL_SCENARIOS = config[config_group]['SOARTECH_TRAIN_QOL_SCENARIOS'].replace('\n','').split(',')
-    SOARTECH_TRAIN_VOL_SCENARIOS = config[config_group]['SOARTECH_TRAIN_VOL_SCENARIOS'].replace('\n','').split(',')
-    SOARTECH_QOL_ALIGNMENT_TARGETS = config[config_group]['SOARTECH_QOL_ALIGNMENT_TARGETS'].replace('\n','').split(',')
-    SOARTECH_VOL_ALIGNMENT_TARGETS = config[config_group]['SOARTECH_VOL_ALIGNMENT_TARGETS'].replace('\n','').split(',')
-    ADEPT_EVAL_FILENAMES = config[config_group]['ADEPT_EVAL_FILENAMES'].replace('\n','').split(',')
-    ADEPT_TRAIN_FILENAMES = config[config_group]['ADEPT_TRAIN_FILENAMES'].replace('\n','').split(',')
-    ADEPT_EVAL_MJ_SCENARIOS = config[config_group]['ADEPT_EVAL_MJ_SCENARIOS'].replace('\n','').split(',')
-    ADEPT_EVAL_IO_SCENARIOS = config[config_group]['ADEPT_EVAL_IO_SCENARIOS'].replace('\n','').split(',')
-    ADEPT_TRAIN_MJ_SCENARIOS = config[config_group]['ADEPT_TRAIN_MJ_SCENARIOS'].replace('\n','').split(',')
-    ADEPT_TRAIN_IO_SCENARIOS = config[config_group]['ADEPT_TRAIN_IO_SCENARIOS'].replace('\n','').split(',')
-    ADEPT_MJ_ALIGNMENT_TARGETS = config[config_group]['ADEPT_MJ_ALIGNMENT_TARGETS'].replace('\n','').split(',')
-    ADEPT_IO_ALIGNMENT_TARGETS = config[config_group]['ADEPT_IO_ALIGNMENT_TARGETS'].replace('\n','').split(',')
 
     # maps alignment id to list alignment_targets, as limited by configuration; used whether connecting to TA1 or not
     alignment_data = {}
@@ -114,8 +98,9 @@ class ITMSession:
                 ITMSession.init_ta1_data(ITMSession.ALL_TA1_NAMES)
                 ITMSession.ta1_connected = True
                 logging.info("Done.")
-            except:
+            except Exception as e:
                 logging.warning("Could not initialize TA1 data. Running standalone.")
+                logging.exception(e)
         else:
             logging.info("Running server in testing mode; no connection to TA1 servers.")
 
@@ -126,7 +111,6 @@ class ITMSession:
         for ta1_name in ta1_names:
             ITMSession.alignment_ids[ta1_name] = [
                 alignment_target_id for alignment_target_id in ITMTa1Controller.get_alignment_target_ids(ta1_name)
-                    if 'train' not in alignment_target_id or ta1_name == 'soartech'
             ]
 
 
@@ -373,8 +357,8 @@ class ITMSession:
 
             if self.ta1_integration:
                 try:
-                    user_id = f"{self.session_id}_{self.itm_scenario.id}" if self.itm_scenario.scene_type == 'soartech' else None
-                    ta1_session_id = self.itm_scenario.ta1_controller.new_session(user_id, self.adept_populations)
+                    user_id = f"{self.session_id}_{self.itm_scenario.id}"
+                    ta1_session_id = self.itm_scenario.ta1_controller.new_session(context=user_id)
                     self.history.add_history(
                         "TA1 Session ID", {}, ta1_session_id
                     )
@@ -410,17 +394,16 @@ class ITMSession:
         return Scenario(session_complete=True, id='', name='',
                         scenes=None, state=None)
 
-    def start_session(self, adm_name: str, session_type: str, adm_profile: str, adept_populations: bool, domain: str, kdma_training: str=None, max_scenarios=None) -> str:
+    def start_session(self, adm_name: str, session_type: str, adm_profile: str, domain: str, kdma_training: str=None, max_scenarios=None) -> str:
         """
         Start a new session.
 
         Args:
             adm_name: The ADM name associated with the session.
-            session_type: The type of scenarios either soartech, adept, test, or eval
+            session_type: The type of session: either one of the configured TA1 names, `test`, or `eval`
             adm_profile: a profile of the ADM in terms of its alignment strategy
-            adept_populations: whether or not ADEPT should use population based alignment
-            domain: the session domain, as selected from the configured SUPPORTED_DOMAINS;
-                defaults to the configured DEFAULT_DOMAIN
+            domain: the session domain, as selected from the configured `SUPPORTED_DOMAINS`;
+                defaults to the configured `DEFAULT_DOMAIN`
             kdma_training: whether this is a `full`, `solo`, or non-training session with TA2;
                 default to non-training
             max_scenarios: The max number of scenarios presented during the session
@@ -428,9 +411,12 @@ class ITMSession:
         Returns:
             A new session Id to use in subsequent calls
         """
-        if session_type not in ['adept', 'soartech', 'eval', 'test']:
+        if session_type not in ITMSession.ALL_TA1_NAMES and session_type not in ['eval', 'test']:
+            ta1_name_str = ''
+            for ta1_name in ITMSession.ALL_TA1_NAMES:
+                ta1_name_str += ta1_name + ", "
             return (
-                f'Invalid session type `{session_type}`. Must be "adept, soartech, test, or eval"',
+                f'Invalid session type `{session_type}`. Must be {ta1_name_str}test, or eval',
                 400
             )
 
@@ -458,7 +444,6 @@ class ITMSession:
             return 'System Overload', 503 # itm_ta2_eval_controller should prevent this
 
         self.kdma_training = kdma_training
-        self.adept_populations = adept_populations
         self.adm_name = adm_name
         self.adm_profile = adm_profile if adm_profile else ''
         if max_scenarios == 0:
@@ -514,10 +499,7 @@ class ITMSession:
             if self.session_type == 'test':
                 scenarios = ITMSession._get_file_names(scenario_path)
             else:
-                if ta1_name == "soartech":
-                    scenarios = ITMSession.SOARTECH_TRAIN_FILENAMES if kdma_training else ITMSession.SOARTECH_EVAL_FILENAMES
-                else:
-                    scenarios = ITMSession.ADEPT_TRAIN_FILENAMES if kdma_training else ITMSession.ADEPT_EVAL_FILENAMES
+                scenarios = ITMTa1Controller.get_filenames(ta1_name, kdma_training)
 
             ta1_scenarios = []
             scenario_ctr = 0
@@ -544,7 +526,7 @@ class ITMSession:
                                 ta1_scenarios[scenario_ctr].alignment_target = alignment_target
                                 if self.ta1_integration:
                                     ta1_scenarios[scenario_ctr].set_controller( # Always create a new controller for each scenario.
-                                        ITMTa1Controller(target_id, ta1_name, alignment_target))
+                                        ITMTa1Controller.create_controller(ta1_name, target_id, alignment_target))
                                 scenario_ctr += 1
                             except Exception as e:
                                 logging.fatal(f"Couldn't obtain alignment target '{target_id}'. Check your TA3 server configuration or connection to TA1.")
@@ -552,17 +534,10 @@ class ITMSession:
                         return scenario_ctr
 
                     try:
-                        if ta1_name == "soartech":
-                            if itm_scenario.id in (ITMSession.SOARTECH_TRAIN_QOL_SCENARIOS if kdma_training else ITMSession.SOARTECH_EVAL_QOL_SCENARIOS):
-                                scenario_ctr = __load_scenarios(ITMSession.SOARTECH_QOL_ALIGNMENT_TARGETS, scenario_ctr)
-                            if itm_scenario.id in (ITMSession.SOARTECH_TRAIN_VOL_SCENARIOS if kdma_training else ITMSession.SOARTECH_EVAL_VOL_SCENARIOS):
-                                scenario_ctr = __load_scenarios(ITMSession.SOARTECH_VOL_ALIGNMENT_TARGETS, scenario_ctr)
-                        elif ta1_name == "adept":
-                            if itm_scenario.id in (ITMSession.ADEPT_TRAIN_MJ_SCENARIOS if kdma_training else ITMSession.ADEPT_EVAL_MJ_SCENARIOS):
-                                scenario_ctr = __load_scenarios(ITMSession.ADEPT_MJ_ALIGNMENT_TARGETS, scenario_ctr)
-                            if itm_scenario.id in (ITMSession.ADEPT_TRAIN_IO_SCENARIOS if kdma_training else ITMSession.ADEPT_EVAL_IO_SCENARIOS):
-                                scenario_ctr = __load_scenarios(ITMSession.ADEPT_IO_ALIGNMENT_TARGETS, scenario_ctr)
+                        # Get a list of alignment target IDs that apply to the given scenario so we can create a scenario for each target
+                        scenario_ctr = __load_scenarios(ITMTa1Controller.get_target_ids(ta1_name, itm_scenario), scenario_ctr)
                     except Exception as e:
+                        logging.exception(e)
                         return f"Problem loading TA3 server configuration.", 503
 
             self.itm_scenarios.extend(ta1_scenarios)

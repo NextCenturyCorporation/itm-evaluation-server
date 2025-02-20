@@ -3,7 +3,6 @@ import logging
 from swagger_server.models import (
     Action,
     ActionTypeEnum,
-    BaseActionTypeEnum,
     Character
 )
 from .itm_scenario import ITMScenario
