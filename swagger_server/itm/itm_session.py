@@ -420,17 +420,6 @@ class ITMSession:
                 400
             )
 
-        # Set up domain
-        if domain is None:
-            domain = ITMSession.DEFAULT_DOMAIN
-        elif domain not in self.SUPPORTED_DOMAINS:
-            return f"Unsupported domain `{domain}`", 400
-        self.domain = domain
-        self.domain_config = ITMDomainConfigFactory.create_domain_factory(domain)
-        if not self.domain_config:
-            return f"No config class found for domain `{domain}`", 400
-        self.action_handler = self.domain_config.get_action_handler(self)
-
         # Re-use current session for same ADM after a client crash
         if self.session_id is None:
             self.session_id = str(uuid.uuid4())
@@ -442,6 +431,19 @@ class ITMSession:
             self.session_id = str(uuid.uuid4()) # but assign new session_id for clarity in logs/history
         else:
             return 'System Overload', 503 # itm_ta2_eval_controller should prevent this
+
+        # Set up domain
+        if domain is None:
+            domain = ITMSession.DEFAULT_DOMAIN
+        elif domain not in self.SUPPORTED_DOMAINS:
+            return f"Unsupported domain `{domain}`", 400
+        self.domain = domain
+        self.domain_config = ITMDomainConfigFactory.create_domain_factory(domain)
+        if not self.domain_config:
+            return f"No config class found for domain `{domain}`", 400
+        self.action_handler = self.domain_config.get_action_handler(self)
+        if not self.action_handler:
+            return f"No action handler found for domain `{domain}`", 400
 
         self.kdma_training = kdma_training
         self.adm_name = adm_name
