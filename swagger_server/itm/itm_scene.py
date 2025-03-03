@@ -81,7 +81,7 @@ class ITMScene:
         state_copy = {}
         if self.state:
             state_copy = copy.deepcopy(vars(self.state))
-            del state_copy['swagger_types']
+            del state_copy['openapi_types']
             del state_copy['attribute_map']
             state_copy = str(state_copy).encode('utf-8').decode('unicode-escape').replace('"', "'")
         to_obj = {

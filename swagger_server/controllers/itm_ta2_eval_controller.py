@@ -34,20 +34,22 @@ def get_alignment_target(session_id, scenario_id):  # noqa: E501
     :param scenario_id: The ID of the scenario for which to retrieve alignment target
     :type scenario_id: str
 
-    :rtype: AlignmentTarget
+    :rtype: Union[AlignmentTarget, Tuple[AlignmentTarget, int], Tuple[AlignmentTarget, int, Dict[str, str]]
     """
     session = _get_session(session_id)
     return session.get_alignment_target(scenario_id=scenario_id) if session else ('Invalid Session ID', 400)
 
 def get_session_alignment(session_id, target_id):  # noqa: E501
-    """Retrieve current session alignment
+    """Retrieve session alignment from TA1
 
-    Retrieve current session alignment for the session with the specified id # noqa: E501
+    Retrieve the current session alignment for the session with the specified id # noqa: E501
 
     :param session_id: a unique session_id, as returned by /ta2/startSession
     :type session_id: str
+    :param target_id: alignment target id
+    :type target_id: str
 
-    :rtype: AlignmentResults
+    :rtype: Union[AlignmentResults, Tuple[AlignmentResults, int], Tuple[AlignmentResults, int, Dict[str, str]]
     """
     session = _get_session(session_id)
     return session.get_session_alignment(target_id=target_id) if session else ('Invalid Session ID', 400)
@@ -60,10 +62,10 @@ def get_available_actions(session_id, scenario_id):  # noqa: E501
 
     :param session_id: a unique session_id, as returned by /ta2/startSession
     :type session_id: str
-    :param scenario_id: The ID of the scenario for which to retrieve avaialble actions
+    :param scenario_id: The ID of the scenario for which to retrieve available actions
     :type scenario_id: str
 
-    :rtype: List[Action]
+    :rtype: Union[List[Action], Tuple[List[Action], int], Tuple[List[Action], int, Dict[str, str]]
     """
     session = _get_session(session_id)
     return session.get_available_actions(scenario_id=scenario_id) if session else ('Invalid Session ID', 400)
@@ -76,10 +78,10 @@ def get_scenario_state(session_id, scenario_id):  # noqa: E501
 
     :param session_id: a unique session_id, as returned by /ta2/startSession
     :type session_id: str
-    :param scenario_id: The ID of the scenario for which to retrieve status
+    :param scenario_id: the ID of the scenario for which to retrieve status
     :type scenario_id: str
 
-    :rtype: State
+    :rtype: Union[State, Tuple[State, int], Tuple[State, int, Dict[str, str]]
     """
     session = _get_session(session_id)
     return session.get_scenario_state(scenario_id=scenario_id) if session else ('Invalid Session ID', 400)
@@ -92,10 +94,10 @@ def start_scenario(session_id, scenario_id=None):  # noqa: E501
 
     :param session_id: a unique session_id, as returned by /ta2/startSession
     :type session_id: str
-    :param scenario_id: the scenario id to run; incompatible with /ta2/startSession's max_scenarios parameter
+    :param scenario_id: the scenario id to run; incompatible with /ta2/startSession&#39;s max_scenarios parameter
     :type scenario_id: str
 
-    :rtype: Scenario
+    :rtype: Union[Scenario, Tuple[Scenario, int], Tuple[Scenario, int, Dict[str, str]]
     """
     session = _get_session(session_id)
     return session.start_scenario(scenario_id=scenario_id) if session else ('Invalid Session ID', 400)
@@ -112,22 +114,22 @@ def _reclaim_old_session():
 def start_session(adm_name, session_type, adm_profile=None, domain=None, kdma_training=None, max_scenarios=None):  # noqa: E501
     """Start a new session
 
-    Get unique session id for grouping answers from a collection of scenarios/probes together # noqa: E501
+    Get unique session id for grouping answers from a collection of scenarios together # noqa: E501
 
     :param adm_name: A self-assigned ADM name.
     :type adm_name: str
-    :param session_type: the type of session to start (`eval`, `test`, or a TA1 name)
+    :param session_type: the type of session to start (&#x60;eval&#x60;, &#x60;test&#x60;, or a TA1 name)
     :type session_type: str
     :param adm_profile: a profile of the ADM in terms of its alignment strategy
     :type adm_profile: str
-    :param domain: A domain supported by the ITM evaluation server, as specified in server configuration
+    :param domain: A domain supported by the ITM evaluation server
     :type domain: str
-    :param kdma_training: whether this is a `full`, `solo`, or non-training session with TA2
+    :param kdma_training: whether this is a &#x60;full&#x60;, &#x60;solo&#x60;, or non-training session with TA2
     :type kdma_training: str
-    :param max_scenarios: the maximum number of scenarios requested, supported only in `test` sessions
+    :param max_scenarios: the maximum number of scenarios requested, not supported in &#x60;eval&#x60; sessions
     :type max_scenarios: int
 
-    :rtype: str
+    :rtype: Union[str, Tuple[str, int], Tuple[str, int, Dict[str, str]]
     """
 
     session = itm_sessions.get(adm_name)
@@ -169,10 +171,10 @@ def take_action(session_id, body=None):  # noqa: E501
 
     :param session_id: a unique session_id, as returned by /ta2/startSession
     :type session_id: str
-    :param body: Encapsulation of an action taken by a DM in the context of the scenario
-    :type body: dict | bytes
+    :param action: Encapsulation of an action taken by a DM in the context of the scenario
+    :type action: dict | bytes
 
-    :rtype: State
+    :rtype: Union[State, Tuple[State, int], Tuple[State, int, Dict[str, str]]
     """
     if connexion.request.is_json:
         body = Action.from_dict(connexion.request.get_json())  # noqa: E501
@@ -191,7 +193,7 @@ def intend_action(session_id, body=None):  # noqa: E501
     :param body: Encapsulation of the intended action by a DM in the context of the scenario
     :type body: dict | bytes
 
-    :rtype: State
+    :rtype: Union[State, Tuple[State, int], Tuple[State, int, Dict[str, str]]
     """
     if connexion.request.is_json:
         body = Action.from_dict(connexion.request.get_json())  # noqa: E501

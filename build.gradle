@@ -42,6 +42,7 @@ openApiGenerate {
     generatorName = "python-flask"
     inputSpec = "$projectDir/$apiDirectory/swagger.yaml".toString()
     outputDir = "$projectDir/$generatedApiDirectory".toString()
+    ignoreFileOverride = "$projectDir/.openapi-generator-ignore".toString()
     packageName = "$outputDirectory".toString()
     globalProperties = [
             modelDocs: "false"
@@ -65,7 +66,7 @@ task postGeneration() {
         }
 
         // delete generated api directory
-        // delete generatedApiDirectory
+        delete generatedApiDirectory
         println "removed ${generatedApiDirectory}"
     }
 }

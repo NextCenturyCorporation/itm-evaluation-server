@@ -1,11 +1,8 @@
 import datetime
 
-import six
 import typing
-from swagger_server import type_util
+from swagger_server import typing_utils
 
-def get_swagger_class_enum_values(klass):
-    return [getattr(klass,i) for i in dir(klass) if not i.startswith("_") and isinstance(getattr(klass,i), str)]
 
 def _deserialize(data, klass):
     """Deserializes dict, list, str into an object.
@@ -18,7 +15,7 @@ def _deserialize(data, klass):
     if data is None:
         return None
 
-    if klass in six.integer_types or klass in (float, str, bool, bytearray):
+    if klass in (int, float, str, bool, bytearray):
         return _deserialize_primitive(data, klass)
     elif klass == object:
         return _deserialize_object(data)
@@ -26,10 +23,10 @@ def _deserialize(data, klass):
         return deserialize_date(data)
     elif klass == datetime.datetime:
         return deserialize_datetime(data)
-    elif type_util.is_generic(klass):
-        if type_util.is_list(klass):
+    elif typing_utils.is_generic(klass):
+        if typing_utils.is_list(klass):
             return _deserialize_list(data, klass.__args__[0])
-        if type_util.is_dict(klass):
+        if typing_utils.is_dict(klass):
             return _deserialize_dict(data, klass.__args__[1])
     else:
         return deserialize_model(data, klass)
@@ -47,7 +44,7 @@ def _deserialize_primitive(data, klass):
     try:
         value = klass(data)
     except UnicodeEncodeError:
-        value = six.u(data)
+        value = data
     except TypeError:
         value = data
     return value
@@ -69,6 +66,9 @@ def deserialize_date(string):
     :return: date.
     :rtype: date
     """
+    if string is None:
+      return None
+    
     try:
         from dateutil.parser import parse
         return parse(string).date()
@@ -86,6 +86,9 @@ def deserialize_datetime(string):
     :return: datetime.
     :rtype: datetime
     """
+    if string is None:
+      return None
+    
     try:
         from dateutil.parser import parse
         return parse(string)
@@ -103,10 +106,10 @@ def deserialize_model(data, klass):
     """
     instance = klass()
 
-    if not instance.swagger_types:
+    if not instance.openapi_types:
         return data
 
-    for attr, attr_type in six.iteritems(instance.swagger_types):
+    for attr, attr_type in instance.openapi_types.items():
         if data is not None \
                 and instance.attribute_map[attr] in data \
                 and isinstance(data, (list, dict)):
@@ -141,4 +144,4 @@ def _deserialize_dict(data, boxed_type):
     :rtype: dict
     """
     return {k: _deserialize(v, boxed_type)
-            for k, v in six.iteritems(data)}
+            for k, v in data.items() }
