@@ -13,29 +13,11 @@ paths:
     get:
       responses:
         "200":
-          description: "Successful operation, scenario state returned"
+          description: NOP
           content:
-            application/json:
+            text/plain:
               schema:
-                $ref: "#/components/schemas/DomainState"
-        "300":
-          description: "Successful operation, scenario state returned"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/DomainCharacter"
-        "400":
-          description: "Successful operation, scenario state returned"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/DomainDemographics"
-        "500":
-          description: "Successful operation, scenario state returned"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/DomainConditions"
+                type: string
 components:
   schemas:
     DomainState:
@@ -354,17 +336,7 @@ components:
           type: array
           description: True if any of the specified collection of vital values have been met for the specified character_id
           items:
-            required:
-              - character_id
-              - vitals
-            type: object
-            description: True if all vitals values have been met by the specified character_id
-            properties:
-              character_id:
-                type: string
-                description: The ID of the character in question
-              vitals:
-                $ref: "#/components/schemas/Vitals"
+            $ref: "#/components/schemas/ConditionsCharacterVitals"
         supplies:
           type: array
           description: True if any of the specified supplies reach or go below the specified quantity
@@ -372,6 +344,18 @@ components:
             $ref: "#/components/schemas/Supplies"
           example:
             - { type: Tourniquet, quantity: 1, reusable: False }
+    ConditionsCharacterVitals:
+      required:
+        - character_id
+        - vitals
+      type: object
+      description: True if all vitals values have been met by the specified character_id
+      properties:
+        character_id:
+          type: string
+          description: The ID of the character in question
+        vitals:
+          $ref: "#/components/schemas/Vitals"
     MissionTypeEnum:
       type: string
       description: enumeration of possible mission types

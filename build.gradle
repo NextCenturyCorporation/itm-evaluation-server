@@ -9,10 +9,9 @@ buildscript {
 apply plugin:'base'
 apply plugin: 'org.openapi.generator'
 
-defaultTasks 'clean', 'generate', 'postGeneration'
+defaultTasks 'clean', 'swaggerClean', 'generate', 'postGeneration'
 
 def generatedApiDirectory = "generated"
-def generatedOutputDirectory = "openapi_server"
 def apiDirectory = "swagger"
 def outputDirectory = "swagger_server"
 
@@ -24,25 +23,26 @@ task swaggerClean(type: Delete) {
 }
 
 // Define a task for validating the primary YAML
-task validateMainSpec(type: org.openapitools.generator.gradle.plugin.tasks.ValidateTask) {
+task validate(type: org.openapitools.generator.gradle.plugin.tasks.ValidateTask) {
     inputSpec.set("$projectDir/$apiDirectory/swagger.yaml")
 }
 
-// Define a task for validating the domain-specific YAML
+// Define a task for validating the domain-specific YAML in isolation
 task validateDomainSpec(type: org.openapitools.generator.gradle.plugin.tasks.ValidateTask) {
     inputSpec.set("$projectDir/$apiDirectory/domain_swagger.yaml")
 }
 
-// Define a task to validate all YAML files
-task validate(dependsOn: ['validateMainSpec', 'validateDomainSpec'])
-
 // Define a task to clean then generate
-task generate(dependsOn: ['swaggerClean', 'openApiGenerate'])
+task generate {
+    dependsOn "openApiGenerate"
+    mustRunAfter "swaggerClean"
+}
 
 openApiGenerate {
     generatorName = "python-flask"
     inputSpec = "$projectDir/$apiDirectory/swagger.yaml".toString()
     outputDir = "$projectDir/$generatedApiDirectory".toString()
+    packageName = "$outputDirectory".toString()
     globalProperties = [
             modelDocs: "false"
     ]
@@ -60,7 +60,7 @@ task postGeneration() {
     doLast() {
         // Copy generated files into models folder
         copy {
-            from "${generatedApiDirectory}/${generatedOutputDirectory}/models"
+            from "${generatedApiDirectory}/${outputDirectory}/models"
             into "${outputDirectory}/models"
         }
 
