@@ -137,12 +137,10 @@ If running the command instead of docker set the environment variables for:
 This requires JDK 8 or higher to run the gradle tool.
 
 The models in swagger_server/models are generated from the following file:
-* `swagger/swagger.yaml`
+* `swagger/base_swagger.yaml`
 
-If this file is updated it will need to be re-generated and checked in.
+If this file is updated then the models and combined `swagger.yaml` will need to be re-generated from this file and checked in.
 Run `./gradlew` to do this.
-
-**NOTE**: When you regenerate models, three files will not be regenerated: `action_type_enum.py`, `character_role_enum.py`, and `threat_type_enum.py`.  If you make changes to these model objects (presumably by adding enums), you'll need to add your new enum values manually.  See [this OpenAPI issue](https://github.com/OAI/OpenAPI-Specification/issues/1552) for background info.
 
 ## Adding a domain
 To add a domain, you'll need to:
@@ -158,12 +156,19 @@ Modify the definitions of the domain-specific versions of various state objects 
 - `DomainCharacter`: domain-specific attributes of the characters in the scenario
 - `DomainDemographics`: domain-specific demographic attributes of the characters in the scenario
 - `DomainConditions` domain-specific conditions that specify whether to transition to the next scene or send a probe response
-- `DomainThreatTypeEnum`: domain-specific type or nature of the risk or threat to the characters in the sceanrio, or to the decision-maker
+- `DomainThreatTypeEnum`: domain-specific type or nature of the risk or threat to the characters in the scenario, or to the decision-maker
 - `DomainCharacterRoleEnum`: domain-specific primary roles a character may have in the scene
 - `DomainActionTypeEnum`: domain-specific (string) action types supported in the server
 - `EntityTypeEnum`: domain-specific enumeration of available entity types; can be a subject or object of a `MESSAGE` action
 
 Add YAML definitions for any nested objects defined in the above state objects.  If any other model objects require domain-specific content, then create both a `Base` and `Domain` version of each object, and change the current object to include both of these versions with the `allOf` keyword. This may also entail other server code changes.  All YAML changes should be made to the `swagger/swagger.yaml` file, and used by your client ADM.  Note that the hope is to move all domain-specific state to a separate file, but this isn't supported cross-platform with our current dependencies.
+
+**NOTE**: Certain enums would ideally be extensible so we can define basic values in `base_swagger.yaml` and domain-specific extensions in `domain_swagger.yaml`.  Until this is supported in the OpenAPI spec and openapi generator, the enums from three domain-specific enums will need to be replicated in the base swagger file:
+- `DomainActionTypeEnum` values should be replicated in `ActionTypeEnum`;
+- `DomainThreatTypeEnum` values should be replicated in `ThreatTypeEnum`; and
+- `DomainCharacterRoleEnum` values should be replicated in `CharacterRoleTypeEnum`.
+
+See [this OpenAPI issue](https://github.com/OAI/OpenAPI-Specification/issues/1552) for background info.
 
 ### Implement domain-specific classes
 Create a directory, `swagger_server/itm/domains/<domainname>`, and implement the following classes:

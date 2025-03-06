@@ -31,13 +31,10 @@ from swagger_server.models.decision_environment import DecisionEnvironment
 from swagger_server.models.demographic_sex_enum import DemographicSexEnum
 from swagger_server.models.demographics import Demographics
 from swagger_server.models.directness_enum import DirectnessEnum
-from swagger_server.models.domain_action_type_enum import DomainActionTypeEnum
 from swagger_server.models.domain_character import DomainCharacter
-from swagger_server.models.domain_character_role_enum import DomainCharacterRoleEnum
 from swagger_server.models.domain_conditions import DomainConditions
 from swagger_server.models.domain_demographics import DomainDemographics
 from swagger_server.models.domain_state import DomainState
-from swagger_server.models.domain_threat_type_enum import DomainThreatTypeEnum
 from swagger_server.models.environment import Environment
 from swagger_server.models.event import Event
 from swagger_server.models.event_type_enum import EventTypeEnum

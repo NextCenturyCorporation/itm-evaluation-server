@@ -15,6 +15,7 @@ class CharacterRoleEnum(Model):
     """
     allowed enum values
     """
+    UNKNOWN = 'Unknown'
     INFANTRY = 'Infantry'
     SEAL = 'SEAL'
     COMMAND = 'Command'
@@ -22,7 +23,6 @@ class CharacterRoleEnum(Model):
     MEDICAL = 'Medical'
     SPECIALIST = 'Specialist'
     COMMUNICATIONS = 'Communications'
-    UNKNOWN = 'Unknown'
     def __init__(self):  # noqa: E501
         """CharacterRoleEnum - a model defined in OpenAPI
 
