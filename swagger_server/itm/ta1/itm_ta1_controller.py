@@ -63,7 +63,7 @@ class ITMTa1Controller(ABC):
     def get_alignment_target_path(alignment_target_id: str) -> str:
         ...
 
-    def supports_probe_alignment() -> bool:
+    def supports_probe_alignment(self) -> bool:
         return True
 
     @abstractmethod
@@ -157,6 +157,16 @@ class ITMTa1Controller(ABC):
         alignment_results: AlignmentResults = AlignmentResults.from_dict(response)
 
         # Need to get KDMAs from a separate endpoint.
+        base_url = f"{self.url}/api/v1/computed_kdma_profile"
+        params = {
+            "session_id": self.session_id
+        }
+        url = f"{base_url}?{urllib.parse.urlencode(params)}"
+        initial_response = requests.get(url)
+        initial_response.raise_for_status()
+        response = self.to_dict(initial_response)
+
+        # TA1s represent their kdmas differently.
         alignment_results.kdma_values = self.get_kdmas(response)
 
         return alignment_results

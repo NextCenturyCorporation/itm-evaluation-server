@@ -164,6 +164,7 @@ class ITMSession:
                 session_alignment: AlignmentResults = \
                     self.itm_scenario.ta1_controller.get_session_alignment()
                 session_alignment_score = session_alignment.score
+                logging.info(f"Got session_alignment, kdma_values = {session_alignment.kdma_values}")
                 self.history.add_history(
                     "TA1 Session Alignment",
                     {"session_id": self.itm_scenario.ta1_controller.session_id,
@@ -204,6 +205,7 @@ class ITMSession:
                 self.state.unstructured = "Full session history"
             else:
                 self.state.unstructured = dumps({'history': self.history.history}, indent=2) + os.linesep + self.state.unstructured
+                self.state.unstructured = "Full session history"
         self.history.clear_history()
 
 
