@@ -16,9 +16,10 @@ class ITMScenarioData:
 
 class ITMScenario:
 
-    def __init__(self, yaml_path, session, training = False) -> None:
+    def __init__(self, yaml_path, session, ta1_name, training = False) -> None:
         self.yaml_path = yaml_path
         self.training = training
+        self.ta1_name = ta1_name
         self.alignment_target: AlignmentTarget = None
         self.ta1_controller: ITMTa1Controller = None
         self.probes_sent = []

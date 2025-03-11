@@ -8,8 +8,8 @@ from swagger_server.itm import ITMScenario
 
 class TriageScenario(ITMScenario):
 
-    def __init__(self, yaml_path, session, training = False) -> None:
-        super().__init__(yaml_path, session, training)
+    def __init__(self, yaml_path, session, ta1_name, training = False) -> None:
+        super().__init__(yaml_path, session, ta1_name, training)
 
 
     # Hide vitals (if not already visited) and hidden injuries

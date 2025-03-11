@@ -192,13 +192,10 @@ class ITMSession:
     def _cleanup(self):
         if self.save_history:
             kdma = self.itm_scenario.alignment_target.kdma_values[0].kdma.split(" ")[0].lower()
-            value = self.itm_scenario.alignment_target.kdma_values[0].value
-            if not value:
-                value = self.itm_scenario.alignment_target.id
-            alignment_type = kdma + "-" + str(value)
+            alignment_type = kdma + "-" + self.itm_scenario.alignment_target.id
             timestamp = f"{datetime.now():%Y%m%d-%H.%M.%S}" # e.g., 20240821-18.22.53
             filename = f"{self.adm_profile.replace(' ','-')}-" if self.adm_profile else ''
-            filename += f"{ITMSession.EVALUATION_TYPE.replace(' ','')}-{self.itm_scenario.id.replace(' ', '_')}-{self.itm_scenario.scene_type}-{alignment_type.replace(' ', '_')}-{self.adm_name}-{timestamp}"
+            filename += f"{ITMSession.EVALUATION_TYPE.replace(' ','')}-{self.itm_scenario.id.replace(' ', '_')}-{self.itm_scenario.ta1_name}-{alignment_type.replace(' ', '_')}-{self.adm_name}-{timestamp}"
             self.history.write_to_json_file(filename, self.save_history_to_s3)
         if self.return_scenario_history:
             if builtins.testing:
@@ -508,7 +505,7 @@ class ITMSession:
             for scenario in scenarios:
                 itm_scenario = \
                     self.domain_config.get_scenario(yaml_path=f'{scenario_path}{scenario}',
-                                session=self, training=self.kdma_training)
+                                session=self, ta1_name=ta1_name, training=self.kdma_training)
                 try:
                     itm_scenario.generate_scenario_data()
                 except FileNotFoundError as fnfe:
