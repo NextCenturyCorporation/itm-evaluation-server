@@ -26,8 +26,8 @@ ALWAYS_CONNECT_TO_TA1=True
 HISTORY_DIRECTORY=itm_history_output
 HISTORY_S3_BUCKET=itm-ui-assets
 
-EVAL_NAME=Phase 1 Evaluation
-EVAL_NUMBER=5
+EVAL_NAME=Phase II E1
+EVAL_NUMBER=7
 
 SOARTECH_EVAL_FILENAMES=phase1-soartech-eval-qol2.yaml,
     phase1-soartech-eval-qol3.yaml,

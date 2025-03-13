@@ -7,7 +7,9 @@ from swagger_server.models import (
 class ITMAlignmentTargetReader:
     """Class for converting YAML data to ITM scenarios."""
 
-    def __init__(self, yaml_path: str):
+    COUNTER: int = 1
+
+    def init_from_yaml(self, yaml_path: str):
         """
         Initialize the class with YAML data from a file path.
 
@@ -20,6 +22,26 @@ class ITMAlignmentTargetReader:
                 id=self.yaml_data['id'],
                 kdma_values=self._extract_alignment_targets()
             )
+
+    def init_from_kdmas(self, mj: float, io: float):
+        """
+        Initialize the class with the specified KDMA values.
+
+        Args:
+            mj: a Moral judgement KDMA value.
+            io: an Ingroup Bias KDMA value.
+        """
+        self.alignment_target = AlignmentTarget(
+            id=f"target{ITMAlignmentTargetReader.COUNTER}",
+            kdma_values=self._extract_kdma_values(mj, io)
+        )
+        ITMAlignmentTargetReader.COUNTER += 1
+
+    def _extract_kdma_values(self, mj: float, io: float):
+        kdma_values = []
+        kdma_values.append(KDMAValue(kdma='Moral judgement', value=mj))
+        kdma_values.append(KDMAValue(kdma='Ingroup Bias', value=io))
+        return kdma_values
 
     def _extract_alignment_targets(self):
         alignment_targets = []

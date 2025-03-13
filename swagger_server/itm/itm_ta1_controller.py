@@ -93,7 +93,7 @@ class ITMTa1Controller:
             actual_target_id = self.alignment_target_id if not target_id else target_id
             params = {
                 "session_id_1_or_target_id": self.session_id,
-                "session_id_2_or_target_id": actual_target_id,
+                "session_id_2_or_target_id": "ADEPT-DryRun-Moral judgement-0.2", # ITM-893 specific hack
                 "target_pop_id": ITMTa1Controller.ADEPT_MJ_ALIGNMENT_DISTRIBUTION_TARGET if 'Moral' in actual_target_id \
                     else ITMTa1Controller.ADEPT_IO_ALIGNMENT_DISTRIBUTION_TARGET
             }

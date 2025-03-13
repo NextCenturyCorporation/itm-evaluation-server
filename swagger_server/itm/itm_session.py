@@ -107,8 +107,9 @@ class ITMSession:
             ITMSession.init_ta1_data(ta1_names)
             ITMSession.ta1_connected = True
             logging.info("Done.")
-        except:
+        except Exception as e:
             logging.warning("Could not initialize TA1 data. Running standalone with local alignment targets.")
+            logging.exception(e)
 
         # If we couldn't use data from TA1, initialize with local data.
         if not ITMSession.ta1_connected:
@@ -124,9 +125,28 @@ class ITMSession:
             targets = ITMSession._get_file_names(path + ta1_name)
             ITMSession.local_alignment_targets[ta1_name] = []
             for target in targets:
-                target_reader = ITMAlignmentTargetReader(f"{path}{ta1_name}/{target}")
+                target_reader = ITMAlignmentTargetReader()
+                target_reader.init_from_yaml(f"{path}{ta1_name}/{target}")
                 ITMSession.local_alignment_targets[ta1_name].append(target_reader.alignment_target)
         return ta1_names
+
+
+    @staticmethod
+    def get_alignment_data_from_kdmas() -> list:
+        import csv
+        ow_csv = open('text_kdmas.csv', 'r', encoding='utf-8')
+        reader = csv.reader(ow_csv)
+        header = next(reader) # Format is PID, Eval, Type, MJ, IO
+        alignment_data = []
+        for line in reader:
+            if len(line) > 4:
+                target_reader = ITMAlignmentTargetReader()
+                target_reader.init_from_kdmas(line[3], line[4])
+                alignment_data.append(target_reader.alignment_target)
+            else:
+                logging.warning(f"--> skipping line: {line}")
+        ow_csv.close()
+        return alignment_data
 
 
     @staticmethod
@@ -134,10 +154,13 @@ class ITMSession:
         # Populate alignment_data from ITMTa1Controller.get_alignment_data
         # Populate ta1_controllers from alignment_data
         for ta1_name in ta1_names:
-            ITMSession.alignment_data[ta1_name] = [
-                alignment_target for alignment_target in ITMTa1Controller.get_alignment_data(ta1_name)
-                    if 'train' not in alignment_target.id or ta1_name == 'soartech'
-            ]
+            if ta1_name == 'soartech':
+                ITMSession.alignment_data[ta1_name] = [
+                    alignment_target for alignment_target in ITMTa1Controller.get_alignment_data(ta1_name)]
+            else: # ITM-893 specific
+                ITMSession.alignment_data[ta1_name] = [
+                    alignment_target for alignment_target in ITMSession.get_alignment_data_from_kdmas()]
+
             ITMSession.ta1_controllers[ta1_name] = [
                 ITMTa1Controller(alignment_target_id=alignment_target.id,
                                  scene_type=ta1_name,
@@ -209,7 +232,7 @@ class ITMSession:
             value = self.itm_scenario.alignment_target.kdma_values[0].value
             if not value:
                 value = self.itm_scenario.alignment_target.id
-            alignment_type = kdma + "-" + str(value)
+            alignment_type = self.itm_scenario.alignment_target.id
             timestamp = f"{datetime.now():%Y%m%d-%H.%M.%S}" # e.g., 20240821-18.22.53
             filename = f"{self.adm_profile.replace(' ','-')}-" if self.adm_profile else ''
             filename += f"{ITMSession.EVALUATION_TYPE.replace(' ','')}-{self.itm_scenario.id.replace(' ', '_')}-{self.itm_scenario.scene_type}-{alignment_type.replace(' ', '_')}-{self.adm_name}-{timestamp}"
@@ -545,10 +568,9 @@ class ITMSession:
                         if itm_scenario.id in (ITMSession.SOARTECH_TRAIN_VOL_SCENARIOS if kdma_training else ITMSession.SOARTECH_EVAL_VOL_SCENARIOS):
                             scenario_ctr = __load_scenarios(ITMSession.SOARTECH_VOL_ALIGNMENT_TARGETS, scenario_ctr)
                     elif ta1_name == "adept":
-                        if itm_scenario.id in (ITMSession.ADEPT_TRAIN_MJ_SCENARIOS if kdma_training else ITMSession.ADEPT_EVAL_MJ_SCENARIOS):
-                            scenario_ctr = __load_scenarios(ITMSession.ADEPT_MJ_ALIGNMENT_TARGETS, scenario_ctr)
                         if itm_scenario.id in (ITMSession.ADEPT_TRAIN_IO_SCENARIOS if kdma_training else ITMSession.ADEPT_EVAL_IO_SCENARIOS):
-                            scenario_ctr = __load_scenarios(ITMSession.ADEPT_IO_ALIGNMENT_TARGETS, scenario_ctr)
+                            all_ids = [target.id for target in ITMSession.alignment_data[ta1_name]]
+                            scenario_ctr = __load_scenarios(all_ids, scenario_ctr)
 
             self.itm_scenarios.extend(ta1_scenarios)
             num_read_scenarios += len(ta1_scenarios)
