@@ -131,6 +131,7 @@ class ITMScene:
 
         # Add most unmapped action types that aren't explicitly restricted.
         valid_action_types = self.get_valid_action_types(state)
+        configured_action_types = [action.action_type for action in actions]
 
         for action_type in valid_action_types:
             actions.append(Action(
@@ -140,7 +141,7 @@ class ITMScene:
             ))
 
         # Add "end scene" action if configured and not already added as an action mapping.
-        if self.end_scene_allowed and ActionTypeEnum.END_SCENE not in valid_action_types:
+        if self.end_scene_allowed and ActionTypeEnum.END_SCENE not in configured_action_types:
             actions.append(Action(action_id="end_scene_action", action_type=ActionTypeEnum.END_SCENE, unstructured="End the scene"))
 
         # Let's not be TOO predictable
