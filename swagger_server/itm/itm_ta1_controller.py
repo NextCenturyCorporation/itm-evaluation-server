@@ -2,6 +2,7 @@ import requests
 import json
 import urllib
 import builtins
+from math import isnan
 from swagger_server.models.probe_response import ProbeResponse  # noqa: F401,E501
 from swagger_server.models.alignment_results import AlignmentResults  # noqa: F401,E501
 from swagger_server.models.alignment_target import AlignmentTarget  # noqa: F401,E501
@@ -108,6 +109,11 @@ class ITMTa1Controller:
         initial_response.raise_for_status()
         response = self.to_dict(initial_response)
         alignment_results :AlignmentResults = AlignmentResults.from_dict(response)
+        if isnan(alignment_results.score):
+            alignment_results = AlignmentResults(
+                alignment_source=alignment_results.alignment_source,
+                alignment_target_id=alignment_results.alignment_target_id,
+                kdma_values=alignment_results.kdma_values)
 
         # Need to get KDMAs from a separate endpoint.
         base_url = f"{self.url}/api/v1/computed_kdma_profile"
