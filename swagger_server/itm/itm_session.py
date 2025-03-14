@@ -92,6 +92,8 @@ class ITMSession:
         self.save_history = ITMSession.config[ITMSession.config_group].getboolean("SAVE_HISTORY")
         # save_history must also be True
         self.save_history_to_s3 = ITMSession.config[ITMSession.config_group].getboolean("SAVE_HISTORY_TO_S3")
+        # maps scenario ID to list of kdma tuples that have been processed for that tuple
+        self.processed_kdmas : dict = {}
 
     def __deepcopy__(self, memo):
         return self # Allows us to deepcopy ITMScenarios
@@ -100,6 +102,7 @@ class ITMSession:
     def initialize():
         logging.basicConfig(level=logging.INFO, format='%(levelname)s %(asctime)s %(message)s', datefmt='%m-%d %I:%M:%S')
         ta1_names = ITMSession.init_local_data()
+        ta1_names = ['adept'] # Little hack just to make initialization faster since we know we're not doing SoarTech
         logging.info("Loaded local alignment targets from configuration.")
         try:
             logging.info("Loading TA1 configuration from TA1 servers...")
@@ -206,7 +209,7 @@ class ITMSession:
                     "TA1 Session Alignment",
                     {"session_id": self.itm_scenario.ta1_controller.session_id,
                     "target_id": self.itm_scenario.ta1_controller.alignment_target_id},
-                    session_alignment.to_dict()
+                    session_alignment.to_dict() if session_alignment else None
                 )
                 logging.info("Got session alignment score %s from TA1.", session_alignment_score)
                 if session_alignment.alignment_source:
@@ -355,6 +358,43 @@ class ITMSession:
         return self.state
 
 
+    """
+        Check current scenario's kdma pair [mj, io] against list of processed kdmas for the scenario
+        If that pair has already been processed for this scenario id, skip it and check next entry in the list of scenarios
+        Otherwise set current scenario to scenario with next unprocessed tuple, and add its tuple to the list for this scenario
+        If there is no next entry, then all scenarios have already been processed, so return None
+    """
+    def skip_duplicate_scenarios(self, cur_index) -> ITMScenario:
+        if cur_index >= len(self.itm_scenarios):
+            return None # All scenarios have already been processed
+
+        cur_scenario: ITMScenario = self.itm_scenarios[cur_index]
+        current_kdmas = (cur_scenario.alignment_target.kdma_values[0].value, cur_scenario.alignment_target.kdma_values[1].value)
+
+        found_kdma = False
+        for scenario_id in self.processed_kdmas.keys():
+            if scenario_id == cur_scenario.id:
+                kdma_tuples = self.processed_kdmas.get(scenario_id) # what kdma tuples have been processed for this scenario_id?
+                for kdma in kdma_tuples:
+                    if current_kdmas[0] == kdma[0] and current_kdmas[1] == kdma[1]:
+                        found_kdma = True
+                        break
+
+        if found_kdma: # Already processed this kdma tuple for this scenario, so skip it
+            logging.debug(f"Skipping scenario {self.itm_scenarios[cur_index].id} with alignment target {self.itm_scenarios[cur_index].alignment_target}.")
+            self.current_scenario_index += 1
+            return self.skip_duplicate_scenarios(self.current_scenario_index)
+        else: # Save this kdma tuple for this scenario, and return the scenario
+            new_kdma_tuple = (current_kdmas[0], current_kdmas[1])
+            kdma_tuples: list = self.processed_kdmas.get(cur_scenario.id)
+            if kdma_tuples:
+                kdma_tuples.append(new_kdma_tuple) # Add kdma tuple to the list
+            else:
+                kdma_tuples = [new_kdma_tuple] # Create a new list with the new kdma tuple
+                self.processed_kdmas.setdefault(cur_scenario.id, kdma_tuples) # and add it to the dict
+            return self.itm_scenarios[cur_index]
+
+
     def start_scenario(self, scenario_id: str=None) -> Scenario:
         """
         Start a new scenario.
@@ -386,6 +426,10 @@ class ITMSession:
                 return f'Must end `{self.itm_scenario.id}` before starting a new scenario', 400
             if self.current_scenario_index < len(self.itm_scenarios):
                 self.itm_scenario = self.itm_scenarios[self.current_scenario_index]
+                if (self.ta1_connected and self.itm_scenario.scene_type == 'adept'):
+                    self.itm_scenario = self.skip_duplicate_scenarios(self.current_scenario_index)
+                if self.itm_scenario is None:
+                    return self._end_session() # Final scenarios were duplicate KDMAs, so end the session
             else:
                 return self._end_session() # No more scenarios means we can end the session
 
