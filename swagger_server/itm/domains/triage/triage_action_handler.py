@@ -233,6 +233,9 @@ class TriageActionHandler(ITMActionHandler):
                 return True
             elif injury_name == InjuryTypeEnum.PUNCTURE:
                 return 'bicep' in location or 'forearm' in location or 'thigh' in location or 'calf' in location
+        elif supply_used == SupplyTypeEnum.PRESSURE_BANDAGE:
+            if injury_name == InjuryTypeEnum.OPEN_ABDOMINAL_WOUND:
+                return True
         return False
 
     def __check_downstream_injuries(self, character_id, all_injuries, treated_injury):
