@@ -16,9 +16,10 @@ class ITMScenarioData:
 
 class ITMScenario:
 
-    def __init__(self, yaml_path, session, training = False) -> None:
+    def __init__(self, yaml_path, session, ta1_name, training = False) -> None:
         self.yaml_path = yaml_path
         self.training = training
+        self.ta1_name = ta1_name
         self.alignment_target: AlignmentTarget = None
         self.ta1_controller: ITMTa1Controller = None
         self.probes_sent = []
@@ -55,7 +56,6 @@ class ITMScenario:
 
     def get_available_actions(self) -> List[Action]:
         current_character_ids = [character.id for character in self.isd.current_scene.state.characters]
-        logging.info(f'Current chars: {current_character_ids}')
         actions = self.isd.current_scene.get_available_actions(self.session.state)
 
         # safe guarding that an action with character id of a removed character doesn't slip through the cracks

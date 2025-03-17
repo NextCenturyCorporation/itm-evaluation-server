@@ -21,8 +21,8 @@ class TriageConfig():
     def get_action_time_filespec(self) -> str:
         return 'swagger_server/itm/data/domains/triage/triageActionTimes.json'
 
-    def get_scenario(self, yaml_path, session, training = False) -> ITMScenario:
-        return TriageScenario(yaml_path, session, training)
+    def get_scenario(self, yaml_path, session, ta1_name, training = False) -> ITMScenario:
+        return TriageScenario(yaml_path, session, ta1_name, training)
 
     def get_scenario_reader(self, yaml_path: str) -> ITMScenarioReader:
         return TriageScenarioReader(yaml_path)
