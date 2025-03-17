@@ -85,8 +85,9 @@ state:
         heart_rate: FAINT 
         spo2: NORMAL
 scenes:
-  - id: 0
+  - id: id-0
     end_scene_allowed: true
+    next_scene: id-1
     restricted_actions:
       - CHECK_BLOOD_OXYGEN
       - DIRECT_MOBILE_CHARACTERS
@@ -175,7 +176,7 @@ scenes:
             breathing: FAST
       supplies:
         - { type: Tourniquet, quantity: 1 } # Only 1 tourniquet left
-  - id: 1
+  - id: id-1
     end_scene_allowed: false
     persist_characters: true
     removed_characters: ['Mike']

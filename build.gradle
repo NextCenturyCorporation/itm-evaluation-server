@@ -76,7 +76,7 @@ task postGeneration() {
         println 'copied generated swagger file'
 
         // delete generated api directory
-        //delete generatedApiDirectory
+        delete generatedApiDirectory
         println "removed ${generatedApiDirectory}"
     }
 }

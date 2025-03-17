@@ -3248,7 +3248,7 @@ components:
             the character is
           items:
             additionalProperties:
-              $ref: "#/components/schemas/MissionImportanceEnum"
+              type: string
             description: A character id with an indicator of how mission-critical
               that character is
             example:
@@ -3306,17 +3306,6 @@ components:
       - Extraction
       - Unknown
       title: MissionTypeEnum
-      type: string
-    MissionImportanceEnum:
-      default: normal
-      description: How important the character is to the mission
-      enum:
-      - low
-      - normal
-      - important
-      - priority
-      - vip
-      title: MissionImportanceEnum
       type: string
     CivilianPresenceEnum:
       description: Indicator of how many civilians are present in the mission
@@ -4269,6 +4258,17 @@ components:
       - skilled
       - expert
       title: SkillLevelEnum
+      type: string
+    MissionImportanceEnum:
+      default: normal
+      description: How important the character is to the mission
+      enum:
+      - low
+      - normal
+      - important
+      - priority
+      - vip
+      title: MissionImportanceEnum
       type: string
     DomainConditions:
       description: Domain-specific conditions that specify whether to transition to

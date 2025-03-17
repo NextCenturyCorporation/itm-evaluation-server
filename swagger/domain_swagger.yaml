@@ -56,7 +56,7 @@ components:
             type: object
             description: A character id with an indicator of how mission-critical that character is
             additionalProperties:
-              $ref: "#/components/schemas/MissionImportanceEnum"
+              type: string
             example:
               - "Mike": normal
               - "Intelligence Officer": priority

@@ -6,14 +6,12 @@ from swagger_server.models.base_model import Model
 from swagger_server.models.civilian_presence_enum import CivilianPresenceEnum
 from swagger_server.models.communication_capability_enum import CommunicationCapabilityEnum
 from swagger_server.models.medical_policies_enum import MedicalPoliciesEnum
-from swagger_server.models.mission_importance_enum import MissionImportanceEnum
 from swagger_server.models.mission_type_enum import MissionTypeEnum
 from swagger_server import util
 
 from swagger_server.models.civilian_presence_enum import CivilianPresenceEnum  # noqa: E501
 from swagger_server.models.communication_capability_enum import CommunicationCapabilityEnum  # noqa: E501
 from swagger_server.models.medical_policies_enum import MedicalPoliciesEnum  # noqa: E501
-from swagger_server.models.mission_importance_enum import MissionImportanceEnum  # noqa: E501
 from swagger_server.models.mission_type_enum import MissionTypeEnum  # noqa: E501
 
 class Mission(Model):
@@ -30,7 +28,7 @@ class Mission(Model):
         :param mission_type: The mission_type of this Mission.  # noqa: E501
         :type mission_type: MissionTypeEnum
         :param character_importance: The character_importance of this Mission.  # noqa: E501
-        :type character_importance: List[Dict[str, MissionImportanceEnum]]
+        :type character_importance: List[Dict[str, str]]
         :param civilian_presence: The civilian_presence of this Mission.  # noqa: E501
         :type civilian_presence: CivilianPresenceEnum
         :param communication_capability: The communication_capability of this Mission.  # noqa: E501
@@ -45,7 +43,7 @@ class Mission(Model):
         self.openapi_types = {
             'unstructured': str,
             'mission_type': MissionTypeEnum,
-            'character_importance': List[Dict[str, MissionImportanceEnum]],
+            'character_importance': List[Dict[str, str]],
             'civilian_presence': CivilianPresenceEnum,
             'communication_capability': CommunicationCapabilityEnum,
             'roe': str,
@@ -133,24 +131,24 @@ class Mission(Model):
         self._mission_type = mission_type
 
     @property
-    def character_importance(self) -> List[Dict[str, MissionImportanceEnum]]:
+    def character_importance(self) -> List[Dict[str, str]]:
         """Gets the character_importance of this Mission.
 
         A list of pairs of character ids with an indicator of how mission-critical the character is  # noqa: E501
 
         :return: The character_importance of this Mission.
-        :rtype: List[Dict[str, MissionImportanceEnum]]
+        :rtype: List[Dict[str, str]]
         """
         return self._character_importance
 
     @character_importance.setter
-    def character_importance(self, character_importance: List[Dict[str, MissionImportanceEnum]]):
+    def character_importance(self, character_importance: List[Dict[str, str]]):
         """Sets the character_importance of this Mission.
 
         A list of pairs of character ids with an indicator of how mission-critical the character is  # noqa: E501
 
         :param character_importance: The character_importance of this Mission.
-        :type character_importance: List[Dict[str, MissionImportanceEnum]]
+        :type character_importance: List[Dict[str, str]]
         """
 
         self._character_importance = character_importance
