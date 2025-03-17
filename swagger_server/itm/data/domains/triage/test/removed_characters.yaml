@@ -1,9 +1,9 @@
 id: removed_characters
 # Test description: A character is removed in the second scene, so the action mapping with this char should be removed by the server.
 # Testing notes:
-#   1. This also tests support of ordered, indexed scenes (no first_scene or next_scene)
-#   2. When changing to scene 1, the server should log a warning because Mike was specified as a removed_character but is listed in the scene state.
-#   3. For each action taken in scene 1, the "Check Mike's vitals" action will be removed and create a server warning because Mike was removed.
+#   1. This also tests defaulting first_scene to the first scene in the file.
+#   2. When changing to scene id-1, the server should log a warning because Mike was specified as a removed_character but is listed in the scene state.
+#   3. For each action taken in scene id-1, the "Check Mike's vitals" action will be removed and create a server warning because Mike was removed.
 
 name: Removed characters test
 state:
