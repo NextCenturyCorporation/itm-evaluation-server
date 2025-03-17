@@ -228,7 +228,8 @@ class TriageActionHandler(ITMActionHandler):
     def __check_unsuccessful_treatment(self, supply_used, injury_name, location):
         if supply_used == SupplyTypeEnum.HEMOSTATIC_GAUZE:
             # Certain misapplications of hemostatic cause will consume the gauze but not treat the injury.
-            if injury_name in [InjuryTypeEnum.ABRASION, InjuryTypeEnum.LACERATION, InjuryTypeEnum.SHRAPNEL]:
+            if injury_name in [InjuryTypeEnum.ABRASION, InjuryTypeEnum.LACERATION,
+                               InjuryTypeEnum.SHRAPNEL, InjuryTypeEnum.OPEN_ABDOMINAL_WOUND]:
                 return True
             elif injury_name == InjuryTypeEnum.PUNCTURE:
                 return 'bicep' in location or 'forearm' in location or 'thigh' in location or 'calf' in location

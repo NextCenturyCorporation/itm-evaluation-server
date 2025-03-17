@@ -277,6 +277,7 @@ scenes:
         - [treat-andrew-left-face, treat-andrew-right-bicep, treat-andrew-left-forearm, treat-andrew-right-thigh, treat-andrew-left-calf] # actions within a list have "and" semantics
 
   - id: fix_adam
+    next_scene: fix_kristin
     end_scene_allowed: false
     state:
       unstructured: Testing applying hemostatic gauze to shrapnel injuries where a different treatment is called for.
@@ -345,3 +346,47 @@ scenes:
     transitions:
       actions:
         - [treat-adam-right-face-with-gauze, treat-adam-right-face-with-airway, treat-adam-left-face, treat-adam-right-calf] # actions within a list have "and" semantics
+
+  - id: fix_kristin
+    end_scene_allowed: false
+    state:
+      unstructured: Testing applying hemostatic gauze to the untreatable open abdominal injury.
+      characters:
+      - id: Kristin
+        name: Kristin
+        unstructured: >
+          Patient has an untreatable open abdominal injury, but treating with hemostatic gauze will consume the supply.
+        demographics:
+          age: 34
+          sex: F
+          race: White
+        vitals:
+          avpu: ALERT
+          ambulatory: true
+          mental_status: CALM
+          breathing: NORMAL
+          heart_rate: NORMAL
+          spo2: NORMAL
+        injuries:
+          - name: Open Abdominal Wound # Hemostatic gauze will be consumed if applied here
+            location: stomach
+            status: visible
+    restricted_actions:
+      - TAG_CHARACTER
+      - CHECK_RESPIRATION
+      - CHECK_PULSE
+      - CHECK_ALL_VITALS
+      - DIRECT_MOBILE_CHARACTERS
+      - SITREP
+      - CHECK_BLOOD_OXYGEN
+    action_mapping:
+      - action_id: treat-kristin-stomach-with-gauze
+        action_type: APPLY_TREATMENT
+        unstructured: Treat Kristin's stomach (open abdominal wound) injury with hemostatic gauze
+        character_id: Kristin
+        parameters: { "treatment": "Hemostatic gauze", "location": "stomach" }
+        probe_id: test-1
+        choice: treat-kristin-stomach-with-gauze
+    transitions:
+      actions:
+        - [treat-kristin-stomach-with-gauze]
