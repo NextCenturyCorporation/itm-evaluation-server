@@ -32,6 +32,7 @@ class TriageActionHandler(ITMActionHandler):
         filespec = self.session.domain_config.get_action_time_filespec()
         with open(filespec, 'r') as json_file:
             self.times_dict.update(json.load(json_file))
+        json_file.close()
 
     def _reveal_injuries(self, source: Character, target: Character):
         if target.visited:
