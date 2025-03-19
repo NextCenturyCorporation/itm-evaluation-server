@@ -154,7 +154,7 @@ class ITMSession:
         self.state.scenario_complete = True
 
         if self.kdma_training:
-            self.state.unstructured = 'Scenario complete.'
+            self.state.unstructured = f"Scenario {self.itm_scenario.id} complete."
             self._cleanup()
             return
 
@@ -189,6 +189,15 @@ class ITMSession:
 
 
     def _cleanup(self):
+        self.history.set_metadata(
+            scenario_name=self.itm_scenario.name,
+            scenario_id=self.itm_scenario.id,
+            alignment_target_id=self.itm_scenario.alignment_target.id,
+            adm_name=self.adm_name,
+            ta1_name=self.itm_scenario.ta1_name,
+            ta3_session_id=self.session_id,
+            ta1_session_id=self.itm_scenario.ta1_controller.session_id if self.itm_scenario.ta1_controller else None
+            )
         if self.save_history:
             kdma = self.itm_scenario.alignment_target.kdma_values[0].kdma.split(" ")[0].lower()
             alignment_type = kdma + "-" + self.itm_scenario.alignment_target.id
@@ -197,10 +206,10 @@ class ITMSession:
             filename += f"{ITMSession.EVALUATION_TYPE.replace(' ','')}-{self.itm_scenario.id.replace(' ', '_')}-{self.itm_scenario.ta1_name}-{alignment_type.replace(' ', '_')}-{self.adm_name}-{timestamp}"
             self.history.write_to_json_file(filename, self.save_history_to_s3)
         if self.return_scenario_history:
-            if builtins.testing:
-                self.state.unstructured = "Full session history"
+            if builtins.testing: # Don't print full history
+                self.state.unstructured = dumps({'metadata': self.history.evaluation_info}, indent=2) + os.linesep + self.state.unstructured
             else:
-                self.state.unstructured = dumps({'history': self.history.history}, indent=2) + os.linesep + self.state.unstructured
+                self.state.unstructured = dumps({'history': self.history.history, 'metadata': self.history.evaluation_info}, indent=2) + os.linesep + self.state.unstructured
         self.history.clear_history()
 
 

@@ -28,9 +28,23 @@ class ITMHistory:
 
     def clear_history(self):
         self.history.clear()
+        if self.evaluation_info.get('scenario_name'): # Did user set metadata?
+            self.evaluation_info.pop('scenario_name')
+            self.evaluation_info.pop('scenario_id')
+            self.evaluation_info.pop('alignment_target_id')
+            self.evaluation_info.pop('adm_name')
+            self.evaluation_info.pop('ta1_name')
+            self.evaluation_info.pop('ta3_session_id')
+            self.evaluation_info.pop('ta1_session_id')
 
-    def get_history(self):
-        return self.history
+    def set_metadata(self, scenario_name, scenario_id, alignment_target_id, adm_name, ta1_name, ta3_session_id, ta1_session_id):
+        self.evaluation_info['scenario_name'] = scenario_name
+        self.evaluation_info['scenario_id'] = scenario_id
+        self.evaluation_info['alignment_target_id'] = alignment_target_id
+        self.evaluation_info['adm_name'] = adm_name
+        self.evaluation_info['ta1_name'] = ta1_name
+        self.evaluation_info['ta3_session_id'] = ta3_session_id
+        self.evaluation_info['ta1_session_id'] = ta1_session_id
 
     def add_history(self,
                     command: str,
