@@ -163,7 +163,7 @@ Modify the definitions of the domain-specific versions of various state objects 
 
 Add YAML definitions for any nested objects defined in the above state objects.  If any other model objects require domain-specific content, then create both a `Base` and `Domain` version of each object, and change the current object to include both of these versions with the `allOf` keyword. This may also entail other server code changes.  All YAML changes should be made to the `swagger/swagger.yaml` file, and used by your client ADM.  Note that the hope is to move all domain-specific state to a separate file, but this isn't supported cross-platform with our current dependencies.
 
-**NOTE**: Certain enums would ideally be extensible so we can define basic values in `base_swagger.yaml` and domain-specific extensions in `domain_swagger.yaml`.  Until this is supported in the OpenAPI spec and openapi generator, the enums from three domain-specific enums will need to be replicated in the base swagger file:
+**NOTE**: Certain enums would ideally be extensible so we can define basic values in `base_swagger.yaml` and domain-specific extensions in `domain_swagger.yaml`.  Until this is supported in the OpenAPI spec and OpenAPI Generator, the enums from three domain-specific enums will need to be replicated in the base swagger file:
 - `DomainActionTypeEnum` values should be replicated in `ActionTypeEnum`;
 - `DomainThreatTypeEnum` values should be replicated in `ThreatTypeEnum`; and
 - `DomainCharacterRoleEnum` values should be replicated in `CharacterRoleTypeEnum`.
