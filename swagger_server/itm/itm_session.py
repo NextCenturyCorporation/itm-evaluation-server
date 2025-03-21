@@ -217,7 +217,7 @@ class ITMSession:
             if builtins.testing: # Don't print full history
                 self.state.unstructured = dumps({'metadata': self.history.evaluation_info}, indent=2) + os.linesep + self.state.unstructured
             else:
-                self.state.unstructured = dumps({'history': self.history.history, 'metadata': self.history.evaluation_info}, indent=2) + os.linesep + self.state.unstructured
+                self.state.unstructured = dumps({'history': self.history.history, 'metadata': self.history.evaluation_info, 'results': self.history.results}, indent=2) + os.linesep + self.state.unstructured
         self.history.clear_history()
 
 
