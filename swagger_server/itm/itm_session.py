@@ -159,6 +159,7 @@ class ITMSession:
             return
 
         session_alignment_score = None
+        kdmas: List[KDMAValue] = None
         if self.ta1_integration:
             try:
                 session_alignment: AlignmentResults = \
@@ -171,6 +172,9 @@ class ITMSession:
                     session_alignment.to_dict()
                 )
                 logging.info("Got session alignment score %s from TA1.", session_alignment_score)
+                kdmas = []
+                for kdma in session_alignment.kdma_values:
+                    kdmas.append(kdma.to_dict())
                 if session_alignment.alignment_source:
                     alignment_scenario_id = session_alignment.alignment_source[0].scenario_id
                     if self.itm_scenario.id != alignment_scenario_id:
@@ -185,10 +189,10 @@ class ITMSession:
             self.state.unstructured = f'Scenario {self.itm_scenario.id} complete for target {self.itm_scenario.alignment_target.id}. Session alignment score = {session_alignment_score}'
         else:
             self.state.unstructured = f'Test scenario {self.itm_scenario.id} complete.'
-        self._cleanup()
+        self._cleanup(session_alignment_score, kdmas)
 
 
-    def _cleanup(self):
+    def _cleanup(self, alignment_score=None, kdmas=None):
         self.history.set_metadata(
             scenario_name=self.itm_scenario.name,
             scenario_id=self.itm_scenario.id,
@@ -196,7 +200,11 @@ class ITMSession:
             adm_name=self.adm_name,
             ta1_name=self.itm_scenario.ta1_name,
             ta3_session_id=self.session_id,
-            ta1_session_id=self.itm_scenario.ta1_controller.session_id if self.itm_scenario.ta1_controller else None
+            )
+        self.history.set_results(
+            ta1_session_id=self.itm_scenario.ta1_controller.session_id if self.itm_scenario.ta1_controller else None,
+            alignment_score=alignment_score,
+            kdmas=kdmas
             )
         if self.save_history:
             kdma = self.itm_scenario.alignment_target.kdma_values[0].kdma.split(" ")[0].lower()

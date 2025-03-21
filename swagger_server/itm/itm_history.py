@@ -24,7 +24,8 @@ class ITMHistory:
             "evalName": config[config_group]['EVAL_NAME'], 
             "evalNumber": config[config_group]['EVAL_NUMBER'], 
             "created" : str(datetime.datetime.now())
-        }        
+        }
+        self.results = {}
 
     def clear_history(self):
         self.history.clear()
@@ -35,16 +36,23 @@ class ITMHistory:
             self.evaluation_info.pop('adm_name')
             self.evaluation_info.pop('ta1_name')
             self.evaluation_info.pop('ta3_session_id')
-            self.evaluation_info.pop('ta1_session_id')
+        if self.results.get('alignment_score'): # Did user set results?
+            self.results.pop('ta1_session_id')
+            self.results.pop('alignment_score')
+            self.results.pop('kdmas')
 
-    def set_metadata(self, scenario_name, scenario_id, alignment_target_id, adm_name, ta1_name, ta3_session_id, ta1_session_id):
+    def set_metadata(self, scenario_name, scenario_id, alignment_target_id, adm_name, ta1_name, ta3_session_id):
         self.evaluation_info['scenario_name'] = scenario_name
         self.evaluation_info['scenario_id'] = scenario_id
         self.evaluation_info['alignment_target_id'] = alignment_target_id
         self.evaluation_info['adm_name'] = adm_name
         self.evaluation_info['ta1_name'] = ta1_name
         self.evaluation_info['ta3_session_id'] = ta3_session_id
-        self.evaluation_info['ta1_session_id'] = ta1_session_id
+
+    def set_results(self, ta1_session_id, alignment_score, kdmas):
+        self.results['ta1_session_id'] = ta1_session_id
+        self.results['alignment_score'] = alignment_score
+        self.results['kdmas'] = kdmas
 
     def add_history(self,
                     command: str,
@@ -85,7 +93,7 @@ class ITMHistory:
 
         with open(full_filepath, 'w') as file:
             # Convert Python dictionary to JSON and write to file
-            json.dump({'evaluation': self.evaluation_info, 'history': self.history}, file, indent=2)
+            json.dump({'evaluation': self.evaluation_info, 'results': self.results, 'history': self.history}, file, indent=2)
 
         if (save_to_s3):
             logging.info("Saving history to S3")
