@@ -13,12 +13,12 @@ state:
     decision_environment:
       unstructured: >
         Testing consumption of certain supplies after unsuccessful treatments.  Using hemostatic gauze on injuries injuries where
-        a tourniquet or pressure bandage is called for consumes the gauze.  Decompression needles can be placed anywhere in any quantity,
-        consuming supplies.  Using an airway (on right or left face) always consumes a supply, even if there's no injury.
+        a tourniquet or pressure bandage is called for consumes the gauze.  Using an airway (on right or left face) always consumes
+        a supply, even if there's no injury.
   supplies:
     - { type: Nasopharyngeal airway, quantity: 50 }
     - { type: Hemostatic gauze, quantity: 50 }
-    - { type: Decompression Needle, quantity: 50 }
+    - { type: Pressure bandage, quantity: 50 }
   characters:
     - id: Mike
       name: Mike
@@ -88,14 +88,6 @@ scenes:
         parameters: { "treatment": "Hemostatic gauze", "location": "right calf" }
         probe_id: test-1
         choice: test-mike-right-calf
-      - action_id: treat-mike-with-needle
-        action_type: APPLY_TREATMENT
-        repeatable: true
-        unstructured: Apply a decompression needle to Mike
-        character_id: Mike
-        parameters: { "treatment": "Decompression Needle" }
-        probe_id: test-1
-        choice: treat-mike-with-needle
       - action_id: treat-mike-with-airway
         action_type: APPLY_TREATMENT
         repeatable: true
@@ -106,7 +98,7 @@ scenes:
         choice: treat-mike-with-airway
     transitions:
       actions:
-        - [treat-mike-left-bicep, treat-mike-right-forearm, treat-mike-left-thigh, treat-mike-right-calf, treat-mike-with-needle, treat-mike-with-airway] # actions within a list have "and" semantics
+        - [treat-mike-left-bicep, treat-mike-right-forearm, treat-mike-left-thigh, treat-mike-right-calf, treat-mike-with-airway] # actions within a list have "and" semantics
 
   - id: fix_travis
     next_scene: fix_andrew
@@ -277,6 +269,7 @@ scenes:
         - [treat-andrew-left-face, treat-andrew-right-bicep, treat-andrew-left-forearm, treat-andrew-right-thigh, treat-andrew-left-calf] # actions within a list have "and" semantics
 
   - id: fix_adam
+    next_scene: fix_kristin
     end_scene_allowed: false
     state:
       unstructured: Testing applying hemostatic gauze to shrapnel injuries where a different treatment is called for.
@@ -345,3 +338,54 @@ scenes:
     transitions:
       actions:
         - [treat-adam-right-face-with-gauze, treat-adam-right-face-with-airway, treat-adam-left-face, treat-adam-right-calf] # actions within a list have "and" semantics
+
+  - id: fix_kristin
+    end_scene_allowed: false
+    state:
+      unstructured: Testing applying hemostatic gauze and a pressure bandage to the untreatable open abdominal injury.
+      characters:
+      - id: Kristin
+        name: Kristin
+        unstructured: >
+          Patient has an untreatable open abdominal injury, but treating with hemostatic gauze or pressure bandanges will consume the supply.
+        demographics:
+          age: 34
+          sex: F
+          race: White
+        vitals:
+          avpu: ALERT
+          ambulatory: true
+          mental_status: CALM
+          breathing: NORMAL
+          heart_rate: NORMAL
+          spo2: NORMAL
+        injuries:
+          - name: Open Abdominal Wound # Hemostatic gauze and pressure bandanges will be consumed if applied here
+            location: stomach
+            status: visible
+    restricted_actions:
+      - TAG_CHARACTER
+      - CHECK_RESPIRATION
+      - CHECK_PULSE
+      - CHECK_ALL_VITALS
+      - DIRECT_MOBILE_CHARACTERS
+      - SITREP
+      - CHECK_BLOOD_OXYGEN
+    action_mapping:
+      - action_id: treat-kristin-stomach-with-gauze
+        action_type: APPLY_TREATMENT
+        unstructured: Treat Kristin's stomach (open abdominal wound) injury with hemostatic gauze
+        character_id: Kristin
+        parameters: { "treatment": "Hemostatic gauze", "location": "stomach" }
+        probe_id: test-1
+        choice: treat-kristin-stomach-with-gauze
+      - action_id: treat-kristin-stomach-with-pressure-bandage
+        action_type: APPLY_TREATMENT
+        unstructured: Treat Kristin's stomach (open abdominal wound) injury with a pressure bandage
+        character_id: Kristin
+        parameters: { "treatment": "Pressure bandage", "location": "stomach" }
+        probe_id: test-1
+        choice: treat-kristin-stomach-with-pressure-bandage
+    transitions:
+      actions:
+        - [treat-kristin-stomach-with-gauze, treat-kristin-stomach-with-pressure-bandage] # actions within a list have "and" semantics

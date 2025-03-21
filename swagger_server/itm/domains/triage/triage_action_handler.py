@@ -32,6 +32,7 @@ class TriageActionHandler(ITMActionHandler):
         filespec = self.session.domain_config.get_action_time_filespec()
         with open(filespec, 'r') as json_file:
             self.times_dict.update(json.load(json_file))
+        json_file.close()
 
     def _reveal_injuries(self, source: Character, target: Character):
         if target.visited:
@@ -228,10 +229,14 @@ class TriageActionHandler(ITMActionHandler):
     def __check_unsuccessful_treatment(self, supply_used, injury_name, location):
         if supply_used == SupplyTypeEnum.HEMOSTATIC_GAUZE:
             # Certain misapplications of hemostatic cause will consume the gauze but not treat the injury.
-            if injury_name in [InjuryTypeEnum.ABRASION, InjuryTypeEnum.LACERATION, InjuryTypeEnum.SHRAPNEL]:
+            if injury_name in [InjuryTypeEnum.ABRASION, InjuryTypeEnum.LACERATION,
+                               InjuryTypeEnum.SHRAPNEL, InjuryTypeEnum.OPEN_ABDOMINAL_WOUND]:
                 return True
             elif injury_name == InjuryTypeEnum.PUNCTURE:
                 return 'bicep' in location or 'forearm' in location or 'thigh' in location or 'calf' in location
+        elif supply_used == SupplyTypeEnum.PRESSURE_BANDAGE:
+            if injury_name == InjuryTypeEnum.OPEN_ABDOMINAL_WOUND:
+                return True
         return False
 
     def __check_downstream_injuries(self, character_id, all_injuries, treated_injury):
