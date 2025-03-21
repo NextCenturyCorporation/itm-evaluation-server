@@ -20,6 +20,7 @@ class ITMAlignmentTargetReader:
                 id=self.yaml_data['id'],
                 kdma_values=self._extract_alignment_targets()
             )
+        file.close()
 
     def _extract_alignment_targets(self):
         alignment_targets = []

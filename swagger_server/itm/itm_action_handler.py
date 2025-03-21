@@ -26,6 +26,7 @@ class ITMActionHandler:
     def load_action_times(self):
         with open("swagger_server/itm/data/actionTimes.json", 'r') as json_file:
                 self.times_dict = json.load(json_file)
+        json_file.close()
 
     def set_scene(self, scene):
         self.current_scene = scene
