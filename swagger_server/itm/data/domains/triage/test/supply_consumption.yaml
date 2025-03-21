@@ -342,12 +342,12 @@ scenes:
   - id: fix_kristin
     end_scene_allowed: false
     state:
-      unstructured: Testing applying hemostatic gauze to the untreatable open abdominal injury.
+      unstructured: Testing applying hemostatic gauze and a pressure bandage to the untreatable open abdominal injury.
       characters:
       - id: Kristin
         name: Kristin
         unstructured: >
-          Patient has an untreatable open abdominal injury, but treating with hemostatic gauze will consume the supply.
+          Patient has an untreatable open abdominal injury, but treating with hemostatic gauze or pressure bandanges will consume the supply.
         demographics:
           age: 34
           sex: F
@@ -360,7 +360,7 @@ scenes:
           heart_rate: NORMAL
           spo2: NORMAL
         injuries:
-          - name: Open Abdominal Wound # Hemostatic gauze will be consumed if applied here
+          - name: Open Abdominal Wound # Hemostatic gauze and pressure bandanges will be consumed if applied here
             location: stomach
             status: visible
     restricted_actions:
