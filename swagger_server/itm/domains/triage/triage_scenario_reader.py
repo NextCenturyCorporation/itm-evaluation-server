@@ -265,7 +265,3 @@ class TriageScenarioReader(ITMScenarioReader):
             character_vitals=character_vitals,
             supplies=supplies
         )
-
-    # Deferred
-    def generate_tagging(self, scene_data):
-        return None

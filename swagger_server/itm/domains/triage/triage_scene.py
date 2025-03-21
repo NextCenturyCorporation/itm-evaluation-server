@@ -25,9 +25,6 @@ class TriageScene(ITMScene):
             (state.environment.decision_environment is None or state.environment.decision_environment.aid is None \
             or state.environment.decision_environment.aid == []):
             remaining_action_types.remove(ActionTypeEnum.MOVE_TO_EVAC)
-        #TODO: uncomment when tagging configuration is supported (ITM-217)
-        #if ActionTypeEnum.TAG_CHARACTER in valid_action_types:
-        #    valid_action_types.remove(ActionTypeEnum.TAG_CHARACTER)
 
         # Don't add actions that require a pulse ox if there is no pulse ox available.
         if ActionTypeEnum.CHECK_BLOOD_OXYGEN in remaining_action_types:

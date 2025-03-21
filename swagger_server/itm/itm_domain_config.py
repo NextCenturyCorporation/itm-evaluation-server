@@ -26,5 +26,5 @@ class ITMDomainConfigFactory:
             instance = klass(*args, **kwargs)
             return instance
         except (ImportError, AttributeError, TypeError) as e:
-            print(f"Error instantiating '{domain}' domain config from factory: {e}")
+            print(f"Error instantiating '{domain}' domain config from factory: {e}", flush=True)
             return None

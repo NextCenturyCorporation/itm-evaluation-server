@@ -1,0 +1,1114 @@
+openapi: 3.0.3
+info:
+  title: ITM TA3 API
+  description: |-
+    This is the specification of the TA3 API for In The Moment (ITM).  Currently, the Evaluation API for TA2 supports functionality for the Phase 1 Evaluation.
+
+    The API is based on the OpenAPI 3.0.3 specification.
+  version: 0.4.0
+servers:
+  - url: /
+tags:
+  - name: itm-ta2-eval
+    description: Endpoints for TA2 Evaluation
+paths:
+  /ta2/startSession:
+    get:
+      tags:
+        - itm-ta2-eval
+      summary: Start a new session
+      description:
+        Get unique session id for grouping answers from a collection of
+        scenarios together
+      operationId: start_session
+      parameters:
+        - name: adm_name
+          in: query
+          description: A self-assigned ADM name.
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: string
+        - name: adm_profile
+          in: query
+          description: a profile of the ADM in terms of its alignment strategy
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: string
+        - name: session_type
+          in: query
+          description: "the type of session to start (`eval`, `test`, or a TA1 name)"
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: string
+            example: eval
+        - name: domain
+          in: query
+          description: A domain supported by the ITM evaluation server
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: string
+        - name: kdma_training
+          in: query
+          description: "whether this is a `full`, `solo`, or non-training session with TA2"
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: string
+        - name: max_scenarios
+          in: query
+          description:
+            "the maximum number of scenarios requested, not supported in\
+            \ `eval` sessions"
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: integer
+            format: int16
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            text/plain:
+              schema:
+                type: string
+                description: a new session Id to use in subsequent calls
+                x-content-type: text/plain
+        "400":
+          description: Invalid session type or max_scenarios
+        "500":
+          description: An exception occurred on the server; see returned error string.
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "503":
+          description: The server is not ready to start a session
+      x-openapi-router-controller: swagger_server.controllers.itm_ta2_eval_controller
+  /ta2/scenario:
+    get:
+      tags:
+        - itm-ta2-eval
+      summary: Get the next scenario
+      description:
+        "Get the next scenario in a session with the specified ADM name,\
+        \ returning a Scenario object and unique id"
+      operationId: start_scenario
+      parameters:
+        - name: session_id
+          in: query
+          description: "a unique session_id, as returned by /ta2/startSession"
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: string
+        - name: scenario_id
+          in: query
+          description: "the scenario id to run; incompatible with /ta2/startSession's max_scenarios parameter"
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description:
+            "Successful operation; scenario data returned, or session_complete\
+            \ is True"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Scenario"
+        "400":
+          description: Invalid Session ID, there is already an active scenario, or scenario_id was specified with max_scenarios
+        "404":
+          description: Scenario ID not found
+        "500":
+          description: An exception occurred on the server; see returned error string.
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "503":
+          description: Could not communicate with TA1 server
+      x-openapi-router-controller: swagger_server.controllers.itm_ta2_eval_controller
+  /ta2/getAlignmentTarget:
+    get:
+      tags:
+        - itm-ta2-eval
+      summary: Retrieve alignment target for the scenario
+      description: Retrieve alignment target for the scenario with the specified id
+      operationId: get_alignment_target
+      parameters:
+        - name: session_id
+          in: query
+          description: "a unique session_id, as returned by /ta2/startSession"
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: string
+        - name: scenario_id
+          in: query
+          description: The ID of the scenario for which to retrieve alignment target
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: "Successful operation, alignment target returned"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AlignmentTarget"
+        "400":
+          description: Scenario Complete or Invalid Session ID
+        "404":
+          description: Scenario ID not found
+        "500":
+          description: An exception occurred on the server; see returned error string.
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+      x-openapi-router-controller: swagger_server.controllers.itm_ta2_eval_controller
+  /ta2/getSessionAlignment:
+    get:
+      tags:
+        - itm-ta2-eval
+      summary: Retrieve session alignment from TA1
+      description: Retrieve the current session alignment for the session with the specified id
+      operationId: get_session_alignment
+      parameters:
+        - name: session_id
+          in: query
+          description: "a unique session_id, as returned by /ta2/startSession"
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: string
+        - name: target_id
+          in: query
+          description: alignment target id
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successful Response; if server is configured to run without TA1, then session alignment will be empty/None/null.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/AlignmentResults"
+        "400":
+          description: Session ID not found
+        "403":
+          description: Session alignment can only be requested during a training session
+        "500":
+          description: An exception occurred on the server; see returned error string.
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+        "503":
+          description: Could not get session alignment from TA1
+      x-openapi-router-controller: swagger_server.controllers.itm_ta2_eval_controller
+  /ta2/{scenario_id}/getState:
+    get:
+      tags:
+        - itm-ta2-eval
+      summary: Retrieve scenario state
+      description: Retrieve state of the scenario with the specified id
+      operationId: get_scenario_state
+      parameters:
+        - name: session_id
+          in: query
+          description: a unique session_id, as returned by /ta2/startSession
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: string
+        - name: scenario_id
+          in: path
+          description: the ID of the scenario for which to retrieve status
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: "Successful operation, scenario state returned"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/State"
+        "400":
+          description: Invalid Session ID
+        "404":
+          description: Scenario ID not found
+        "500":
+          description: An exception occurred on the server; see returned error string.
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+      x-openapi-router-controller: swagger_server.controllers.itm_ta2_eval_controller
+  /ta2/{scenario_id}/getAvailableActions:
+    get:
+      tags:
+        - itm-ta2-eval
+      summary: Get a list of currently available ADM actions
+      description:
+        Retrieve a list of currently available actions in the scenario
+        with the specified id
+      operationId: get_available_actions
+      parameters:
+        - name: session_id
+          in: query
+          description: a unique session_id, as returned by /ta2/startSession
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: string
+        - name: scenario_id
+          in: path
+          description: The ID of the scenario for which to retrieve available actions
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successful operation; array of possible Actions returned
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Action"
+                x-content-type: application/json
+        "400":
+          description: Scenario Complete or Invalid Session ID
+        "404":
+          description: Scenario ID not found
+        "500":
+          description: An exception occurred on the server; see returned error string.
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+      x-openapi-router-controller: swagger_server.controllers.itm_ta2_eval_controller
+  /ta2/takeAction:
+    post:
+      tags:
+        - itm-ta2-eval
+      summary: Take an action within a scenario
+      description: Take the specified Action within a scenario
+      operationId: take_action
+      parameters:
+        - name: session_id
+          in: query
+          description: a unique session_id, as returned by /ta2/startSession
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: string
+      requestBody:
+        description:
+          Encapsulation of an action taken by a DM in the context of the
+          scenario
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Action"
+      responses:
+        "200":
+          description: "Successful operation, scenario state returned"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/State"
+        "400":
+          description: Invalid action or Session ID, or specified an intent action
+        "500":
+          description: An exception occurred on the server; see returned error string.
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+      x-openapi-router-controller: swagger_server.controllers.itm_ta2_eval_controller
+  /ta2/intendAction:
+    post:
+      tags:
+        - itm-ta2-eval
+      summary: Express intent to take an action within a scenario
+      description: Express intent to take the specified Action within a scenario
+      operationId: intend_action
+      parameters:
+        - name: session_id
+          in: query
+          description: a unique session_id, as returned by /ta2/startSession
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: string
+      requestBody:
+        description:
+          Encapsulation of the intended action by a DM in the context of the
+          scenario
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Action"
+      responses:
+        "200":
+          description: "Successful operation, scenario state returned"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/State"
+        "400":
+          description: Invalid action or Session ID, or did not specify an intent action
+        "500":
+          description: An exception occurred on the server; see returned error string.
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+      x-openapi-router-controller: swagger_server.controllers.itm_ta2_eval_controller
+components:
+  schemas:
+    Scenario:
+      required:
+        - id
+        - name
+        - state
+      type: object
+      description: a scenario requiring decisions by a decision-maker
+      properties:
+        id:
+          type: string
+          description: a globally unique id for the scenario
+        name:
+          type: string
+          description: human-readable scenario name, not necessarily unique
+        first_scene:
+          type: string
+          description: indicates the first/opening scene ID in the scenario
+        session_complete:
+          type: boolean
+          description: "set to true if the session is complete; that is, there are\
+            \ no more scenarios"
+        state:
+          $ref: "#/components/schemas/State"
+        scenes:
+          type: array
+          description: A list of specification for all scenes in the scenario
+          items:
+            $ref: "#/components/schemas/Scene"
+    AlignmentResults:
+      title: AlignmentResults
+      required:
+        - alignment_source
+        - alignment_target_id
+        - score
+      type: object
+      description: Computed KDMA profile and alignment score for a set of decisions.
+      properties:
+        alignment_source:
+          title: Alignment Source
+          type: array
+          items:
+            "$ref": "#/components/schemas/AlignmentSource"
+        alignment_target_id:
+          title: Alignment Target Id
+          type: string
+          description: ID of desired profile to align responses to.
+        score:
+          title: Score
+          type: number
+          description: Measured alignment, 0 (completely unaligned) - 1 (completely aligned).
+          minimum: 0
+          maximum: 1
+        kdma_values:
+          title: KDMA Values
+          description: Computed KDMA profile from results
+          type: array
+          items:
+            "$ref": "#/components/schemas/KDMA_Value"
+    KDMAProfile:
+      title: Computed KDMA Profile (SoarTech)
+      required:
+        - computed_kdma_profile
+      type: object
+      description: KDMA Profile
+      properties:
+        computed_kdma_profile:
+          title: Computed KDMA Profile
+          type: array
+          items:
+            "$ref": "#/components/schemas/KDMA_Value"
+    AlignmentSource:
+      title: AlignmentSource
+      required:
+        - scenario_id
+        - probes
+      type: object
+      description: |-
+        Describes which session/probe responses were used to
+        compute an alignment score, allowing for lots of flexibility.
+      properties:
+        scenario_id:
+          title: Scenario Id
+          type: string
+          description: Unique ID for user session.
+        probes:
+          title: Probes
+          type: array
+          items:
+            type: string
+          description: List of ID's of probes used to compute alignment.
+    AlignmentTarget:
+      required:
+        - id
+        - kdma_values
+      type: object
+      description: list of KDMAs to align to
+      properties:
+        id:
+          type: string
+          description: globally unique alignment target id
+        kdma_values:
+          type: array
+          description: list of KDMAs to align to
+          items:
+            $ref: "#/components/schemas/KDMA_Value"
+    KDE_Data:
+      type: object
+      description: KDE Objects representing a KDMA Measurement
+      required:
+        - kde
+        - label
+      properties:
+        kde:
+          type: string
+          description: sklearn.neighbors.KernelDensity serialized to base64 string
+        label:
+          type: string
+          description: Label for this KDE
+    KDMA_Value:
+      required:
+        - kdma
+      type: object
+      description: Single KDMA value with value(s) between 0 and 1, or a kernel density estimate of the KDMA value.
+      properties:
+        kdma:
+          type: string
+          description: Name of KDMA
+        value:
+          type: number
+          format: float
+          description: Numeric score for a given KDMA, 0-1 scale
+          minimum: 0.0
+          maximum: 1.0
+        scores:
+          type: array
+          description: Ordered KDMA scores
+          items:
+            type: number
+            format: float
+            description: Numeric score for a given KDMA, 0-1 scale
+            minimum: 0.0
+            maximum: 1.0
+        kdes:
+          type: object
+          description: KDE Objects representing a KDMA Measurement
+          additionalProperties:
+            $ref: "#/components/schemas/KDE_Data"
+    BaseState:
+      type: object
+      required:
+        - unstructured
+        - characters
+      description: Base state for the scene or scenario
+      properties:
+        unstructured:
+          type: string
+          description: Natural language, plain text description of a scene's state
+        elapsed_time:
+          type: integer
+          description: The simulated elapsed time (in seconds) since the scenario started
+          example: 10
+        meta_info:
+          $ref: "#/components/schemas/MetaInfo"
+        events:
+          type: array
+          description: A list of scenario events to inform decision-making
+          items:
+            $ref: "#/components/schemas/Event"
+        threat_state:
+          $ref: "#/components/schemas/ThreatState"
+        characters:
+          type: array
+          description: A list of characters in the scene
+          items:
+            $ref: "#/components/schemas/Character"
+        scenario_complete:
+          type: boolean
+          description: set to true if the scenario is complete; subsequent calls involving that scenario will return an error code
+    State:
+      allOf: # Combines the BaseState and the domain-level state
+        - $ref: "domain_swagger.yaml#/components/schemas/DomainState"
+        - $ref: "#/components/schemas/BaseState"
+      type: object
+      description: The complete state of the scene or scenario
+    MetaInfo:
+      type: object
+      description: Includes meta info to assist with debugging. Only provided during training sessions.
+      properties:
+        scene_id:
+          type: string
+          description: The scene ID, unique throughout the scenario
+        probe_response:
+          $ref: "#/components/schemas/ProbeResponse"
+    ThreatState:
+      required:
+        - unstructured
+        - threats
+      type: object
+      description: Description of the current risks or threats to the characters
+      properties:
+        unstructured:
+          type: string
+          description: Natural language, plain text description of environmental risks or threats
+        threats:
+          type: array
+          description: A list of pairs of threat types with a severity descriptor
+          items:
+            $ref: "#/components/schemas/Threat"
+      example:
+        unstructured: Gunshots have been reported in the surrounding area
+        threats:
+          - type: gunfire
+            severity: moderate
+    Threat:
+      required:
+        - threat_type
+        - severity
+      type: object
+      description: threats in the environment that could affect decision-making
+      properties:
+        threat_type:
+          $ref: "#/components/schemas/ThreatTypeEnum"
+        severity:
+          $ref: "#/components/schemas/ThreatSeverityEnum"
+    Event:
+      required:
+        - unstructured
+        - type
+      type: object
+      description: a unit of structured communication from scenario to ADM
+      properties:
+        unstructured:
+          type: string
+          description: Natural language, plain text description of the event
+        type:
+          $ref: "#/components/schemas/EventTypeEnum"
+        source:
+          type: string
+          description: "The 'subject' of the event; can be a character `id` or an `EntityTypeEnum`"
+        object:
+          type: string
+          description: "The 'object' of the event; can be a character `id` or an `EntityTypeEnum`"
+        when:
+          type: number
+          format: float
+          description: "indicates when (in minutes) the event happened (negative value) or is expected to happen (positive value); omit if zero (event happens now)"
+        action_id:
+          type: string
+          description: An action ID from among the available actions
+        relevant_state:
+          type: array
+          description: An array of relevant state for the Event
+          items:
+            description: >
+              string paths within the `State` object, in which indexed lists are context-sensitive and usually domain-specific:
+              for a character, it's the id;
+              for a threat, it's the threat_type;
+            type: string
+            example: threat_state.threats[gunshots].threat_type
+    BaseCharacter:
+      required:
+        - id
+        - name
+        - unstructured
+        - demographics
+      type: object
+      description: a character in the scene
+      properties:
+        id:
+          type: string
+          description: A unique character ID throughout the scenario
+        name:
+          type: string
+          description: display name, as in a dashboard
+          example: Mike
+        unstructured:
+          type: string
+          description: Natural language, plain text description of the character
+          example: 22-year-old male with brown hair
+        demographics:
+          $ref: "#/components/schemas/Demographics"
+        rapport:
+          $ref: "#/components/schemas/RapportEnum"
+        unseen:
+          type: boolean
+          description: whether or not this character is visible in the scene or merely heard or reported about from a nearby location
+          default: false
+    Character:
+      allOf: # Combines the BaseCharacter and the domain-level character
+        - $ref: "domain_swagger.yaml#/components/schemas/DomainCharacter"
+        - $ref: "#/components/schemas/BaseCharacter"
+      type: object
+      description: a character in the scene
+    BaseDemographics:
+      required:
+        - sex
+        - race
+      type: object
+      description: Basic properties about the character
+      properties:
+        age:
+          type: integer
+          description: the age of the character, omit if unknown
+          format: int16
+          minimum: 0
+          maximum: 125
+        sex:
+          $ref: "#/components/schemas/DemographicSexEnum"
+        race:
+          $ref: "#/components/schemas/RaceEnum"
+        role:
+          $ref: "#/components/schemas/CharacterRoleEnum"
+    Demographics:
+      allOf: # Combines the BaseDemographics and the domain-level demographics
+        - $ref: "domain_swagger.yaml#/components/schemas/DomainDemographics"
+        - $ref: "#/components/schemas/BaseDemographics"
+      type: object
+      description: Basic properties about the character
+    Scene:
+      required:
+        - id
+        - end_scene_allowed
+        - action_mapping
+      type: object
+      description: the specification for a scene in the scenario
+      properties:
+        id:
+          type: string
+          description: The scene ID, unique throughout the scenario
+        state:
+          $ref: "#/components/schemas/State"
+        next_scene:
+          type: string
+          description: "The ID of the default next scene in the scenario; if empty or missing, then by default this is the last scene."
+        end_scene_allowed:
+          type: boolean
+          description: Whether ADMs can explicitly end the scene
+        persist_characters:
+          type: boolean
+          description: Whether characters should persist from the previous scene
+        removed_characters:
+          type: array
+          description: List of character ids to be removed from the scene
+          items:
+            type: string
+        probe_config:
+          description: TA1-provided probe configuration, ignored by TA3
+          type: array
+          items:
+            $ref: "#/components/schemas/ProbeConfig"
+        action_mapping:
+          description: List of actions with details of how those actions map to probe responses
+          type: array
+          items:
+            $ref: "#/components/schemas/ActionMapping"
+        restricted_actions:
+          description: List of actions that will be excluded from get_available_actions
+          type: array
+          items:
+            $ref: "#/components/schemas/ActionTypeEnum"
+          example:
+            - SEARCH
+        transition_semantics:
+          $ref: "#/components/schemas/SemanticTypeEnum"
+        transitions:
+          $ref: "#/components/schemas/Conditions"
+    Action:
+      required:
+        - action_id
+        - action_type
+      type: object
+      description: An action taken by an ADM
+      properties:
+        action_id:
+          type: string
+          description: A unique action ID within the scenario
+          example: action_01
+        action_type:
+          $ref: "#/components/schemas/ActionTypeEnum"
+        intent_action:
+          type: boolean
+          default: false
+          description: Whether this action is to be taken or intended
+        unstructured:
+          type: string
+          description: Natural language, plain text description of the action
+        character_id:
+          type: string
+          description: The ID of the character being acted upon
+        threat_state:
+          $ref: "#/components/schemas/ThreatState"
+        parameters:
+          type: object
+          description: key-value pairs containing additional [action-specific parameters](https://github.com/NextCenturyCorporation/itm-evaluation-client?tab=readme-ov-file#available-actions)
+          additionalProperties:
+            type: string
+          example:
+            - character_id: Mike
+        justification:
+          type: string
+          description: A justification of the action taken
+        kdma_association:
+          type: object
+          additionalProperties:
+            type: number
+            format: float
+            minimum: 0.0
+            maximum: 1.0
+          description: KDMA associations for this choice, if provided by TA1
+    ActionMapping:
+      required:
+        - action_id
+        - action_type
+        - unstructured
+        - probe_id
+        - choice
+      type: object
+      description: Details for how a given action maps to a probe response
+      properties:
+        action_id:
+          type: string
+          description: A unique action ID within the scenario
+          example: action_01
+        action_type:
+          $ref: "#/components/schemas/ActionTypeEnum"
+        unstructured:
+          type: string
+          description: Natural language, plain text description of the action
+        repeatable:
+          type: boolean
+          default: false
+          description: Whether or not this action should remain after it's selected by an ADM
+        character_id:
+          type: string
+          description: The ID of the character being acted upon
+        intent_action:
+          type: boolean
+          default: false
+          description: Whether this mapping is to take an action or to intend one
+        threat_state:
+          $ref: "#/components/schemas/ThreatState"
+        parameters:
+          type: object
+          description: key-value pairs containing additional [action-specific parameters](https://github.com/NextCenturyCorporation/itm-evaluation-client?tab=readme-ov-file#available-actions)
+          additionalProperties:
+            type: string
+          example:
+            - character_id: Mike
+        probe_id:
+          type: string
+          description: A valid probe_id from the appropriate TA1
+        choice:
+          type: string
+          description: A valid choice for the specified probe_id
+        next_scene:
+          type: string
+          description: The ID of the next scene in the scenario; overrides Scene.next_scene
+        kdma_association:
+          type: object
+          additionalProperties:
+            type: number
+            format: float
+            minimum: 0.0
+            maximum: 1.0
+          description: KDMA associations for this choice, if provided by TA1
+        action_condition_semantics:
+          $ref: "#/components/schemas/SemanticTypeEnum"
+        action_conditions:
+          $ref: "#/components/schemas/Conditions"
+        probe_condition_semantics:
+          $ref: "#/components/schemas/SemanticTypeEnum"
+        probe_conditions:
+          $ref: "#/components/schemas/Conditions"
+    BaseConditions:
+      type: object
+      description: Conditions that specify whether to transition to the next scene or send a probe response
+      properties:
+        elapsed_time_lt:
+          type: integer
+          description: True if the scenario elapsed time (in seconds) is less than the specified value
+          minimum: 5
+        elapsed_time_gt:
+          type: integer
+          description: True if the scenario elapsed time (in seconds) is greater than the specified value
+          minimum: 5
+        actions:
+          description: True if any of the specified lists of actions have been taken; multiple action ID lists have "or" semantics; multiple action IDs within a list have "and" semantics
+          type: array
+          items:
+            type: array
+            items:
+              type: string
+        probes:
+          type: array
+          description: True if the specified list of probe_ids have been answered
+          items:
+            type: string
+          example:
+            - probe-1
+        probe_responses:
+          type: array
+          description: True if the specified list of probe responses (choice) have been sent
+          items:
+            type: string
+          example:
+            - probe-1-choice2
+    Conditions:
+      allOf: # Combines the BaseConditions and the domain-level conditions
+        - $ref: "domain_swagger.yaml#/components/schemas/DomainConditions"
+        - $ref: "#/components/schemas/BaseConditions"
+      type: object
+      description: Conditions that specify whether to transition to the next scene or send a probe response
+    ProbeConfig:
+      type: object
+      description: Probe configuration for use by TA1
+      properties:
+        probe_id:
+          type: string
+          description: A valid probe_id from the appropriate TA1
+        description:
+          type: string
+          description: A description of the probe for use by TA1
+    ProbeResponse:
+      required:
+        - choice
+        - probe_id
+        - scenario_id
+      type: object
+      properties:
+        scenario_id:
+          type: string
+          description: globally unique scenario ID
+        probe_id:
+          type: string
+          description: globally unique probe ID
+        choice:
+          type: string
+          description: id of choice made
+        justification:
+          type: string
+          description: A justification of the response to the probe
+      description: encapsulates the selection by a DM of an option in response to
+        a probe
+    BaseThreatTypeEnum:
+      type: string
+      description: the type or nature of the threat
+      enum:
+        - Unknown
+# When oneOf is supported for extensible enums someday:
+#    ThreatTypeEnum:
+#      oneOf: # Combines the BaseThreatTypeEnum and the domain-level theat type enum
+#        - $ref: "#/components/schemas/BaseThreatTypeEnum"
+#        - $ref: "domain_swagger.yaml#/components/schemas/DomainThreatTypeEnum"
+#      type: string
+#      description: the type or nature of the threat; includes base and domain-specific threat types
+# Until then, expand then entries in BaseThreatTypeEnum with domain-specific action types:
+    ThreatTypeEnum:
+      type: string
+      description: the type or nature of the threat
+      enum:
+        - Unknown
+        - Civil unrest
+        - Drone activity
+        - Extreme weather
+        - Fire
+        - Gunfire
+        - IED activity
+        - Mines
+        - Poisonous vegetation
+        - Predators
+        - Unstable structure
+    ThreatSeverityEnum:
+      type: string
+      description: how dangerous and/or imminent the threat is
+      enum:
+        - low
+        - moderate
+        - substantial
+        - severe
+        - extreme
+    EventTypeEnum:
+      type: string
+      description: "an enumeration of available event types; the 'verb' of the event"
+      enum:
+        - change
+        - emphasize
+        - inform
+        - order
+        - recommend
+    MessageTypeEnum:
+      type: string
+      description: an enumeration of available message types
+      enum:
+        - allow
+        - ask
+        - delegate
+        - deny
+        - justify
+        - recommend
+        - wait
+    DemographicSexEnum:
+      type: string
+      description: the sex of the character
+      enum:
+        - M
+        - F
+        - Unknown
+    RaceEnum:
+      type: string
+      description: Race or ethnicity
+      enum:
+        - American Indian
+        - White
+        - Hispanic
+        - Black
+        - Asian
+        - Pacific Islander
+    BaseCharacterRoleEnum:
+      type: string
+      description: The primary role a character has in the scene
+      enum:
+        - Unknown
+# When oneOf is supported for extensible enums someday:
+#    CharacterRoleEnum:
+#      oneOf: # Combines the BaseCharacterRoleEnum and the domain-level character role enum
+#        - $ref: "#/components/schemas/BaseCharacterRoleEnum"
+#        - $ref: "domain_swagger.yaml#/components/schemas/DomainCharacterRoleEnum"
+#      type: string
+#      description: The primary role a character has in the mission, in terms of the skills they possess
+# Until then, expand then entries in BaseCharacterRoleEnum with domain-specific action types:
+    CharacterRoleEnum:
+      type: string
+      description: The primary role a character has in the scene
+      enum:
+        - Unknown
+        - Infantry
+        - SEAL
+        - Command
+        - Intelligence
+        - Medical
+        - Specialist
+        - Communications
+    RapportEnum:
+      type: string
+      description: A measure of closeness or affinity towards the decision-maker
+      enum:
+        - loathing
+        - dislike
+        - neutral
+        - close
+        - familial
+    SemanticTypeEnum:
+      description: Whether transition or probe response conditions use and, or, or not semantics
+      type: string
+      default: and
+      enum:
+        - and
+        - or
+        - not
+    BaseActionTypeEnum:
+      type: string
+      description: An action type [recognized by the ADM Server](https://github.com/NextCenturyCorporation/itm-evaluation-client?tab=readme-ov-file#available-actions)
+      enum:
+        - END_SCENE
+        - MOVE_TO
+        - MESSAGE
+        - SEARCH
+# When oneOf is supported for extensible enums someday:
+#    ActionTypeEnum:
+#      type: string
+#      description: An action type recognized by the ADM Server; includes base and domain-specific actions
+#      oneOf: # Combines the BaseActionTypeEnum and the domain-level action type enum
+#        - $ref: "#/components/schemas/BaseActionTypeEnum"
+#        - $ref: "domain_swagger.yaml#/components/schemas/DomainActionTypeEnum"
+# Until then, expand then entries in BaseActionTypeEnum with domain-specific action types:
+    ActionTypeEnum:
+      type: string
+      enum:
+        - END_SCENE
+        - MOVE_TO
+        - MESSAGE
+        - SEARCH
+        - APPLY_TREATMENT
+        - CHECK_ALL_VITALS
+        - CHECK_BLOOD_OXYGEN
+        - CHECK_PULSE
+        - CHECK_RESPIRATION
+        - DIRECT_MOBILE_CHARACTERS
+        - MOVE_TO_EVAC
+        - SITREP
+        - TAG_CHARACTER
+  responses:
+    server_error:
+      description: An exception occurred on the server; see returned error string.
+      content:
+        text/plain:
+          schema:
+            type: string
+            x-content-type: text/plain
+    state_returned:
+      description: "Successful operation, scenario state returned"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/State"
