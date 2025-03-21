@@ -30,6 +30,7 @@ class ITMScenarioReader:
         """
         with open(yaml_path, 'r', encoding='utf-8') as file:
             self.yaml_data = yaml.safe_load(file)
+        file.close()
 
 
     def read_scenario_from_yaml(self) -> Tuple[Scenario, List[ITMScene]]:

@@ -94,6 +94,7 @@ class ITMHistory:
         with open(full_filepath, 'w') as file:
             # Convert Python dictionary to JSON and write to file
             json.dump({'evaluation': self.evaluation_info, 'results': self.results, 'history': self.history}, file, indent=2)
+        file.close()
 
         if (save_to_s3):
             logging.info("Saving history to S3")
