@@ -14,5 +14,5 @@ EXPOSE 8080
 
 ENTRYPOINT ["python3"]
 
-CMD ["-m", "swagger_server", "-c", "GROUP_TARGET"]
+CMD ["-m", "swagger_server"]
 
