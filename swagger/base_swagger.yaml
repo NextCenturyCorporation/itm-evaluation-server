@@ -445,7 +445,7 @@ paths:
                 type: string
                 x-content-type: text/plain
           description: An exception occurred on the server; see returned error string.
-      summary: Take an action within a scenario
+      summary: Validate an action within a scenario
       tags:
       - itm-ta2-eval
       x-openapi-router-controller: swagger_server.controllers.itm_ta2_eval_controller
