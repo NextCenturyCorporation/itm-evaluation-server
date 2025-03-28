@@ -672,19 +672,8 @@ class ITMSession:
             message += f" with parameters {adm_action.parameters}"
         logging.info(message + '.')
 
-        # Pre-validate action.  This ensures the ADM didn't change a pre-configured action in ways it shouldn't
-        prevalidation_error = self.prevalidate_action(adm_action)
-        if prevalidation_error:
-            return prevalidation_error, 400
-
-        # Validate the right type of action (taken or intended)
-        if intent_only and not adm_action.intent_action:
-            return 'Cannot take actions via intent_action', 400
-        elif adm_action.intent_action and not intent_only:
-            return 'Cannot intend actions via take_action', 400
-
         # Validate that action is a valid, well-formed action
-        (successful, message, code) = self.action_handler.validate_action(adm_action)
+        (successful, message, code) = self._validation_wrapper(adm_action, intent_only)
         if not successful:
             return message, code
 
@@ -745,3 +734,37 @@ class ITMSession:
             return self.itm_scenario.get_available_actions()
         else:
             return 'Scenario Complete', 400
+
+
+    def _validation_wrapper(self, adm_action: Action, intent_only):
+        # Pre-validate action.  This ensures the ADM didn't change a pre-configured action in ways it shouldn't
+        prevalidation_error = self.prevalidate_action(adm_action)
+        if prevalidation_error:
+            return False, prevalidation_error, 400
+
+        # Validate the right type of action (taken or intended)
+        if intent_only and not adm_action.intent_action:
+            return False, 'Cannot take actions via intent_action', 400
+        elif adm_action.intent_action and not intent_only:
+            return False, 'Cannot intend actions via take_action', 400
+
+        # Validate that action is a valid, well-formed action
+        return self.action_handler.validate_action(adm_action)
+
+
+    def validate_action(self, body: Action) -> str:
+        """
+        Validate that the specified Action is structually and contextually valid within a scenario
+
+        Args:
+            body: Encapsulation of an action to be validated by a DM in the context of the scenario
+
+        Returns:
+            'valid action'/'valid intention' if the action/intention is valid,
+                otherwise a string describing why it is invalid.
+        """
+        (successful, message, code) = self._validation_wrapper(body, body.intent_action)
+        if successful:
+            return 'valid intention' if body.intent_action else 'valid action'
+        else:
+            return f"Error code {code}: {message}"

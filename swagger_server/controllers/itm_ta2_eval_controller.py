@@ -200,3 +200,22 @@ def intend_action(session_id, body=None):  # noqa: E501
 
     session = _get_session(session_id)
     return session.intend_action(body=body) if session else ('Invalid Session ID', 400)
+
+
+def validate_action(session_id, body=None):  # noqa: E501
+    """Validate that the specified Action is structually and contextually valid within a scenario
+
+    Validate that the specified Action is structually and contextually valid within a scenario # noqa: E501
+
+    :param session_id: a unique session_id, as returned by /ta2/startSession
+    :type session_id: str
+    :param body: Encapsulation of an action to be validated by a DM in the context of the scenario
+    :type body: dict | bytes
+
+    :rtype: Union[boolean, Tuple[str, int], Tuple[str, int, Dict[str, str]]
+    """
+    if connexion.request.is_json:
+        body = Action.from_dict(connexion.request.get_json())  # noqa: E501
+
+    session = _get_session(session_id)
+    return session.validate_action(body=body) if session else ('Invalid Session ID', 400)

@@ -405,6 +405,50 @@ paths:
                 type: string
                 x-content-type: text/plain
       x-openapi-router-controller: swagger_server.controllers.itm_ta2_eval_controller
+  /ta2/validateAction:
+    post:
+      description: Validate that the specified Action is structually and contextually valid within a scenario
+      operationId: validate_action
+      parameters:
+      - description: "a unique session_id, as returned by /ta2/startSession"
+        explode: true
+        in: query
+        name: session_id
+        required: true
+        schema:
+          type: string
+        style: form
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Action"
+        description: Encapsulation of an action to be validated by a DM in the context of the
+          scenario
+      responses:
+        "200":
+          description: "Successful operation, returns 'valid action'/'valid intention'
+            if the action/intention is valid, otherwise a string describing why it is invalid"
+          content:
+            text/plain:
+              schema:
+                type: string
+                description: "'valid action'/'valid intention' if the action/intention is valid,
+                  otherwise a string describing why it is invalid"
+                x-content-type: text/plain
+        "400":
+          description: "Invalid Session ID"
+        "500":
+          content:
+            text/plain:
+              schema:
+                type: string
+                x-content-type: text/plain
+          description: An exception occurred on the server; see returned error string.
+      summary: Validate an action within a scenario
+      tags:
+      - itm-ta2-eval
+      x-openapi-router-controller: swagger_server.controllers.itm_ta2_eval_controller
 components:
   schemas:
     Scenario:
