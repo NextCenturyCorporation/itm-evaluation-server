@@ -404,7 +404,7 @@ class ITMSession:
             return 'Exception getting next scenario; ending session.', 503
 
     def _end_session(self) -> Scenario:
-        self.__init__()
+        self.session_complete = True
         return Scenario(session_complete=True, id='', name='',
                         scenes=None, state=None)
 
@@ -434,15 +434,8 @@ class ITMSession:
                 400
             )
 
-        # Re-use current session for same ADM after a client crash
         if self.session_id is None:
             self.session_id = str(uuid.uuid4())
-        elif self.adm_name == adm_name:
-            logging.info("Re-using session %s for ADM %s", self.session_id, self.adm_name)
-            self.history.add_history(
-                "Abort Session", {"session_id": self.session_id, "adm_name": self.adm_name, "domain": self.domain}, None)
-            self.__init__()
-            self.session_id = str(uuid.uuid4()) # but assign new session_id for clarity in logs/history
         else:
             return 'System Overload', 503 # itm_ta2_eval_controller should prevent this
 

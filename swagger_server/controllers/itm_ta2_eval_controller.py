@@ -1,13 +1,15 @@
 import connexion
 import time
+import builtins
+import logging
 
 from swagger_server.models.action import Action  # noqa: E501
 from ..itm import ITMSession
 
-MAX_SESSIONS = 250     # Hard limit on simultaneously active sessions
-SESSION_TIMEOUT = 60 * 60 * 1  # 1 hour timeout in seconds
-itm_sessions = {}     # one for each active adm_name
-session_mapping = {}  # maps session_id to adm_name and last active time
+MAX_SESSIONS = builtins.max_sessions             # Hard limit on simultaneously active sessions
+SESSION_TIMEOUT = 60 * builtins.session_timeout  # Convert timeout to seconds
+session_mapping = {}                             # maps session_id to ITMSession and last active time
+print(f"Server running with maximum of {MAX_SESSIONS} simultaneous sessions and a session timeout of {SESSION_TIMEOUT} seconds.")
 ITMSession.initialize()
 
 """
@@ -15,14 +17,14 @@ The internal controller for ITM Server.
 """
 
 def _get_session(session_id: str) -> ITMSession:
-    session_dict = session_mapping.get(session_id)
-    adm_name = session_dict.get("adm_name") if session_dict else None
-    if not adm_name:
+    mapping = session_mapping.get(session_id)
+    if mapping:
+        # Update access time of existing session and return it
+        mapping['last_accessed'] = time.time()
+        return mapping['session']
+    else:
         return None
 
-    # Update access time and return session
-    session_mapping[session_id] = {"adm_name": adm_name, "last_accessed": time.time()}
-    return itm_sessions[adm_name]
 
 def get_alignment_target(session_id, scenario_id):  # noqa: E501
     """Retrieve alignment target for the scenario
@@ -102,14 +104,39 @@ def start_scenario(session_id, scenario_id=None):  # noqa: E501
     session = _get_session(session_id)
     return session.start_scenario(scenario_id=scenario_id) if session else ('Invalid Session ID', 400)
 
+
 def _reclaim_old_session():
-    for session_id in session_mapping.keys():
-        session_dict = session_mapping[session_id]
-        if time.time() - session_dict["last_accessed"] > SESSION_TIMEOUT:
-            itm_sessions.pop(session_dict["adm_name"])  # Clear out old unused session
-            session_mapping.pop(session_id)             # From both places
-            return ITMSession()
-    return None
+    # First look for a completed session
+    old_session_id = None
+    for mapping in session_mapping.values():
+        session: ITMSession = mapping['session']
+        if session.session_complete:            # This session terminated normally
+            old_session_id = session.session_id # Save the old id
+            logging.info(f"Reclaiming completed session {old_session_id}, name '{session.adm_name}'")
+            session.__init__()                  # And re-initialize the session
+            break
+
+    if old_session_id:
+        session_mapping.pop(old_session_id)     # Remove the entry in the session_mapping for the old session_id
+        return session                          # And return the re-initialized session
+
+    # Next look for an inactive session
+    current_time = time.time()
+    for mapping in session_mapping.values():
+        if current_time - mapping['last_accessed'] > SESSION_TIMEOUT: # This session is inactive
+            session: ITMSession = mapping['session']
+            old_session_id = session.session_id # Save the old id
+            logging.info(f"Reclaiming inactive session {old_session_id}, name '{session.adm_name}'")
+            session.__init__()                  # And re-initialize the session
+            break
+
+    if old_session_id:
+        session_mapping.pop(old_session_id)     # Remove the entry in the session_mapping for the old session_id
+        return session                          # And return the re-initialized session
+
+    logging.info("Couldn't reclaim a session")
+    return None # No session to reclaim
+
 
 def start_session(adm_name, session_type, adm_profile=None, domain=None, kdma_training=None, max_scenarios=None):  # noqa: E501
     """Start a new session
@@ -132,25 +159,12 @@ def start_session(adm_name, session_type, adm_profile=None, domain=None, kdma_tr
     :rtype: Union[str, Tuple[str, int], Tuple[str, int, Dict[str, str]]
     """
 
-    session = itm_sessions.get(adm_name)
-    if not session:
-        if len(itm_sessions) >= MAX_SESSIONS:
-            session = _reclaim_old_session()
-            if not session: # couldn't clear out an old session
-                return 'System Overload', 503
-        else:
-            session = ITMSession()
-        itm_sessions[adm_name] = session
+    if len(session_mapping) >= MAX_SESSIONS:
+        session = _reclaim_old_session()
+        if not session: # couldn't clear out an old session
+            return 'System Overload', 503
     else:
-        # Iterate through session_mappings, looking for the one whose dict contains the specified adm_name.
-        # Then remove that session mapping.
-        old_session_id = None
-        for session_id in session_mapping.keys():
-            session_dict = session_mapping[session_id]
-            if session_dict["adm_name"] == adm_name:
-                old_session_id = session_id
-        if old_session_id:
-            session_mapping.pop(old_session_id) # Remove old session_id from mapping since session is about to get new id
+        session = ITMSession()
 
     session_id = session.start_session(
         adm_name=adm_name,
@@ -160,7 +174,8 @@ def start_session(adm_name, session_type, adm_profile=None, domain=None, kdma_tr
         kdma_training=kdma_training if kdma_training != 'None' else None,
         max_scenarios=max_scenarios
     )
-    session_mapping[session_id] = {"adm_name": adm_name, "last_accessed": time.time()}
+    logging.info(f"Saving session_id {session_id} in mapping; name '{session.adm_name}'.")
+    session_mapping[session_id] = {'session': session, 'last_accessed': time.time()}
     return session_id
 
 

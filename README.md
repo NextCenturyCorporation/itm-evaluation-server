@@ -59,13 +59,14 @@ The following properties can be configured:
 *NOTE:* the trailing **`s`** in `.../data/%(EVALUATION_TYPE)s/...` is needed for string interpolation to work properly.
 
 ### Scenario filename convention
-Scenario files must be named in the following format to be read by the server at runtime (without punctuation except the indicated hyphens).
-This is the same convention used in the metrics evaluation:
+Scenario files should be named in the following format (without punctuation except the indicated hyphens).
+This was the convention used in the (Phase 1) Dry Run evaluation:
 - `<EVALUATION_TYPE>-<ta1name>-[eval|train]-<id>.yaml`
+At runtime, however, the server will look for the filenames as specified by the `*_FILENAMES` configuration variables.
 
 Please note:
 1. `EVALUATION_TYPE` is the value of the configuration variable defined in `config.ini`;
-2. `ta1name` is either `soartech` or `adept`;
+2. `ta1name` is one of the values from the `ALL_TA1_NAMES` configuration variable;
 3. Use `eval` for evaluation scenarios and `train` for training scenarios; and
 4. The `id` should be derived from the scenario ID in the YAML file, although it isn't required, e.g., `qol`, `MJ2`, `urban`, etc.
 
@@ -86,10 +87,12 @@ usage: python -m swagger_server [-h] [-t] [-c CONFIG_GROUP] [-p PORT]
 options:
   -h, --help            show this help message and exit
   -c CONFIG_GROUP, --config_group CONFIG_GROUP
-                        Specify the configuration group in `config.ini` used to launch the Swagger server (default = DEFAULT)
-  -p PORT, --port PORT  Specify the port the Swagger server will listen on (default = 8080)
-  -t, --testing         Put the server in test mode which will run standalone and not connect to TA1.
-```
+                               Specify the configuration group in `config.ini` used to launch the Swagger server (default = DEFAULT)
+  -p PORT, --port PORT         Specify the port the Swagger server will listen on (default = 8080)
+  -t, --testing                Put the server in test mode which will run standalone and not connect to TA1.
+  --max_sessions MAX_SESSIONS  Hard maximum for number of simultaneous active sessions (default 100)
+  --timeout SESSION_TIMEOUT    Number of minutes an ADM can be inactive before it's subject to being recycled (default 60)
+  ```
 
 You can browse the API at:
 
@@ -122,7 +125,7 @@ docker run -p 8080:8080 swagger_server
 ```
 
 ### Running with docker on separate instances
-To run with TA1 on multiple systems set docker env vars for ADM host, Soartech Host, and ADEPT Host.
+To run with TA1 on multiple systems set docker env vars for ADM host.
 ```bash
 docker run -d -p 8080:8080 --name itm-server itm-server
 ```
