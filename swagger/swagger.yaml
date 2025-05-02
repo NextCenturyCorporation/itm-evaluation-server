@@ -3116,22 +3116,6 @@ components:
       enum:
       - Unknown
       type: string
-    ThreatTypeEnum:
-      description: the type or nature of the threat
-      enum:
-      - Unknown
-      - Civil unrest
-      - Drone activity
-      - Extreme weather
-      - Fire
-      - Gunfire
-      - IED activity
-      - Mines
-      - Poisonous vegetation
-      - Predators
-      - Unstable structure
-      title: ThreatTypeEnum
-      type: string
     ThreatSeverityEnum:
       description: how dangerous and/or imminent the threat is
       enum:
@@ -3180,25 +3164,13 @@ components:
       - Black
       - Asian
       - Pacific Islander
+      - Unknown
       title: RaceEnum
       type: string
     BaseCharacterRoleEnum:
       description: The primary role a character has in the scene
       enum:
       - Unknown
-      type: string
-    CharacterRoleEnum:
-      description: The primary role a character has in the scene
-      enum:
-      - Unknown
-      - Infantry
-      - SEAL
-      - Command
-      - Intelligence
-      - Medical
-      - Specialist
-      - Communications
-      title: CharacterRoleEnum
       type: string
     RapportEnum:
       description: A measure of closeness or affinity towards the decision-maker
@@ -3227,23 +3199,6 @@ components:
       - MOVE_TO
       - MESSAGE
       - SEARCH
-      type: string
-    ActionTypeEnum:
-      enum:
-      - END_SCENE
-      - MOVE_TO
-      - MESSAGE
-      - SEARCH
-      - APPLY_TREATMENT
-      - CHECK_ALL_VITALS
-      - CHECK_BLOOD_OXYGEN
-      - CHECK_PULSE
-      - CHECK_RESPIRATION
-      - DIRECT_MOBILE_CHARACTERS
-      - MOVE_TO_EVAC
-      - SITREP
-      - TAG_CHARACTER
-      title: ActionTypeEnum
       type: string
     DomainState:
       description: the current tactical & environmental state of the scenario and
@@ -3850,6 +3805,22 @@ components:
       - Burn Dressing
       title: SupplyTypeEnum
       type: string
+    ThreatTypeEnum:
+      description: the type or nature of the threat
+      enum:
+      - Unknown
+      - Civil unrest
+      - Drone activity
+      - Extreme weather
+      - Fire
+      - Gunfire
+      - IED activity
+      - Mines
+      - Poisonous vegetation
+      - Predators
+      - Unstable structure
+      title: ThreatTypeEnum
+      type: string
     DomainCharacter:
       description: "a character in the scene, including injured patients, civilians,\
         \ medics, etc."
@@ -4124,6 +4095,19 @@ components:
       example: DELAYED
       title: CharacterTagEnum
       type: string
+    CharacterRoleEnum:
+      description: The primary role a character has in the scene
+      enum:
+      - Unknown
+      - Infantry
+      - SEAL
+      - Command
+      - Intelligence
+      - Medical
+      - Specialist
+      - Communications
+      title: CharacterRoleEnum
+      type: string
     DomainDemographics:
       description: Basic domain-specific properties about the character
       properties:
@@ -4315,6 +4299,25 @@ components:
       - priority
       - vip
       title: MissionImportanceEnum
+      type: string
+    ActionTypeEnum:
+      description: "An action type recognized by the ADM Server, combining basic and\
+        \ domain-specific actions"
+      enum:
+      - END_SCENE
+      - MOVE_TO
+      - MESSAGE
+      - SEARCH
+      - APPLY_TREATMENT
+      - CHECK_ALL_VITALS
+      - CHECK_BLOOD_OXYGEN
+      - CHECK_PULSE
+      - CHECK_RESPIRATION
+      - DIRECT_MOBILE_CHARACTERS
+      - MOVE_TO_EVAC
+      - SITREP
+      - TAG_CHARACTER
+      title: ActionTypeEnum
       type: string
     DomainConditions:
       description: Domain-specific conditions that specify whether to transition to

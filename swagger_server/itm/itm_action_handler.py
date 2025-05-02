@@ -74,7 +74,7 @@ class ITMActionHandler:
                 # Character required
                 return False, f'Malformed Action: Missing character_id for {action.action_type}', 400
              if not character.unseen and not action.intent_action:
-                return False, f'Cannot perform {action.action_type} action with unseen character `{action.character_id}`', 400 
+                return False, f'Can only {action.action_type} an "unseen" character, but `{action.character_id}` is "seen".', 400 
 
         # type checks for possible fields
         if action.unstructured and not isinstance(action.unstructured, str):

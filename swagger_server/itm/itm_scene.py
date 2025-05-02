@@ -94,7 +94,7 @@ class ITMScene:
             "actions_taken": self.actions_taken,
             "action_mappings": action_mappings,
             "restricted_actions": self.restricted_actions,
-            "parent_scenario": self.parent_scenario.id,
+            "parent_scenario": self.parent_scenario.id if self.parent_scenario else None,
             "training": self.training,
             "transition_semantics": self.transition_semantics,
             "transitions": json.loads(str(self.transitions).replace('"', '').replace("'", '"').replace("None", '"None"').replace("False", "false").replace("True", "true"))

@@ -9,11 +9,14 @@ buildscript {
 apply plugin:'base'
 apply plugin: 'org.openapi.generator'
 
-defaultTasks 'clean', 'swaggerClean', 'generate', 'postGeneration'
+defaultTasks 'clean', 'swaggerClean', 'determineDomain', 'generate', 'postGeneration'
 
 def generatedApiDirectory = "generated"
 def apiDirectory = "swagger"
 def outputDirectory = "swagger_server"
+def baseSwaggerFile = "base_swagger.yaml"
+def domainSwaggerFile = "domain_swagger.yaml"
+def domain = "triage" // Default domain
 
 task swaggerClean(type: Delete) {
     doFirst {
@@ -22,25 +25,40 @@ task swaggerClean(type: Delete) {
     mustRunAfter "clean"
 }
 
+task determineDomain {
+    if (project.hasProperty("domain")) {
+        domain = project.getProperty("domain")
+        println "Setting domain to '${domain}'."
+    }
+    copy {
+        from "${apiDirectory}/${domain}_swagger.yaml"
+        into "${apiDirectory}"
+        rename { String filename ->
+            "${domainSwaggerFile}"
+        }
+    }
+}
+
 // Define a task for validating the primary YAML
 task validate(type: org.openapitools.generator.gradle.plugin.tasks.ValidateTask) {
-    inputSpec.set("$projectDir/$apiDirectory/base_swagger.yaml")
+    inputSpec.set("$projectDir/$apiDirectory/$baseSwaggerFile")
 }
 
 // Define a task for validating the domain-specific YAML in isolation
 task validateDomainSpec(type: org.openapitools.generator.gradle.plugin.tasks.ValidateTask) {
-    inputSpec.set("$projectDir/$apiDirectory/domain_swagger.yaml")
+    dependsOn "determineDomain"
+    inputSpec.set("$projectDir/$apiDirectory/$domainSwaggerFile")
 }
 
 // Define a task to clean then generate
 task generate {
     dependsOn "openApiGenerate"
-    mustRunAfter "swaggerClean"
+    mustRunAfter "determineDomain"
 }
 
 openApiGenerate {
     generatorName = "python-flask"
-    inputSpec = "$projectDir/$apiDirectory/base_swagger.yaml".toString()
+    inputSpec = "$projectDir/$apiDirectory/$baseSwaggerFile".toString()
     outputDir = "$projectDir/$generatedApiDirectory".toString()
     ignoreFileOverride = "$projectDir/.openapi-generator-ignore".toString()
     packageName = "$outputDirectory".toString()

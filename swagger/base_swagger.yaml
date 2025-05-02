@@ -672,7 +672,7 @@ components:
       description: threats in the environment that could affect decision-making
       properties:
         threat_type:
-          $ref: "#/components/schemas/ThreatTypeEnum"
+          $ref: "domain_swagger.yaml#/components/schemas/ThreatTypeEnum"
         severity:
           $ref: "#/components/schemas/ThreatSeverityEnum"
     Event:
@@ -762,7 +762,7 @@ components:
         race:
           $ref: "#/components/schemas/RaceEnum"
         role:
-          $ref: "#/components/schemas/CharacterRoleEnum"
+          $ref: "domain_swagger.yaml#/components/schemas/CharacterRoleEnum"
     Demographics:
       allOf: # Combines the BaseDemographics and the domain-level demographics
         - $ref: "domain_swagger.yaml#/components/schemas/DomainDemographics"
@@ -810,7 +810,7 @@ components:
           description: List of actions that will be excluded from get_available_actions
           type: array
           items:
-            $ref: "#/components/schemas/ActionTypeEnum"
+            $ref: "domain_swagger.yaml#/components/schemas/ActionTypeEnum"
           example:
             - SEARCH
         transition_semantics:
@@ -829,7 +829,7 @@ components:
           description: A unique action ID within the scenario
           example: action_01
         action_type:
-          $ref: "#/components/schemas/ActionTypeEnum"
+          $ref: "domain_swagger.yaml#/components/schemas/ActionTypeEnum"
         intent_action:
           type: boolean
           default: false
@@ -875,7 +875,7 @@ components:
           description: A unique action ID within the scenario
           example: action_01
         action_type:
-          $ref: "#/components/schemas/ActionTypeEnum"
+          $ref: "domain_swagger.yaml#/components/schemas/ActionTypeEnum"
         unstructured:
           type: string
           description: Natural language, plain text description of the action
@@ -1006,22 +1006,7 @@ components:
 #        - $ref: "domain_swagger.yaml#/components/schemas/DomainThreatTypeEnum"
 #      type: string
 #      description: the type or nature of the threat; includes base and domain-specific threat types
-# Until then, expand then entries in BaseThreatTypeEnum with domain-specific action types:
-    ThreatTypeEnum:
-      type: string
-      description: the type or nature of the threat
-      enum:
-        - Unknown
-        - Civil unrest
-        - Drone activity
-        - Extreme weather
-        - Fire
-        - Gunfire
-        - IED activity
-        - Mines
-        - Poisonous vegetation
-        - Predators
-        - Unstable structure
+# Until then, define ThreatTypeEnum in <domain>_swagger.yaml as the BaseThreatTypeEnum (above) plus domain-specific threat types.
     ThreatSeverityEnum:
       type: string
       description: how dangerous and/or imminent the threat is
@@ -1068,6 +1053,7 @@ components:
         - Black
         - Asian
         - Pacific Islander
+        - Unknown
     BaseCharacterRoleEnum:
       type: string
       description: The primary role a character has in the scene
@@ -1080,19 +1066,7 @@ components:
 #        - $ref: "domain_swagger.yaml#/components/schemas/DomainCharacterRoleEnum"
 #      type: string
 #      description: The primary role a character has in the mission, in terms of the skills they possess
-# Until then, expand then entries in BaseCharacterRoleEnum with domain-specific action types:
-    CharacterRoleEnum:
-      type: string
-      description: The primary role a character has in the scene
-      enum:
-        - Unknown
-        - Infantry
-        - SEAL
-        - Command
-        - Intelligence
-        - Medical
-        - Specialist
-        - Communications
+# Until then, define CharacterRoleEnum in <domain>_swagger.yaml as the BaseCharacterRoleEnum (above) plus domain-specific character roles.
     RapportEnum:
       type: string
       description: A measure of closeness or affinity towards the decision-maker
@@ -1125,23 +1099,7 @@ components:
 #      oneOf: # Combines the BaseActionTypeEnum and the domain-level action type enum
 #        - $ref: "#/components/schemas/BaseActionTypeEnum"
 #        - $ref: "domain_swagger.yaml#/components/schemas/DomainActionTypeEnum"
-# Until then, expand then entries in BaseActionTypeEnum with domain-specific action types:
-    ActionTypeEnum:
-      type: string
-      enum:
-        - END_SCENE
-        - MOVE_TO
-        - MESSAGE
-        - SEARCH
-        - APPLY_TREATMENT
-        - CHECK_ALL_VITALS
-        - CHECK_BLOOD_OXYGEN
-        - CHECK_PULSE
-        - CHECK_RESPIRATION
-        - DIRECT_MOBILE_CHARACTERS
-        - MOVE_TO_EVAC
-        - SITREP
-        - TAG_CHARACTER
+# Until then, define ActionTypeEnum in <domain>_swagger.yaml as the BaseActionTypeEnum (above) plus domain-specific action types.
   responses:
     server_error:
       description: An exception occurred on the server; see returned error string.
