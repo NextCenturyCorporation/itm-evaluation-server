@@ -3,8 +3,7 @@ name: Wumpus placeholder
 # Test description: placeholder.
 first_scene: opening_scene
 state:
-  unstructured: >
-    Placeholder.
+  unstructured: Placeholder.
   foobar: placeholder
   threat_state:
     unstructured: There is a wumpus somewhere in the cave.
@@ -19,8 +18,7 @@ state:
   characters:
     - id: Room 1
       name: Room 1
-      unstructured: >
-        Placeholder.
+      unstructured: Placeholder.
       foobar: placeholder1
       unseen: false # Room is "seen" because the player starts in this room
       demographics:
@@ -29,8 +27,7 @@ state:
         foobar: placeholder1
     - id: Room 2
       name: Room 2
-      unstructured: >
-        Placeholder.
+      unstructured: Placeholder.
       foobar: placeholder2
       unseen: true
       demographics:
@@ -39,8 +36,7 @@ state:
         foobar: placeholder2
     - id: Room 3
       name: Room 3
-      unstructured: >
-        Placeholder.
+      unstructured: Placeholder.
       foobar: placeholder3
       unseen: true
       demographics:
@@ -84,14 +80,12 @@ scenes:
       foobar: placeholder
   - id: final_scene # start in Room 3
     state:
-      unstructured: >
-        Placeholder.
+      unstructured: Placeholder.
       foobar: placeholder
       characters:
         - id: Room 1
           name: Room 1
-          unstructured: >
-            Placeholder.
+          unstructured: Placeholder.
           foobar: placeholder1
           unseen: true
           demographics:
@@ -100,8 +94,7 @@ scenes:
             foobar: placeholder1
         - id: Room 3
           name: Room 3
-          unstructured: >
-            Placeholder.
+          unstructured: Placeholder.
           foobar: placeholder3
           unseen: false # Room is "seen" because the player starts in this room
           demographics:
