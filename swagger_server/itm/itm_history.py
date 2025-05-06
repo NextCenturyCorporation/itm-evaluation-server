@@ -34,6 +34,8 @@ class ITMHistory:
             self.evaluation_info.pop('scenario_id')
             self.evaluation_info.pop('alignment_target_id')
             self.evaluation_info.pop('adm_name')
+            self.evaluation_info.pop('adm_profile')
+            self.evaluation_info.pop('domain')
             self.evaluation_info.pop('ta1_name')
             self.evaluation_info.pop('ta3_session_id')
         if self.results.get('alignment_score'): # Did user set results?
@@ -41,11 +43,13 @@ class ITMHistory:
             self.results.pop('alignment_score')
             self.results.pop('kdmas')
 
-    def set_metadata(self, scenario_name, scenario_id, alignment_target_id, adm_name, ta1_name, ta3_session_id):
+    def set_metadata(self, scenario_name, scenario_id, alignment_target_id, adm_name, adm_profile, domain, ta1_name, ta3_session_id):
         self.evaluation_info['scenario_name'] = scenario_name
         self.evaluation_info['scenario_id'] = scenario_id
         self.evaluation_info['alignment_target_id'] = alignment_target_id
         self.evaluation_info['adm_name'] = adm_name
+        self.evaluation_info['adm_profile'] = adm_profile
+        self.evaluation_info['domain'] = domain
         self.evaluation_info['ta1_name'] = ta1_name
         self.evaluation_info['ta3_session_id'] = ta3_session_id
 

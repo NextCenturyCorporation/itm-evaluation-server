@@ -4,7 +4,7 @@ import random
 import os
 import logging
 import builtins
-from datetime import datetime
+import datetime
 from typing import List
 from copy import deepcopy
 from json import dumps
@@ -149,7 +149,7 @@ class ITMSession:
         """
         self.history.add_history(
             "Scenario ended", {"scenario_id": self.itm_scenario.id, "session_id": self.session_id,
-                            "elapsed_time": self.state.elapsed_time}, None)
+                            "end_time": str(datetime.datetime.now()), "simulated_elapsed_time": self.state.elapsed_time}, None)
         logging.info("Scenario %s ended.", self.itm_scenario.id)
         self.state.scenario_complete = True
 
@@ -198,6 +198,8 @@ class ITMSession:
             scenario_id=self.itm_scenario.id,
             alignment_target_id=self.itm_scenario.alignment_target.id,
             adm_name=self.adm_name,
+            adm_profile=self.adm_profile,
+            domain=self.domain,
             ta1_name=self.itm_scenario.ta1_name,
             ta3_session_id=self.session_id,
             )
@@ -209,7 +211,7 @@ class ITMSession:
         if self.save_history:
             kdma = self.itm_scenario.alignment_target.kdma_values[0].kdma.split(" ")[0].lower()
             alignment_type = kdma + "-" + self.itm_scenario.alignment_target.id
-            timestamp = f"{datetime.now():%Y%m%d-%H.%M.%S}" # e.g., 20240821-18.22.53
+            timestamp = f"{datetime.datetime.now():%Y%m%d-%H.%M.%S}" # e.g., 20240821-18.22.53
             filename = f"{self.adm_profile.replace(' ','-')}-" if self.adm_profile else ''
             filename += f"{ITMSession.EVALUATION_TYPE.replace(' ','')}-{self.itm_scenario.id.replace(' ', '_')}-{self.itm_scenario.ta1_name}-{alignment_type.replace(' ', '_')}-{self.adm_name}-{timestamp}"
             self.history.write_to_json_file(filename, self.save_history_to_s3)
@@ -365,8 +367,8 @@ class ITMSession:
             self.current_scenario_index += 1
             self.history.add_history(
                 "Start Scenario",
-                {"session_id": self.session_id, "adm_name": self.adm_name, "adm_profile": self.adm_profile},
-                scenario.to_dict())
+                {"session_id": self.session_id, "adm_name": self.adm_name, "adm_profile": self.adm_profile,
+                 "domain": self.domain, "start_time": str(datetime.datetime.now())}, scenario.to_dict())
             logging.info("Scenario %s starting.", self.itm_scenario.id)
 
             if self.ta1_integration:
