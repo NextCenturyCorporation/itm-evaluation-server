@@ -43,7 +43,6 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     #Checking for config_group in config.ini
-    config_util.check_ini()
     config = config_util.read_ini()[0]
     if args.config_group not in config:
         print(f"The Config Group `{args.config_group}` does not exist in config.ini.")

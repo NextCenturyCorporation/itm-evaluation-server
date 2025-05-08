@@ -1,0 +1,17 @@
+; Copy over this template file and rename it to swagger_server/config.ini
+; Replace the default configurations below with the desired values
+
+[DEFAULT]
+
+PLACEHOLDER=placeholder
+SCENARIO_DIRECTORY=swagger_server/itm/data/%(EVALUATION_TYPE)s/scenarios/
+DEFAULT_DOMAIN=wumpus
+SUPPORTED_DOMAINS=wumpus
+
+ALL_TA1_NAMES=test
+
+REQUIRED_CONFIG=PLACEHOLDER, SCENARIO_DIRECTORY, DEFAULT_DOMAIN, SUPPORTED_DOMAINS, ALL_TA1_NAMES
+
+[CONFIG_2]
+
+PLACEHOLDER=placeholder2

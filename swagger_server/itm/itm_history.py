@@ -19,7 +19,7 @@ class ITMHistory:
         config_group = builtins.config_group
         self.history = []
         self.filepath = config[config_group]["HISTORY_DIRECTORY"] + os.sep
-        self.save_history_bucket = config["DEFAULT"]["HISTORY_S3_BUCKET"]
+        self.save_history_bucket = config[config_group]["HISTORY_S3_BUCKET"]
         self.evaluation_info = {
             "evalName": config[config_group]['EVAL_NAME'], 
             "evalNumber": config[config_group]['EVAL_NUMBER'], 

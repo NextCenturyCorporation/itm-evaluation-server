@@ -117,11 +117,15 @@ tox
 To run the server on a Docker container, please execute the following from the root directory:
 
 ```bash
-# building the image
+# Build the image with the default domain
 docker build -t swagger_server .
+# Build the image with the specified domain
+docker build --build-arg domain=<my_domain> -t swagger_server .
 
-# starting up a container
+# Run the container with the defaul port and configuration target
 docker run -p 8080:8080 swagger_server
+# Run the container with the specified port and configuration target
+docker run -p <my_port>:<my_port> -e "TA3_PORT=<my_port>" -e "CONFIG_GROUP=<MY_CONFIG_TARGET>" swagger_server
 ```
 
 ### Running with docker on separate instances
@@ -129,8 +133,6 @@ To run with TA1 on multiple systems set docker env vars for ADM host.
 ```bash
 docker run -d -p 8080:8080 --name itm-server itm-server
 ```
-** Note, If setting `TA3_PORT` to anything other then the default requires the docker run command to expose those ports. 
-Can write the above command as `$TA3_PORT:$TA3_PORT` however, this will not work if it is not set and won't default.
 
 ### Manual runs on separate instances
 If running the command instead of docker set the environment variables for:

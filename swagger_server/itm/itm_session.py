@@ -29,7 +29,6 @@ class ITMSession:
     """
     Class for representing and manipulating a simulation scenario session.
     """
-    config_util.check_ini()
     config = config_util.read_ini()[0]
     config_group = builtins.config_group
 
@@ -103,7 +102,7 @@ class ITMSession:
                 logging.exception(e)
         else:
             logging.info("Running server in testing mode; no connection to TA1 servers.")
-
+        logging.info("Running with default domain '%s'.", ITMSession.DEFAULT_DOMAIN)
 
     @staticmethod
     def init_ta1_data(ta1_names):
