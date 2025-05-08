@@ -568,7 +568,7 @@ class ITMSession:
         logging.info("Loaded %d total scenarios from '%s'.", len(self.itm_scenarios), scenario_path)
         self.current_scenario_index = 0
 
-        return self.session_id
+        return self.session_id, 200
 
 
     def take_action(self, body: Action) -> State:
