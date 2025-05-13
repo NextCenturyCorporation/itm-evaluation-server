@@ -2,7 +2,6 @@ import boto3
 import json
 import logging
 import os
-import datetime
 import builtins
 
 from typing import Union
