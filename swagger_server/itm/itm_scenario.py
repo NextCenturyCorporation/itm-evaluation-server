@@ -29,6 +29,7 @@ class ITMScenario:
         self.isd: ITMScenarioData
         self.id=''
         self.name=''
+        self.start_time = None
 
     @staticmethod
     def clear_hidden_data(state: State):

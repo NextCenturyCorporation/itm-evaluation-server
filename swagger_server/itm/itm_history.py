@@ -20,38 +20,20 @@ class ITMHistory:
         self.history = []
         self.filepath = config[config_group]["HISTORY_DIRECTORY"] + os.sep
         self.save_history_bucket = config["DEFAULT"]["HISTORY_S3_BUCKET"]
-        self.evaluation_info = {
-            "evalName": config[config_group]['EVAL_NAME'], 
-            "evalNumber": config[config_group]['EVAL_NUMBER'], 
-            "created" : str(datetime.datetime.now())
-        }
-        self.results = {}
+        self.eval_name = config[config_group]['EVAL_NAME']
+        self.eval_number = config[config_group]['EVAL_NUMBER']
+        self.clear_history()
 
     def clear_history(self):
         self.history.clear()
-        if self.evaluation_info.get('scenario_name'): # Did user set metadata?
-            self.evaluation_info.pop('scenario_name')
-            self.evaluation_info.pop('scenario_id')
-            self.evaluation_info.pop('alignment_target_id')
-            self.evaluation_info.pop('adm_name')
-            self.evaluation_info.pop('adm_profile')
-            self.evaluation_info.pop('domain')
-            self.evaluation_info.pop('ta1_name')
-            self.evaluation_info.pop('ta3_session_id')
-        if self.results.get('alignment_score'): # Did user set results?
-            self.results.pop('ta1_session_id')
-            self.results.pop('alignment_score')
-            self.results.pop('kdmas')
+        self.evaluation_info = {
+            "evalName": self.eval_name,
+            "evalNumber": self.eval_number
+        }
+        self.results = {}
 
-    def set_metadata(self, scenario_name, scenario_id, alignment_target_id, adm_name, adm_profile, domain, ta1_name, ta3_session_id):
-        self.evaluation_info['scenario_name'] = scenario_name
-        self.evaluation_info['scenario_id'] = scenario_id
-        self.evaluation_info['alignment_target_id'] = alignment_target_id
-        self.evaluation_info['adm_name'] = adm_name
-        self.evaluation_info['adm_profile'] = adm_profile
-        self.evaluation_info['domain'] = domain
-        self.evaluation_info['ta1_name'] = ta1_name
-        self.evaluation_info['ta3_session_id'] = ta3_session_id
+    def set_metadata(self, metadata: dict):
+        self.evaluation_info.update(metadata)
 
     def set_results(self, ta1_session_id, alignment_score, kdmas):
         self.results['ta1_session_id'] = ta1_session_id

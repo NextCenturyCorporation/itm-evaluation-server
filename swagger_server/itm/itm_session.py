@@ -64,7 +64,6 @@ class ITMSession:
         self.adm_name = ''
         self.adm_profile = ''
         self.time_started = 0
-        self.time_elapsed_realtime = 0
 
         self.session_type = ''
         self.domain = ''
@@ -147,15 +146,16 @@ class ITMSession:
         """
         End the current scenario and store history to json file.
         """
+        scenario_end_time = datetime.datetime.now()
         self.history.add_history(
             "Scenario ended", {"scenario_id": self.itm_scenario.id, "session_id": self.session_id,
-                            "end_time": str(datetime.datetime.now()), "simulated_elapsed_time": self.state.elapsed_time}, None)
+                            "end_time": str(scenario_end_time), "simulated_elapsed_time": self.state.elapsed_time}, None)
         logging.info("Scenario %s ended.", self.itm_scenario.id)
         self.state.scenario_complete = True
 
         if self.kdma_training:
             self.state.unstructured = f"Scenario {self.itm_scenario.id} complete."
-            self._cleanup()
+            self._cleanup(scenario_end_time)
             return
 
         session_alignment_score = None
@@ -189,20 +189,22 @@ class ITMSession:
             self.state.unstructured = f'Scenario {self.itm_scenario.id} complete for target {self.itm_scenario.alignment_target.id}. Session alignment score = {session_alignment_score}'
         else:
             self.state.unstructured = f'Test scenario {self.itm_scenario.id} complete.'
-        self._cleanup(session_alignment_score, kdmas)
+        self._cleanup(scenario_end_time, session_alignment_score, kdmas)
 
 
-    def _cleanup(self, alignment_score=None, kdmas=None):
-        self.history.set_metadata(
-            scenario_name=self.itm_scenario.name,
-            scenario_id=self.itm_scenario.id,
-            alignment_target_id=self.itm_scenario.alignment_target.id,
-            adm_name=self.adm_name,
-            adm_profile=self.adm_profile,
-            domain=self.domain,
-            ta1_name=self.itm_scenario.ta1_name,
-            ta3_session_id=self.session_id,
-            )
+    def _cleanup(self, scenario_end_time, alignment_score=None, kdmas=None):
+        self.history.set_metadata({
+            "scenario_name": self.itm_scenario.name,
+            "scenario_id" : self.itm_scenario.id,
+            "alignment_target_id" : self.itm_scenario.alignment_target.id,
+            "adm_name" : self.adm_name,
+            "adm_profile" : self.adm_profile,
+            "domain" : self.domain,
+            "start_time" : self.itm_scenario.start_time,
+            "end_time" : str(scenario_end_time),
+            "ta1_name" : self.itm_scenario.ta1_name,
+            "ta3_session_id" : self.session_id,
+            })
         self.history.set_results(
             ta1_session_id=self.itm_scenario.ta1_controller.session_id if self.itm_scenario.ta1_controller else None,
             alignment_score=alignment_score,
@@ -211,7 +213,7 @@ class ITMSession:
         if self.save_history:
             kdma = self.itm_scenario.alignment_target.kdma_values[0].kdma.split(" ")[0].lower()
             alignment_type = kdma + "-" + self.itm_scenario.alignment_target.id
-            timestamp = f"{datetime.datetime.now():%Y%m%d-%H.%M.%S}" # e.g., 20240821-18.22.53
+            timestamp = f"{scenario_end_time:%Y%m%d-%H.%M.%S}" # e.g., 20240821-18.22.53
             filename = f"{self.adm_profile.replace(' ','-')}-" if self.adm_profile else ''
             filename += f"{ITMSession.EVALUATION_TYPE.replace(' ','')}-{self.itm_scenario.id.replace(' ', '_')}-{self.itm_scenario.ta1_name}-{alignment_type.replace(' ', '_')}-{self.adm_name}-{timestamp}"
             self.history.write_to_json_file(filename, self.save_history_to_s3)
@@ -221,18 +223,6 @@ class ITMSession:
             else:
                 self.state.unstructured = dumps({'history': self.history.history, 'metadata': self.history.evaluation_info, 'results': self.history.results}, indent=2) + os.linesep + self.state.unstructured
         self.history.clear_history()
-
-
-    def _get_realtime_elapsed_time(self) -> float:
-        """
-        Return the elapsed time since the session started.
-
-        Returns:
-            The elapsed time in seconds as a float.
-        """
-        if self.time_started:
-            self.time_elapsed_realtime = time.time() - self.time_started
-        return round(self.time_elapsed_realtime, 2)
 
 
     @staticmethod
@@ -365,10 +355,11 @@ class ITMSession:
             )
             self.action_handler.set_scenario(self.itm_scenario)
             self.current_scenario_index += 1
+            self.itm_scenario.start_time = str(datetime.datetime.now())
             self.history.add_history(
                 "Start Scenario",
                 {"session_id": self.session_id, "adm_name": self.adm_name, "adm_profile": self.adm_profile,
-                 "domain": self.domain, "start_time": str(datetime.datetime.now())}, scenario.to_dict())
+                 "domain": self.domain, "start_time": self.itm_scenario.start_time}, scenario.to_dict())
             logging.info("Scenario %s starting.", self.itm_scenario.id)
 
             if self.ta1_integration:
@@ -407,6 +398,7 @@ class ITMSession:
 
     def _end_session(self) -> Scenario:
         self.session_complete = True
+        logging.info(f"Session {self.session_id} ended at {str(datetime.datetime.now())} and had a total duration of {round(time.time() - self.time_started, 2)} seconds.")
         return Scenario(session_complete=True, id='', name='',
                         scenes=None, state=None)
 
@@ -462,6 +454,7 @@ class ITMSession:
         self.itm_scenarios = []
         self.session_type = session_type
         self.history.clear_history()
+        self.time_started = time.time()
 
         ta1_names = []
         if self.session_type == 'eval':
@@ -482,6 +475,7 @@ class ITMSession:
                 "adm_name": self.adm_name,
                 "adm_profile": self.adm_profile,
                 "domain": self.domain,
+                "session_start_time": str(datetime.datetime.now()),
                 "session_type": session_type},
                 self.session_id)
 
