@@ -4,6 +4,7 @@ import urllib
 import builtins
 from abc import ABC, abstractmethod
 from importlib import import_module
+from math import isnan
 from swagger_server.models import (
     ProbeResponse, AlignmentResults, AlignmentTarget
 )
@@ -132,7 +133,6 @@ class ITMTa1Controller(ABC):
         body = {"session_id": self.session_id, "response": probe_response.to_dict()}
         url = f"{self.url}/api/v1/response"
         self.to_dict(requests.post(url, json=body))
-        return None
 
     def get_probe_response_alignment(self, scenario_id, probe_id):
         base_url = f"{self.url}/api/v1/alignment/probe"
@@ -168,5 +168,12 @@ class ITMTa1Controller(ABC):
 
         # TA1s represent their kdmas differently.
         alignment_results.kdma_values = self.get_kdmas(response)
+
+        # JSON output doesn't like NaN, so change to None
+        if isnan(alignment_results.score):
+            alignment_results = AlignmentResults(
+                alignment_source=alignment_results.alignment_source,
+                alignment_target_id=alignment_results.alignment_target_id,
+                kdma_values=alignment_results.kdma_values)
 
         return alignment_results

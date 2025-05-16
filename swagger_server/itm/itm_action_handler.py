@@ -145,7 +145,8 @@ class ITMActionHandler:
         character = next((character for character in self.session.state.characters \
                          if character.id == action.character_id), None)
 
-        parameters = {"action_type": action.action_type, "session_id": self.session.session_id}
+        parameters = {"action_type": action.action_type, "action_id": action.action_id,
+                      "justification": action.justification, "session_id": self.session.session_id}
         if character:
             parameters['character'] = action.character_id
         match action.action_type:
@@ -175,6 +176,8 @@ class ITMActionHandler:
         if character:
             parameters['character'] = action.character_id
         parameters['action_type'] = action.action_type
+        parameters['action_id'] = action.action_id
+        parameters['justification'] = action.justification
         parameters['session_id'] = self.session.session_id
 
 

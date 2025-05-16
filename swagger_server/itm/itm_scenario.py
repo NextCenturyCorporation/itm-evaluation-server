@@ -29,6 +29,7 @@ class ITMScenario:
         self.isd: ITMScenarioData
         self.id=''
         self.name=''
+        self.start_time = None
 
     @staticmethod
     def clear_hidden_data(state: State):
@@ -76,11 +77,12 @@ class ITMScenario:
         return filtered_actions
 
 
-    def respond_to_probe(self, probe_id, choice_id, justification):
+    def respond_to_probe(self, action_id, probe_id, choice_id, justification):
         """
         Respond to the specified probe with the specified choice and justification
 
         Args:
+            action_id: The id of the action as configured by TA1
             probe_id: The TA1 id of the probe
             choice_id: The TA1 id of the choice the ADM made
             justification: the choice justification provided by the ADM, if any
@@ -95,7 +97,7 @@ class ITMScenario:
         self.session.history.add_history(
             "Respond to TA1 Probe",
             {"session_id": self.session.session_id, "scenario_id": response.scenario_id, "probe_id": response.probe_id,
-             "choice": response.choice, "justification": response.justification},
+             "choice": response.choice, "action_id": action_id, "justification": response.justification},
              None
             )
         if self.ta1_controller:

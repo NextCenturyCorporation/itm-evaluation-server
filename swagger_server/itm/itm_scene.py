@@ -179,7 +179,7 @@ class ITMScene:
                 next_scene_id = mapping.next_scene
                 # Respond to probes if conditions are met.
                 if self._conditions_met(mapping.probe_conditions, session_state, mapping.probe_condition_semantics):
-                    self.parent_scenario.respond_to_probe(mapping.probe_id, mapping.choice, action.justification)
+                    self.parent_scenario.respond_to_probe(mapping.action_id, mapping.probe_id, mapping.choice, action.justification)
                 break  # action_id's are unique within a scene
 
         if not found_mapping: # Handle ADMs ordering something not on the menu
