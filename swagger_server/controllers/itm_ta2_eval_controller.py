@@ -166,7 +166,7 @@ def start_session(adm_name, session_type, adm_profile=None, domain=None, kdma_tr
     else:
         session = ITMSession()
 
-    session_id = session.start_session(
+    (session_id, code) = session.start_session(
         adm_name=adm_name,
         session_type=session_type,
         adm_profile=adm_profile if adm_profile != 'None' else None,
@@ -174,9 +174,12 @@ def start_session(adm_name, session_type, adm_profile=None, domain=None, kdma_tr
         kdma_training=kdma_training if kdma_training != 'None' else None,
         max_scenarios=max_scenarios
     )
-    logging.info(f"Saving session_id {session_id} in mapping; name '{session.adm_name}'.")
-    session_mapping[session_id] = {'session': session, 'last_accessed': time.time()}
-    return session_id
+    if code == 200:
+        logging.info(f"Saving session_id {session_id} in mapping; name '{session.adm_name}'.")
+        session_mapping[session_id] = {'session': session, 'last_accessed': time.time()}
+        return session_id
+    else:
+        return session_id, code
 
 
 def take_action(session_id, body=None):  # noqa: E501
