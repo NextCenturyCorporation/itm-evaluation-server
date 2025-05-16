@@ -756,4 +756,4 @@ class ITMSession:
         if successful:
             return 'valid intention' if body.intent_action else 'valid action'
         else:
-            return f"Error code {code}: {message}"
+            return f"Error code {code}: {message}", code
