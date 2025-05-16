@@ -117,14 +117,12 @@ tox
 To run the server on a Docker container, please execute the following from the root directory:
 
 ```bash
-# Build the image with the default domain
-docker build -t swagger_server .
-# Build the image with the specified domain
-docker build --build-arg domain=<my_domain> -t swagger_server .
-
-# Run the container with the defaul port and configuration target
+# Build and run the image with the default domain, port, and configuration target
+docker build --no-cache -t swagger_server .
 docker run -p 8080:8080 swagger_server
-# Run the container with the specified port and configuration target
+
+# Build the image with the specified domain, port, and configuration target
+docker build --no-cache --build-arg domain=<my_domain> -t swagger_server .
 docker run -p <my_port>:<my_port> -e "TA3_PORT=<my_port>" -e "CONFIG_GROUP=<MY_CONFIG_TARGET>" swagger_server
 ```
 
