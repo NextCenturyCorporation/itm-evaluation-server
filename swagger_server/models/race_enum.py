@@ -21,6 +21,7 @@ class RaceEnum(Model):
     BLACK = 'Black'
     ASIAN = 'Asian'
     PACIFIC_ISLANDER = 'Pacific Islander'
+    UNKNOWN = 'Unknown'
     def __init__(self):  # noqa: E501
         """RaceEnum - a model defined in OpenAPI
 

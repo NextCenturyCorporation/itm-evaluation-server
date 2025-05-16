@@ -119,4 +119,5 @@ scenes:
         probe_id: test-1
         choice: test-choice6
     transitions:
-      elapsed_time_gt: 1500 # Ensure that the burn dressing will be reused.
+      actions:
+        - [mike-bloodox, civilian-bloodox, treat-mike, treat-civ] # Make sure blood ox and burn dressing were both re-used

@@ -139,22 +139,22 @@ If running the command instead of docker set the environment variables for:
 ## Updating models
 This requires JDK 8 or higher to run the gradle tool.
 
-The models in swagger_server/models are generated from the following file:
+The models in swagger_server/models are generated from the following files:
 * `swagger/base_swagger.yaml`
+* `swagger/domain_swagger.yaml`
 
-If this file is updated then the models and combined `swagger.yaml` will need to be re-generated from this file and checked in.
-Run `./gradlew` to do this.
+`domain_swagger.yaml` is generated from (`<domain_name>_swagger.yaml`) as part of a Gradle task.  If `base_swagger.yaml` or `<domain_name>_swagger.yaml` is updated, then the models and combined `swagger.yaml` will need to be re-generated from these files and checked in. Run `./gradlew -Pdomain=<domain_name>` to do this.  If you are building the models for the default domain (as defined in `build.gradle`), then the `-P` option isn't required.
 
 ## Adding a domain
 To add a domain, you'll need to:
-1. Update the YAML definition of certain domain-specific versions of the model and define nested state;
+1. Create a domain-specific YAML file for your domain;
 2. Implement a domain-specific version of certain ITM server classes;
 3. Create domain-specific tests;
 4. Create and update configuration; and
 5. Document your domain actions in the `itm-client-evaluation` repository.
 
-### Update YAML definition
-Modify the definitions of the domain-specific versions of various state objects (i.e., the model), namely:
+### Create YAML definition
+Determine a one-word name for your domain and create the file `swagger/<domain_name>_swagger.yaml`. This file contains certain domain-specific versions of the model and define nested state. Modify the definitions of the domain-specific versions of various state objects (i.e., the model), namely:
 - `DomainState`: high-level, domain-specific state relevant to a scenario or a scene therein
 - `DomainCharacter`: domain-specific attributes of the characters in the scenario
 - `DomainDemographics`: domain-specific demographic attributes of the characters in the scenario
@@ -166,7 +166,7 @@ Modify the definitions of the domain-specific versions of various state objects 
 
 Add YAML definitions for any nested objects defined in the above state objects.  If any other model objects require domain-specific content, then create both a `Base` and `Domain` version of each object, and change the current object to include both of these versions with the `allOf` keyword. This may also entail other server code changes.  All YAML changes should be made to the `swagger/swagger.yaml` file, and used by your client ADM.  Note that the hope is to move all domain-specific state to a separate file, but this isn't supported cross-platform with our current dependencies.
 
-**NOTE**: Certain enums would ideally be extensible so we can define basic values in `base_swagger.yaml` and domain-specific extensions in `domain_swagger.yaml`.  Until this is supported in the OpenAPI spec and OpenAPI Generator, the enums from three domain-specific enums will need to be replicated in the base swagger file:
+**NOTE**: Certain enums would ideally be extensible so we can define basic values in `base_swagger.yaml` and domain-specific extensions in `<domain_name>_swagger.yaml`.  Until this is supported in the OpenAPI spec and OpenAPI Generator, the enums from three domain-specific enums will need to be replicated in the domain-specific swagger file:
 - `DomainActionTypeEnum` values should be replicated in `ActionTypeEnum`;
 - `DomainThreatTypeEnum` values should be replicated in `ThreatTypeEnum`; and
 - `DomainCharacterRoleEnum` values should be replicated in `CharacterRoleTypeEnum`.
@@ -174,7 +174,7 @@ Add YAML definitions for any nested objects defined in the above state objects. 
 See [this OpenAPI issue](https://github.com/OAI/OpenAPI-Specification/issues/1552) for background info.
 
 ### Implement domain-specific classes
-Create a directory, `swagger_server/itm/domains/<domainname>`, and implement the following classes:
+Create a directory, `swagger_server/itm/domains/<domain_name>`, and implement the following classes:
 - `<Domain>Config`, which implements the `ITMDomainConfig` protocol, which defines factory-like methods for creating domain objects
 - `<Domain>ActionHandler` (a subclass of `ITMActionHandler`), with:
    - `validate_domain_action` for validating domain-specific actions
@@ -189,16 +189,16 @@ Create a directory, `swagger_server/itm/domains/<domainname>`, and implement the
    - `get_valid_action_types` if there are conditions where non-restricted domain-specific actions should NOT be added as available actions
 
 ### Create domain-specific tests
-Create a directory, `swagger_server/itm/data/domains/<domainname>/test` and add domain-specific tests, and/or domain-specific variants of existing tests.
+Create a directory, `swagger_server/itm/data/domains/<domain_name>/test` and add domain-specific tests, and/or domain-specific variants of existing tests.
 
 ### Create and update configuration
 Make the following changes to configuration (`config.ini.template`, replicated in `config.ini`):
-- Create a file, `<domainname>ActionTimes.json>` in `swagger_server/itm/data/domains/<domainname>/` with a dictionary of domain-specific action types and simulated time (in seconds) for a given action to be performed.
+- Create a file, `<domain_name>ActionTimes.json>` in `swagger_server/itm/data/domains/<domain_name>/` with a dictionary of domain-specific action types and simulated time (in seconds) for a given action to be performed.
 - Update the `SUPPORTED_DOMAINS` and (if desired) `DEFAULT_DOMAIN` keywords in `config.ini.template` and `config.ini` at the root level.
 
 ### Document your domain
 You should document your domain for multiple audiences, including scenario writers and TA2 ADMs. Some suggestions:
-- In the [TA3 client repository](https://github.com/NextCenturyCorporation/itm-evaluation-client), create a new file at the root level, `README-<domainname>.md`, a Markdown file with a description of domain-specific actions and FAQs.  The audience is primarily ADM writers.
+- In the [TA3 client repository](https://github.com/NextCenturyCorporation/itm-evaluation-client), create a new file at the root level, `README-<domain_name>.md`, a Markdown file with a description of domain-specific actions and FAQs.  The audience is primarily ADM writers.
 - Consider writing a document [like this](https://nextcentury.atlassian.net/wiki/spaces/ITMC/pages/3041951763/Scenario+YAML+Documentation) that documents every property in the domain-specific state, including controlled vocabulary, data type, and how to use each field.
 - If the domain uses a wide variety of controlled vocabulary, consider writing [a glossary](https://nextcentury.atlassian.net/wiki/download/attachments/3041951763/ITM%20Scenario%20Glossary%20(Phase%201%20Final).pdf?api=v2) that documents each property and possible value.
 
@@ -214,6 +214,6 @@ Make the following changes to configuration (`config.ini.template`, replicated i
   - `<TA1>_EVAL_FILENAMES`, `<TA1>_TRAIN_FILENAMES`
   - For each KDMA, define `<TA1>_EVAL_<KDMA>_SCENARIOS`, `<TA1>_TRAIN_<KDMA>_SCENARIOS`, and `<TA1>_<KDMA>_ALIGNMENT_TARGETS`.
 
-### Implement domain-specific classes
+### Implement TA1-specific classes
 In the directory `swagger_server/itm/ta1`, create a child class `<TA1name>Ta1Controller` of `ITMTa1Controller`, and implement all abstract methods (e.g., `get_ta1name`, `get_alignment_ids_path`, and `new_session`, among others).  Override any `ITMTa1Controller` methods as necessary.
 Add code to get the configuration values defined above (see current TA1 controllers for examples).  Depending how extensive/different your TA1 server is from current cases, you may need to make changes to `ITMTa1Controller`.
