@@ -52,7 +52,7 @@ class ITMActionHandler:
 
         if not action.action_type:
             return False, 'Invalid or Malformed Action: Missing action_type', 400
-        
+
         if not action.justification:
             return False, 'Invalid or Malformed Action: Missing justification', 400
 
@@ -63,18 +63,12 @@ class ITMActionHandler:
             action.action_type == ActionTypeEnum.END_SCENE and not self.current_scene.end_scene_allowed:
             return False, 'Invalid Action: action restricted', 400
 
-        # Validate character
+        # Validate specified character exists
         character = None
         if action.character_id:
             character = next((character for character in self.session.state.characters if character.id == action.character_id), None)
             if not character:
                 return False, f'Character `{action.character_id}` not found in state', 400
-        if action.action_type == ActionTypeEnum.MOVE_TO:
-             if not character:
-                # Character required
-                return False, f'Malformed Action: Missing character_id for {action.action_type}', 400
-             if not character.unseen and not action.intent_action:
-                return False, f'Can only {action.action_type} an "unseen" character, but `{action.character_id}` is "seen".', 400 
 
         # type checks for possible fields
         if action.unstructured and not isinstance(action.unstructured, str):
@@ -90,9 +84,12 @@ class ITMActionHandler:
             if action.action_id not in scene_action_ids:
                 return False, f'Malformed {action.action_type} Action: action_id `{action.action_id}` is not a valid action_id from the current scene', 400
         elif action.action_type == ActionTypeEnum.MOVE_TO:
+            # Character is required
+            if not character:
+                return False, f'Malformed Action: Missing character_id for {action.action_type}', 400
             # Can only target unseen characters
             if not character.unseen:
-                return False, f'Can only perform {action.action_type} action with unseen characters, but `{action.character_id}` is not unseen', 400
+                return False, f'Can only {action.action_type} an "unseen" character, but `{action.character_id}` is "seen".', 400
         elif action.action_type in [ActionTypeEnum.END_SCENE, ActionTypeEnum.SEARCH]:
             return True, '', 0 # Requires nothing
         else: # Passed base validation; validate domain-level actions

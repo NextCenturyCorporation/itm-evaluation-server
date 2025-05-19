@@ -80,9 +80,11 @@ itm_wumpus_history
 # local config files
 config.ini
 config.triage.ini
+config.p2triage.ini
 config.wumpus.ini
 
 # local scenarios
 itm_scenarios
 swagger_server/itm/data/phase1/scenarios
+swagger_server/itm/data/june2025/scenarios
 

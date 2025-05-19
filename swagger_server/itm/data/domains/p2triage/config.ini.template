@@ -1,0 +1,108 @@
+; Copy over this template file and rename it to swagger_server/config.ini
+; Replace the default configurations below with the desired values
+
+[DEFAULT]
+
+EVALUATION_TYPE=june2025
+SCENARIO_DIRECTORY=swagger_server/itm/data/%(EVALUATION_TYPE)s/scenarios/
+DEFAULT_DOMAIN=p2triage
+SUPPORTED_DOMAINS=p2triage
+
+; Local Default URLs
+; ADEPT_URL=http://localhost:8081
+
+; AWS TA1 Default URLs (access Prod AWS servers locally)
+; ADEPT_URL=https://darpaitm.caci.com/adept
+
+; Prod Default URLs (use on production AWS only)
+ADEPT_URL=http://10.216.38.101:8080
+
+SAVE_HISTORY=True
+SAVE_HISTORY_TO_S3=True
+ALL_TA1_NAMES=adept
+
+HISTORY_DIRECTORY=itm_history_output
+HISTORY_S3_BUCKET=itm-ui-assets
+
+EVAL_NAME=Phase 2 June 2025 Collaboration
+EVAL_NUMBER=8
+
+ADEPT_EVAL_FILENAMES=june2025-adept-eval-MF1.yaml,
+    june2025-adept-eval-AF1.yaml,
+    june2025-adept-eval-SS1.yaml,
+    june2025-adept-eval-PS1.yaml
+
+ADEPT_TRAIN_FILENAMES=june2025-adept-train-MF1.yaml,
+    june2025-adept-train-AF1.yaml,
+    june2025-adept-train-SS1.yaml,
+    june2025-adept-train-PS1.yaml
+
+ADEPT_EVAL_MF_SCENARIOS=June2025-MF1-eval
+ADEPT_EVAL_AF_SCENARIOS=June2025-AF1-eval
+ADEPT_EVAL_SS_SCENARIOS=June2025-SS1-eval
+ADEPT_EVAL_PS_SCENARIOS=June2025-PS1-eval
+
+ADEPT_TRAIN_MF_SCENARIOS=June2025-MF1-train
+ADEPT_TRAIN_AF_SCENARIOS=June2025-AF1-train
+ADEPT_TRAIN_SS_SCENARIOS=June2025-SS1-train
+ADEPT_TRAIN_PS_SCENARIOS=June2025-PS1-train
+
+ADEPT_MF_ALIGNMENT_TARGETS=ADEPT-June2025-Moral focus-0.2,
+    ADEPT-June2025-Moral focus-0.3,
+    ADEPT-June2025-Moral focus-0.4,
+    ADEPT-June2025-Moral focus-0.5,
+    ADEPT-June2025-Moral focus-0.6,
+    ADEPT-June2025-Moral focus-0.7,
+    ADEPT-June2025-Moral focus-0.8
+
+ADEPT_AF_ALIGNMENT_TARGETS=ADEPT-June2025-Affiliation focus-0.2,
+    ADEPT-June2025-Affiliation focus-0.3,
+    ADEPT-June2025-Affiliation focus-0.4,
+    ADEPT-June2025-Affiliation focus-0.5,
+    ADEPT-June2025-Affiliation focus-0.6,
+    ADEPT-June2025-Affiliation focus-0.7,
+    ADEPT-June2025-Affiliation focus-0.8
+
+ADEPT_SS_ALIGNMENT_TARGETS=ADEPT-June2025-Search vs Stay-0.2,
+    ADEPT-June2025-Search vs Stay-0.3,
+    ADEPT-June2025-Search vs Stay-0.4,
+    ADEPT-June2025-Search vs Stay-0.5,
+    ADEPT-June2025-Search vs Stay-0.6,
+    ADEPT-June2025-Search vs Stay-0.7,
+    ADEPT-June2025-Search vs Stay-0.8
+
+ADEPT_PS_ALIGNMENT_TARGETS=ADEPT-June2025-Personal Safety-0.2,
+    ADEPT-June2025-Personal Safety-0.3,
+    ADEPT-June2025-Personal Safety-0.4,
+    ADEPT-June2025-Personal Safety-0.5,
+    ADEPT-June2025-Personal Safety-0.6,
+    ADEPT-June2025-Personal Safety-0.7,
+    ADEPT-June2025-Personal Safety-0.8
+
+ADEPT_MF_ALIGNMENT_DISTRIBUTION_TARGET=ADEPT-June2025-Moral focus-Population-All
+ADEPT_AF_ALIGNMENT_DISTRIBUTION_TARGET=ADEPT-June2025-Affiliation focus-Population-All
+ADEPT_SS_ALIGNMENT_DISTRIBUTION_TARGET=ADEPT-June2025-Search vs Stay-Population-All
+ADEPT_PS_ALIGNMENT_DISTRIBUTION_TARGET=ADEPT-June2025-Personal Safety-Population-All
+
+# All of these keywords must be present in the DEFAULT configuration
+REQUIRED_CONFIG=EVALUATION_TYPE, SCENARIO_DIRECTORY, ADEPT_URL, SAVE_HISTORY, SAVE_HISTORY_TO_S3,
+  ALL_TA1_NAMES, HISTORY_DIRECTORY, HISTORY_S3_BUCKET, EVAL_NAME, EVAL_NUMBER, ADEPT_EVAL_MF_SCENARIOS,
+  ADEPT_EVAL_AF_SCENARIOS, ADEPT_EVAL_SS_SCENARIOS, ADEPT_EVAL_PS_SCENARIOS, ADEPT_TRAIN_MF_SCENARIOS,
+  ADEPT_TRAIN_AF_SCENARIOS, ADEPT_TRAIN_SS_SCENARIOS, ADEPT_TRAIN_PS_SCENARIOS, ADEPT_MF_ALIGNMENT_TARGETS,
+  ADEPT_AF_ALIGNMENT_TARGETS, ADEPT_SS_ALIGNMENT_TARGETS, ADEPT_PS_ALIGNMENT_TARGETS, ADEPT_EVAL_FILENAMES,
+  ADEPT_TRAIN_FILENAMES, DEFAULT_DOMAIN, SUPPORTED_DOMAINS, ADEPT_MF_ALIGNMENT_DISTRIBUTION_TARGET,
+  ADEPT_AF_ALIGNMENT_DISTRIBUTION_TARGET, ADEPT_SS_ALIGNMENT_DISTRIBUTION_TARGET, ADEPT_PS_ALIGNMENT_DISTRIBUTION_TARGET
+
+[GROUP_TARGET]
+
+ADEPT_MF_ALIGNMENT_TARGETS=ADEPT-June2025-Moral focus-Group-Low,
+    ADEPT-June2025-Moral Focus-Group-High
+
+ADEPT_AF_ALIGNMENT_TARGETS=ADEPT-June2025-Affiliation focus-Group-Low,
+    ADEPT-June2025-Affiliation Focus-Group-High
+
+ADEPT_SS_ALIGNMENT_TARGETS=ADEPT-June2025-Search vs Stay-Group-Low,
+    ADEPT-June2025-Search vs Stay-Group-High
+
+ADEPT_PS_ALIGNMENT_TARGETS=ADEPT-June2025-Ingroup Bias-Group-Low,
+    ADEPT-June2025-Personal Safety-Group-High
