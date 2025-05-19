@@ -29,7 +29,6 @@ class ITMSession:
     """
     Class for representing and manipulating a simulation scenario session.
     """
-    config_util.check_ini()
     config = config_util.read_ini()[0]
     config_group = builtins.config_group
 
@@ -102,6 +101,8 @@ class ITMSession:
                 logging.exception(e)
         else:
             logging.info("Running server in testing mode; no connection to TA1 servers.")
+
+        logging.info("Running with default domain '%s'.", ITMSession.DEFAULT_DOMAIN)
 
 
     @staticmethod
@@ -565,7 +566,7 @@ class ITMSession:
         logging.info("Loaded %d total scenarios from '%s'.", len(self.itm_scenarios), scenario_path)
         self.current_scenario_index = 0
 
-        return self.session_id
+        return self.session_id, 200
 
 
     def take_action(self, body: Action) -> State:

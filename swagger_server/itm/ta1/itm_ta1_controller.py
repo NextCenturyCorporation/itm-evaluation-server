@@ -11,7 +11,6 @@ from swagger_server.models import (
 from swagger_server import config_util
 
 class ITMTa1Controller(ABC):
-    config_util.check_ini()
     config = config_util.read_ini()[0]
     config_group = builtins.config_group
 

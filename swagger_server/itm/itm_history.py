@@ -18,7 +18,7 @@ class ITMHistory:
         config_group = builtins.config_group
         self.history = []
         self.filepath = config[config_group]["HISTORY_DIRECTORY"] + os.sep
-        self.save_history_bucket = config["DEFAULT"]["HISTORY_S3_BUCKET"]
+        self.save_history_bucket = config[config_group]["HISTORY_S3_BUCKET"]
         self.eval_name = config[config_group]['EVAL_NAME']
         self.eval_number = config[config_group]['EVAL_NUMBER']
         self.clear_history()

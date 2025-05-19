@@ -193,8 +193,14 @@ Create a directory, `swagger_server/itm/data/domains/<domain_name>/test` and add
 
 ### Create and update configuration
 Make the following changes to configuration (`config.ini.template`, replicated in `config.ini`):
+- Create a file, `swagger_server/itm/data/domains/<domain_name>/config.ini.template` with whatever configuration is suitable
+for your domain.  To run an evaluation, though, you will need the following keywords:
+   - `EVALUATION_TYPE`, `SCENARIO_DIRECTORY`, `DEFAULT_DOMAIN`, `SUPPORTED_DOMAINS`, `SAVE_HISTORY`, `SAVE_HISTORY_TO_S3`,
+  `ALL_TA1_NAMES`, `HISTORY_DIRECTORY`, `HISTORY_S3_BUCKET`, `EVAL_NAME`, `EVAL_NUMBER`, and `REQUIRED_CONFIG`.
+- Add a `REQUIRED_CONFIG` keyword in the `DEFAULT` configuration that contains all required configuration for your domain.
+- Create secondary configurations, if desired, that overrides the `DEFAULT` configuration.
 - Create a file, `<domain_name>ActionTimes.json>` in `swagger_server/itm/data/domains/<domain_name>/` with a dictionary of domain-specific action types and simulated time (in seconds) for a given action to be performed.
-- Update the `SUPPORTED_DOMAINS` and (if desired) `DEFAULT_DOMAIN` keywords in `config.ini.template` and `config.ini` at the root level.
+- To start using your new domain, copy your new `config.ini.template` to `swagger_server/config.ini`.
 
 ### Document your domain
 You should document your domain for multiple audiences, including scenario writers and TA2 ADMs. Some suggestions:
@@ -208,7 +214,7 @@ You'll also have to update the [TA3 client repository](https://github.com/NextCe
 be able to use its sample clients.  See its README for details.
 
 ### Create and update configuration
-Make the following changes to configuration (`config.ini.template`, replicated in `config.ini`):
+Make the following changes to relevant configurations (`swagger_server/itm/data/domains/<domain_name>/config.ini.template`, replicated in `swagger_server/config.ini`):
 - Add a new all-lowercase ta1 name to `ALL_TA1_NAMES`.
 - Define the following variables in both the `DEFAULT` and `GROUP_TARGET` configuration groups:
   - `<TA1>_EVAL_FILENAMES`, `<TA1>_TRAIN_FILENAMES`
