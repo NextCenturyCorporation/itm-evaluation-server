@@ -32,7 +32,7 @@ class ITMScenario:
         self.start_time = None
 
     @staticmethod
-    def clear_hidden_data(state: State):
+    def clear_hidden_data(state: State, training: bool):
         pass
 
     def generate_scenario_data(self):
@@ -249,7 +249,7 @@ class ITMScenario:
         current_state.events = deepcopy(target_state.events)
 
         # 3. Clear hidden data
-        self.clear_hidden_data(current_state)
+        self.clear_hidden_data(current_state, self.training)
 
         # 4. Update MetaInfo with new scene ID
         current_state.meta_info.scene_id = self.isd.current_scene.id

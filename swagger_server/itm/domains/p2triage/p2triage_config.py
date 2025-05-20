@@ -9,7 +9,7 @@ from .p2triage_action_handler import P2TriageActionHandler
 from .p2triage_scenario import P2triageScenario
 from .p2triage_scenario_reader import P2TriageScenarioReader
 
-class P2TriageConfig():
+class P2triageConfig():
     # Implements the ITMDomainConfig protocol
 
     def get_domain_name(self) -> str:

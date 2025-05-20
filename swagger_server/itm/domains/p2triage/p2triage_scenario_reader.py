@@ -48,5 +48,5 @@ class P2TriageScenarioReader(ITMScenarioReader):
             rapport=baseChar.rapport,
             unseen=baseChar.unseen,
             medical_condition=character_data.get('medical_condition'),
-            attribute=character_data.get('attribute')
+            attribute_rating=character_data.get('attribute_rating')
         )

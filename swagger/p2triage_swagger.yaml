@@ -37,7 +37,7 @@ components:
           format: float
           minimum: 0.0
           maximum: 1.0
-        attribute:
+        attribute_rating:
           description: >
             A scenario-specific characteristic of the patient or situation regarding the patient, 0-1 scale:
               Merit Focus (MF): degree of blame for a patient: 0.0 doesn't consider merit when deciding who to treat / always treats the medically favored patient; 1.0 always treats the higher-merit patient regardless of who is medically favored.

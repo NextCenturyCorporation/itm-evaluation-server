@@ -15,5 +15,4 @@ class P2TriageScene(ITMScene):
         super().__init__(scene)
 
     def get_valid_action_types(self, state: State):
-        remaining_action_types = super().get_valid_action_types(state)
-        return remaining_action_types.remove(ActionTypeEnum.TREAT_PATIENT)
+        return [] # Don't add actions in this domain

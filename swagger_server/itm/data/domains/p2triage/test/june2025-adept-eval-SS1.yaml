@@ -39,18 +39,12 @@ scenes:
         character_id: Patient A
         probe_id: Probe 1
         choice: Response 1-A
-        kdma_association:
-          medical: 0.9 # Replicated from Patient A Character "medical_condition"
-          search: 0.0  # By definition, always 0.0
       - action_id: go_to_the_next_room
         action_type: MOVE_TO
         unstructured: Go to the next room
         character_id: Patient B
         probe_id: Probe 1
         choice: Response 1-B
-        kdma_association:
-          medical: 0.0 # By definition, always 0.0
-          search: 0.6  # Replicated from Patient B Character "attribute_rating"; urgency to search for/treat another patient
     transitions:
       probes:
         - Probe 1
@@ -87,18 +81,12 @@ scenes:
         character_id: Patient A
         probe_id: Probe 5
         choice: Response 5-A
-        kdma_association:
-          medical: 0.9 # Replicated from Patient A Character
-          search: 0.0  # By definition, always 0.0
       - action_id: go_to_the_next_patient
         action_type: TREAT_PATIENT
         unstructured: Go to the next patient
         character_id: Patient B
         probe_id: Probe 5
         choice: Response 5-B
-        kdma_association:
-          medical: 0.0 # By definition, always 0.0
-          search: 0.7  # Replicated from Patient B Character "attribute_rating"; urgency to search for/treat another patient
     transitions:
       probes:
         - Probe 5
@@ -134,18 +122,12 @@ scenes:
         character_id: Patient A
         probe_id: Probe 17
         choice: Response 17-A
-        kdma_association:
-          medical: 0.8 # Replicated from Patient A Character
-          search: 0.0  # By definition, always 0.0
       - action_id: search_for_other_patients
         action_type: SEARCH
         unstructured: Search for other patients
         character_id: Patient B
         probe_id: Probe 17
         choice: Response 17-B
-        kdma_association:
-          medical: 0.0 # By definition, always 0.0
-          search: 0.4  # Replicated from Patient B Character "attribute_rating"; urgency to search for/treat another patient
     transitions:
       probes:
         - Probe 17

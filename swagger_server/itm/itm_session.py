@@ -346,7 +346,7 @@ class ITMSession:
 
         try:
             self.state = deepcopy(self.itm_scenario.isd.current_scene.state)
-            self.itm_scenario.clear_hidden_data(self.state)
+            self.itm_scenario.clear_hidden_data(self.state, self.kdma_training)
             self.state.meta_info = MetaInfo(scene_id=self.itm_scenario.isd.current_scene.id, probe_response=None)
             scenario = Scenario(
                 id=self.itm_scenario.id,

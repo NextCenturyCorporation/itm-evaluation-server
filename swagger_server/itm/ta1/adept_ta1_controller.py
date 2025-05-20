@@ -6,16 +6,24 @@ from .itm_ta1_controller import ITMTa1Controller
 
 class AdeptTa1Controller(ITMTa1Controller):
 
-    ADEPT_MJ_ALIGNMENT_DISTRIBUTION_TARGET = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_MJ_ALIGNMENT_DISTRIBUTION_TARGET']
-    ADEPT_IO_ALIGNMENT_DISTRIBUTION_TARGET = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_IO_ALIGNMENT_DISTRIBUTION_TARGET']
+    ADEPT_K1_ALIGNMENT_DISTRIBUTION_TARGET = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_K1_ALIGNMENT_DISTRIBUTION_TARGET']
+    ADEPT_K2_ALIGNMENT_DISTRIBUTION_TARGET = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_K2_ALIGNMENT_DISTRIBUTION_TARGET']
+    ADEPT_K3_ALIGNMENT_DISTRIBUTION_TARGET = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_K3_ALIGNMENT_DISTRIBUTION_TARGET']
+    ADEPT_K4_ALIGNMENT_DISTRIBUTION_TARGET = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_K4_ALIGNMENT_DISTRIBUTION_TARGET']
     ADEPT_EVAL_FILENAMES = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_EVAL_FILENAMES'].replace('\n','').split(',')
     ADEPT_TRAIN_FILENAMES = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_TRAIN_FILENAMES'].replace('\n','').split(',')
-    ADEPT_EVAL_MJ_SCENARIOS = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_EVAL_MJ_SCENARIOS'].replace('\n','').split(',')
-    ADEPT_EVAL_IO_SCENARIOS = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_EVAL_IO_SCENARIOS'].replace('\n','').split(',')
-    ADEPT_TRAIN_MJ_SCENARIOS = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_TRAIN_MJ_SCENARIOS'].replace('\n','').split(',')
-    ADEPT_TRAIN_IO_SCENARIOS = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_TRAIN_IO_SCENARIOS'].replace('\n','').split(',')
-    ADEPT_MJ_ALIGNMENT_TARGETS = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_MJ_ALIGNMENT_TARGETS'].replace('\n','').split(',')
-    ADEPT_IO_ALIGNMENT_TARGETS = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_IO_ALIGNMENT_TARGETS'].replace('\n','').split(',')
+    ADEPT_EVAL_K1_SCENARIOS = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_EVAL_K1_SCENARIOS'].replace('\n','').split(',')
+    ADEPT_EVAL_K2_SCENARIOS = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_EVAL_K2_SCENARIOS'].replace('\n','').split(',')
+    ADEPT_EVAL_K3_SCENARIOS = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_EVAL_K3_SCENARIOS'].replace('\n','').split(',')
+    ADEPT_EVAL_K4_SCENARIOS = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_EVAL_K4_SCENARIOS'].replace('\n','').split(',')
+    ADEPT_TRAIN_K1_SCENARIOS = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_TRAIN_K1_SCENARIOS'].replace('\n','').split(',')
+    ADEPT_TRAIN_K2_SCENARIOS = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_TRAIN_K2_SCENARIOS'].replace('\n','').split(',')
+    ADEPT_TRAIN_K3_SCENARIOS = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_TRAIN_K3_SCENARIOS'].replace('\n','').split(',')
+    ADEPT_TRAIN_K4_SCENARIOS = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_TRAIN_K4_SCENARIOS'].replace('\n','').split(',')
+    ADEPT_K1_ALIGNMENT_TARGETS = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_K1_ALIGNMENT_TARGETS'].replace('\n','').split(',')
+    ADEPT_K2_ALIGNMENT_TARGETS = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_K2_ALIGNMENT_TARGETS'].replace('\n','').split(',')
+    ADEPT_K3_ALIGNMENT_TARGETS = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_K3_ALIGNMENT_TARGETS'].replace('\n','').split(',')
+    ADEPT_K4_ALIGNMENT_TARGETS = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_K4_ALIGNMENT_TARGETS'].replace('\n','').split(',')
 
     def __init__(self, alignment_target_id, alignment_target = None):
         super().__init__(self.get_ta1name(), alignment_target_id, alignment_target)
@@ -44,10 +52,14 @@ class AdeptTa1Controller(ITMTa1Controller):
     @staticmethod
     def get_target_ids(itm_scenario) -> list[str]:
         target_ids: list[str] = []
-        if itm_scenario.id in (AdeptTa1Controller.ADEPT_TRAIN_MJ_SCENARIOS if itm_scenario.training else AdeptTa1Controller.ADEPT_EVAL_MJ_SCENARIOS):
-            target_ids.extend(AdeptTa1Controller.ADEPT_MJ_ALIGNMENT_TARGETS)
-        if itm_scenario.id in (AdeptTa1Controller.ADEPT_TRAIN_IO_SCENARIOS if itm_scenario.training else AdeptTa1Controller.ADEPT_EVAL_IO_SCENARIOS):
-            target_ids.extend(AdeptTa1Controller.ADEPT_IO_ALIGNMENT_TARGETS)
+        if itm_scenario.id in (AdeptTa1Controller.ADEPT_TRAIN_K1_SCENARIOS if itm_scenario.training else AdeptTa1Controller.ADEPT_EVAL_K1_SCENARIOS):
+            target_ids.extend(AdeptTa1Controller.ADEPT_K1_ALIGNMENT_TARGETS)
+        if itm_scenario.id in (AdeptTa1Controller.ADEPT_TRAIN_K2_SCENARIOS if itm_scenario.training else AdeptTa1Controller.ADEPT_EVAL_K2_SCENARIOS):
+            target_ids.extend(AdeptTa1Controller.ADEPT_K2_ALIGNMENT_TARGETS)
+        if itm_scenario.id in (AdeptTa1Controller.ADEPT_TRAIN_K3_SCENARIOS if itm_scenario.training else AdeptTa1Controller.ADEPT_EVAL_K3_SCENARIOS):
+            target_ids.extend(AdeptTa1Controller.ADEPT_K3_ALIGNMENT_TARGETS)
+        if itm_scenario.id in (AdeptTa1Controller.ADEPT_TRAIN_K4_SCENARIOS if itm_scenario.training else AdeptTa1Controller.ADEPT_EVAL_K4_SCENARIOS):
+            target_ids.extend(AdeptTa1Controller.ADEPT_K4_ALIGNMENT_TARGETS)
         return target_ids
 
     def supports_probe_alignment(self) -> bool:
@@ -75,10 +87,17 @@ class AdeptTa1Controller(ITMTa1Controller):
             actual_target_id = self.alignment_target_id if not target_id else target_id
             params = {
                 "session_id_1_or_target_id": self.session_id,
-                "session_id_2_or_target_id": actual_target_id,
-                "target_pop_id": self.ADEPT_MJ_ALIGNMENT_DISTRIBUTION_TARGET if 'Moral' in actual_target_id \
-                    else self.ADEPT_IO_ALIGNMENT_DISTRIBUTION_TARGET
+                "session_id_2_or_target_id": actual_target_id
             }
+            # TODO: Refactor this to avoid hardcoding
+            if 'Moral' in actual_target_id or 'Merit' in actual_target_id:
+                params['target_pop_id'] = self.ADEPT_K1_ALIGNMENT_DISTRIBUTION_TARGET
+            elif 'Ingroup' in actual_target_id or 'Affiliation' in actual_target_id:
+                params['target_pop_id'] = self.ADEPT_K2_ALIGNMENT_DISTRIBUTION_TARGET
+            elif 'Search' in actual_target_id:
+                params['target_pop_id'] = self.ADEPT_K3_ALIGNMENT_DISTRIBUTION_TARGET
+            elif 'Safety' in actual_target_id:
+                params['target_pop_id'] = self.ADEPT_K4_ALIGNMENT_DISTRIBUTION_TARGET
         else:
             base_url = f"{self.url}/api/v1/alignment/session"
             params = {
