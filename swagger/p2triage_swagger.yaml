@@ -23,10 +23,6 @@ components:
     DomainState:
       type: object
       description: the current tactical & environmental state of the scenario and of its characters
-      properties:
-        unused:
-          description: unused property; ignore
-          type: string
     DomainCharacter:
       type: object
       description: A character in the scene
@@ -51,17 +47,9 @@ components:
     DomainDemographics:
       type: object
       description: Basic domain-specific properties about the character
-      properties:
-        unused:
-          description: unused property; ignore
-          type: string
     DomainConditions:
       type: object
       description: Domain-specific conditions that specify whether to transition to the next scene or send a probe response
-      properties:
-        unused:
-          description: unused property; ignore
-          type: string
 # Until oneOf is supported for extensible enums, define ThreatTypeEnum here as the BaseThreatTypeEnum strings plus DomainThreatTypeEnum strings (above).
     ThreatTypeEnum:
       type: string
