@@ -8,13 +8,13 @@ SCENARIO_DIRECTORY=swagger_server/itm/data/%(EVALUATION_TYPE)s/scenarios/
 DEFAULT_DOMAIN=p2triage
 SUPPORTED_DOMAINS=p2triage
 
-; Local Default URLs
+; Local Default URL
 ; ADEPT_URL=http://localhost:8081
 
-; AWS TA1 Default URLs (access Prod AWS servers locally)
+; AWS TA1 Default URL (access Prod AWS servers locally)
 ; ADEPT_URL=https://darpaitm.caci.com/adept
 
-; Prod Default URLs (use on production AWS only)
+; Prod Default URL (use on production AWS only)
 ADEPT_URL=http://10.216.38.101:8080
 
 SAVE_HISTORY=True
@@ -27,62 +27,86 @@ HISTORY_S3_BUCKET=itm-ui-assets
 EVAL_NAME=Phase 2 June 2025 Collaboration
 EVAL_NUMBER=8
 
-ADEPT_EVAL_FILENAMES=june2025-adept-eval-MF1.yaml,
-    june2025-adept-eval-AF1.yaml,
-    june2025-adept-eval-SS1.yaml,
-    june2025-adept-eval-PS1.yaml
+ADEPT_EVAL_FILENAMES=june2025-adept-eval-MF.yaml,
+    june2025-adept-eval-AF.yaml,
+    june2025-adept-eval-SS.yaml,
+    june2025-adept-eval-PS.yaml
 
-ADEPT_TRAIN_FILENAMES=june2025-adept-train-MF1.yaml,
-    june2025-adept-train-AF1.yaml,
-    june2025-adept-train-SS1.yaml,
-    june2025-adept-train-PS1.yaml
+ADEPT_TRAIN_FILENAMES=june2025-adept-train-MF.yaml,
+    june2025-adept-train-AF.yaml,
+    june2025-adept-train-SS.yaml,
+    june2025-adept-train-PS.yaml
 
-ADEPT_EVAL_K1_SCENARIOS=June2025-MF1-eval
-ADEPT_EVAL_K2_SCENARIOS=June2025-AF1-eval
-ADEPT_EVAL_K3_SCENARIOS=June2025-SS1-eval
-ADEPT_EVAL_K4_SCENARIOS=June2025-PS1-eval
+ADEPT_EVAL_K1_SCENARIOS=June2025-MF-eval
+ADEPT_EVAL_K2_SCENARIOS=June2025-AF-eval
+ADEPT_EVAL_K3_SCENARIOS=June2025-SS-eval
+ADEPT_EVAL_K4_SCENARIOS=June2025-PS-eval
 
-ADEPT_TRAIN_K1_SCENARIOS=June2025-MF1-train
-ADEPT_TRAIN_K2_SCENARIOS=June2025-AF1-train
-ADEPT_TRAIN_K3_SCENARIOS=June2025-SS1-train
-ADEPT_TRAIN_K4_SCENARIOS=June2025-PS1-train
+ADEPT_TRAIN_K1_SCENARIOS=June2025-MF-train
+ADEPT_TRAIN_K2_SCENARIOS=June2025-AF-train
+ADEPT_TRAIN_K3_SCENARIOS=June2025-SS-train
+ADEPT_TRAIN_K4_SCENARIOS=June2025-PS-train
 
-ADEPT_K1_ALIGNMENT_TARGETS=ADEPT-June2025-Moral focus-0.2,
-    ADEPT-June2025-Moral focus-0.3,
-    ADEPT-June2025-Moral focus-0.4,
-    ADEPT-June2025-Moral focus-0.5,
-    ADEPT-June2025-Moral focus-0.6,
-    ADEPT-June2025-Moral focus-0.7,
-    ADEPT-June2025-Moral focus-0.8
+ADEPT_K1_ALIGNMENT_TARGETS=ADEPT-June2025-merit-0.0,
+    ADEPT-June2025-merit-0.1,
+    ADEPT-June2025-merit-0.2,
+    ADEPT-June2025-merit-0.3,
+    ADEPT-June2025-merit-0.4,
+    ADEPT-June2025-merit-0.5,
+    ADEPT-June2025-merit-0.6,
+    ADEPT-June2025-merit-0.7,
+    ADEPT-June2025-merit-0.8,
+    ADEPT-June2025-merit-0.9,
+    ADEPT-June2025-merit-1.0,
+    ADEPT-June2025-affiliation_merit-0.0_0.0,
+    ADEPT-June2025-affiliation_merit-0.0_1.0,
+    ADEPT-June2025-affiliation_merit-1.0_0.0,
+    ADEPT-June2025-affiliation_merit-1.0_1.0
 
-ADEPT_K2_ALIGNMENT_TARGETS=ADEPT-June2025-Affiliation focus-0.2,
-    ADEPT-June2025-Affiliation focus-0.3,
-    ADEPT-June2025-Affiliation focus-0.4,
-    ADEPT-June2025-Affiliation focus-0.5,
-    ADEPT-June2025-Affiliation focus-0.6,
-    ADEPT-June2025-Affiliation focus-0.7,
-    ADEPT-June2025-Affiliation focus-0.8
+ADEPT_K2_ALIGNMENT_TARGETS=ADEPT-June2025-affiliation-0.0,
+    ADEPT-June2025-affiliation-0.1,
+    ADEPT-June2025-affiliation-0.2,
+    ADEPT-June2025-affiliation-0.3,
+    ADEPT-June2025-affiliation-0.4,
+    ADEPT-June2025-affiliation-0.5,
+    ADEPT-June2025-affiliation-0.6,
+    ADEPT-June2025-affiliation-0.7,
+    ADEPT-June2025-affiliation-0.8,
+    ADEPT-June2025-affiliation-0.9,
+    ADEPT-June2025-affiliation-1.0,
+    ADEPT-June2025-affiliation_merit-0.0_0.0,
+    ADEPT-June2025-affiliation_merit-0.0_1.0,
+    ADEPT-June2025-affiliation_merit-1.0_0.0,
+    ADEPT-June2025-affiliation_merit-1.0_1.0
 
-ADEPT_K3_ALIGNMENT_TARGETS=ADEPT-June2025-Search vs Stay-0.2,
-    ADEPT-June2025-Search vs Stay-0.3,
-    ADEPT-June2025-Search vs Stay-0.4,
-    ADEPT-June2025-Search vs Stay-0.5,
-    ADEPT-June2025-Search vs Stay-0.6,
-    ADEPT-June2025-Search vs Stay-0.7,
-    ADEPT-June2025-Search vs Stay-0.8
+ADEPT_K3_ALIGNMENT_TARGETS=ADEPT-June2025-search-0.0,
+    ADEPT-June2025-search-0.1,
+    ADEPT-June2025-search-0.2,
+    ADEPT-June2025-search-0.3,
+    ADEPT-June2025-search-0.4,
+    ADEPT-June2025-search-0.5,
+    ADEPT-June2025-search-0.6,
+    ADEPT-June2025-search-0.7,
+    ADEPT-June2025-search-0.8,
+    ADEPT-June2025-search-0.9,
+    ADEPT-June2025-search-1.0
 
-ADEPT_K4_ALIGNMENT_TARGETS=ADEPT-June2025-Personal Safety-0.2,
-    ADEPT-June2025-Personal Safety-0.3,
-    ADEPT-June2025-Personal Safety-0.4,
-    ADEPT-June2025-Personal Safety-0.5,
-    ADEPT-June2025-Personal Safety-0.6,
-    ADEPT-June2025-Personal Safety-0.7,
-    ADEPT-June2025-Personal Safety-0.8
+ADEPT_K4_ALIGNMENT_TARGETS=ADEPT-June2025-personal_safety-0.0,
+    ADEPT-June2025-personal_safety-0.1,
+    ADEPT-June2025-personal_safety-0.2,
+    ADEPT-June2025-personal_safety-0.3,
+    ADEPT-June2025-personal_safety-0.4,
+    ADEPT-June2025-personal_safety-0.5,
+    ADEPT-June2025-personal_safety-0.6,
+    ADEPT-June2025-personal_safety-0.7,
+    ADEPT-June2025-personal_safety-0.8,
+    ADEPT-June2025-personal_safety-0.9,
+    ADEPT-June2025-personal_safety-1.0
 
-ADEPT_K1_ALIGNMENT_DISTRIBUTION_TARGET=ADEPT-June2025-Moral focus-Population-All
-ADEPT_K2_ALIGNMENT_DISTRIBUTION_TARGET=ADEPT-June2025-Affiliation focus-Population-All
-ADEPT_K3_ALIGNMENT_DISTRIBUTION_TARGET=ADEPT-June2025-Search vs Stay-Population-All
-ADEPT_K4_ALIGNMENT_DISTRIBUTION_TARGET=ADEPT-June2025-Personal Safety-Population-All
+ADEPT_K1_ALIGNMENT_DISTRIBUTION_TARGET=ADEPT-June2025-merit-Population-All
+ADEPT_K2_ALIGNMENT_DISTRIBUTION_TARGET=ADEPT-June2025-affiliation-Population-All
+ADEPT_K3_ALIGNMENT_DISTRIBUTION_TARGET=ADEPT-June2025-search-Population-All
+ADEPT_K4_ALIGNMENT_DISTRIBUTION_TARGET=ADEPT-June2025-personal_safety-Population-All
 
 # All of these keywords must be present in the DEFAULT configuration
 REQUIRED_CONFIG=EVALUATION_TYPE, SCENARIO_DIRECTORY, ADEPT_URL, SAVE_HISTORY, SAVE_HISTORY_TO_S3,
@@ -95,14 +119,14 @@ REQUIRED_CONFIG=EVALUATION_TYPE, SCENARIO_DIRECTORY, ADEPT_URL, SAVE_HISTORY, SA
 
 [GROUP_TARGET]
 
-ADEPT_K1_ALIGNMENT_TARGETS=ADEPT-June2025-Moral focus-Group-Low,
-    ADEPT-June2025-Moral Focus-Group-High
+ADEPT_K1_ALIGNMENT_TARGETS=ADEPT-June2025-merit-Group-Low,
+    ADEPT-June2025-merit-Group-High
 
-ADEPT_K2_ALIGNMENT_TARGETS=ADEPT-June2025-Affiliation focus-Group-Low,
-    ADEPT-June2025-Affiliation Focus-Group-High
+ADEPT_K2_ALIGNMENT_TARGETS=ADEPT-June2025-affiliation-Group-Low,
+    ADEPT-June2025-affiliation-Group-High
 
-ADEPT_K3_ALIGNMENT_TARGETS=ADEPT-June2025-Search vs Stay-Group-Low,
-    ADEPT-June2025-Search vs Stay-Group-High
+ADEPT_K3_ALIGNMENT_TARGETS=ADEPT-June2025-search-Group-Low,
+    ADEPT-June2025-search-Group-High
 
-ADEPT_K4_ALIGNMENT_TARGETS=ADEPT-June2025-Ingroup Bias-Group-Low,
-    ADEPT-June2025-Personal Safety-Group-High
+ADEPT_K4_ALIGNMENT_TARGETS=ADEPT-June2025-personal_safety-Group-Low,
+    ADEPT-June2025-personal_safety-Group-High

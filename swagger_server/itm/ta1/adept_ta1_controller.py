@@ -90,13 +90,13 @@ class AdeptTa1Controller(ITMTa1Controller):
                 "session_id_2_or_target_id": actual_target_id
             }
             # TODO: Refactor this to avoid hardcoding
-            if 'Moral' in actual_target_id or 'Merit' in actual_target_id:
+            if 'Moral' in actual_target_id or 'merit' in actual_target_id:
                 params['target_pop_id'] = self.ADEPT_K1_ALIGNMENT_DISTRIBUTION_TARGET
-            elif 'Ingroup' in actual_target_id or 'Affiliation' in actual_target_id:
+            elif 'Ingroup' in actual_target_id or 'affiliation' in actual_target_id:
                 params['target_pop_id'] = self.ADEPT_K2_ALIGNMENT_DISTRIBUTION_TARGET
-            elif 'Search' in actual_target_id:
+            elif 'search' in actual_target_id:
                 params['target_pop_id'] = self.ADEPT_K3_ALIGNMENT_DISTRIBUTION_TARGET
-            elif 'Safety' in actual_target_id:
+            elif 'safety' in actual_target_id:
                 params['target_pop_id'] = self.ADEPT_K4_ALIGNMENT_DISTRIBUTION_TARGET
         else:
             base_url = f"{self.url}/api/v1/alignment/session"
