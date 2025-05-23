@@ -16,14 +16,17 @@ class AdeptTa1Controller(ITMTa1Controller):
     ADEPT_EVAL_K2_SCENARIOS = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_EVAL_K2_SCENARIOS'].replace('\n','').split(',')
     ADEPT_EVAL_K3_SCENARIOS = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_EVAL_K3_SCENARIOS'].replace('\n','').split(',')
     ADEPT_EVAL_K4_SCENARIOS = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_EVAL_K4_SCENARIOS'].replace('\n','').split(',')
+    ADEPT_EVAL_M1_SCENARIOS = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_EVAL_M1_SCENARIOS'].replace('\n','').split(',')
     ADEPT_TRAIN_K1_SCENARIOS = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_TRAIN_K1_SCENARIOS'].replace('\n','').split(',')
     ADEPT_TRAIN_K2_SCENARIOS = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_TRAIN_K2_SCENARIOS'].replace('\n','').split(',')
     ADEPT_TRAIN_K3_SCENARIOS = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_TRAIN_K3_SCENARIOS'].replace('\n','').split(',')
     ADEPT_TRAIN_K4_SCENARIOS = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_TRAIN_K4_SCENARIOS'].replace('\n','').split(',')
+    ADEPT_TRAIN_M1_SCENARIOS = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_TRAIN_M1_SCENARIOS'].replace('\n','').split(',')
     ADEPT_K1_ALIGNMENT_TARGETS = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_K1_ALIGNMENT_TARGETS'].replace('\n','').split(',')
     ADEPT_K2_ALIGNMENT_TARGETS = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_K2_ALIGNMENT_TARGETS'].replace('\n','').split(',')
     ADEPT_K3_ALIGNMENT_TARGETS = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_K3_ALIGNMENT_TARGETS'].replace('\n','').split(',')
     ADEPT_K4_ALIGNMENT_TARGETS = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_K4_ALIGNMENT_TARGETS'].replace('\n','').split(',')
+    ADEPT_M1_ALIGNMENT_TARGETS = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_M1_ALIGNMENT_TARGETS'].replace('\n','').split(',')
 
     def __init__(self, alignment_target_id, alignment_target = None):
         super().__init__(self.get_ta1name(), alignment_target_id, alignment_target)
@@ -60,6 +63,8 @@ class AdeptTa1Controller(ITMTa1Controller):
             target_ids.extend(AdeptTa1Controller.ADEPT_K3_ALIGNMENT_TARGETS)
         if itm_scenario.id in (AdeptTa1Controller.ADEPT_TRAIN_K4_SCENARIOS if itm_scenario.training else AdeptTa1Controller.ADEPT_EVAL_K4_SCENARIOS):
             target_ids.extend(AdeptTa1Controller.ADEPT_K4_ALIGNMENT_TARGETS)
+        if itm_scenario.id in (AdeptTa1Controller.ADEPT_TRAIN_M1_SCENARIOS if itm_scenario.training else AdeptTa1Controller.ADEPT_EVAL_M1_SCENARIOS):
+            target_ids.extend(AdeptTa1Controller.ADEPT_M1_ALIGNMENT_TARGETS)
         return target_ids
 
     def supports_probe_alignment(self) -> bool:

@@ -30,7 +30,6 @@ state:
 
 scenes:
   - id: Probe 1
-    next_scene: Probe 5
     end_scene_allowed: true
     action_mapping:
       - action_id: continue_treating_your_current_patient
