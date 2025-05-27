@@ -27,22 +27,20 @@ HISTORY_S3_BUCKET=itm-ui-assets
 EVAL_NAME=Phase 2 June 2025 Collaboration
 EVAL_NUMBER=8
 
-ADEPT_EVAL_FILENAMES=june2025-adept-eval-MF.yaml,
-    june2025-adept-eval-AF.yaml,
-    june2025-adept-eval-SS.yaml,
-    june2025-adept-eval-PS.yaml
-    june2025-adept-eval-MF-AF.yaml
+ADEPT_EVAL_FILENAMES=june2025-adept-eval-MF1.yaml,june2025-adept-eval-MF2.yaml,june2025-adept-eval-MF3.yaml,
+    june2025-adept-eval-AF1.yaml,june2025-adept-eval-AF2.yaml,june2025-adept-eval-AF3.yaml,
+    june2025-adept-eval-SS1.yaml,june2025-adept-eval-SS2.yaml,june2025-adept-eval-SS3.yaml,
+    june2025-adept-eval-PS1.yaml,june2025-adept-eval-PS2.yaml,june2025-adept-eval-PS3.yaml
 
 ADEPT_TRAIN_FILENAMES=june2025-adept-train-MF.yaml,
     june2025-adept-train-AF.yaml,
     june2025-adept-train-SS.yaml,
     june2025-adept-train-PS.yaml
-    june2025-adept-train-MF-AF.yaml
 
-ADEPT_EVAL_K1_SCENARIOS=June2025-MF-eval
-ADEPT_EVAL_K2_SCENARIOS=June2025-AF-eval
-ADEPT_EVAL_K3_SCENARIOS=June2025-SS-eval
-ADEPT_EVAL_K4_SCENARIOS=June2025-PS-eval
+ADEPT_EVAL_K1_SCENARIOS=June2025-MF1-eval,June2025-MF2-eval,June2025-MF3-eval
+ADEPT_EVAL_K2_SCENARIOS=June2025-AF1-eval,June2025-AF2-eval,June2025-AF3-eval
+ADEPT_EVAL_K3_SCENARIOS=June2025-SS1-eval,June2025-SS2-eval,June2025-SS3-eval
+ADEPT_EVAL_K4_SCENARIOS=June2025-PS1-eval,June2025-PS2-eval,June2025-PS3-eval
 ADEPT_EVAL_M1_SCENARIOS=June2025-MF-AF-eval
 
 ADEPT_TRAIN_K1_SCENARIOS=June2025-MF-train
