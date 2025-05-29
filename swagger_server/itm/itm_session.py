@@ -366,7 +366,7 @@ class ITMSession:
             if self.ta1_integration:
                 try:
                     user_id = f"{self.session_id}_{self.itm_scenario.id}"
-                    ta1_session_id = self.itm_scenario.ta1_controller.new_session(context='false')
+                    ta1_session_id = self.itm_scenario.ta1_controller.new_session(context='false' if self.domain == 'p2triage' else user_id)
                     self.history.add_history(
                         "TA1 Session ID", {}, ta1_session_id
                     )

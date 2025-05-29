@@ -14,7 +14,7 @@ class TriageScenario(ITMScenario):
 
     # Hide vitals (if not already visited) and hidden injuries
     @staticmethod
-    def clear_hidden_data(state: State):
+    def clear_hidden_data(state: State, training: bool):
         for character in state.characters:
             if character.visited:
                 character.injuries[:] = \
