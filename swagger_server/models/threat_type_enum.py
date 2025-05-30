@@ -15,17 +15,7 @@ class ThreatTypeEnum(Model):
     """
     allowed enum values
     """
-    UNKNOWN = 'Unknown'
-    CIVIL_UNREST = 'Civil unrest'
-    DRONE_ACTIVITY = 'Drone activity'
-    EXTREME_WEATHER = 'Extreme weather'
-    FIRE = 'Fire'
-    GUNFIRE = 'Gunfire'
-    IED_ACTIVITY = 'IED activity'
-    MINES = 'Mines'
-    POISONOUS_VEGETATION = 'Poisonous vegetation'
-    PREDATORS = 'Predators'
-    UNSTABLE_STRUCTURE = 'Unstable structure'
+    NOT_SPECIFIED = 'Not specified'
     def __init__(self):  # noqa: E501
         """ThreatTypeEnum - a model defined in OpenAPI
 

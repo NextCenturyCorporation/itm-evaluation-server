@@ -15,14 +15,7 @@ class CharacterRoleEnum(Model):
     """
     allowed enum values
     """
-    UNKNOWN = 'Unknown'
-    INFANTRY = 'Infantry'
-    SEAL = 'SEAL'
-    COMMAND = 'Command'
-    INTELLIGENCE = 'Intelligence'
-    MEDICAL = 'Medical'
-    SPECIALIST = 'Specialist'
-    COMMUNICATIONS = 'Communications'
+    NOT_SPECIFIED = 'Not specified'
     def __init__(self):  # noqa: E501
         """CharacterRoleEnum - a model defined in OpenAPI
 

@@ -494,29 +494,6 @@ components:
             next_scene: next_scene
             action_conditions:
               elapsed_time_gt: 5
-              supplies:
-              - type: Tourniquet
-                quantity: 1
-                reusable: false
-              character_vitals:
-              - character_id: character_id
-                vitals:
-                  triss: 36.160767
-                  breathing: NORMAL
-                  spo2: NORMAL
-                  avpu: ALERT
-                  heart_rate: NONE
-                  ambulatory: true
-                  mental_status: AGONY
-              - character_id: character_id
-                vitals:
-                  triss: 36.160767
-                  breathing: NORMAL
-                  spo2: NORMAL
-                  avpu: ALERT
-                  heart_rate: NONE
-                  ambulatory: true
-                  mental_status: AGONY
               elapsed_time_lt: 5
               probe_responses:
               - probe-1-choice2
@@ -530,29 +507,6 @@ components:
             action_id: action_01
             probe_conditions:
               elapsed_time_gt: 5
-              supplies:
-              - type: Tourniquet
-                quantity: 1
-                reusable: false
-              character_vitals:
-              - character_id: character_id
-                vitals:
-                  triss: 36.160767
-                  breathing: NORMAL
-                  spo2: NORMAL
-                  avpu: ALERT
-                  heart_rate: NONE
-                  ambulatory: true
-                  mental_status: AGONY
-              - character_id: character_id
-                vitals:
-                  triss: 36.160767
-                  breathing: NORMAL
-                  spo2: NORMAL
-                  avpu: ALERT
-                  heart_rate: NONE
-                  ambulatory: true
-                  mental_status: AGONY
               elapsed_time_lt: 5
               probe_responses:
               - probe-1-choice2
@@ -584,29 +538,6 @@ components:
             next_scene: next_scene
             action_conditions:
               elapsed_time_gt: 5
-              supplies:
-              - type: Tourniquet
-                quantity: 1
-                reusable: false
-              character_vitals:
-              - character_id: character_id
-                vitals:
-                  triss: 36.160767
-                  breathing: NORMAL
-                  spo2: NORMAL
-                  avpu: ALERT
-                  heart_rate: NONE
-                  ambulatory: true
-                  mental_status: AGONY
-              - character_id: character_id
-                vitals:
-                  triss: 36.160767
-                  breathing: NORMAL
-                  spo2: NORMAL
-                  avpu: ALERT
-                  heart_rate: NONE
-                  ambulatory: true
-                  mental_status: AGONY
               elapsed_time_lt: 5
               probe_responses:
               - probe-1-choice2
@@ -620,29 +551,6 @@ components:
             action_id: action_01
             probe_conditions:
               elapsed_time_gt: 5
-              supplies:
-              - type: Tourniquet
-                quantity: 1
-                reusable: false
-              character_vitals:
-              - character_id: character_id
-                vitals:
-                  triss: 36.160767
-                  breathing: NORMAL
-                  spo2: NORMAL
-                  avpu: ALERT
-                  heart_rate: NONE
-                  ambulatory: true
-                  mental_status: AGONY
-              - character_id: character_id
-                vitals:
-                  triss: 36.160767
-                  breathing: NORMAL
-                  spo2: NORMAL
-                  avpu: ALERT
-                  heart_rate: NONE
-                  ambulatory: true
-                  mental_status: AGONY
               elapsed_time_lt: 5
               probe_responses:
               - probe-1-choice2
@@ -663,169 +571,30 @@ components:
           id: id
           state:
             characters:
-            - unstructured_postassess: 22 YO male Marine hit by an IED. Puncture wound
-                on the left side of the neck.  Burns cover about 30 of his body.
-              directness_of_causality: direct
-              injuries:
-              - severity: minor
-                name: Ear Bleed
-                treatments_required: 1
-                treatments_applied: 0
-                location: right forearm
-                source_character: source_character
-                status: hidden
-              - severity: minor
-                name: Ear Bleed
-                treatments_required: 1
-                treatments_applied: 0
-                location: right forearm
-                source_character: source_character
-                status: hidden
-              rapport: loathing
-              intent: intend major harm
+            - attribute_rating: 0.14658129
+              medical_condition: 0.6027456
               unstructured: 22-year-old male with brown hair
-              visited: false
               name: Mike
-              tag: DELAYED
+              rapport: loathing
               id: id
-              has_blanket: false
-              vitals:
-                triss: 36.160767
-                breathing: NORMAL
-                spo2: NORMAL
-                avpu: ALERT
-                heart_rate: NONE
-                ambulatory: true
-                mental_status: AGONY
               unseen: false
               demographics:
-                skills:
-                - skill_type: Combat
-                  level: skilled
-                - skill_type: Medical
-                  level: novice
-                role: Unknown
-                military_disposition: null
+                role: Not specified
                 race: American Indian
-                military_branch: US Army
                 sex: M
-                rank: E-1
-                mission_importance: normal
-                rank_title: Private (Recruit)
-                age: 25
-            - unstructured_postassess: 22 YO male Marine hit by an IED. Puncture wound
-                on the left side of the neck.  Burns cover about 30 of his body.
-              directness_of_causality: direct
-              injuries:
-              - severity: minor
-                name: Ear Bleed
-                treatments_required: 1
-                treatments_applied: 0
-                location: right forearm
-                source_character: source_character
-                status: hidden
-              - severity: minor
-                name: Ear Bleed
-                treatments_required: 1
-                treatments_applied: 0
-                location: right forearm
-                source_character: source_character
-                status: hidden
-              rapport: loathing
-              intent: intend major harm
+                age: 74
+            - attribute_rating: 0.14658129
+              medical_condition: 0.6027456
               unstructured: 22-year-old male with brown hair
-              visited: false
               name: Mike
-              tag: DELAYED
+              rapport: loathing
               id: id
-              has_blanket: false
-              vitals:
-                triss: 36.160767
-                breathing: NORMAL
-                spo2: NORMAL
-                avpu: ALERT
-                heart_rate: NONE
-                ambulatory: true
-                mental_status: AGONY
               unseen: false
               demographics:
-                skills:
-                - skill_type: Combat
-                  level: skilled
-                - skill_type: Medical
-                  level: novice
-                role: Unknown
-                military_disposition: null
+                role: Not specified
                 race: American Indian
-                military_branch: US Army
                 sex: M
-                rank: E-1
-                mission_importance: normal
-                rank_title: Private (Recruit)
-                age: 25
-            mission:
-              civilian_presence: none
-              political_climate: political_climate
-              unstructured: Place sensors in and around the jungle base
-              communication_capability: both
-              roe: roe
-              mission_type: Attack
-              character_importance:
-              - - Mike: normal
-                - Intelligence Officer: priority
-              - - Mike: normal
-                - Intelligence Officer: priority
-              medical_policies:
-              - Treat All Neutrally
-              - Treat All Neutrally
-            environment:
-              decision_environment:
-                city_infrastructure: city_infrastructure
-                oxygen_levels: normal
-                injury_triggers: explosion
-                unstructured: Injuries triggered by an IED detonation.  Helicopter
-                  Evac expected in one hour for up to three casualties.
-                population_density: none
-                air_quality: green
-                aid:
-                - patients_treated:
-                  - Allied US
-                  - Allied US
-                  delay: 0.14658129
-                  role: 2
-                  id: id
-                  type: local military
-                  max_transport: 1
-                - patients_treated:
-                  - Allied US
-                  - Allied US
-                  delay: 0.14658129
-                  role: 2
-                  id: id
-                  type: local military
-                  max_transport: 1
-                sound_restriction: unrestricted
-                movement_restriction: unrestricted
-              sim_environment:
-                noise_ambient: none
-                visibility: none
-                fauna: none
-                unstructured: It was a dark and stormy night.
-                weather: clear
-                flora: none
-                temperature: -56.981365
-                humidity: 60.274563
-                type: jungle
-                lighting: none
-                terrain: jungle
-                noise_peak: none
-            supplies:
-            - type: Tourniquet
-              quantity: 4
-              reusable: false
-            - type: Tourniquet
-              quantity: 4
-              reusable: false
+                age: 74
             unstructured: unstructured
             meta_info:
               scene_id: scene_id
@@ -849,7 +618,7 @@ components:
               - "threat_state.threats[gunshots].threat_type"
               source: source
               type: change
-              when: 2.302136
+              when: 0.8008282
               object: object
             - action_id: action_id
               unstructured: unstructured
@@ -858,35 +627,12 @@ components:
               - "threat_state.threats[gunshots].threat_type"
               source: source
               type: change
-              when: 2.302136
+              when: 0.8008282
               object: object
           end_scene_allowed: true
           persist_characters: true
           transitions:
             elapsed_time_gt: 5
-            supplies:
-            - type: Tourniquet
-              quantity: 1
-              reusable: false
-            character_vitals:
-            - character_id: character_id
-              vitals:
-                triss: 36.160767
-                breathing: NORMAL
-                spo2: NORMAL
-                avpu: ALERT
-                heart_rate: NONE
-                ambulatory: true
-                mental_status: AGONY
-            - character_id: character_id
-              vitals:
-                triss: 36.160767
-                breathing: NORMAL
-                spo2: NORMAL
-                avpu: ALERT
-                heart_rate: NONE
-                ambulatory: true
-                mental_status: AGONY
             elapsed_time_lt: 5
             probe_responses:
             - probe-1-choice2
@@ -924,29 +670,6 @@ components:
             next_scene: next_scene
             action_conditions:
               elapsed_time_gt: 5
-              supplies:
-              - type: Tourniquet
-                quantity: 1
-                reusable: false
-              character_vitals:
-              - character_id: character_id
-                vitals:
-                  triss: 36.160767
-                  breathing: NORMAL
-                  spo2: NORMAL
-                  avpu: ALERT
-                  heart_rate: NONE
-                  ambulatory: true
-                  mental_status: AGONY
-              - character_id: character_id
-                vitals:
-                  triss: 36.160767
-                  breathing: NORMAL
-                  spo2: NORMAL
-                  avpu: ALERT
-                  heart_rate: NONE
-                  ambulatory: true
-                  mental_status: AGONY
               elapsed_time_lt: 5
               probe_responses:
               - probe-1-choice2
@@ -960,29 +683,6 @@ components:
             action_id: action_01
             probe_conditions:
               elapsed_time_gt: 5
-              supplies:
-              - type: Tourniquet
-                quantity: 1
-                reusable: false
-              character_vitals:
-              - character_id: character_id
-                vitals:
-                  triss: 36.160767
-                  breathing: NORMAL
-                  spo2: NORMAL
-                  avpu: ALERT
-                  heart_rate: NONE
-                  ambulatory: true
-                  mental_status: AGONY
-              - character_id: character_id
-                vitals:
-                  triss: 36.160767
-                  breathing: NORMAL
-                  spo2: NORMAL
-                  avpu: ALERT
-                  heart_rate: NONE
-                  ambulatory: true
-                  mental_status: AGONY
               elapsed_time_lt: 5
               probe_responses:
               - probe-1-choice2
@@ -1014,29 +714,6 @@ components:
             next_scene: next_scene
             action_conditions:
               elapsed_time_gt: 5
-              supplies:
-              - type: Tourniquet
-                quantity: 1
-                reusable: false
-              character_vitals:
-              - character_id: character_id
-                vitals:
-                  triss: 36.160767
-                  breathing: NORMAL
-                  spo2: NORMAL
-                  avpu: ALERT
-                  heart_rate: NONE
-                  ambulatory: true
-                  mental_status: AGONY
-              - character_id: character_id
-                vitals:
-                  triss: 36.160767
-                  breathing: NORMAL
-                  spo2: NORMAL
-                  avpu: ALERT
-                  heart_rate: NONE
-                  ambulatory: true
-                  mental_status: AGONY
               elapsed_time_lt: 5
               probe_responses:
               - probe-1-choice2
@@ -1050,29 +727,6 @@ components:
             action_id: action_01
             probe_conditions:
               elapsed_time_gt: 5
-              supplies:
-              - type: Tourniquet
-                quantity: 1
-                reusable: false
-              character_vitals:
-              - character_id: character_id
-                vitals:
-                  triss: 36.160767
-                  breathing: NORMAL
-                  spo2: NORMAL
-                  avpu: ALERT
-                  heart_rate: NONE
-                  ambulatory: true
-                  mental_status: AGONY
-              - character_id: character_id
-                vitals:
-                  triss: 36.160767
-                  breathing: NORMAL
-                  spo2: NORMAL
-                  avpu: ALERT
-                  heart_rate: NONE
-                  ambulatory: true
-                  mental_status: AGONY
               elapsed_time_lt: 5
               probe_responses:
               - probe-1-choice2
@@ -1093,169 +747,30 @@ components:
           id: id
           state:
             characters:
-            - unstructured_postassess: 22 YO male Marine hit by an IED. Puncture wound
-                on the left side of the neck.  Burns cover about 30 of his body.
-              directness_of_causality: direct
-              injuries:
-              - severity: minor
-                name: Ear Bleed
-                treatments_required: 1
-                treatments_applied: 0
-                location: right forearm
-                source_character: source_character
-                status: hidden
-              - severity: minor
-                name: Ear Bleed
-                treatments_required: 1
-                treatments_applied: 0
-                location: right forearm
-                source_character: source_character
-                status: hidden
-              rapport: loathing
-              intent: intend major harm
+            - attribute_rating: 0.14658129
+              medical_condition: 0.6027456
               unstructured: 22-year-old male with brown hair
-              visited: false
               name: Mike
-              tag: DELAYED
+              rapport: loathing
               id: id
-              has_blanket: false
-              vitals:
-                triss: 36.160767
-                breathing: NORMAL
-                spo2: NORMAL
-                avpu: ALERT
-                heart_rate: NONE
-                ambulatory: true
-                mental_status: AGONY
               unseen: false
               demographics:
-                skills:
-                - skill_type: Combat
-                  level: skilled
-                - skill_type: Medical
-                  level: novice
-                role: Unknown
-                military_disposition: null
+                role: Not specified
                 race: American Indian
-                military_branch: US Army
                 sex: M
-                rank: E-1
-                mission_importance: normal
-                rank_title: Private (Recruit)
-                age: 25
-            - unstructured_postassess: 22 YO male Marine hit by an IED. Puncture wound
-                on the left side of the neck.  Burns cover about 30 of his body.
-              directness_of_causality: direct
-              injuries:
-              - severity: minor
-                name: Ear Bleed
-                treatments_required: 1
-                treatments_applied: 0
-                location: right forearm
-                source_character: source_character
-                status: hidden
-              - severity: minor
-                name: Ear Bleed
-                treatments_required: 1
-                treatments_applied: 0
-                location: right forearm
-                source_character: source_character
-                status: hidden
-              rapport: loathing
-              intent: intend major harm
+                age: 74
+            - attribute_rating: 0.14658129
+              medical_condition: 0.6027456
               unstructured: 22-year-old male with brown hair
-              visited: false
               name: Mike
-              tag: DELAYED
+              rapport: loathing
               id: id
-              has_blanket: false
-              vitals:
-                triss: 36.160767
-                breathing: NORMAL
-                spo2: NORMAL
-                avpu: ALERT
-                heart_rate: NONE
-                ambulatory: true
-                mental_status: AGONY
               unseen: false
               demographics:
-                skills:
-                - skill_type: Combat
-                  level: skilled
-                - skill_type: Medical
-                  level: novice
-                role: Unknown
-                military_disposition: null
+                role: Not specified
                 race: American Indian
-                military_branch: US Army
                 sex: M
-                rank: E-1
-                mission_importance: normal
-                rank_title: Private (Recruit)
-                age: 25
-            mission:
-              civilian_presence: none
-              political_climate: political_climate
-              unstructured: Place sensors in and around the jungle base
-              communication_capability: both
-              roe: roe
-              mission_type: Attack
-              character_importance:
-              - - Mike: normal
-                - Intelligence Officer: priority
-              - - Mike: normal
-                - Intelligence Officer: priority
-              medical_policies:
-              - Treat All Neutrally
-              - Treat All Neutrally
-            environment:
-              decision_environment:
-                city_infrastructure: city_infrastructure
-                oxygen_levels: normal
-                injury_triggers: explosion
-                unstructured: Injuries triggered by an IED detonation.  Helicopter
-                  Evac expected in one hour for up to three casualties.
-                population_density: none
-                air_quality: green
-                aid:
-                - patients_treated:
-                  - Allied US
-                  - Allied US
-                  delay: 0.14658129
-                  role: 2
-                  id: id
-                  type: local military
-                  max_transport: 1
-                - patients_treated:
-                  - Allied US
-                  - Allied US
-                  delay: 0.14658129
-                  role: 2
-                  id: id
-                  type: local military
-                  max_transport: 1
-                sound_restriction: unrestricted
-                movement_restriction: unrestricted
-              sim_environment:
-                noise_ambient: none
-                visibility: none
-                fauna: none
-                unstructured: It was a dark and stormy night.
-                weather: clear
-                flora: none
-                temperature: -56.981365
-                humidity: 60.274563
-                type: jungle
-                lighting: none
-                terrain: jungle
-                noise_peak: none
-            supplies:
-            - type: Tourniquet
-              quantity: 4
-              reusable: false
-            - type: Tourniquet
-              quantity: 4
-              reusable: false
+                age: 74
             unstructured: unstructured
             meta_info:
               scene_id: scene_id
@@ -1279,7 +794,7 @@ components:
               - "threat_state.threats[gunshots].threat_type"
               source: source
               type: change
-              when: 2.302136
+              when: 0.8008282
               object: object
             - action_id: action_id
               unstructured: unstructured
@@ -1288,35 +803,12 @@ components:
               - "threat_state.threats[gunshots].threat_type"
               source: source
               type: change
-              when: 2.302136
+              when: 0.8008282
               object: object
           end_scene_allowed: true
           persist_characters: true
           transitions:
             elapsed_time_gt: 5
-            supplies:
-            - type: Tourniquet
-              quantity: 1
-              reusable: false
-            character_vitals:
-            - character_id: character_id
-              vitals:
-                triss: 36.160767
-                breathing: NORMAL
-                spo2: NORMAL
-                avpu: ALERT
-                heart_rate: NONE
-                ambulatory: true
-                mental_status: AGONY
-            - character_id: character_id
-              vitals:
-                triss: 36.160767
-                breathing: NORMAL
-                spo2: NORMAL
-                avpu: ALERT
-                heart_rate: NONE
-                ambulatory: true
-                mental_status: AGONY
             elapsed_time_lt: 5
             probe_responses:
             - probe-1-choice2
@@ -1335,169 +827,30 @@ components:
         id: id
         state:
           characters:
-          - unstructured_postassess: 22 YO male Marine hit by an IED. Puncture wound
-              on the left side of the neck.  Burns cover about 30 of his body.
-            directness_of_causality: direct
-            injuries:
-            - severity: minor
-              name: Ear Bleed
-              treatments_required: 1
-              treatments_applied: 0
-              location: right forearm
-              source_character: source_character
-              status: hidden
-            - severity: minor
-              name: Ear Bleed
-              treatments_required: 1
-              treatments_applied: 0
-              location: right forearm
-              source_character: source_character
-              status: hidden
-            rapport: loathing
-            intent: intend major harm
+          - attribute_rating: 0.14658129
+            medical_condition: 0.6027456
             unstructured: 22-year-old male with brown hair
-            visited: false
             name: Mike
-            tag: DELAYED
+            rapport: loathing
             id: id
-            has_blanket: false
-            vitals:
-              triss: 36.160767
-              breathing: NORMAL
-              spo2: NORMAL
-              avpu: ALERT
-              heart_rate: NONE
-              ambulatory: true
-              mental_status: AGONY
             unseen: false
             demographics:
-              skills:
-              - skill_type: Combat
-                level: skilled
-              - skill_type: Medical
-                level: novice
-              role: Unknown
-              military_disposition: null
+              role: Not specified
               race: American Indian
-              military_branch: US Army
               sex: M
-              rank: E-1
-              mission_importance: normal
-              rank_title: Private (Recruit)
-              age: 25
-          - unstructured_postassess: 22 YO male Marine hit by an IED. Puncture wound
-              on the left side of the neck.  Burns cover about 30 of his body.
-            directness_of_causality: direct
-            injuries:
-            - severity: minor
-              name: Ear Bleed
-              treatments_required: 1
-              treatments_applied: 0
-              location: right forearm
-              source_character: source_character
-              status: hidden
-            - severity: minor
-              name: Ear Bleed
-              treatments_required: 1
-              treatments_applied: 0
-              location: right forearm
-              source_character: source_character
-              status: hidden
-            rapport: loathing
-            intent: intend major harm
+              age: 74
+          - attribute_rating: 0.14658129
+            medical_condition: 0.6027456
             unstructured: 22-year-old male with brown hair
-            visited: false
             name: Mike
-            tag: DELAYED
+            rapport: loathing
             id: id
-            has_blanket: false
-            vitals:
-              triss: 36.160767
-              breathing: NORMAL
-              spo2: NORMAL
-              avpu: ALERT
-              heart_rate: NONE
-              ambulatory: true
-              mental_status: AGONY
             unseen: false
             demographics:
-              skills:
-              - skill_type: Combat
-                level: skilled
-              - skill_type: Medical
-                level: novice
-              role: Unknown
-              military_disposition: null
+              role: Not specified
               race: American Indian
-              military_branch: US Army
               sex: M
-              rank: E-1
-              mission_importance: normal
-              rank_title: Private (Recruit)
-              age: 25
-          mission:
-            civilian_presence: none
-            political_climate: political_climate
-            unstructured: Place sensors in and around the jungle base
-            communication_capability: both
-            roe: roe
-            mission_type: Attack
-            character_importance:
-            - - Mike: normal
-              - Intelligence Officer: priority
-            - - Mike: normal
-              - Intelligence Officer: priority
-            medical_policies:
-            - Treat All Neutrally
-            - Treat All Neutrally
-          environment:
-            decision_environment:
-              city_infrastructure: city_infrastructure
-              oxygen_levels: normal
-              injury_triggers: explosion
-              unstructured: Injuries triggered by an IED detonation.  Helicopter Evac
-                expected in one hour for up to three casualties.
-              population_density: none
-              air_quality: green
-              aid:
-              - patients_treated:
-                - Allied US
-                - Allied US
-                delay: 0.14658129
-                role: 2
-                id: id
-                type: local military
-                max_transport: 1
-              - patients_treated:
-                - Allied US
-                - Allied US
-                delay: 0.14658129
-                role: 2
-                id: id
-                type: local military
-                max_transport: 1
-              sound_restriction: unrestricted
-              movement_restriction: unrestricted
-            sim_environment:
-              noise_ambient: none
-              visibility: none
-              fauna: none
-              unstructured: It was a dark and stormy night.
-              weather: clear
-              flora: none
-              temperature: -56.981365
-              humidity: 60.274563
-              type: jungle
-              lighting: none
-              terrain: jungle
-              noise_peak: none
-          supplies:
-          - type: Tourniquet
-            quantity: 4
-            reusable: false
-          - type: Tourniquet
-            quantity: 4
-            reusable: false
+              age: 74
           unstructured: unstructured
           meta_info:
             scene_id: scene_id
@@ -1521,7 +874,7 @@ components:
             - "threat_state.threats[gunshots].threat_type"
             source: source
             type: change
-            when: 2.302136
+            when: 0.8008282
             object: object
           - action_id: action_id
             unstructured: unstructured
@@ -1530,7 +883,7 @@ components:
             - "threat_state.threats[gunshots].threat_type"
             source: source
             type: change
-            when: 2.302136
+            when: 0.8008282
             object: object
         first_scene: first_scene
       properties:
@@ -1813,169 +1166,30 @@ components:
       description: The complete state of the scene or scenario
       example:
         characters:
-        - unstructured_postassess: 22 YO male Marine hit by an IED. Puncture wound
-            on the left side of the neck.  Burns cover about 30 of his body.
-          directness_of_causality: direct
-          injuries:
-          - severity: minor
-            name: Ear Bleed
-            treatments_required: 1
-            treatments_applied: 0
-            location: right forearm
-            source_character: source_character
-            status: hidden
-          - severity: minor
-            name: Ear Bleed
-            treatments_required: 1
-            treatments_applied: 0
-            location: right forearm
-            source_character: source_character
-            status: hidden
-          rapport: loathing
-          intent: intend major harm
+        - attribute_rating: 0.14658129
+          medical_condition: 0.6027456
           unstructured: 22-year-old male with brown hair
-          visited: false
           name: Mike
-          tag: DELAYED
+          rapport: loathing
           id: id
-          has_blanket: false
-          vitals:
-            triss: 36.160767
-            breathing: NORMAL
-            spo2: NORMAL
-            avpu: ALERT
-            heart_rate: NONE
-            ambulatory: true
-            mental_status: AGONY
           unseen: false
           demographics:
-            skills:
-            - skill_type: Combat
-              level: skilled
-            - skill_type: Medical
-              level: novice
-            role: Unknown
-            military_disposition: null
+            role: Not specified
             race: American Indian
-            military_branch: US Army
             sex: M
-            rank: E-1
-            mission_importance: normal
-            rank_title: Private (Recruit)
-            age: 25
-        - unstructured_postassess: 22 YO male Marine hit by an IED. Puncture wound
-            on the left side of the neck.  Burns cover about 30 of his body.
-          directness_of_causality: direct
-          injuries:
-          - severity: minor
-            name: Ear Bleed
-            treatments_required: 1
-            treatments_applied: 0
-            location: right forearm
-            source_character: source_character
-            status: hidden
-          - severity: minor
-            name: Ear Bleed
-            treatments_required: 1
-            treatments_applied: 0
-            location: right forearm
-            source_character: source_character
-            status: hidden
-          rapport: loathing
-          intent: intend major harm
+            age: 74
+        - attribute_rating: 0.14658129
+          medical_condition: 0.6027456
           unstructured: 22-year-old male with brown hair
-          visited: false
           name: Mike
-          tag: DELAYED
+          rapport: loathing
           id: id
-          has_blanket: false
-          vitals:
-            triss: 36.160767
-            breathing: NORMAL
-            spo2: NORMAL
-            avpu: ALERT
-            heart_rate: NONE
-            ambulatory: true
-            mental_status: AGONY
           unseen: false
           demographics:
-            skills:
-            - skill_type: Combat
-              level: skilled
-            - skill_type: Medical
-              level: novice
-            role: Unknown
-            military_disposition: null
+            role: Not specified
             race: American Indian
-            military_branch: US Army
             sex: M
-            rank: E-1
-            mission_importance: normal
-            rank_title: Private (Recruit)
-            age: 25
-        mission:
-          civilian_presence: none
-          political_climate: political_climate
-          unstructured: Place sensors in and around the jungle base
-          communication_capability: both
-          roe: roe
-          mission_type: Attack
-          character_importance:
-          - - Mike: normal
-            - Intelligence Officer: priority
-          - - Mike: normal
-            - Intelligence Officer: priority
-          medical_policies:
-          - Treat All Neutrally
-          - Treat All Neutrally
-        environment:
-          decision_environment:
-            city_infrastructure: city_infrastructure
-            oxygen_levels: normal
-            injury_triggers: explosion
-            unstructured: Injuries triggered by an IED detonation.  Helicopter Evac
-              expected in one hour for up to three casualties.
-            population_density: none
-            air_quality: green
-            aid:
-            - patients_treated:
-              - Allied US
-              - Allied US
-              delay: 0.14658129
-              role: 2
-              id: id
-              type: local military
-              max_transport: 1
-            - patients_treated:
-              - Allied US
-              - Allied US
-              delay: 0.14658129
-              role: 2
-              id: id
-              type: local military
-              max_transport: 1
-            sound_restriction: unrestricted
-            movement_restriction: unrestricted
-          sim_environment:
-            noise_ambient: none
-            visibility: none
-            fauna: none
-            unstructured: It was a dark and stormy night.
-            weather: clear
-            flora: none
-            temperature: -56.981365
-            humidity: 60.274563
-            type: jungle
-            lighting: none
-            terrain: jungle
-            noise_peak: none
-        supplies:
-        - type: Tourniquet
-          quantity: 4
-          reusable: false
-        - type: Tourniquet
-          quantity: 4
-          reusable: false
+            age: 74
         unstructured: unstructured
         meta_info:
           scene_id: scene_id
@@ -1999,7 +1213,7 @@ components:
           - "threat_state.threats[gunshots].threat_type"
           source: source
           type: change
-          when: 2.302136
+          when: 0.8008282
           object: object
         - action_id: action_id
           unstructured: unstructured
@@ -2008,7 +1222,7 @@ components:
           - "threat_state.threats[gunshots].threat_type"
           source: source
           type: change
-          when: 2.302136
+          when: 0.8008282
           object: object
       title: State
       type: object
@@ -2075,7 +1289,7 @@ components:
         - "threat_state.threats[gunshots].threat_type"
         source: source
         type: change
-        when: 2.302136
+        when: 0.8008282
         object: object
       properties:
         unstructured:
@@ -2157,56 +1371,18 @@ components:
       - $ref: "#/components/schemas/BaseCharacter"
       description: a character in the scene
       example:
-        unstructured_postassess: 22 YO male Marine hit by an IED. Puncture wound on
-          the left side of the neck.  Burns cover about 30 of his body.
-        directness_of_causality: direct
-        injuries:
-        - severity: minor
-          name: Ear Bleed
-          treatments_required: 1
-          treatments_applied: 0
-          location: right forearm
-          source_character: source_character
-          status: hidden
-        - severity: minor
-          name: Ear Bleed
-          treatments_required: 1
-          treatments_applied: 0
-          location: right forearm
-          source_character: source_character
-          status: hidden
-        rapport: loathing
-        intent: intend major harm
+        attribute_rating: 0.14658129
+        medical_condition: 0.6027456
         unstructured: 22-year-old male with brown hair
-        visited: false
         name: Mike
-        tag: DELAYED
+        rapport: loathing
         id: id
-        has_blanket: false
-        vitals:
-          triss: 36.160767
-          breathing: NORMAL
-          spo2: NORMAL
-          avpu: ALERT
-          heart_rate: NONE
-          ambulatory: true
-          mental_status: AGONY
         unseen: false
         demographics:
-          skills:
-          - skill_type: Combat
-            level: skilled
-          - skill_type: Medical
-            level: novice
-          role: Unknown
-          military_disposition: null
+          role: Not specified
           race: American Indian
-          military_branch: US Army
           sex: M
-          rank: E-1
-          mission_importance: normal
-          rank_title: Private (Recruit)
-          age: 25
+          age: 74
       title: Character
       type: object
     BaseDemographics:
@@ -2236,20 +1412,10 @@ components:
       - $ref: "#/components/schemas/BaseDemographics"
       description: Basic properties about the character
       example:
-        skills:
-        - skill_type: Combat
-          level: skilled
-        - skill_type: Medical
-          level: novice
-        role: Unknown
-        military_disposition: null
+        role: Not specified
         race: American Indian
-        military_branch: US Army
         sex: M
-        rank: E-1
-        mission_importance: normal
-        rank_title: Private (Recruit)
-        age: 25
+        age: 74
       title: Demographics
       type: object
     Scene:
@@ -2277,29 +1443,6 @@ components:
           next_scene: next_scene
           action_conditions:
             elapsed_time_gt: 5
-            supplies:
-            - type: Tourniquet
-              quantity: 1
-              reusable: false
-            character_vitals:
-            - character_id: character_id
-              vitals:
-                triss: 36.160767
-                breathing: NORMAL
-                spo2: NORMAL
-                avpu: ALERT
-                heart_rate: NONE
-                ambulatory: true
-                mental_status: AGONY
-            - character_id: character_id
-              vitals:
-                triss: 36.160767
-                breathing: NORMAL
-                spo2: NORMAL
-                avpu: ALERT
-                heart_rate: NONE
-                ambulatory: true
-                mental_status: AGONY
             elapsed_time_lt: 5
             probe_responses:
             - probe-1-choice2
@@ -2313,29 +1456,6 @@ components:
           action_id: action_01
           probe_conditions:
             elapsed_time_gt: 5
-            supplies:
-            - type: Tourniquet
-              quantity: 1
-              reusable: false
-            character_vitals:
-            - character_id: character_id
-              vitals:
-                triss: 36.160767
-                breathing: NORMAL
-                spo2: NORMAL
-                avpu: ALERT
-                heart_rate: NONE
-                ambulatory: true
-                mental_status: AGONY
-            - character_id: character_id
-              vitals:
-                triss: 36.160767
-                breathing: NORMAL
-                spo2: NORMAL
-                avpu: ALERT
-                heart_rate: NONE
-                ambulatory: true
-                mental_status: AGONY
             elapsed_time_lt: 5
             probe_responses:
             - probe-1-choice2
@@ -2367,29 +1487,6 @@ components:
           next_scene: next_scene
           action_conditions:
             elapsed_time_gt: 5
-            supplies:
-            - type: Tourniquet
-              quantity: 1
-              reusable: false
-            character_vitals:
-            - character_id: character_id
-              vitals:
-                triss: 36.160767
-                breathing: NORMAL
-                spo2: NORMAL
-                avpu: ALERT
-                heart_rate: NONE
-                ambulatory: true
-                mental_status: AGONY
-            - character_id: character_id
-              vitals:
-                triss: 36.160767
-                breathing: NORMAL
-                spo2: NORMAL
-                avpu: ALERT
-                heart_rate: NONE
-                ambulatory: true
-                mental_status: AGONY
             elapsed_time_lt: 5
             probe_responses:
             - probe-1-choice2
@@ -2403,29 +1500,6 @@ components:
           action_id: action_01
           probe_conditions:
             elapsed_time_gt: 5
-            supplies:
-            - type: Tourniquet
-              quantity: 1
-              reusable: false
-            character_vitals:
-            - character_id: character_id
-              vitals:
-                triss: 36.160767
-                breathing: NORMAL
-                spo2: NORMAL
-                avpu: ALERT
-                heart_rate: NONE
-                ambulatory: true
-                mental_status: AGONY
-            - character_id: character_id
-              vitals:
-                triss: 36.160767
-                breathing: NORMAL
-                spo2: NORMAL
-                avpu: ALERT
-                heart_rate: NONE
-                ambulatory: true
-                mental_status: AGONY
             elapsed_time_lt: 5
             probe_responses:
             - probe-1-choice2
@@ -2446,169 +1520,30 @@ components:
         id: id
         state:
           characters:
-          - unstructured_postassess: 22 YO male Marine hit by an IED. Puncture wound
-              on the left side of the neck.  Burns cover about 30 of his body.
-            directness_of_causality: direct
-            injuries:
-            - severity: minor
-              name: Ear Bleed
-              treatments_required: 1
-              treatments_applied: 0
-              location: right forearm
-              source_character: source_character
-              status: hidden
-            - severity: minor
-              name: Ear Bleed
-              treatments_required: 1
-              treatments_applied: 0
-              location: right forearm
-              source_character: source_character
-              status: hidden
-            rapport: loathing
-            intent: intend major harm
+          - attribute_rating: 0.14658129
+            medical_condition: 0.6027456
             unstructured: 22-year-old male with brown hair
-            visited: false
             name: Mike
-            tag: DELAYED
+            rapport: loathing
             id: id
-            has_blanket: false
-            vitals:
-              triss: 36.160767
-              breathing: NORMAL
-              spo2: NORMAL
-              avpu: ALERT
-              heart_rate: NONE
-              ambulatory: true
-              mental_status: AGONY
             unseen: false
             demographics:
-              skills:
-              - skill_type: Combat
-                level: skilled
-              - skill_type: Medical
-                level: novice
-              role: Unknown
-              military_disposition: null
+              role: Not specified
               race: American Indian
-              military_branch: US Army
               sex: M
-              rank: E-1
-              mission_importance: normal
-              rank_title: Private (Recruit)
-              age: 25
-          - unstructured_postassess: 22 YO male Marine hit by an IED. Puncture wound
-              on the left side of the neck.  Burns cover about 30 of his body.
-            directness_of_causality: direct
-            injuries:
-            - severity: minor
-              name: Ear Bleed
-              treatments_required: 1
-              treatments_applied: 0
-              location: right forearm
-              source_character: source_character
-              status: hidden
-            - severity: minor
-              name: Ear Bleed
-              treatments_required: 1
-              treatments_applied: 0
-              location: right forearm
-              source_character: source_character
-              status: hidden
-            rapport: loathing
-            intent: intend major harm
+              age: 74
+          - attribute_rating: 0.14658129
+            medical_condition: 0.6027456
             unstructured: 22-year-old male with brown hair
-            visited: false
             name: Mike
-            tag: DELAYED
+            rapport: loathing
             id: id
-            has_blanket: false
-            vitals:
-              triss: 36.160767
-              breathing: NORMAL
-              spo2: NORMAL
-              avpu: ALERT
-              heart_rate: NONE
-              ambulatory: true
-              mental_status: AGONY
             unseen: false
             demographics:
-              skills:
-              - skill_type: Combat
-                level: skilled
-              - skill_type: Medical
-                level: novice
-              role: Unknown
-              military_disposition: null
+              role: Not specified
               race: American Indian
-              military_branch: US Army
               sex: M
-              rank: E-1
-              mission_importance: normal
-              rank_title: Private (Recruit)
-              age: 25
-          mission:
-            civilian_presence: none
-            political_climate: political_climate
-            unstructured: Place sensors in and around the jungle base
-            communication_capability: both
-            roe: roe
-            mission_type: Attack
-            character_importance:
-            - - Mike: normal
-              - Intelligence Officer: priority
-            - - Mike: normal
-              - Intelligence Officer: priority
-            medical_policies:
-            - Treat All Neutrally
-            - Treat All Neutrally
-          environment:
-            decision_environment:
-              city_infrastructure: city_infrastructure
-              oxygen_levels: normal
-              injury_triggers: explosion
-              unstructured: Injuries triggered by an IED detonation.  Helicopter Evac
-                expected in one hour for up to three casualties.
-              population_density: none
-              air_quality: green
-              aid:
-              - patients_treated:
-                - Allied US
-                - Allied US
-                delay: 0.14658129
-                role: 2
-                id: id
-                type: local military
-                max_transport: 1
-              - patients_treated:
-                - Allied US
-                - Allied US
-                delay: 0.14658129
-                role: 2
-                id: id
-                type: local military
-                max_transport: 1
-              sound_restriction: unrestricted
-              movement_restriction: unrestricted
-            sim_environment:
-              noise_ambient: none
-              visibility: none
-              fauna: none
-              unstructured: It was a dark and stormy night.
-              weather: clear
-              flora: none
-              temperature: -56.981365
-              humidity: 60.274563
-              type: jungle
-              lighting: none
-              terrain: jungle
-              noise_peak: none
-          supplies:
-          - type: Tourniquet
-            quantity: 4
-            reusable: false
-          - type: Tourniquet
-            quantity: 4
-            reusable: false
+              age: 74
           unstructured: unstructured
           meta_info:
             scene_id: scene_id
@@ -2632,7 +1567,7 @@ components:
             - "threat_state.threats[gunshots].threat_type"
             source: source
             type: change
-            when: 2.302136
+            when: 0.8008282
             object: object
           - action_id: action_id
             unstructured: unstructured
@@ -2641,35 +1576,12 @@ components:
             - "threat_state.threats[gunshots].threat_type"
             source: source
             type: change
-            when: 2.302136
+            when: 0.8008282
             object: object
         end_scene_allowed: true
         persist_characters: true
         transitions:
           elapsed_time_gt: 5
-          supplies:
-          - type: Tourniquet
-            quantity: 1
-            reusable: false
-          character_vitals:
-          - character_id: character_id
-            vitals:
-              triss: 36.160767
-              breathing: NORMAL
-              spo2: NORMAL
-              avpu: ALERT
-              heart_rate: NONE
-              ambulatory: true
-              mental_status: AGONY
-          - character_id: character_id
-            vitals:
-              triss: 36.160767
-              breathing: NORMAL
-              spo2: NORMAL
-              avpu: ALERT
-              heart_rate: NONE
-              ambulatory: true
-              mental_status: AGONY
           elapsed_time_lt: 5
           probe_responses:
           - probe-1-choice2
@@ -2826,29 +1738,6 @@ components:
         next_scene: next_scene
         action_conditions:
           elapsed_time_gt: 5
-          supplies:
-          - type: Tourniquet
-            quantity: 1
-            reusable: false
-          character_vitals:
-          - character_id: character_id
-            vitals:
-              triss: 36.160767
-              breathing: NORMAL
-              spo2: NORMAL
-              avpu: ALERT
-              heart_rate: NONE
-              ambulatory: true
-              mental_status: AGONY
-          - character_id: character_id
-            vitals:
-              triss: 36.160767
-              breathing: NORMAL
-              spo2: NORMAL
-              avpu: ALERT
-              heart_rate: NONE
-              ambulatory: true
-              mental_status: AGONY
           elapsed_time_lt: 5
           probe_responses:
           - probe-1-choice2
@@ -2862,29 +1751,6 @@ components:
         action_id: action_01
         probe_conditions:
           elapsed_time_gt: 5
-          supplies:
-          - type: Tourniquet
-            quantity: 1
-            reusable: false
-          character_vitals:
-          - character_id: character_id
-            vitals:
-              triss: 36.160767
-              breathing: NORMAL
-              spo2: NORMAL
-              avpu: ALERT
-              heart_rate: NONE
-              ambulatory: true
-              mental_status: AGONY
-          - character_id: character_id
-            vitals:
-              triss: 36.160767
-              breathing: NORMAL
-              spo2: NORMAL
-              avpu: ALERT
-              heart_rate: NONE
-              ambulatory: true
-              mental_status: AGONY
           elapsed_time_lt: 5
           probe_responses:
           - probe-1-choice2
@@ -3029,29 +1895,6 @@ components:
         or send a probe response
       example:
         elapsed_time_gt: 5
-        supplies:
-        - type: Tourniquet
-          quantity: 1
-          reusable: false
-        character_vitals:
-        - character_id: character_id
-          vitals:
-            triss: 36.160767
-            breathing: NORMAL
-            spo2: NORMAL
-            avpu: ALERT
-            heart_rate: NONE
-            ambulatory: true
-            mental_status: AGONY
-        - character_id: character_id
-          vitals:
-            triss: 36.160767
-            breathing: NORMAL
-            spo2: NORMAL
-            avpu: ALERT
-            heart_rate: NONE
-            ambulatory: true
-            mental_status: AGONY
         elapsed_time_lt: 5
         probe_responses:
         - probe-1-choice2
@@ -3203,1103 +2046,47 @@ components:
     DomainState:
       description: the current tactical & environmental state of the scenario and
         of its characters
-      properties:
-        mission:
-          $ref: "#/components/schemas/Mission"
-        environment:
-          $ref: "#/components/schemas/Environment"
-        supplies:
-          description: A list of supplies available to the medic
-          items:
-            $ref: "#/components/schemas/Supplies"
-          title: supplies
-          type: array
-      required:
-      - environment
-      - supplies
-      title: DomainState
       type: object
-    Mission:
-      description: Mission parameters that impact decision-making
-      example:
-        civilian_presence: none
-        political_climate: political_climate
-        unstructured: Place sensors in and around the jungle base
-        communication_capability: both
-        roe: roe
-        mission_type: Attack
-        character_importance:
-        - - Mike: normal
-          - Intelligence Officer: priority
-        - - Mike: normal
-          - Intelligence Officer: priority
-        medical_policies:
-        - Treat All Neutrally
-        - Treat All Neutrally
-      properties:
-        unstructured:
-          description: natural language description of current mission
-          example: Place sensors in and around the jungle base
-          title: unstructured
-          type: string
-        mission_type:
-          $ref: "#/components/schemas/MissionTypeEnum"
-        character_importance:
-          description: A list of pairs of character ids with an indicator of how mission-critical
-            the character is
-          items:
-            additionalProperties:
-              type: string
-            description: A character id with an indicator of how mission-critical
-              that character is
-            example:
-            - Mike: normal
-            - Intelligence Officer: priority
-            type: object
-          title: character_importance
-          type: array
-        civilian_presence:
-          $ref: "#/components/schemas/CivilianPresenceEnum"
-        communication_capability:
-          $ref: "#/components/schemas/CommunicationCapabilityEnum"
-        roe:
-          description: "rules of engagement to inform decision-making, but not to\
-            \ restrict decision space"
-          title: roe
-          type: string
-        political_climate:
-          description: The political climate in a mission to inform decision-making
-          title: political_climate
-          type: string
-        medical_policies:
-          description: A list of medical policies; omit this property if no special
-            policy is in place
-          items:
-            $ref: "#/components/schemas/MedicalPoliciesEnum"
-          title: medical_policies
-          type: array
-      required:
-      - mission_type
-      - unstructured
-      title: Mission
-      type: object
-    MissionTypeEnum:
-      description: enumeration of possible mission types
-      enum:
-      - Attack
-      - Defend
-      - Delay
-      - Patrol
-      - Reconnaissance
-      - Ambush
-      - Listening/Observation
-      - Direct Action
-      - Hostage rescue
-      - Asset transport
-      - Sensor emplacement
-      - Intelligence gathering
-      - Civil affairs
-      - Training
-      - Sabotage
-      - Security patrol
-      - Fire support
-      - Nuclear deterrence
-      - Extraction
-      - Unknown
-      title: MissionTypeEnum
-      type: string
-    CivilianPresenceEnum:
-      description: Indicator of how many civilians are present in the mission
-      enum:
-      - none
-      - limited
-      - some
-      - extensive
-      - crowd
-      title: CivilianPresenceEnum
-      type: string
-    CommunicationCapabilityEnum:
-      default: both
-      description: current availability of internal and external communication
-      enum:
-      - internal
-      - external
-      - both
-      - neither
-      title: CommunicationCapabilityEnum
-      type: string
-    MedicalPoliciesEnum:
-      description: Directives issued by competent military authority
-      enum:
-      - Treat All Neutrally
-      - Treat Enemy LLE
-      - Treat Civilian LLE
-      - Prioritize Mission
-      title: MedicalPoliciesEnum
-      type: string
-    Environment:
-      description: "Environmental parameters that impact either decision-making, the\
-        \ simulation environment, or both"
-      example:
-        decision_environment:
-          city_infrastructure: city_infrastructure
-          oxygen_levels: normal
-          injury_triggers: explosion
-          unstructured: Injuries triggered by an IED detonation.  Helicopter Evac
-            expected in one hour for up to three casualties.
-          population_density: none
-          air_quality: green
-          aid:
-          - patients_treated:
-            - Allied US
-            - Allied US
-            delay: 0.14658129
-            role: 2
-            id: id
-            type: local military
-            max_transport: 1
-          - patients_treated:
-            - Allied US
-            - Allied US
-            delay: 0.14658129
-            role: 2
-            id: id
-            type: local military
-            max_transport: 1
-          sound_restriction: unrestricted
-          movement_restriction: unrestricted
-        sim_environment:
-          noise_ambient: none
-          visibility: none
-          fauna: none
-          unstructured: It was a dark and stormy night.
-          weather: clear
-          flora: none
-          temperature: -56.981365
-          humidity: 60.274563
-          type: jungle
-          lighting: none
-          terrain: jungle
-          noise_peak: none
-      properties:
-        sim_environment:
-          $ref: "#/components/schemas/SimEnvironment"
-        decision_environment:
-          $ref: "#/components/schemas/DecisionEnvironment"
-      required:
-      - sim_environment
-      title: Environment
-      type: object
-    SimEnvironment:
-      description: Environmental elements that impact simulation configuration
-      example:
-        noise_ambient: none
-        visibility: none
-        fauna: none
-        unstructured: It was a dark and stormy night.
-        weather: clear
-        flora: none
-        temperature: -56.981365
-        humidity: 60.274563
-        type: jungle
-        lighting: none
-        terrain: jungle
-        noise_peak: none
-      properties:
-        unstructured:
-          description: "Natural language, plain text description of the environment"
-          example: It was a dark and stormy night.
-          title: unstructured
-          type: string
-        type:
-          $ref: "#/components/schemas/SimEnvironmentTypeEnum"
-        weather:
-          $ref: "#/components/schemas/WeatherTypeEnum"
-        terrain:
-          $ref: "#/components/schemas/TerrainTypeEnum"
-        flora:
-          $ref: "#/components/schemas/FloraTypeEnum"
-        fauna:
-          $ref: "#/components/schemas/FaunaTypeEnum"
-        temperature:
-          description: numerical temperature in degrees Fahrenheit
-          format: float
-          maximum: 150.0
-          minimum: -75.0
-          title: temperature
-          type: number
-        humidity:
-          description: "Numerical relative humidity, in percentage"
-          format: float
-          maximum: 100.0
-          minimum: 0.0
-          title: humidity
-          type: number
-        lighting:
-          $ref: "#/components/schemas/LightingTypeEnum"
-        visibility:
-          $ref: "#/components/schemas/VisibilityTypeEnum"
-        noise_ambient:
-          $ref: "#/components/schemas/AmbientNoiseEnum"
-        noise_peak:
-          $ref: "#/components/schemas/PeakNoiseEnum"
-      required:
-      - type
-      title: SimEnvironment
-      type: object
-    SimEnvironmentTypeEnum:
-      description: Basic setting for the entire scenario
-      enum:
-      - jungle
-      - submarine
-      - urban
-      - desert
-      title: SimEnvironmentTypeEnum
-      type: string
-    WeatherTypeEnum:
-      description: Descriptor of the scenario weather
-      enum:
-      - clear
-      - wind
-      - clouds
-      - rain
-      - fog
-      - thunderstorm
-      - hail
-      - sleet
-      - snow
-      title: WeatherTypeEnum
-      type: string
-    TerrainTypeEnum:
-      description: Descriptor for the scenario terrain
-      enum:
-      - jungle
-      - indoors
-      - urban
-      - dunes
-      - forest
-      - beach
-      - mountain
-      - plains
-      - hills
-      - swamp
-      - flat
-      - rough
-      - extreme
-      title: TerrainTypeEnum
-      type: string
-    FloraTypeEnum:
-      description: Descriptor of local vegetation.
-      enum:
-      - none
-      - limited
-      - normal
-      - lush
-      - extensive
-      title: FloraTypeEnum
-      type: string
-    FaunaTypeEnum:
-      description: Descriptor of local animal/insect activity
-      enum:
-      - none
-      - limited
-      - normal
-      - high
-      - pervasive
-      title: FaunaTypeEnum
-      type: string
-    LightingTypeEnum:
-      description: Descriptor of available natural or man-made lighting
-      enum:
-      - none
-      - limited
-      - normal
-      - bright
-      - flashing
-      title: LightingTypeEnum
-      type: string
-    VisibilityTypeEnum:
-      description: "Descriptor for operational visibility; affected by time of day,\
-        \ lighting, weather, terrain, etc."
-      enum:
-      - none
-      - very low
-      - low
-      - moderate
-      - good
-      - excellent
-      title: VisibilityTypeEnum
-      type: string
-    AmbientNoiseEnum:
-      description: Descriptor for background noise level
-      enum:
-      - none
-      - quiet
-      - normal
-      - noisy
-      - extreme
-      title: AmbientNoiseEnum
-      type: string
-    PeakNoiseEnum:
-      description: "Descriptor for peak noise level due to gunfire, vehicles, helicopters,\
-        \ etc."
-      enum:
-      - none
-      - quiet
-      - normal
-      - noisy
-      - extreme
-      title: PeakNoiseEnum
-      type: string
-    DecisionEnvironment:
-      description: Environmental elements that impact decision-making
-      example:
-        city_infrastructure: city_infrastructure
-        oxygen_levels: normal
-        injury_triggers: explosion
-        unstructured: Injuries triggered by an IED detonation.  Helicopter Evac expected
-          in one hour for up to three casualties.
-        population_density: none
-        air_quality: green
-        aid:
-        - patients_treated:
-          - Allied US
-          - Allied US
-          delay: 0.14658129
-          role: 2
-          id: id
-          type: local military
-          max_transport: 1
-        - patients_treated:
-          - Allied US
-          - Allied US
-          delay: 0.14658129
-          role: 2
-          id: id
-          type: local military
-          max_transport: 1
-        sound_restriction: unrestricted
-        movement_restriction: unrestricted
-      properties:
-        unstructured:
-          description: "Natural language, plain text description of decision-impacting\
-            \ environmental factors"
-          example: Injuries triggered by an IED detonation.  Helicopter Evac expected
-            in one hour for up to three casualties.
-          title: unstructured
-          type: string
-        aid:
-          description: A list of available forms of aid
-          items:
-            $ref: "#/components/schemas/Aid"
-          title: aid
-          type: array
-        movement_restriction:
-          $ref: "#/components/schemas/MovementRestrictionEnum"
-        sound_restriction:
-          $ref: "#/components/schemas/SoundRestrictionEnum"
-        oxygen_levels:
-          $ref: "#/components/schemas/OxygenLevelsEnum"
-        population_density:
-          $ref: "#/components/schemas/PopulationDensityEnum"
-        injury_triggers:
-          $ref: "#/components/schemas/InjuryTriggerEnum"
-        air_quality:
-          $ref: "#/components/schemas/AirQualityEnum"
-        city_infrastructure:
-          description: "Refers to building/city infrastructure that should be noted\
-            \ and known (safe house, etc.)"
-          title: city_infrastructure
-          type: string
-      required:
-      - unstructured
-      title: DecisionEnvironment
-      type: object
-    Aid:
-      description: "Properties related to evacuation, available hospitals, or other\
-        \ forms of aid"
-      example:
-        patients_treated:
-        - Allied US
-        - Allied US
-        delay: 0.14658129
-        role: 2
-        id: id
-        type: local military
-        max_transport: 1
-      properties:
-        id:
-          description: "An identifier for the aid opportunity, unique within the scene"
-          title: id
-          type: string
-        delay:
-          description: "Time until aid is available, in minutes; 0 means ready now"
-          format: float
-          minimum: 0
-          title: delay
-          type: number
-        type:
-          $ref: "#/components/schemas/AidTypeEnum"
-        role:
-          description: |
-            The characterization of health support for the distribution of medical resources and capabilities; Role 1 has higher capability than Role 4. See [health.mil](https://health.mil/Reference-Center/Glossary-Terms/2018/06/22/Roles-of-Medical-Care)
-          maximum: 4
-          minimum: 1
-          title: role
-          type: integer
-        patients_treated:
-          description: "A list of types of patients that can be helped; if omitted,\
-            \ then no restrictions or restrictions are irrelevant"
-          items:
-            $ref: "#/components/schemas/MilitaryDispositionEnum"
-          title: patients_treated
-          type: array
-        max_transport:
-          description: Maximum number of casualties that can be accommodated
-          minimum: 1
-          title: max_transport
-          type: integer
-      required:
-      - delay
-      - id
-      title: Aid
-      type: object
-    AidTypeEnum:
-      description: Types of aid
-      enum:
-      - local military
-      - local non-military
-      - air evac
-      - ground evac
-      - water evac
-      - unknown evac
-      title: AidTypeEnum
-      type: string
-    MilitaryDispositionEnum:
-      description: How the character is to be treated in a military context
-      enum:
-      - Allied US
-      - Allied
-      - Civilian
-      - Military Adversary
-      - Military Neutral
-      - Non-Military Adversary
-      title: MilitaryDispositionEnum
-      type: string
-    MovementRestrictionEnum:
-      description: "Operational movement restrictions due to any factor including\
-        \ terrain, weather, enemy activity, etc."
-      enum:
-      - unrestricted
-      - minimal
-      - moderate
-      - severe
-      - extreme
-      title: MovementRestrictionEnum
-      type: string
-    SoundRestrictionEnum:
-      description: Operational sound restrictions due to any factor
-      enum:
-      - unrestricted
-      - minimal
-      - moderate
-      - severe
-      - extreme
-      title: SoundRestrictionEnum
-      type: string
-    OxygenLevelsEnum:
-      description: Oxygen levels due to any factor that may impact decision-making
-      enum:
-      - normal
-      - limited
-      - scarce
-      - none
-      title: OxygenLevelsEnum
-      type: string
-    PopulationDensityEnum:
-      description: "persons per square meter, each successive term is one more person\
-        \ per square meter"
-      enum:
-      - none
-      - sparse
-      - some
-      - busy
-      - crowded
-      - very crowded
-      - extreme
-      title: PopulationDensityEnum
-      type: string
-    InjuryTriggerEnum:
-      description: What source caused character injuries
-      enum:
-      - explosion
-      - firearm
-      - fall
-      - fight
-      - pathogen
-      - poison
-      - animal
-      - plant
-      - water
-      - collision
-      - electrical
-      - equipment
-      - attack
-      - fire
-      - stress
-      - chemical
-      title: InjuryTriggerEnum
-      type: string
-    AirQualityEnum:
-      description: "Air Quality Index (AQI); see [airnow.gov](https://www.airnow.gov/aqi/aqi-basics/)"
-      enum:
-      - green
-      - yellow
-      - orange
-      - red
-      - purple
-      - maroon
-      title: AirQualityEnum
-      type: string
-    Supplies:
-      description: a single type of medical supply available to the medic
-      example:
-        type: Tourniquet
-        quantity: 4
-        reusable: false
-      properties:
-        type:
-          $ref: "#/components/schemas/SupplyTypeEnum"
-        reusable:
-          default: false
-          description: Whether or not item is consumable/reusable
-          type: boolean
-        quantity:
-          description: Number of items available in the medical bag
-          format: int32
-          maximum: 999
-          minimum: 0
-          type: integer
-      required:
-      - quantity
-      - type
-      title: Supplies
-      type: object
-    SupplyTypeEnum:
-      description: an enumeration of available supply types
-      enum:
-      - Tourniquet
-      - Pressure bandage
-      - Hemostatic gauze
-      - Decompression Needle
-      - Nasopharyngeal airway
-      - Pulse Oximeter
-      - Blanket
-      - Epi Pen
-      - Vented Chest Seal
-      - Pain Medications
-      - Fentanyl Lollipop
-      - Splint
-      - Blood
-      - IV Bag
-      - Burn Dressing
-      title: SupplyTypeEnum
-      type: string
     ThreatTypeEnum:
       description: the type or nature of the threat
       enum:
-      - Unknown
-      - Civil unrest
-      - Drone activity
-      - Extreme weather
-      - Fire
-      - Gunfire
-      - IED activity
-      - Mines
-      - Poisonous vegetation
-      - Predators
-      - Unstable structure
+      - Not specified
       title: ThreatTypeEnum
       type: string
     DomainCharacter:
-      description: "a character in the scene, including injured patients, civilians,\
-        \ medics, etc."
+      description: A character in the scene
       properties:
-        unstructured_postassess:
-          description: unstructured description updated after character assessment
-          example: 22 YO male Marine hit by an IED. Puncture wound on the left side
-            of the neck.  Burns cover about 30 of his body.
-          title: unstructured_postassess
-          type: string
-        has_blanket:
-          default: false
-          description: whether or not this character has a blanket (either wrapped
-            around or underneath)
-          title: has_blanket
-          type: boolean
-        intent:
-          $ref: "#/components/schemas/IntentEnum"
-        directness_of_causality:
-          $ref: "#/components/schemas/DirectnessEnum"
-        injuries:
-          description: A list of Injuries for the character
-          items:
-            $ref: "#/components/schemas/Injury"
-          title: injuries
-          type: array
-        vitals:
-          $ref: "#/components/schemas/Vitals"
-        visited:
-          default: false
-          description: whether or not this character has been visited by the ADM in
-            the current scenario
-          title: visited
-          type: boolean
-        tag:
-          $ref: "#/components/schemas/CharacterTagEnum"
+        medical_condition:
+          description: "The treatment priority/urgency of a patient's medical condition,\
+            \ 0-1 scale"
+          format: float
+          maximum: 1.0
+          minimum: 0.0
+          title: medical_condition
+          type: number
+        attribute_rating:
+          description: |
+            A scenario-specific characteristic of the patient or situation regarding the patient, 0-1 scale:
+              Merit Focus (MF): degree of blame for a patient: 0.0 doesn't consider merit when deciding who to treat / always treats the medically favored patient; 1.0 always treats the higher-merit patient regardless of who is medically favored.
+              Affiliation Focus (AF): degree of closeness for a patient: 0.0 doesn't consider affiliation / always treats the medically favored patient; 1.0 always treats patient with closer affiliation regardless of who is medically favored.
+              Search vs. Stay (SS): urgency to search for/treat a patient: 0.0 always stays despite how urgent the need is to treat patient in next room; 1.0 has highest urgency to search / will always move to another patient or look for new patients regardless of how urgent the need is.
+              Personal Safety Focus (PS): amount of danger to reach a patient: 0.0 doesn't consider personal safety and always switches to the medically favored patient; 1.0 won't risk personal safety / always stays in safest place regardless of who is medically favored.
+          format: float
+          maximum: 1.0
+          minimum: 0.0
+          title: attribute_rating
+          type: number
       title: DomainCharacter
       type: object
-    IntentEnum:
-      description: The intent of the character
-      enum:
-      - intend major harm
-      - intend minor harm
-      - no intent
-      - intend minor help
-      - intend major help
-      title: IntentEnum
-      type: string
-    DirectnessEnum:
-      description: How directly a character is responsible for injury
-      enum:
-      - direct
-      - somewhat direct
-      - somewhat indirect
-      - indirect
-      - none
-      title: DirectnessEnum
-      type: string
-    Injury:
-      description: An injury on a character.
-      example:
-        severity: minor
-        name: Ear Bleed
-        treatments_required: 1
-        treatments_applied: 0
-        location: right forearm
-        source_character: source_character
-        status: hidden
-      properties:
-        name:
-          $ref: "#/components/schemas/InjuryTypeEnum"
-        location:
-          $ref: "#/components/schemas/InjuryLocationEnum"
-        severity:
-          $ref: "#/components/schemas/InjurySeverityEnum"
-        status:
-          $ref: "#/components/schemas/InjuryStatusEnum"
-        source_character:
-          description: "The character id of the person responsible for the injury,\
-            \ subject to the character's `directness_of_causality`"
-          title: source_character
-          type: string
-        treatments_required:
-          description: "The number of successful treatments required to treat the\
-            \ injury fully, which sets `status` to `treated`"
-          minimum: 1
-          title: treatments_required
-          type: integer
-        treatments_applied:
-          default: 0
-          description: The number of successful treatments applied to the injury
-          minimum: 0
-          title: treatments_applied
-          type: integer
-      required:
-      - location
-      - name
-      - status
-      title: Injury
-      type: object
-    InjuryTypeEnum:
-      description: A brief but descriptive label for the injury type
-      enum:
-      - Ear Bleed
-      - Asthmatic
-      - Laceration
-      - Puncture
-      - Shrapnel
-      - Chest Collapse
-      - Amputation
-      - Burn
-      - Abrasion
-      - Broken Bone
-      - Internal
-      - Traumatic Brain Injury
-      - Open Abdominal Wound
-      title: InjuryTypeEnum
-      type: string
-    InjuryLocationEnum:
-      description: the injury location on the character's body
-      enum:
-      - right forearm
-      - left forearm
-      - right hand
-      - left hand
-      - right leg
-      - left leg
-      - right calf
-      - left calf
-      - right thigh
-      - left thigh
-      - right stomach
-      - left stomach
-      - right bicep
-      - left bicep
-      - right shoulder
-      - left shoulder
-      - right side
-      - left side
-      - right chest
-      - left chest
-      - center chest
-      - right wrist
-      - left wrist
-      - left face
-      - right face
-      - left neck
-      - right neck
-      - internal
-      - head
-      - neck
-      - stomach
-      - unspecified
-      title: InjuryLocationEnum
-      type: string
-    InjurySeverityEnum:
-      description: "The severity of the injury; for revelant injuries, impacts blood\
-        \ pool sizes"
-      enum:
-      - minor
-      - moderate
-      - substantial
-      - major
-      - extreme
-      title: InjurySeverityEnum
-      type: string
-    InjuryStatusEnum:
-      description: "Whether the injury is known prior- and post-assessment, and to\
-        \ what extent it's been treated"
-      enum:
-      - hidden
-      - discoverable
-      - visible
-      - discovered
-      - partially treated
-      - treated
-      title: InjuryStatusEnum
-      type: string
-    Vitals:
-      description: Vital levels and other indications of health
-      example:
-        triss: 36.160767
-        breathing: NORMAL
-        spo2: NORMAL
-        avpu: ALERT
-        heart_rate: NONE
-        ambulatory: true
-        mental_status: AGONY
-      properties:
-        avpu:
-          $ref: "#/components/schemas/AvpuLevelEnum"
-        ambulatory:
-          description: whether or not the character can walk
-          title: ambulatory
-          type: boolean
-        mental_status:
-          $ref: "#/components/schemas/MentalStatusEnum"
-        breathing:
-          $ref: "#/components/schemas/BreathingLevelEnum"
-        heart_rate:
-          $ref: "#/components/schemas/HeartRateEnum"
-        triss:
-          description: |
-            Trauma and Injury Severity Score, a calculation that combines patient vitals and injury severity to predict a patient's probability of survival
-          format: float
-          maximum: 100.0
-          minimum: 0.0
-          title: triss
-          type: number
-        spo2:
-          $ref: "#/components/schemas/BloodOxygenEnum"
-      title: Vitals
-      type: object
-    AvpuLevelEnum:
-      description: "Character level of response; anything but ALERT is considered\
-        \ unconscious.  See [Levels of Response](https://www.firstresponse.org.uk/first-aid-az/3-general/first-aid/79-levels-of-response)\
-        \ for details"
-      enum:
-      - ALERT
-      - VOICE
-      - PAIN
-      - UNRESPONSIVE
-      title: AvpuLevelEnum
-      type: string
-    MentalStatusEnum:
-      description: "Character mental status, which impacts interaction in the sim\
-        \ environment"
-      enum:
-      - AGONY
-      - CALM
-      - CONFUSED
-      - SHOCK
-      - UPSET
-      - UNRESPONSIVE
-      title: MentalStatusEnum
-      type: string
-    BreathingLevelEnum:
-      description: Descriptive breathing level
-      enum:
-      - NORMAL
-      - FAST
-      - SLOW
-      - RESTRICTED
-      - NONE
-      title: BreathingLevelEnum
-      type: string
-    HeartRateEnum:
-      description: Descriptive heart rate
-      enum:
-      - NONE
-      - FAINT
-      - NORMAL
-      - FAST
-      title: HeartRateEnum
-      type: string
-    BloodOxygenEnum:
-      description: "A description of the percentage of oxygen in someone's blood,\
-        \ as measured by a pulse oximeter"
-      enum:
-      - NORMAL
-      - LOW
-      - NONE
-      title: BloodOxygenEnum
-      type: string
-    CharacterTagEnum:
-      description: the tag assigned to a character
-      enum:
-      - MINIMAL
-      - DELAYED
-      - IMMEDIATE
-      - EXPECTANT
-      example: DELAYED
-      title: CharacterTagEnum
-      type: string
     CharacterRoleEnum:
       description: The primary role a character has in the scene
       enum:
-      - Unknown
-      - Infantry
-      - SEAL
-      - Command
-      - Intelligence
-      - Medical
-      - Specialist
-      - Communications
+      - Not specified
       title: CharacterRoleEnum
       type: string
     DomainDemographics:
       description: Basic domain-specific properties about the character
-      properties:
-        military_disposition:
-          $ref: "#/components/schemas/MilitaryDispositionEnum"
-        military_branch:
-          $ref: "#/components/schemas/MilitaryBranchEnum"
-        rank:
-          $ref: "#/components/schemas/MilitaryRankEnum"
-        rank_title:
-          $ref: "#/components/schemas/MilitaryRankTitleEnum"
-        skills:
-          description: A list of pairs of skill type and descriptive skill level
-          example:
-          - skill_type: Combat
-            level: skilled
-          - skill_type: Medical
-            level: novice
-          items:
-            $ref: "#/components/schemas/Skills"
-          title: skills
-          type: array
-        mission_importance:
-          $ref: "#/components/schemas/MissionImportanceEnum"
-      title: DomainDemographics
       type: object
-    MilitaryBranchEnum:
-      description: Branch of the US military.
-      enum:
-      - US Army
-      - US Navy
-      - US Air Force
-      - US Marine Corps
-      - US Space Force
-      - US Coast Guard
-      title: MilitaryBranchEnum
-      type: string
-    MilitaryRankEnum:
-      description: the cross-branch military rank (paygrade)
-      enum:
-      - E-1
-      - E-2
-      - E-3
-      - E-4
-      - E-5
-      - E-6
-      - E-7
-      - E-8
-      - E-9
-      - E-9 (special)
-      - W-1
-      - W-2
-      - W-3
-      - W-4
-      - W-5
-      - O-1
-      - O-2
-      - O-3
-      - O-4
-      - O-5
-      - O-6
-      - O-7
-      - O-8
-      - O-9
-      - O-10
-      - Special
-      - Special (Navy)
-      - Special (Coast Guard)
-      title: MilitaryRankEnum
-      type: string
-    MilitaryRankTitleEnum:
-      description: the branch-specific military rank
-      enum:
-      - Private (Recruit)
-      - Private
-      - Private First Class
-      - Specialist
-      - Corporal
-      - Sergeant
-      - Staff Sergeant
-      - Sergeant First Class
-      - Master Sergeant
-      - First Sergeant
-      - Sergeant Major
-      - Command Sergeant Major
-      - Sergeant Major of the Army
-      - Warrant Officer 1
-      - Chief Warrant Officer 2
-      - Chief Warrant Officer 3
-      - Chief Warrant Officer 4
-      - Chief Warrant Officer 5
-      - 2nd Lieutenant
-      - 1st Lieutenant
-      - Lieutenant
-      - Captain
-      - Major
-      - Lieutenant Colonel
-      - Colonel
-      - Brigadier General
-      - Major General
-      - Lieutenant General
-      - Army Chief of Staff (special)
-      - General
-      - Airman Basic
-      - Airman
-      - Airman First Class
-      - Senior Airman
-      - Technical Sergeant
-      - Senior Master Sergeant
-      - First Sergeant / Chief Master Sergeant
-      - Chief Master Sergeant of the Air Force
-      - Air Force Chief of Staff (special)
-      - Seaman Recruit
-      - Seaman Apprentice
-      - Seaman
-      - Petty Officer Third Class
-      - Petty Officer Second Class
-      - Petty Officer First Class
-      - Chief Petty Officer
-      - Senior Chief Petty Officer
-      - Master Chief Petty Officer
-      - Master Chief Petty Officer of the Navy
-      - Master Chief Petty Officer of the Coast Guard
-      - Chief Warrant Officer
-      - Ensign
-      - "Lieutenant, Junior Grade"
-      - Lieutenant Commander
-      - Commander
-      - Rear Admiral (Lower Half)
-      - Rear Admiral (Upper Half)
-      - Vice Admiral
-      - Chief of Naval Operations (special)
-      - Commandant of the Coast Guard (special)
-      - Admiral
-      - Lance Corporal
-      - Gunnery Sergeant
-      - Master Gunnery Sergeant
-      - Sergeant Major of the Marine Corps
-      - Warrant Officer
-      - Commandant of the Marine Corps
-      - Specialist 1
-      - Specialist 2
-      - Specialist 3
-      - Specialist 4
-      - Chief Master Sergeant
-      - Chief Master Sergeant of the Space Force
-      - Chief of Space Operations
-      title: MilitaryRankTitleEnum
-      type: string
-    Skills:
-      description: A skill possessed by a character at a certain level of proficiency
-      properties:
-        skill_type:
-          $ref: "#/components/schemas/SkillTypeEnum"
-        level:
-          $ref: "#/components/schemas/SkillLevelEnum"
-      required:
-      - level
-      - skill_type
-      title: Skills
-      type: object
-    SkillTypeEnum:
-      description: the type of skill the character has
-      enum:
-      - Medical
-      - Combat
-      - Specialist
-      - Communications
-      - Command
-      title: SkillTypeEnum
-      type: string
-    SkillLevelEnum:
-      description: the level of expertise the character has in the skill
-      enum:
-      - novice
-      - qualified
-      - competent
-      - skilled
-      - expert
-      title: SkillLevelEnum
-      type: string
-    MissionImportanceEnum:
-      default: normal
-      description: How important the character is to the mission
-      enum:
-      - low
-      - normal
-      - important
-      - priority
-      - vip
-      title: MissionImportanceEnum
-      type: string
     ActionTypeEnum:
       description: "An action type recognized by the ADM Server, combining basic and\
         \ domain-specific actions"
@@ -4308,62 +2095,10 @@ components:
       - MOVE_TO
       - MESSAGE
       - SEARCH
-      - APPLY_TREATMENT
-      - CHECK_ALL_VITALS
-      - CHECK_BLOOD_OXYGEN
-      - CHECK_PULSE
-      - CHECK_RESPIRATION
-      - DIRECT_MOBILE_CHARACTERS
-      - MOVE_TO_EVAC
-      - SITREP
-      - TAG_CHARACTER
+      - TREAT_PATIENT
       title: ActionTypeEnum
       type: string
     DomainConditions:
       description: Domain-specific conditions that specify whether to transition to
         the next scene or send a probe response
-      properties:
-        character_vitals:
-          description: True if any of the specified collection of vital values have
-            been met for the specified character_id
-          items:
-            $ref: "#/components/schemas/ConditionsCharacterVitals"
-          title: character_vitals
-          type: array
-        supplies:
-          description: True if any of the specified supplies reach or go below the
-            specified quantity
-          example:
-          - type: Tourniquet
-            quantity: 1
-            reusable: false
-          items:
-            $ref: "#/components/schemas/Supplies"
-          title: supplies
-          type: array
-      title: DomainConditions
-      type: object
-    ConditionsCharacterVitals:
-      description: True if all vitals values have been met by the specified character_id
-      example:
-        character_id: character_id
-        vitals:
-          triss: 36.160767
-          breathing: NORMAL
-          spo2: NORMAL
-          avpu: ALERT
-          heart_rate: NONE
-          ambulatory: true
-          mental_status: AGONY
-      properties:
-        character_id:
-          description: The ID of the character in question
-          title: character_id
-          type: string
-        vitals:
-          $ref: "#/components/schemas/Vitals"
-      required:
-      - character_id
-      - vitals
-      title: ConditionsCharacterVitals
       type: object

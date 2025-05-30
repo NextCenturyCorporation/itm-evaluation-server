@@ -4,20 +4,14 @@ from typing import List, Dict  # noqa: F401
 
 from swagger_server.models.base_model import Model
 from swagger_server.models.character import Character
-from swagger_server.models.environment import Environment
 from swagger_server.models.event import Event
 from swagger_server.models.meta_info import MetaInfo
-from swagger_server.models.mission import Mission
-from swagger_server.models.supplies import Supplies
 from swagger_server.models.threat_state import ThreatState
 from swagger_server import util
 
 from swagger_server.models.character import Character  # noqa: E501
-from swagger_server.models.environment import Environment  # noqa: E501
 from swagger_server.models.event import Event  # noqa: E501
 from swagger_server.models.meta_info import MetaInfo  # noqa: E501
-from swagger_server.models.mission import Mission  # noqa: E501
-from swagger_server.models.supplies import Supplies  # noqa: E501
 from swagger_server.models.threat_state import ThreatState  # noqa: E501
 
 class State(Model):
@@ -26,15 +20,9 @@ class State(Model):
     Do not edit the class manually.
     """
 
-    def __init__(self, mission=None, environment=None, supplies=None, unstructured=None, elapsed_time=None, meta_info=None, events=None, threat_state=None, characters=None, scenario_complete=None):  # noqa: E501
+    def __init__(self, unstructured=None, elapsed_time=None, meta_info=None, events=None, threat_state=None, characters=None, scenario_complete=None):  # noqa: E501
         """State - a model defined in OpenAPI
 
-        :param mission: The mission of this State.  # noqa: E501
-        :type mission: Mission
-        :param environment: The environment of this State.  # noqa: E501
-        :type environment: Environment
-        :param supplies: The supplies of this State.  # noqa: E501
-        :type supplies: List[Supplies]
         :param unstructured: The unstructured of this State.  # noqa: E501
         :type unstructured: str
         :param elapsed_time: The elapsed_time of this State.  # noqa: E501
@@ -51,9 +39,6 @@ class State(Model):
         :type scenario_complete: bool
         """
         self.openapi_types = {
-            'mission': Mission,
-            'environment': Environment,
-            'supplies': List[Supplies],
             'unstructured': str,
             'elapsed_time': int,
             'meta_info': MetaInfo,
@@ -64,9 +49,6 @@ class State(Model):
         }
 
         self.attribute_map = {
-            'mission': 'mission',
-            'environment': 'environment',
-            'supplies': 'supplies',
             'unstructured': 'unstructured',
             'elapsed_time': 'elapsed_time',
             'meta_info': 'meta_info',
@@ -76,9 +58,6 @@ class State(Model):
             'scenario_complete': 'scenario_complete'
         }
 
-        self._mission = mission
-        self._environment = environment
-        self._supplies = supplies
         self._unstructured = unstructured
         self._elapsed_time = elapsed_time
         self._meta_info = meta_info
@@ -97,75 +76,6 @@ class State(Model):
         :rtype: State
         """
         return util.deserialize_model(dikt, cls)
-
-    @property
-    def mission(self) -> Mission:
-        """Gets the mission of this State.
-
-
-        :return: The mission of this State.
-        :rtype: Mission
-        """
-        return self._mission
-
-    @mission.setter
-    def mission(self, mission: Mission):
-        """Sets the mission of this State.
-
-
-        :param mission: The mission of this State.
-        :type mission: Mission
-        """
-
-        self._mission = mission
-
-    @property
-    def environment(self) -> Environment:
-        """Gets the environment of this State.
-
-
-        :return: The environment of this State.
-        :rtype: Environment
-        """
-        return self._environment
-
-    @environment.setter
-    def environment(self, environment: Environment):
-        """Sets the environment of this State.
-
-
-        :param environment: The environment of this State.
-        :type environment: Environment
-        """
-        if environment is None:
-            raise ValueError("Invalid value for `environment`, must not be `None`")  # noqa: E501
-
-        self._environment = environment
-
-    @property
-    def supplies(self) -> List[Supplies]:
-        """Gets the supplies of this State.
-
-        A list of supplies available to the medic  # noqa: E501
-
-        :return: The supplies of this State.
-        :rtype: List[Supplies]
-        """
-        return self._supplies
-
-    @supplies.setter
-    def supplies(self, supplies: List[Supplies]):
-        """Sets the supplies of this State.
-
-        A list of supplies available to the medic  # noqa: E501
-
-        :param supplies: The supplies of this State.
-        :type supplies: List[Supplies]
-        """
-        if supplies is None:
-            raise ValueError("Invalid value for `supplies`, must not be `None`")  # noqa: E501
-
-        self._supplies = supplies
 
     @property
     def unstructured(self) -> str:
