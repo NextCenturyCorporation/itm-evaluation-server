@@ -346,7 +346,7 @@ class ITMSession:
 
         try:
             self.state = deepcopy(self.itm_scenario.isd.current_scene.state)
-            self.itm_scenario.clear_hidden_data(self.state)
+            self.itm_scenario.clear_hidden_data(self.state, self.kdma_training)
             self.state.meta_info = MetaInfo(scene_id=self.itm_scenario.isd.current_scene.id, probe_response=None)
             scenario = Scenario(
                 id=self.itm_scenario.id,
@@ -366,7 +366,7 @@ class ITMSession:
             if self.ta1_integration:
                 try:
                     user_id = f"{self.session_id}_{self.itm_scenario.id}"
-                    ta1_session_id = self.itm_scenario.ta1_controller.new_session(context=user_id)
+                    ta1_session_id = self.itm_scenario.ta1_controller.new_session(context='false' if self.domain == 'p2triage' else user_id)
                     self.history.add_history(
                         "TA1 Session ID", {}, ta1_session_id
                     )

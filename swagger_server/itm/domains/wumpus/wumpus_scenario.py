@@ -12,7 +12,7 @@ class WumpusScenario(ITMScenario):
 
 
     @staticmethod
-    def clear_hidden_data(state: State):
+    def clear_hidden_data(state: State, training: bool):
         for character in state.characters:
             if character.foobar:
                 character.foobar = None
