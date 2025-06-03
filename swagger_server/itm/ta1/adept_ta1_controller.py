@@ -6,27 +6,23 @@ from .itm_ta1_controller import ITMTa1Controller
 
 class AdeptTa1Controller(ITMTa1Controller):
 
-    ADEPT_K1_ALIGNMENT_DISTRIBUTION_TARGET = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_K1_ALIGNMENT_DISTRIBUTION_TARGET']
-    ADEPT_K2_ALIGNMENT_DISTRIBUTION_TARGET = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_K2_ALIGNMENT_DISTRIBUTION_TARGET']
-    ADEPT_K3_ALIGNMENT_DISTRIBUTION_TARGET = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_K3_ALIGNMENT_DISTRIBUTION_TARGET']
-    ADEPT_K4_ALIGNMENT_DISTRIBUTION_TARGET = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_K4_ALIGNMENT_DISTRIBUTION_TARGET']
     ADEPT_EVAL_FILENAMES = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_EVAL_FILENAMES'].replace('\n','').split(',')
     ADEPT_TRAIN_FILENAMES = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_TRAIN_FILENAMES'].replace('\n','').split(',')
     ADEPT_EVAL_K1_SCENARIOS = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_EVAL_K1_SCENARIOS'].replace('\n','').split(',')
     ADEPT_EVAL_K2_SCENARIOS = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_EVAL_K2_SCENARIOS'].replace('\n','').split(',')
     ADEPT_EVAL_K3_SCENARIOS = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_EVAL_K3_SCENARIOS'].replace('\n','').split(',')
     ADEPT_EVAL_K4_SCENARIOS = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_EVAL_K4_SCENARIOS'].replace('\n','').split(',')
-    ADEPT_EVAL_M1_SCENARIOS = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_EVAL_M1_SCENARIOS'].replace('\n','').split(',')
+    ADEPT_EVAL_M1_SCENARIOS = ITMTa1Controller.config[ITMTa1Controller.config_group].get('ADEPT_EVAL_M1_SCENARIOS', '').replace('\n','').split(',')
     ADEPT_TRAIN_K1_SCENARIOS = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_TRAIN_K1_SCENARIOS'].replace('\n','').split(',')
     ADEPT_TRAIN_K2_SCENARIOS = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_TRAIN_K2_SCENARIOS'].replace('\n','').split(',')
     ADEPT_TRAIN_K3_SCENARIOS = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_TRAIN_K3_SCENARIOS'].replace('\n','').split(',')
     ADEPT_TRAIN_K4_SCENARIOS = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_TRAIN_K4_SCENARIOS'].replace('\n','').split(',')
-    ADEPT_TRAIN_M1_SCENARIOS = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_TRAIN_M1_SCENARIOS'].replace('\n','').split(',')
+    ADEPT_TRAIN_M1_SCENARIOS = ITMTa1Controller.config[ITMTa1Controller.config_group].get('ADEPT_TRAIN_M1_SCENARIOS', '').replace('\n','').split(',')
     ADEPT_K1_ALIGNMENT_TARGETS = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_K1_ALIGNMENT_TARGETS'].replace('\n','').split(',')
     ADEPT_K2_ALIGNMENT_TARGETS = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_K2_ALIGNMENT_TARGETS'].replace('\n','').split(',')
     ADEPT_K3_ALIGNMENT_TARGETS = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_K3_ALIGNMENT_TARGETS'].replace('\n','').split(',')
     ADEPT_K4_ALIGNMENT_TARGETS = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_K4_ALIGNMENT_TARGETS'].replace('\n','').split(',')
-    ADEPT_M1_ALIGNMENT_TARGETS = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_M1_ALIGNMENT_TARGETS'].replace('\n','').split(',')
+    ADEPT_M1_ALIGNMENT_TARGETS = ITMTa1Controller.config[ITMTa1Controller.config_group].get('ADEPT_M1_ALIGNMENT_TARGETS', '').replace('\n','').split(',')
 
     def __init__(self, alignment_target_id, alignment_target = None):
         super().__init__(self.get_ta1name(), alignment_target_id, alignment_target)
@@ -77,6 +73,11 @@ class AdeptTa1Controller(ITMTa1Controller):
         response = self.to_dict(initial_response)
         self.session_id = response
         self.adept_populations = context is None or context.lower() != 'false' # True unless specified as false
+        if self.adept_populations:
+            self.ADEPT_K1_ALIGNMENT_DISTRIBUTION_TARGET = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_K1_ALIGNMENT_DISTRIBUTION_TARGET']
+            self.ADEPT_K2_ALIGNMENT_DISTRIBUTION_TARGET = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_K2_ALIGNMENT_DISTRIBUTION_TARGET']
+            self.ADEPT_K3_ALIGNMENT_DISTRIBUTION_TARGET = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_K3_ALIGNMENT_DISTRIBUTION_TARGET']
+            self.ADEPT_K4_ALIGNMENT_DISTRIBUTION_TARGET = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_K4_ALIGNMENT_DISTRIBUTION_TARGET']
         return response
 
     @staticmethod
