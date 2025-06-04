@@ -12,7 +12,7 @@ SAVE_HISTORY=True
 SAVE_HISTORY_TO_S3=False
 ALL_TA1_NAMES=test
 
-HISTORY_DIRECTORY=itm_wumpus_history
+HISTORY_DIRECTORY=%(EVALUATION_TYPE)s_history_output
 HISTORY_S3_BUCKET=itm-wumpus-assets
 
 EVAL_NAME=Wumpus Evaluation
