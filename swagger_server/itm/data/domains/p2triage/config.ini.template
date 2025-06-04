@@ -21,7 +21,7 @@ SAVE_HISTORY=True
 SAVE_HISTORY_TO_S3=True
 ALL_TA1_NAMES=adept
 
-HISTORY_DIRECTORY=itm_history_output
+HISTORY_DIRECTORY=%(EVALUATION_TYPE)s_history_output
 HISTORY_S3_BUCKET=itm-ui-assets
 
 EVAL_NAME=Phase 2 June 2025 Collaboration
@@ -127,6 +127,18 @@ ADEPT_K3_ALIGNMENT_TARGETS=ADEPT-June2025-search-Group-Low,
 ADEPT_K4_ALIGNMENT_TARGETS=ADEPT-June2025-personal_safety-Group-Low,
     ADEPT-June2025-personal_safety-Group-High
 
+[SUBSET_ONLY]
+
+ADEPT_EVAL_FILENAMES=june2025-adept-eval-MF1.yaml,june2025-adept-eval-MF2.yaml,june2025-adept-eval-MF3.yaml,
+    june2025-adept-eval-AF1.yaml,june2025-adept-eval-AF2.yaml,june2025-adept-eval-AF3.yaml,
+    june2025-adept-eval-SS1.yaml,june2025-adept-eval-SS2.yaml,june2025-adept-eval-SS3.yaml,
+    june2025-adept-eval-PS1.yaml,june2025-adept-eval-PS2.yaml,june2025-adept-eval-PS3.yaml
+
+ADEPT_EVAL_K1_SCENARIOS=June2025-MF1-eval,June2025-MF2-eval,June2025-MF3-eval
+ADEPT_EVAL_K2_SCENARIOS=June2025-AF1-eval,June2025-AF2-eval,June2025-AF3-eval
+ADEPT_EVAL_K3_SCENARIOS=June2025-SS1-eval,June2025-SS2-eval,June2025-SS3-eval
+ADEPT_EVAL_K4_SCENARIOS=June2025-PS1-eval,June2025-PS2-eval,June2025-PS3-eval
+
 [MULTI_KDMA]
 
 ADEPT_EVAL_FILENAMES=june2025-adept-eval-AF-MF1.yaml,june2025-adept-eval-AF-MF2.yaml,june2025-adept-eval-AF-MF3.yaml,june2025-adept-eval-AF-MF.yaml
@@ -135,9 +147,7 @@ ADEPT_TRAIN_FILENAMES=june2025-adept-train-AF-MF.yaml
 ADEPT_EVAL_M1_SCENARIOS=June2025-AF-MF1-eval,June2025-AF-MF2-eval,June2025-AF-MF3-eval,June2025-AF-MF-eval
 ADEPT_TRAIN_M1_SCENARIOS=June2025-AF-MF-train
 
-ADEPT_M1_ALIGNMENT_TARGETS=ADEPT-June2025-affiliation_merit-0.0_1.0
-
-xADEPT_M1_ALIGNMENT_TARGETS=ADEPT-June2025-affiliation_merit-0.0_0.0,
+ADEPT_M1_ALIGNMENT_TARGETS=ADEPT-June2025-affiliation_merit-0.0_0.0,
     ADEPT-June2025-affiliation_merit-0.0_1.0,
     ADEPT-June2025-affiliation_merit-1.0_0.0,
     ADEPT-June2025-affiliation_merit-1.0_1.0
