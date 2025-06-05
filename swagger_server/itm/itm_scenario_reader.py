@@ -33,6 +33,12 @@ class ITMScenarioReader:
         file.close()
 
 
+    def set_first_scene_state(self, scenario: Scenario, state, scenes: List[ITMScene]):
+        for scene in scenes:
+            if scene.id == scenario.first_scene:
+                scene.state = deepcopy(state)
+
+
     def read_scenario_from_yaml(self) -> Tuple[Scenario, List[ITMScene]]:
         """
         Generate a Scenario and its scenes from the YAML data.
@@ -52,9 +58,7 @@ class ITMScenarioReader:
             session_complete=False
         )
 
-        for scene in scenes:
-            if scene.id == scenario.first_scene:
-                scene.state = deepcopy(state)
+        self.set_first_scene_state(scenario, state, scenes)
 
         return (scenario, scenes)
 
