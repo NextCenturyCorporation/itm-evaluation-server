@@ -37,9 +37,9 @@ The following properties can be configured:
 - `SCENARIO_DIRECTORY`
     - default is `swagger_server/itm/data/%(EVALUATION_TYPE)s/scenarios/`
 - `DEFAULT_DOMAIN`
-    - default is `triage`
+    - default is `p2triage`
 - `SUPPORTED_DOMAINS`
-    - default is `triage`
+    - default is `p2triage`
 - `SOARTECH_URL`
     - default is `http://10.216.38.25:8084`
 - `ADEPT_URL`
@@ -117,24 +117,15 @@ tox
 To run the server on a Docker container, please execute the following from the root directory:
 
 ```bash
-# building the image
-docker build -t swagger_server .
-
-# starting up a container
+# Build and run the image with the default domain, port, and configuration target
+docker build --no-cache -t swagger_server .
 docker run -p 8080:8080 swagger_server
-```
 
-### Running with docker on separate instances
-To run with TA1 on multiple systems set docker env vars for ADM host.
-```bash
-docker run -d -p 8080:8080 --name itm-server itm-server
+# Build the image with the specified domain, port, and configuration target
+./gradle -Pdomain=<my_domain>
+docker build --no-cache --build-arg domain=<my_domain> -t swagger_server .
+docker run -p <my_port>:<my_port> -e "TA3_PORT=<my_port>" -e "CONFIG_GROUP=<MY_CONFIG_TARGET>" swagger_server
 ```
-** Note, If setting `TA3_PORT` to anything other then the default requires the docker run command to expose those ports. 
-Can write the above command as `$TA3_PORT:$TA3_PORT` however, this will not work if it is not set and won't default.
-
-### Manual runs on separate instances
-If running the command instead of docker set the environment variables for:
-- `TA3_PORT` (default:8080)
 
 ## Updating models
 This requires JDK 8 or higher to run the gradle tool.

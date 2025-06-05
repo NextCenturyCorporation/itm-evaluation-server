@@ -16,7 +16,7 @@ def apiDirectory = "swagger"
 def outputDirectory = "swagger_server"
 def baseSwaggerFile = "base_swagger.yaml"
 def domainSwaggerFile = "domain_swagger.yaml"
-def domain = "triage" // Default domain
+def domain = "p2triage" // Default domain
 
 task swaggerClean(type: Delete) {
     doFirst {
