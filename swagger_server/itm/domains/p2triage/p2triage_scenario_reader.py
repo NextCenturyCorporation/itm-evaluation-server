@@ -24,6 +24,10 @@ class P2TriageScenarioReader(ITMScenarioReader):
         super().__init__(yaml_path)
 
 
+    def set_first_scene_state(self, scenario, state, scenes):
+        return # p2triage scenarios specify state for the first scene
+
+
     def convert_to_itmscene(self, scene: Scene) -> ITMScene:
         return P2TriageScene(scene)
 
