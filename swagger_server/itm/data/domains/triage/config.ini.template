@@ -1,0 +1,144 @@
+; Copy over this template file and rename it to swagger_server/config.ini
+; Replace the default configurations below with the desired values
+
+[DEFAULT]
+
+EVALUATION_TYPE=phase1
+SCENARIO_DIRECTORY=swagger_server/itm/data/%(EVALUATION_TYPE)s/scenarios/
+DEFAULT_DOMAIN=triage
+SUPPORTED_DOMAINS=triage
+
+; Local Default URLs
+; ADEPT_URL=http://localhost:8081
+; SOARTECH_URL=http://localhost:8084
+
+; AWS TA1 Default URLs (access Prod AWS servers locally)
+; ADEPT_URL=https://darpaitm.caci.com/adept
+; SOARTECH_URL=https://darpaitm.caci.com/soartech
+
+; Prod Default URLs (use on production AWS only)
+SOARTECH_URL=http://10.216.38.25:8084
+ADEPT_URL=http://10.216.38.101:8080
+
+SAVE_HISTORY=True
+SAVE_HISTORY_TO_S3=True
+ALL_TA1_NAMES=adept,soartech
+
+HISTORY_DIRECTORY=itm_history_output
+HISTORY_S3_BUCKET=itm-ui-assets
+
+EVAL_NAME=Phase 1 Evaluation
+EVAL_NUMBER=6
+
+SOARTECH_EVAL_FILENAMES=phase1-soartech-eval-qol2.yaml,
+    phase1-soartech-eval-qol3.yaml,
+    phase1-soartech-eval-qol4.yaml,
+    phase1-soartech-eval-vol2.yaml,
+    phase1-soartech-eval-vol3.yaml,
+    phase1-soartech-eval-vol4.yaml
+
+SOARTECH_TRAIN_FILENAMES=phase1-soartech-train-qol1.yaml,
+    phase1-soartech-train-qol2.yaml,
+    phase1-soartech-train-qol3.yaml,
+    phase1-soartech-train-qol4.yaml,
+    phase1-soartech-train-vol1.yaml,
+    phase1-soartech-train-vol2.yaml,
+    phase1-soartech-train-vol3.yaml,
+    phase1-soartech-train-vol4.yaml
+
+SOARTECH_EVAL_QOL_SCENARIOS=qol-ph1-eval-2,qol-ph1-eval-3,qol-ph1-eval-4
+SOARTECH_EVAL_VOL_SCENARIOS=vol-ph1-eval-2,vol-ph1-eval-3,vol-ph1-eval-4
+
+SOARTECH_TRAIN_QOL_SCENARIOS=qol-ph1-train-1,qol-ph1-train-2,qol-ph1-train-3,qol-ph1-train-4
+SOARTECH_TRAIN_VOL_SCENARIOS=vol-ph1-train-1,vol-ph1-train-2,vol-ph1-train-3,vol-ph1-train-4
+
+SOARTECH_QOL_ALIGNMENT_TARGETS=qol-human-8022671-SplitLowMulti-ph1,
+    qol-human-6403274-SplitHighBinary-ph1,
+    qol-human-3043871-SplitHighBinary-ph1,
+    qol-human-5032922-SplitLowMulti-ph1,
+    qol-human-0000001-SplitEvenMulti-ph1,
+    qol-human-7040555-SplitHighMulti-ph1,
+    qol-synth-LowExtreme-ph1,
+    qol-synth-HighExtreme-ph1,
+    qol-synth-HighCluster-ph1,
+    qol-synth-LowCluster-ph1
+
+SOARTECH_VOL_ALIGNMENT_TARGETS=vol-human-8022671-SplitHighMulti-ph1,
+    vol-human-1774519-SplitHighMulti-ph1,
+    vol-human-6403274-SplitEvenBinary-ph1,
+    vol-human-8478698-SplitLowMulti-ph1,
+    vol-human-5032922-SplitLowMulti-ph1,
+    vol-synth-LowExtreme-ph1,
+    vol-synth-HighCluster-ph1,
+    vol-synth-LowCluster-ph1
+
+ADEPT_EVAL_FILENAMES=phase1-adept-eval-MJ2.yaml,
+    phase1-adept-eval-MJ4.yaml,
+    phase1-adept-eval-MJ5.yaml
+
+ADEPT_TRAIN_FILENAMES=phase1-adept-train-MJ1.yaml,
+    phase1-adept-train-MJ3.yaml,
+    phase1-adept-train-IO1.yaml,
+    phase1-adept-train-IO2.yaml,
+    phase1-adept-train-IO3.yaml
+
+ADEPT_EVAL_K1_SCENARIOS=DryRunEval-MJ2-eval,DryRunEval-MJ4-eval,DryRunEval-MJ5-eval
+ADEPT_EVAL_K2_SCENARIOS=DryRunEval-MJ2-eval,DryRunEval-MJ4-eval,DryRunEval-MJ5-eval
+
+ADEPT_TRAIN_K1_SCENARIOS=DryRunEval.MJ1,DryRunEval.MJ3
+ADEPT_TRAIN_K2_SCENARIOS=DryRunEval.IO1,DryRunEval.IO2,DryRunEval.IO3
+
+ADEPT_K1_ALIGNMENT_TARGETS=ADEPT-DryRun-Moral judgement-0.2,
+    ADEPT-DryRun-Moral judgement-0.3,
+    ADEPT-DryRun-Moral judgement-0.4,
+    ADEPT-DryRun-Moral judgement-0.5,
+    ADEPT-DryRun-Moral judgement-0.6,
+    ADEPT-DryRun-Moral judgement-0.7,
+    ADEPT-DryRun-Moral judgement-0.8
+
+ADEPT_K2_ALIGNMENT_TARGETS=ADEPT-DryRun-Ingroup Bias-0.2,
+    ADEPT-DryRun-Ingroup Bias-0.3,
+    ADEPT-DryRun-Ingroup Bias-0.4,
+    ADEPT-DryRun-Ingroup Bias-0.5,
+    ADEPT-DryRun-Ingroup Bias-0.6,
+    ADEPT-DryRun-Ingroup Bias-0.7,
+    ADEPT-DryRun-Ingroup Bias-0.8
+
+ADEPT_K1_ALIGNMENT_DISTRIBUTION_TARGET=ADEPT-DryRun-Moral judgement-Population-All
+ADEPT_K2_ALIGNMENT_DISTRIBUTION_TARGET=ADEPT-DryRun-Ingroup Bias-Population-All
+
+# All of these keywords must be present in the DEFAULT configuration
+REQUIRED_CONFIG=EVALUATION_TYPE, SCENARIO_DIRECTORY, ADEPT_URL, SOARTECH_URL, SAVE_HISTORY, SAVE_HISTORY_TO_S3,
+  ALL_TA1_NAMES, HISTORY_DIRECTORY, HISTORY_S3_BUCKET, EVAL_NAME, EVAL_NUMBER, SOARTECH_EVAL_QOL_SCENARIOS,
+  SOARTECH_EVAL_VOL_SCENARIOS, SOARTECH_TRAIN_QOL_SCENARIOS, SOARTECH_TRAIN_VOL_SCENARIOS, SOARTECH_QOL_ALIGNMENT_TARGETS,
+  SOARTECH_VOL_ALIGNMENT_TARGETS, SOARTECH_EVAL_FILENAMES, SOARTECH_TRAIN_FILENAMES, ADEPT_EVAL_K1_SCENARIOS,
+  ADEPT_EVAL_K2_SCENARIOS, ADEPT_TRAIN_K1_SCENARIOS, ADEPT_TRAIN_K2_SCENARIOS, ADEPT_K1_ALIGNMENT_TARGETS,
+  ADEPT_K2_ALIGNMENT_TARGETS, ADEPT_EVAL_FILENAMES, ADEPT_TRAIN_FILENAMES, DEFAULT_DOMAIN, SUPPORTED_DOMAINS,
+  ADEPT_K1_ALIGNMENT_DISTRIBUTION_TARGET, ADEPT_K2_ALIGNMENT_DISTRIBUTION_TARGET
+
+# TODO Remove, see ITM-1009
+ADEPT_EVAL_K3_SCENARIOS=itm1009
+ADEPT_TRAIN_K3_SCENARIOS=itm1009
+ADEPT_K3_ALIGNMENT_TARGETS=itm1009
+ADEPT_K3_ALIGNMENT_DISTRIBUTION_TARGET=itm1009
+ADEPT_EVAL_K4_SCENARIOS=itm1009
+ADEPT_TRAIN_K4_SCENARIOS=itm1009
+ADEPT_K4_ALIGNMENT_TARGETS=itm1009
+ADEPT_K4_ALIGNMENT_DISTRIBUTION_TARGET=itm1009
+ADEPT_EVAL_M1_SCENARIOS=itm1009
+ADEPT_TRAIN_M1_SCENARIOS=itm1009
+ADEPT_M1_ALIGNMENT_TARGETS=itm1009
+
+[GROUP_TARGET]
+
+SOARTECH_QOL_ALIGNMENT_TARGETS=qol-group-target-1-final-eval,
+   qol-group-target-2-final-eval
+
+SOARTECH_VOL_ALIGNMENT_TARGETS=vol-group-target-1-final-eval,
+   vol-group-target-2-final-eval
+
+ADEPT_K1_ALIGNMENT_TARGETS=ADEPT-Phase1Eval-Moral judgement-Group-Low,
+    ADEPT-Phase1Eval-Moral judgement-Group-High
+
+ADEPT_K2_ALIGNMENT_TARGETS=ADEPT-Phase1Eval-Ingroup Bias-Group-Low,
+    ADEPT-Phase1Eval-Ingroup Bias-Group-High

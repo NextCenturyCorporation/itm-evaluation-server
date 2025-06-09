@@ -4,7 +4,7 @@ import random
 import os
 import logging
 import builtins
-from datetime import datetime
+import datetime
 from typing import List
 from copy import deepcopy
 from json import dumps
@@ -13,51 +13,46 @@ from swagger_server.models import (
     Action,
     AlignmentTarget,
     AlignmentResults,
+    KDMAValue,
     Scenario,
     State,
     MetaInfo
 )
 from .itm_scenario import ITMScenario
 from .itm_action_handler import ITMActionHandler
-from .itm_alignment_target_reader import ITMAlignmentTargetReader
-from .itm_ta1_controller import ITMTa1Controller
+from swagger_server.itm.ta1.itm_ta1_controller import ITMTa1Controller
 from .itm_history import ITMHistory
+from .itm_domain_config import ITMDomainConfig, ITMDomainConfigFactory
 from swagger_server import config_util
 
 class ITMSession:
     """
     Class for representing and manipulating a simulation scenario session.
     """
-    config_util.check_ini()
     config = config_util.read_ini()[0]
     config_group = builtins.config_group
-    
+
     # Class variables
     EVALUATION_TYPE = config[config_group]['EVALUATION_TYPE']
     EVALUATION_NAME = config[config_group]['EVAL_NAME']
     EVALUATION_NUMBER = config[config_group]['EVAL_NUMBER']
+    DEFAULT_DOMAIN = config[config_group]['DEFAULT_DOMAIN']
+    SUPPORTED_DOMAINS = config[config_group]['SUPPORTED_DOMAINS']
     SCENARIO_DIRECTORY = config[config_group]['SCENARIO_DIRECTORY']
-    SOARTECH_EVAL_FILENAMES = config[config_group]['SOARTECH_EVAL_FILENAMES'].replace('\n','').split(',')
-    SOARTECH_TRAIN_FILENAMES = config[config_group]['SOARTECH_TRAIN_FILENAMES'].replace('\n','').split(',')
-    SOARTECH_EVAL_QOL_SCENARIOS = config[config_group]['SOARTECH_EVAL_QOL_SCENARIOS'].replace('\n','').split(',')
-    SOARTECH_EVAL_VOL_SCENARIOS = config[config_group]['SOARTECH_EVAL_VOL_SCENARIOS'].replace('\n','').split(',')
-    SOARTECH_TRAIN_QOL_SCENARIOS = config[config_group]['SOARTECH_TRAIN_QOL_SCENARIOS'].replace('\n','').split(',')
-    SOARTECH_TRAIN_VOL_SCENARIOS = config[config_group]['SOARTECH_TRAIN_VOL_SCENARIOS'].replace('\n','').split(',')
-    SOARTECH_QOL_ALIGNMENT_TARGETS = config[config_group]['SOARTECH_QOL_ALIGNMENT_TARGETS'].replace('\n','').split(',')
-    SOARTECH_VOL_ALIGNMENT_TARGETS = config[config_group]['SOARTECH_VOL_ALIGNMENT_TARGETS'].replace('\n','').split(',')
-    ADEPT_EVAL_FILENAMES = config[config_group]['ADEPT_EVAL_FILENAMES'].replace('\n','').split(',')
-    ADEPT_TRAIN_FILENAMES = config[config_group]['ADEPT_TRAIN_FILENAMES'].replace('\n','').split(',')
-    ADEPT_EVAL_MJ_SCENARIOS = config[config_group]['ADEPT_EVAL_MJ_SCENARIOS'].replace('\n','').split(',')
-    ADEPT_EVAL_IO_SCENARIOS = config[config_group]['ADEPT_EVAL_IO_SCENARIOS'].replace('\n','').split(',')
-    ADEPT_TRAIN_MJ_SCENARIOS = config[config_group]['ADEPT_TRAIN_MJ_SCENARIOS'].replace('\n','').split(',')
-    ADEPT_TRAIN_IO_SCENARIOS = config[config_group]['ADEPT_TRAIN_IO_SCENARIOS'].replace('\n','').split(',')
-    ADEPT_MJ_ALIGNMENT_TARGETS = config[config_group]['ADEPT_MJ_ALIGNMENT_TARGETS'].replace('\n','').split(',')
-    ADEPT_IO_ALIGNMENT_TARGETS = config[config_group]['ADEPT_IO_ALIGNMENT_TARGETS'].replace('\n','').split(',')
+    ALL_TA1_NAMES = config[config_group]['ALL_TA1_NAMES'].replace('\n','').split(',')
 
-    local_alignment_targets = {} # alignment_targets baked into server, for use when not connecting to TA1
-    alignment_data = {} # maps ta1_name to list alignment_targets, used whether connecting to TA1 or not
-    ta1_controllers = {} # map of ta1_names to lists of ta1_controllers
-    ta1_connected = False # have we successfully connected to TA1?
+    # maps alignment id to list alignment_targets, as limited by configuration; used whether connecting to TA1 or not
+    alignment_data = {}
+    # have we successfully connected to TA1?
+    ta1_connected = False
+    # maps ta1_name to list of alignment target IDs obtained from the TA1 server
+    alignment_ids = {}
+    # This determines whether the server makes calls to TA1
+    ta1_integration = not builtins.testing
+    # This determines whether the server saves history to JSON
+    save_history = config[config_group].getboolean("SAVE_HISTORY")
+    # save_history must also be True
+    save_history_to_s3 = config[config_group].getboolean("SAVE_HISTORY_TO_S3")
 
 
     def __init__(self):
@@ -68,9 +63,9 @@ class ITMSession:
         self.adm_name = ''
         self.adm_profile = ''
         self.time_started = 0
-        self.time_elapsed_realtime = 0
 
         self.session_type = ''
+        self.domain = ''
         self.using_max_scenarios = False
         self.kdma_training = None
 
@@ -80,18 +75,14 @@ class ITMSession:
         self.itm_scenarios = []
         self.itm_scenario: ITMScenario = None
 
+        # Domain config
+        self.domain_config: ITMDomainConfig = None
         # Action Handler
-        self.action_handler: ITMActionHandler = ITMActionHandler(self)
+        self.action_handler: ITMActionHandler = None
         # ADM History
         self.history: ITMHistory = ITMHistory(ITMSession.config)
-        # This determines whether the server makes calls to TA1
-        self.ta1_integration = ITMSession.config[ITMSession.config_group].getboolean("ALWAYS_CONNECT_TO_TA1") # Default here applies to non-training, non-eval sessions
         # This determines whether the server returns history in final State after each scenario completes
         self.return_scenario_history = False
-        # This determines whether the server saves history to JSON
-        self.save_history = ITMSession.config[ITMSession.config_group].getboolean("SAVE_HISTORY")
-        # save_history must also be True
-        self.save_history_to_s3 = ITMSession.config[ITMSession.config_group].getboolean("SAVE_HISTORY_TO_S3")
 
     def __deepcopy__(self, memo):
         return self # Allows us to deepcopy ITMScenarios
@@ -99,51 +90,45 @@ class ITMSession:
     @staticmethod
     def initialize():
         logging.basicConfig(level=logging.INFO, format='%(levelname)s %(asctime)s %(message)s', datefmt='%m-%d %I:%M:%S')
-        ta1_names = ITMSession.init_local_data()
-        logging.info("Loaded local alignment targets from configuration.")
-        try:
-            logging.info("Loading TA1 configuration from TA1 servers...")
-            # Note: when running standalone (no TA1 servers), you may wish to comment out the next two lines:
-            ITMSession.init_ta1_data(ta1_names)
-            ITMSession.ta1_connected = True
-            logging.info("Done.")
-        except:
-            logging.warning("Could not initialize TA1 data. Running standalone with local alignment targets.")
+        if ITMSession.ta1_integration:
+            try:
+                logging.info("Loading TA1 configuration from TA1 servers...")
+                ITMSession.init_ta1_data(ITMSession.ALL_TA1_NAMES)
+                ITMSession.ta1_connected = True
+                logging.info("Done.")
+            except Exception as e:
+                logging.warning("Could not initialize TA1 data. Running standalone.")
+                logging.exception(e)
+        else:
+            logging.info("Running server in testing mode; no connection to TA1 servers.")
 
-        # If we couldn't use data from TA1, initialize with local data.
-        if not ITMSession.ta1_connected:
-            for ta1_name in ta1_names:
-                ITMSession.alignment_data[ta1_name] = ITMSession.local_alignment_targets[ta1_name]
-
-
-    @staticmethod
-    def init_local_data():
-        path = f"swagger_server/itm/data/{ITMSession.EVALUATION_TYPE}/local_alignment_targets/"
-        ta1_names = ITMSession._get_sub_directory_names(path)
-        for ta1_name in ta1_names:
-            targets = ITMSession._get_file_names(path + ta1_name)
-            ITMSession.local_alignment_targets[ta1_name] = []
-            for target in targets:
-                target_reader = ITMAlignmentTargetReader(f"{path}{ta1_name}/{target}")
-                ITMSession.local_alignment_targets[ta1_name].append(target_reader.alignment_target)
-        return ta1_names
+        logging.info("Running with default domain '%s'.", ITMSession.DEFAULT_DOMAIN)
 
 
     @staticmethod
     def init_ta1_data(ta1_names):
-        # Populate alignment_data from ITMTa1Controller.get_alignment_data
-        # Populate ta1_controllers from alignment_data
+        # Populate alignment_data_ids from ITMTa1Controller.get_alignment_target_ids
         for ta1_name in ta1_names:
-            ITMSession.alignment_data[ta1_name] = [
-                alignment_target for alignment_target in ITMTa1Controller.get_alignment_data(ta1_name)
-                    if 'train' not in alignment_target.id or ta1_name == 'soartech'
+            ITMSession.alignment_ids[ta1_name] = [
+                alignment_target_id for alignment_target_id in ITMTa1Controller.get_alignment_target_ids(ta1_name)
             ]
-            ITMSession.ta1_controllers[ta1_name] = [
-                ITMTa1Controller(alignment_target_id=alignment_target.id,
-                                 scene_type=ta1_name,
-                                 alignment_target=alignment_target,)
-                                 for alignment_target in ITMSession.alignment_data[ta1_name]
-                                 ]
+
+
+    def load_alignment_target(self, target_id, ta1_name):
+        alignment_target = ITMSession.alignment_data.get(target_id)
+        if alignment_target: # Previously retrieved specified alignment target
+            return alignment_target
+        if self.ta1_integration:
+            if target_id not in ITMSession.alignment_ids[ta1_name]:
+                logging.fatal(f"Cannot get alignment target {target_id} because it is not defined by {ta1_name}. Check configuration.")
+                raise Exception("Undefined alignment target")
+            else:
+                logging.info(f"Loading alignment target {target_id} from TA1 {ta1_name}.")
+                alignment_target = ITMTa1Controller.get_alignment_target(ta1_name, target_id)
+        else:
+            alignment_target = AlignmentTarget(target_id, [KDMAValue(kdma='Test_KDMA', value=0.5)])
+        ITMSession.alignment_data[target_id] = alignment_target
+        return alignment_target
 
 
     def _check_scenario_id(self, scenario_id: str) -> None:
@@ -162,21 +147,23 @@ class ITMSession:
         """
         End the current scenario and store history to json file.
         """
+        scenario_end_time = datetime.datetime.now()
         self.history.add_history(
             "Scenario ended", {"scenario_id": self.itm_scenario.id, "session_id": self.session_id,
-                            "elapsed_time": self.state.elapsed_time}, None)
+                            "end_time": str(scenario_end_time), "simulated_elapsed_time": self.state.elapsed_time}, None)
         logging.info("Scenario %s ended.", self.itm_scenario.id)
         self.state.scenario_complete = True
 
         if self.kdma_training:
-            self.state.unstructured = 'Scenario complete.'
-            self._cleanup()
+            self.state.unstructured = f"Scenario {self.itm_scenario.id} complete."
+            self._cleanup(scenario_end_time)
             return
 
         session_alignment_score = None
+        kdmas: List[KDMAValue] = None
         if self.ta1_integration:
             try:
-                session_alignment :AlignmentResults = \
+                session_alignment: AlignmentResults = \
                     self.itm_scenario.ta1_controller.get_session_alignment()
                 session_alignment_score = session_alignment.score
                 self.history.add_history(
@@ -186,6 +173,9 @@ class ITMSession:
                     session_alignment.to_dict()
                 )
                 logging.info("Got session alignment score %s from TA1.", session_alignment_score)
+                kdmas = []
+                for kdma in session_alignment.kdma_values:
+                    kdmas.append(kdma.to_dict())
                 if session_alignment.alignment_source:
                     alignment_scenario_id = session_alignment.alignment_source[0].scenario_id
                     if self.itm_scenario.id != alignment_scenario_id:
@@ -200,36 +190,40 @@ class ITMSession:
             self.state.unstructured = f'Scenario {self.itm_scenario.id} complete for target {self.itm_scenario.alignment_target.id}. Session alignment score = {session_alignment_score}'
         else:
             self.state.unstructured = f'Test scenario {self.itm_scenario.id} complete.'
-        self._cleanup()
+        self._cleanup(scenario_end_time, session_alignment_score, kdmas)
 
 
-    def _cleanup(self):
+    def _cleanup(self, scenario_end_time, alignment_score=None, kdmas=None):
+        self.history.set_metadata({
+            "scenario_name": self.itm_scenario.name,
+            "scenario_id" : self.itm_scenario.id,
+            "alignment_target_id" : self.itm_scenario.alignment_target.id,
+            "adm_name" : self.adm_name,
+            "adm_profile" : self.adm_profile,
+            "domain" : self.domain,
+            "start_time" : self.itm_scenario.start_time,
+            "end_time" : str(scenario_end_time),
+            "ta1_name" : self.itm_scenario.ta1_name,
+            "ta3_session_id" : self.session_id,
+            })
+        self.history.set_results(
+            ta1_session_id=self.itm_scenario.ta1_controller.session_id if self.itm_scenario.ta1_controller else None,
+            alignment_score=alignment_score,
+            kdmas=kdmas
+            )
         if self.save_history:
             kdma = self.itm_scenario.alignment_target.kdma_values[0].kdma.split(" ")[0].lower()
-            value = self.itm_scenario.alignment_target.kdma_values[0].value
-            if not value:
-                value = self.itm_scenario.alignment_target.id
-            alignment_type = kdma + "-" + str(value)
-            timestamp = f"{datetime.now():%Y%m%d-%H.%M.%S}" # e.g., 20240821-18.22.53
+            alignment_type = kdma + "-" + self.itm_scenario.alignment_target.id
+            timestamp = f"{scenario_end_time:%Y%m%d-%H.%M.%S}" # e.g., 20240821-18.22.53
             filename = f"{self.adm_profile.replace(' ','-')}-" if self.adm_profile else ''
-            filename += f"{ITMSession.EVALUATION_TYPE.replace(' ','')}-{self.itm_scenario.id.replace(' ', '_')}-{self.itm_scenario.scene_type}-{alignment_type.replace(' ', '_')}-{self.adm_name}-{timestamp}"
+            filename += f"{ITMSession.EVALUATION_TYPE.replace(' ','')}-{self.itm_scenario.id.replace(' ', '_')}-{self.itm_scenario.ta1_name}-{alignment_type.replace(' ', '_')}-{self.adm_name}-{timestamp}"
             self.history.write_to_json_file(filename, self.save_history_to_s3)
         if self.return_scenario_history:
-            self.state.unstructured = dumps({'history': self.history.history}, indent=2) + os.linesep + self.state.unstructured
-            self.state.unstructured = "Full session history"
+            if builtins.testing: # Don't print full history
+                self.state.unstructured = dumps({'metadata': self.history.evaluation_info}, indent=2) + os.linesep + self.state.unstructured
+            else:
+                self.state.unstructured = dumps({'history': self.history.history, 'metadata': self.history.evaluation_info, 'results': self.history.results}, indent=2) + os.linesep + self.state.unstructured
         self.history.clear_history()
-
-
-    def _get_realtime_elapsed_time(self) -> float:
-        """
-        Return the elapsed time since the session started.
-
-        Returns:
-            The elapsed time in seconds as a float.
-        """
-        if self.time_started:
-            self.time_elapsed_realtime = time.time() - self.time_started
-        return round(self.time_elapsed_realtime, 2)
 
 
     @staticmethod
@@ -261,22 +255,6 @@ class ITMSession:
                 filespecs.append(item)
         return filespecs
 
-    @staticmethod
-    def _get_sub_directory_names(directory):
-        """
-        Return the names of all of the subdirectories inside of the
-        parameter directory.
-
-        Args:
-            directory: The directory to search inside of for subdirectories.
-        """
-
-        directories = []
-        for item in os.listdir(directory):
-            item_path = os.path.join(directory, item)
-            if os.path.isdir(item_path):
-                directories.append(item)
-        return directories
 
     def get_alignment_target(self, scenario_id: str) -> AlignmentTarget:
         """
@@ -355,7 +333,7 @@ class ITMSession:
                     break
                 index += 1
             if self.itm_scenario is None:
-                return f'Scenario ID `{scenario_id}` does not exist as {"a training" if self.kdma_training else "an eval"} scenario for `{self.session_type}`', 404
+                return f'Scenario ID `{scenario_id}` does not exist as {"a training" if self.kdma_training else "an eval"} scenario for `{self.session_type}`. Check your TA3 server configuration?', 404
             if self.itm_scenario.isd.current_scene.state is None:
                 return self._end_session() # We have already run the specified scenario to completion
         else:
@@ -368,7 +346,7 @@ class ITMSession:
 
         try:
             self.state = deepcopy(self.itm_scenario.isd.current_scene.state)
-            ITMScenario.clear_hidden_data(self.state)
+            self.itm_scenario.clear_hidden_data(self.state, self.kdma_training)
             self.state.meta_info = MetaInfo(scene_id=self.itm_scenario.isd.current_scene.id, probe_response=None)
             scenario = Scenario(
                 id=self.itm_scenario.id,
@@ -378,16 +356,17 @@ class ITMSession:
             )
             self.action_handler.set_scenario(self.itm_scenario)
             self.current_scenario_index += 1
+            self.itm_scenario.start_time = str(datetime.datetime.now())
             self.history.add_history(
                 "Start Scenario",
-                {"session_id": self.session_id, "adm_name": self.adm_name, "adm_profile" : self.adm_profile},
-                scenario.to_dict())
+                {"session_id": self.session_id, "adm_name": self.adm_name, "adm_profile": self.adm_profile,
+                 "domain": self.domain, "start_time": self.itm_scenario.start_time}, scenario.to_dict())
             logging.info("Scenario %s starting.", self.itm_scenario.id)
 
             if self.ta1_integration:
                 try:
-                    user_id = f"{self.session_id}_{self.itm_scenario.id}" if self.itm_scenario.scene_type == 'soartech' else None
-                    ta1_session_id = self.itm_scenario.ta1_controller.new_session(user_id, self.adept_populations)
+                    user_id = f"{self.session_id}_{self.itm_scenario.id}"
+                    ta1_session_id = self.itm_scenario.ta1_controller.new_session(context='false' if self.domain == 'p2triage' else user_id)
                     self.history.add_history(
                         "TA1 Session ID", {}, ta1_session_id
                     )
@@ -401,7 +380,7 @@ class ITMSession:
                     self._end_session() # Exception here ends the session
                     return 'Exception communicating with TA1; is the TA1 server running?  Ending session.', 503
 
-            # Get alignment target; was previously obtained either from TA1 or from local configuration.
+            # Get alignment target; was previously obtained from TA1 unless testing.
             if not self.kdma_training:
                 alignment_target = self.itm_scenario.alignment_target
                 logging.info("Using alignment target %s.", alignment_target.id)
@@ -419,42 +398,54 @@ class ITMSession:
             return 'Exception getting next scenario; ending session.', 503
 
     def _end_session(self) -> Scenario:
-        self.__init__()
+        self.session_complete = True
+        logging.info(f"Session {self.session_id} ended at {str(datetime.datetime.now())} and had a total duration of {round(time.time() - self.time_started, 2)} seconds.")
         return Scenario(session_complete=True, id='', name='',
                         scenes=None, state=None)
 
-    def start_session(self, adm_name: str, session_type: str, adm_profile: str, adept_populations: bool, kdma_training: str=None, max_scenarios=None) -> str:
+    def start_session(self, adm_name: str, session_type: str, adm_profile: str, domain: str, kdma_training: str=None, max_scenarios=None) -> str:
         """
         Start a new session.
 
         Args:
             adm_name: The ADM name associated with the session.
-            session_type: The type of scenarios either soartech, adept, test, or eval
+            session_type: The type of session: either one of the configured TA1 names, `test`, or `eval`
             adm_profile: a profile of the ADM in terms of its alignment strategy
-            adept_populations: whether or not ADEPT should use population based alignment
-            kdma_training: whether this is a `full`, `solo`, or non-training session with TA2
+            domain: the session domain, as selected from the configured `SUPPORTED_DOMAINS`;
+                defaults to the configured `DEFAULT_DOMAIN`
+            kdma_training: whether this is a `full`, `solo`, or non-training session with TA2;
+                default to non-training
             max_scenarios: The max number of scenarios presented during the session
 
         Returns:
             A new session Id to use in subsequent calls
         """
-        if session_type not in ['adept', 'soartech', 'eval', 'test']:
+        if session_type not in ITMSession.ALL_TA1_NAMES and session_type not in ['eval', 'test']:
+            ta1_name_str = ''
+            for ta1_name in ITMSession.ALL_TA1_NAMES:
+                ta1_name_str += ta1_name + ", "
             return (
-                f'Invalid session type `{session_type}`. Must be "adept, soartech, test, or eval"',
+                f'Invalid session type `{session_type}`. Must be {ta1_name_str}test, or eval',
                 400
             )
 
-        # Re-use current session for same ADM after a client crash
         if self.session_id is None:
             self.session_id = str(uuid.uuid4())
-        elif self.adm_name == adm_name:
-            logging.info("Re-using session %s for ADM %s", self.session_id, self.adm_name)
-            self.history.add_history(
-                "Abort Session", {"session_id": self.session_id, "adm_name": self.adm_name}, None)
-            self.__init__()
-            self.session_id = str(uuid.uuid4()) # but assign new session_id for clarity in logs/history
         else:
             return 'System Overload', 503 # itm_ta2_eval_controller should prevent this
+
+        # Set up domain
+        if domain is None:
+            domain = ITMSession.DEFAULT_DOMAIN
+        elif domain not in self.SUPPORTED_DOMAINS:
+            return f"Unsupported domain `{domain}`", 400
+        self.domain = domain
+        self.domain_config = ITMDomainConfigFactory.create_domain_factory(domain)
+        if not self.domain_config:
+            return f"No config class found for domain `{domain}`", 400
+        self.action_handler = self.domain_config.get_action_handler(self)
+        if not self.action_handler:
+            return f"No action handler found for domain `{domain}`", 400
 
         self.kdma_training = kdma_training
         self.adept_populations = adept_populations
@@ -465,12 +456,13 @@ class ITMSession:
         self.itm_scenarios = []
         self.session_type = session_type
         self.history.clear_history()
+        self.time_started = time.time()
 
         ta1_names = []
         if self.session_type == 'eval':
             self.ta1_integration = True
             max_scenarios = None
-            ta1_names = ['soartech', 'adept']
+            ta1_names = ITMSession.ALL_TA1_NAMES
         else:
             ta1_names.append(self.session_type)
         if kdma_training:
@@ -484,6 +476,8 @@ class ITMSession:
                 {"session_id": self.session_id,
                 "adm_name": self.adm_name,
                 "adm_profile": self.adm_profile,
+                "domain": self.domain,
+                "session_start_time": str(datetime.datetime.now()),
                 "session_type": session_type},
                 self.session_id)
 
@@ -493,62 +487,65 @@ class ITMSession:
                 logging.info("Attempting just-in-time connection to TA1.")
                 ITMSession.init_ta1_data(ta1_names)
                 ITMSession.ta1_connected = True
+                logging.info("Just-in-time connection succeeded.")
             except:
                 logging.exception("Exception communicating with TA1; is the TA1 server running?  Ending session.")
                 self._end_session() # Exception here ends the session
                 return 'Exception communicating with TA1; is the TA1 server running?  Ending session.', 503
 
-        path = f"swagger_server/itm/data/{ITMSession.EVALUATION_TYPE}/test/" if self.session_type == 'test' else f"{ITMSession.SCENARIO_DIRECTORY}/"
+        # Get scenario path based on evaluation type and number
+        if self.session_type != 'test':
+            scenario_path = f"{ITMSession.SCENARIO_DIRECTORY}/"
+        elif ITMSession.EVALUATION_NUMBER <= '5': # through Phase 1
+            scenario_path = f"swagger_server/itm/data/{ITMSession.EVALUATION_TYPE}/test/"
+        else: # after Phase 1
+            scenario_path = f"swagger_server/itm/data/domains/{domain}/test/"
+
         num_read_scenarios = 0
         for ta1_name in ta1_names:
             if self.session_type == 'test':
-                scenarios = ITMSession._get_file_names(path)
+                scenarios = ITMSession._get_file_names(scenario_path)
             else:
-                if ta1_name == "soartech":
-                    scenarios = ITMSession.SOARTECH_TRAIN_FILENAMES if kdma_training else ITMSession.SOARTECH_EVAL_FILENAMES
-                else:
-                    scenarios = ITMSession.ADEPT_TRAIN_FILENAMES if kdma_training else ITMSession.ADEPT_EVAL_FILENAMES
+                scenarios = ITMTa1Controller.get_filenames(ta1_name, kdma_training)
 
-            local_alignment_targets = ITMSession.local_alignment_targets[ta1_name]
             ta1_scenarios = []
             scenario_ctr = 0
             for scenario in scenarios:
                 itm_scenario = \
-                    ITMScenario(yaml_path=f'{path}{scenario}',
-                                session=self, training=self.kdma_training)
-                itm_scenario.generate_scenario_data()
+                    self.domain_config.get_scenario(yaml_path=f'{scenario_path}{scenario}',
+                                session=self, ta1_name=ta1_name, training=self.kdma_training)
+                try:
+                    itm_scenario.generate_scenario_data()
+                except FileNotFoundError as fnfe:
+                    logging.fatal("Could not read filename '%s.'  Check your TA3 server configuration?", fnfe.filename)
+                    return f"Could not read filename '{fnfe.filename}.'  Check your TA3 server configuration?", 503
 
                 if ta1_name == "test":
                     ta1_scenarios.append(deepcopy(itm_scenario))
-                    ta1_scenarios[scenario_ctr].alignment_target = local_alignment_targets[scenario_ctr % (len(local_alignment_targets))]
+                    ta1_scenarios[scenario_ctr].alignment_target = AlignmentTarget('Test_Target_ID', [KDMAValue(kdma='Test_KDMA', value=0.5)])
                     scenario_ctr += 1
                 else:
-                    controllers = ITMSession.ta1_controllers[ta1_name] if self.ta1_integration else None
-
                     def __load_scenarios(alignment_target_ids, scenario_ctr):
                         for target_id in alignment_target_ids:
                             try:
                                 ta1_scenarios.append(deepcopy(itm_scenario))
+                                alignment_target = self.load_alignment_target(target_id, ta1_name)
+                                ta1_scenarios[scenario_ctr].alignment_target = alignment_target
                                 if self.ta1_integration:
-                                    ta1_controller = deepcopy(next(controller for controller in controllers if controller.alignment_target_id == target_id), None)
-                                    ta1_scenarios[scenario_ctr].set_controller(ta1_controller)
-                                else:
-                                    ta1_scenarios[scenario_ctr].alignment_target = deepcopy(next(target for target in local_alignment_targets if target.id == target_id), None)
+                                    ta1_scenarios[scenario_ctr].set_controller( # Always create a new controller for each scenario.
+                                        ITMTa1Controller.create_controller(ta1_name, target_id, alignment_target))
                                 scenario_ctr += 1
-                            except StopIteration:
-                                logging.fatal(f"Couldn't find alignment target {target_id}.")
+                            except Exception as e:
+                                logging.fatal(f"Couldn't obtain alignment target '{target_id}'. Check your TA3 server configuration or connection to TA1.")
+                                raise e
                         return scenario_ctr
 
-                    if ta1_name == "soartech":
-                        if itm_scenario.id in (ITMSession.SOARTECH_TRAIN_QOL_SCENARIOS if kdma_training else ITMSession.SOARTECH_EVAL_QOL_SCENARIOS):
-                            scenario_ctr = __load_scenarios(ITMSession.SOARTECH_QOL_ALIGNMENT_TARGETS, scenario_ctr)
-                        if itm_scenario.id in (ITMSession.SOARTECH_TRAIN_VOL_SCENARIOS if kdma_training else ITMSession.SOARTECH_EVAL_VOL_SCENARIOS):
-                            scenario_ctr = __load_scenarios(ITMSession.SOARTECH_VOL_ALIGNMENT_TARGETS, scenario_ctr)
-                    elif ta1_name == "adept":
-                        if itm_scenario.id in (ITMSession.ADEPT_TRAIN_MJ_SCENARIOS if kdma_training else ITMSession.ADEPT_EVAL_MJ_SCENARIOS):
-                            scenario_ctr = __load_scenarios(ITMSession.ADEPT_MJ_ALIGNMENT_TARGETS, scenario_ctr)
-                        if itm_scenario.id in (ITMSession.ADEPT_TRAIN_IO_SCENARIOS if kdma_training else ITMSession.ADEPT_EVAL_IO_SCENARIOS):
-                            scenario_ctr = __load_scenarios(ITMSession.ADEPT_IO_ALIGNMENT_TARGETS, scenario_ctr)
+                    try:
+                        # Get a list of alignment target IDs that apply to the given scenario so we can create a scenario for each target
+                        scenario_ctr = __load_scenarios(ITMTa1Controller.get_target_ids(ta1_name, itm_scenario), scenario_ctr)
+                    except Exception as e:
+                        logging.exception(e)
+                        return f"Problem loading TA3 server configuration.", 503
 
             self.itm_scenarios.extend(ta1_scenarios)
             num_read_scenarios += len(ta1_scenarios)
@@ -566,11 +563,11 @@ class ITMSession:
             while len(self.itm_scenarios) < max_scenarios:
                 random_index = random.randint(0, num_read_scenarios - 1)
                 self.itm_scenarios.append(deepcopy(self.itm_scenarios[random_index]))
-                
-        logging.info('Loaded %d total scenarios from %s.', len(self.itm_scenarios), f"swagger_server/itm/data/{ITMSession.EVALUATION_TYPE}/test/" if self.session_type == 'test' else ITMSession.SCENARIO_DIRECTORY)
+
+        logging.info("Loaded %d total scenarios from '%s'.", len(self.itm_scenarios), scenario_path)
         self.current_scenario_index = 0
 
-        return self.session_id
+        return self.session_id, 200
 
 
     def take_action(self, body: Action) -> State:
@@ -666,19 +663,8 @@ class ITMSession:
             message += f" with parameters {adm_action.parameters}"
         logging.info(message + '.')
 
-        # Pre-validate action.  This ensures the ADM didn't change a pre-configured action in ways it shouldn't
-        prevalidation_error = self.prevalidate_action(adm_action)
-        if prevalidation_error:
-            return prevalidation_error, 400
-
-        # Validate the right type of action (taken or intended)
-        if intent_only and not adm_action.intent_action:
-            return 'Cannot take actions via intent_action', 400
-        elif adm_action.intent_action and not intent_only:
-            return 'Cannot intend actions via take_action', 400
-
         # Validate that action is a valid, well-formed action
-        (successful, message, code) = self.action_handler.validate_action(adm_action)
+        (successful, message, code) = self._validation_wrapper(adm_action, intent_only)
         if not successful:
             return message, code
 
@@ -693,7 +679,7 @@ class ITMSession:
         if not self.kdma_training == 'full':
             return 'Session alignment can only be requested during a full training session', 403
 
-        session_alignment :AlignmentResults = None
+        session_alignment: AlignmentResults = None
         if self.ta1_integration:
             try:
                 if len(self.itm_scenario.probes_sent) > 0:
@@ -739,3 +725,37 @@ class ITMSession:
             return self.itm_scenario.get_available_actions()
         else:
             return 'Scenario Complete', 400
+
+
+    def _validation_wrapper(self, adm_action: Action, intent_only):
+        # Pre-validate action.  This ensures the ADM didn't change a pre-configured action in ways it shouldn't
+        prevalidation_error = self.prevalidate_action(adm_action)
+        if prevalidation_error:
+            return False, prevalidation_error, 400
+
+        # Validate the right type of action (taken or intended)
+        if intent_only and not adm_action.intent_action:
+            return False, 'Cannot take actions via intent_action', 400
+        elif adm_action.intent_action and not intent_only:
+            return False, 'Cannot intend actions via take_action', 400
+
+        # Validate that action is a valid, well-formed action
+        return self.action_handler.validate_action(adm_action)
+
+
+    def validate_action(self, body: Action) -> str:
+        """
+        Validate that the specified Action is structually and contextually valid within a scenario
+
+        Args:
+            body: Encapsulation of an action to be validated by a DM in the context of the scenario
+
+        Returns:
+            'valid action'/'valid intention' if the action/intention is valid,
+                otherwise a string describing why it is invalid.
+        """
+        (successful, message, code) = self._validation_wrapper(body, body.intent_action)
+        if successful:
+            return 'valid intention' if body.intent_action else 'valid action'
+        else:
+            return f"Error code {code}: {message}", code

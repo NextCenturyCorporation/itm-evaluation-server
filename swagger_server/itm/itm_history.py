@@ -2,7 +2,6 @@ import boto3
 import json
 import logging
 import os
-import datetime
 import builtins
 
 from typing import Union
@@ -19,18 +18,26 @@ class ITMHistory:
         config_group = builtins.config_group
         self.history = []
         self.filepath = config[config_group]["HISTORY_DIRECTORY"] + os.sep
-        self.save_history_bucket = config["DEFAULT"]["HISTORY_S3_BUCKET"]
-        self.evaluation_info = {
-            "evalName": config[config_group]['EVAL_NAME'], 
-            "evalNumber": config[config_group]['EVAL_NUMBER'], 
-            "created" : str(datetime.datetime.now())
-        }        
+        self.save_history_bucket = config[config_group]["HISTORY_S3_BUCKET"]
+        self.eval_name = config[config_group]['EVAL_NAME']
+        self.eval_number = config[config_group]['EVAL_NUMBER']
+        self.clear_history()
 
     def clear_history(self):
         self.history.clear()
+        self.evaluation_info = {
+            "evalName": self.eval_name,
+            "evalNumber": self.eval_number
+        }
+        self.results = {}
 
-    def get_history(self):
-        return self.history
+    def set_metadata(self, metadata: dict):
+        self.evaluation_info.update(metadata)
+
+    def set_results(self, ta1_session_id, alignment_score, kdmas):
+        self.results['ta1_session_id'] = ta1_session_id
+        self.results['alignment_score'] = alignment_score
+        self.results['kdmas'] = kdmas
 
     def add_history(self,
                     command: str,
@@ -71,7 +78,8 @@ class ITMHistory:
 
         with open(full_filepath, 'w') as file:
             # Convert Python dictionary to JSON and write to file
-            json.dump({'evaluation': self.evaluation_info, 'history': self.history}, file, indent=2)
+            json.dump({'evaluation': self.evaluation_info, 'results': self.results, 'history': self.history}, file, indent=2)
+        file.close()
 
         if (save_to_s3):
             logging.info("Saving history to S3")

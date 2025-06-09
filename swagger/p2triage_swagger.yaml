@@ -1,0 +1,79 @@
+openapi: 3.0.3
+info:
+  title: ITM TA3 API
+  description: |-
+    This is the specification of the TA3 API for In The Moment (ITM).  Currently, the Evaluation API for TA2 supports functionality for the Phase 2 Evaluation.
+
+    The API is based on the OpenAPI 3.0.3 specification.
+  version: 0.5.0
+servers:
+  - url: /
+paths:
+  /ta2/nop: # There are no domain-specific paths; this is just here for validation purposes
+    get:
+      responses:
+        "200":
+          description: NOP
+          content:
+            text/plain:
+              schema:
+                type: string
+components:
+  schemas:
+    DomainState:
+      type: object
+      description: the current tactical & environmental state of the scenario and of its characters
+    DomainCharacter:
+      type: object
+      description: A character in the scene
+      properties:
+        medical_condition:
+          description: "The treatment priority/urgency of a patient's medical condition, 0-1 scale"
+          type: number
+          format: float
+          minimum: 0.0
+          maximum: 1.0
+        attribute_rating:
+          description: >
+            A scenario-specific characteristic of the patient or situation regarding the patient, 0-1 scale:
+              Merit Focus (MF): degree of blame for a patient: 0.0 doesn't consider merit when deciding who to treat / always treats the medically favored patient; 1.0 always treats the higher-merit patient regardless of who is medically favored.
+              Affiliation Focus (AF): degree of closeness for a patient: 0.0 doesn't consider affiliation / always treats the medically favored patient; 1.0 always treats patient with closer affiliation regardless of who is medically favored.
+              Search vs. Stay (SS): urgency to search for/treat a patient: 0.0 always stays despite how urgent the need is to treat patient in next room; 1.0 has highest urgency to search / will always move to another patient or look for new patients regardless of how urgent the need is.
+              Personal Safety Focus (PS): amount of danger to reach a patient: 0.0 doesn't consider personal safety and always switches to the medically favored patient; 1.0 won't risk personal safety / always stays in safest place regardless of who is medically favored.
+          type: number
+          format: float
+          minimum: 0.0
+          maximum: 1.0
+    DomainDemographics:
+      type: object
+      description: Basic domain-specific properties about the character
+    DomainConditions:
+      type: object
+      description: Domain-specific conditions that specify whether to transition to the next scene or send a probe response
+# Until oneOf is supported for extensible enums, define ThreatTypeEnum here as the BaseThreatTypeEnum strings plus DomainThreatTypeEnum strings (above).
+    ThreatTypeEnum:
+      type: string
+      description: the type or nature of the threat
+      enum:
+        - Not specified
+# Until oneOf is supported for extensible enums, define CharacterRoleEnum here as the BaseCharacterRoleEnum strings plus DomainCharacterRoleEnum strings (above).
+    CharacterRoleEnum:
+      type: string
+      description: The primary role a character has in the scene
+      enum:
+        - Not specified
+    DomainActionTypeEnum:
+      type: string
+      description: An action type [recognized by the ADM Server](https://github.com/NextCenturyCorporation/itm-evaluation-client?tab=readme-ov-file#available-actions)
+      enum:
+        - TREAT_PATIENT
+# Until oneOf is supported for extensible enums, define ActionTypeEnum here as the BaseActionTypeEnum strings plus DomainActionTypeEnum strings (above).
+    ActionTypeEnum:
+      type: string
+      description: An action type recognized by the ADM Server, combining basic and domain-specific actions
+      enum:
+        - END_SCENE
+        - MOVE_TO
+        - MESSAGE
+        - SEARCH
+        - TREAT_PATIENT

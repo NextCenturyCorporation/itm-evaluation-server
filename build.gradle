@@ -1,96 +1,105 @@
-plugins {
-    id 'org.hidetake.swagger.generator' version '2.19.2'
-    id 'groovy-base'
+buildscript {
+  repositories {
+    gradlePluginPortal()
+  }
+  dependencies {
+    classpath("org.openapi.generator:org.openapi.generator.gradle.plugin:7.11.0")
+  }
 }
+apply plugin:'base'
+apply plugin: 'org.openapi.generator'
 
-apply plugin: 'org.hidetake.swagger.generator'
-import org.apache.tools.ant.taskdefs.condition.Os
-repositories {
-    mavenCentral()
-    maven { url 'https://repo.spring.io/release' }
-}
-
-dependencies {
-    swaggerCodegen 'org.slf4j:slf4j-simple:1.7.36'
-    swaggerCodegen 'io.swagger.codegen.v3:swagger-codegen-cli:3.0.46'
-}
-
-defaultTasks 'clean', 'generateSwaggerCode', 'postGeneration'
+defaultTasks 'clean', 'swaggerClean', 'determineDomain', 'generate', 'postGeneration'
 
 def generatedApiDirectory = "generated"
 def apiDirectory = "swagger"
 def outputDirectory = "swagger_server"
+def baseSwaggerFile = "base_swagger.yaml"
+def domainSwaggerFile = "domain_swagger.yaml"
+def domain = "p2triage" // Default domain
 
 task swaggerClean(type: Delete) {
     doFirst {
         delete generatedApiDirectory
     }
+    mustRunAfter "clean"
 }
-swaggerClean.mustRunAfter(clean)
 
-swaggerSources {
-    server {
-        inputFile = file(apiDirectory+'/swagger.yaml')
-        code {
-            language = 'python-flask'
-            components = ['models']
-            outputDir = file (generatedApiDirectory)
-            configFile = file (apiDirectory+'/config.json')
-            wipeOutputDir = false
+task determineDomain {
+    if (project.hasProperty("domain")) {
+        domain = project.getProperty("domain")
+        println "Setting domain to '${domain}'."
+    }
+    copy {
+        from "${apiDirectory}/${domain}_swagger.yaml"
+        into "${apiDirectory}"
+        rename { String filename ->
+            "${domainSwaggerFile}"
         }
     }
 }
-generateSwaggerCode.dependsOn(swaggerClean)
-generateSwaggerCode.mustRunAfter(swaggerClean)
 
-ext.generateInitFile = { directory, component ->
-    // Generate init file
-    def initFilePath = "${directory}/${component}/__init__.py"
+// Define a task for validating the primary YAML
+task validate(type: org.openapitools.generator.gradle.plugin.tasks.ValidateTask) {
+    inputSpec.set("$projectDir/$apiDirectory/$baseSwaggerFile")
+}
 
-    File initFile = new File(initFilePath)
+// Define a task for validating the domain-specific YAML in isolation
+task validateDomainSpec(type: org.openapitools.generator.gradle.plugin.tasks.ValidateTask) {
+    dependsOn "determineDomain"
+    inputSpec.set("$projectDir/$apiDirectory/$domainSwaggerFile")
+}
 
-    initFile.withWriter { it.println "from __future__ import absolute_import \n# import ${component} into ${component} package" }
+// Define a task to clean then generate
+task generate {
+    dependsOn "openApiGenerate"
+    mustRunAfter "determineDomain"
+}
 
-    fileTree("${directory}/${component}/").matching{ include "**/*.py" exclude "__init__.py" }.sort().forEach { fileName ->
-        def file = new File("${fileName}")
-        def basename = file.name.take(file.name.lastIndexOf('.'))
-        def classLine = file.text.tokenize('\n').find {
-            it.contains 'class'
-        }
-        def matcher = classLine =~ /^class (.*)\(.*/
-        matcher.find()
-        initFile.withWriterAppend { it.println "from ${directory}.${component}.${basename} import ${matcher.group(1)}" }
-    }
-    println "generated __init__.py for ${component}"
-
+openApiGenerate {
+    generatorName = "python-flask"
+    inputSpec = "$projectDir/$apiDirectory/$baseSwaggerFile".toString()
+    outputDir = "$projectDir/$generatedApiDirectory".toString()
+    ignoreFileOverride = "$projectDir/.openapi-generator-ignore".toString()
+    packageName = "$outputDirectory".toString()
+    globalProperties = [
+            modelDocs: "false"
+    ]
+    skipValidateSpec = true
+    logToStderr = true
+    generateAliasAsModel = false
+    // set to true and set environment variable {LANG}_POST_PROCESS_FILE
+    // (e.g. SCALA_POST_PROCESS_FILE) to the linter/formatter to be processed.
+    // This command will be passed one file at a time for most supported post processors.
+//    enablePostProcessFile = false
 }
 
 task postGeneration() {
+    mustRunAfter "openApiGenerate"
     doLast() {
-        // Copy generated files into models folder
+        // Copy generated model files into models folder
         copy {
-            from "${generatedApiDirectory}/${outputDirectory}/"
-            into outputDirectory
+            from "${generatedApiDirectory}/${outputDirectory}/models"
+            into "${outputDirectory}/models"
         }
+
+        // Copy generated swagger file (that combines base and domain) into swagger folder
+        copy {
+             from "${generatedApiDirectory}/${outputDirectory}/openapi/openapi.yaml"
+             into "${apiDirectory}"
+             rename { String filename ->
+                "swagger.yaml"
+             }
+        }
+        println 'copied generated swagger file'
 
         // delete generated api directory
         delete generatedApiDirectory
         println "removed ${generatedApiDirectory}"
-
-        // Copy basemodel file
-        copy {
-            from apiDirectory+'/base_model_.py'
-            into outputDirectory+'/models/'
-        }
-        println 'copied base_model.py'
-
-        // Generate models init file
-        project.generateInitFile(outputDirectory, 'models')
     }
 }
-postGeneration.mustRunAfter('generateSwaggerCode')
 
-// Ensures tasks are re-run always, needed for swaggerCodeGen
+// Ensures tasks are re-run always, needed for openApiGenerate
 gradle.taskGraph.whenReady { taskGraph ->
   taskGraph.getAllTasks().each {
       it.setOnlyIf { true }

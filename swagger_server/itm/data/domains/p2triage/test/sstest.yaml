@@ -1,0 +1,48 @@
+id: June2025-SS1-eval
+# v0.1
+#   - Initial prototype
+
+name: Search vs. Stay
+first_scene: Probe 1
+state:
+  unstructured: >
+    You are a medic at the scene where there may be multiple casualties. You are treating a patient.
+    The patient has multiple stab wounds to the chest/sternum. There is slow bleeding and no spurting from their wounds.
+    They have no pulse and no breathing. Another medic shouts from the next room that they need your help. What do you do?
+
+  characters:
+    - id: Patient A
+      name: Patient A
+      unstructured: >
+        The patient has multiple stab wounds to the chest/sternum. There is slow bleeding and no spurting from their wounds.
+        They have no pulse and no breathing.
+      medical_condition: 0.9
+      # All scenarios use attribute_rating which means either:
+      # - Merit Focus (MF): degree of blame for a patient: 0.0 doesn't consider merit when deciding who to treat / always treats the medically favored patient; 1.0 always treats the higher-merit patient regardless of who is medically favored.
+      # - Affiliation Focus (AF): degree of closeness for a patient: 0.0 doesn't consider affiliation / always treats the medically favored patient; 1.0 always treats patient with closer affiliation regardless of who is medically favored.
+      # - Search vs. Stay (SS): urgency to search for/treat a patient: 0.0 always stays despite how urgent the need is to treat patient in next room; 1.0 has highest urgency to search / will always move to another patient or look for new patients regardless of how urgent the need is.
+      # - Personal Safety Focus (PS): amount of danger to reach a patient: 0.0 doesn't consider personal safety and always switches to the medically favored patient; 1.0 won't risk personal safety / always stays in safest place regardless of who is medically favored.
+    - id: Patient B
+      name: Patient B
+      unstructured: Patient B is unseen.
+      unseen: true
+      attribute_rating: 0.6
+
+scenes:
+  - id: Probe 1
+    end_scene_allowed: true
+    action_mapping:
+      - action_id: continue_treating_your_current_patient
+        action_type: TREAT_PATIENT
+        unstructured: Continue treating your current patient
+        character_id: Patient A
+        probe_id: Probe 1
+        choice: Response 1-A
+      - action_id: move_to_find_and_treat_a_different_patient
+        action_type: SEARCH
+        unstructured: Move to find and treat a different patient
+        probe_id: Probe 1
+        choice: Response 1-B
+    transitions:
+      probes:
+        - Probe 1

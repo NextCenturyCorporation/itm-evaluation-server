@@ -1,0 +1,391 @@
+id: supply_consumption
+name: Supply consumption after unsuccessful treatments
+# Test description: Test consumption of supplies after certain unsuccessful treatments.
+state:
+  unstructured: Testing consumption of certain supplies after unsuccessful treatments.
+  mission:
+    unstructured: No mission parameters
+    mission_type: Patrol
+
+  environment:
+    sim_environment:
+      type: jungle
+    decision_environment:
+      unstructured: >
+        Testing consumption of certain supplies after unsuccessful treatments.  Using hemostatic gauze on injuries injuries where
+        a tourniquet or pressure bandage is called for consumes the gauze.  Using an airway (on right or left face) always consumes
+        a supply, even if there's no injury.
+  supplies:
+    - { type: Nasopharyngeal airway, quantity: 50 }
+    - { type: Hemostatic gauze, quantity: 50 }
+    - { type: Pressure bandage, quantity: 50 }
+  characters:
+    - id: Mike
+      name: Mike
+      unstructured: Patient with multiple punctures that require a tourniquet, but treating with hemostatic gauze will consume the supply.
+      demographics:
+        age: 34
+        sex: M
+        race: White
+      vitals:
+        avpu: ALERT
+        ambulatory: true
+        mental_status: CALM
+        breathing: NORMAL
+        heart_rate: NORMAL
+        spo2: NORMAL
+      injuries:
+        - name: Puncture # (Mis)-treating this with hemostatic gauze should consume the supply
+          location: left bicep
+          status: visible
+        - name: Puncture # (Mis)-treating this with hemostatic gauze should consume the supply
+          location: right forearm
+          status: visible
+        - name: Puncture # (Mis)-treating this with hemostatic gauze should consume the supply
+          location: left thigh
+          status: visible
+        - name: Puncture # (Mis)-treating this with hemostatic gauze should consume the supply
+          location: right calf
+          status: visible
+scenes:
+  - id: fix_mike
+    next_scene: fix_travis
+    end_scene_allowed: false
+    restricted_actions:
+      - TAG_CHARACTER
+      - CHECK_RESPIRATION
+      - CHECK_PULSE
+      - CHECK_ALL_VITALS
+      - DIRECT_MOBILE_CHARACTERS
+      - SITREP
+      - CHECK_BLOOD_OXYGEN
+    action_mapping:
+      - action_id: treat-mike-left-bicep
+        action_type: APPLY_TREATMENT
+        unstructured: Treat Mike's left bicep (puncture) injury
+        character_id: Mike
+        parameters: { "treatment": "Hemostatic gauze", "location": "left bicep" }
+        probe_id: test-1
+        choice: test-mike-left-bicep
+      - action_id: treat-mike-right-forearm
+        action_type: APPLY_TREATMENT
+        unstructured: Treat Mike's right forearm (puncture) injury
+        character_id: Mike
+        parameters: { "treatment": "Hemostatic gauze", "location": "right forearm" }
+        probe_id: test-1
+        choice: test-mike-right-forearm
+      - action_id: treat-mike-left-thigh
+        action_type: APPLY_TREATMENT
+        unstructured: Treat Mike's left thigh (puncture) injury
+        character_id: Mike
+        parameters: { "treatment": "Hemostatic gauze", "location": "left thigh" }
+        probe_id: test-1
+        choice: test-mike-left-thigh
+      - action_id: treat-mike-right-calf
+        action_type: APPLY_TREATMENT
+        unstructured: Treat Mike's right calf (puncture) injury
+        character_id: Mike
+        parameters: { "treatment": "Hemostatic gauze", "location": "right calf" }
+        probe_id: test-1
+        choice: test-mike-right-calf
+      - action_id: treat-mike-with-airway
+        action_type: APPLY_TREATMENT
+        repeatable: true
+        unstructured: Apply a Nasopharyngeal airway to Mike
+        character_id: Mike
+        parameters: { "treatment": "Nasopharyngeal airway" }
+        probe_id: test-1
+        choice: treat-mike-with-airway
+    transitions:
+      actions:
+        - [treat-mike-left-bicep, treat-mike-right-forearm, treat-mike-left-thigh, treat-mike-right-calf, treat-mike-with-airway] # actions within a list have "and" semantics
+
+  - id: fix_travis
+    next_scene: fix_andrew
+    end_scene_allowed: false
+    state:
+      unstructured: Testing applying hemostatic gauze to lacerations where a pressure bandage is called for.
+      characters:
+      - id: Travis
+        name: Travis
+        unstructured: Patient with multiple lacerations that require a pressure bandage, but treating with hemostatic gauze will consume the supply.
+        demographics:
+          age: 34
+          sex: M
+          race: White
+        vitals:
+          avpu: ALERT
+          ambulatory: true
+          mental_status: CALM
+          breathing: NORMAL
+          heart_rate: NORMAL
+          spo2: NORMAL
+        injuries:
+          - name: Laceration # (Mis)-treating this with hemostatic gauze should consume the supply
+            location: left face
+            status: visible
+          - name: Laceration # (Mis)-treating this with hemostatic gauze should consume the supply
+            location: left forearm
+            status: visible
+          - name: Laceration # (Mis)-treating this with hemostatic gauze should consume the supply
+            location: left stomach
+            status: visible
+          - name: Laceration # (Mis)-treating this with hemostatic gauze should consume the supply
+            location: right hand
+            status: visible
+          - name: Laceration # (Mis)-treating this with hemostatic gauze should consume the supply
+            location: right calf
+            status: visible
+    restricted_actions:
+      - TAG_CHARACTER
+      - CHECK_RESPIRATION
+      - CHECK_PULSE
+      - CHECK_ALL_VITALS
+      - DIRECT_MOBILE_CHARACTERS
+      - SITREP
+      - CHECK_BLOOD_OXYGEN
+    action_mapping:
+      - action_id: treat-travis-left-face
+        action_type: APPLY_TREATMENT
+        unstructured: Treat Travis's left face (laceration) injury
+        character_id: Travis
+        parameters: { "treatment": "Hemostatic gauze", "location": "left face" }
+        probe_id: test-1
+        choice: test-travis-left-face
+      - action_id: treat-travis-left-forearm
+        action_type: APPLY_TREATMENT
+        unstructured: Treat Travis's left forearm (laceration) injury
+        character_id: Travis
+        parameters: { "treatment": "Hemostatic gauze", "location": "left forearm" }
+        probe_id: test-1
+        choice: test-travis-left-forearm
+      - action_id: treat-travis-left-stomach
+        action_type: APPLY_TREATMENT
+        unstructured: Treat Travis's left stomach (laceration) injury
+        character_id: Travis
+        parameters: { "treatment": "Hemostatic gauze", "location": "left stomach" }
+        probe_id: test-1
+        choice: test-travis-left-stomach
+      - action_id: treat-travis-right-hand
+        action_type: APPLY_TREATMENT
+        unstructured: Treat Travis's right hand (laceration) injury
+        character_id: Travis
+        parameters: { "treatment": "Hemostatic gauze", "location": "right hand" }
+        probe_id: test-1
+        choice: test-travis-right-hand
+      - action_id: treat-travis-right-calf
+        action_type: APPLY_TREATMENT
+        unstructured: Treat Travis's right calf (laceration) injury
+        character_id: Travis
+        parameters: { "treatment": "Hemostatic gauze", "location": "right calf" }
+        probe_id: test-1
+        choice: test-travis-right-calf
+    transitions:
+      actions:
+        - [treat-travis-left-face, treat-travis-left-forearm, treat-travis-left-stomach, treat-travis-right-hand, treat-travis-right-calf] # actions within a list have "and" semantics
+
+  - id: fix_andrew
+    next_scene: fix_adam
+    end_scene_allowed: false
+    state:
+      unstructured: Testing applying hemostatic gauze to abrasions where a pressure bandage is called for.
+      characters:
+      - id: Andrew
+        name: Andrew
+        unstructured: Patient with multiple abrasions that require a pressure bandage, but treating with hemostatic gauze will consume the supply.
+        demographics:
+          age: 34
+          sex: M
+          race: White
+        vitals:
+          avpu: ALERT
+          ambulatory: true
+          mental_status: CALM
+          breathing: NORMAL
+          heart_rate: NORMAL
+          spo2: NORMAL
+        injuries:
+          - name: Abrasion # (Mis)-treating this with hemostatic gauze should consume the supply
+            location: left face
+            status: visible
+          - name: Abrasion # (Mis)-treating this with hemostatic gauze should consume the supply
+            location: right bicep
+            status: visible
+          - name: Abrasion # (Mis)-treating this with hemostatic gauze should consume the supply
+            location: left forearm
+            status: visible
+          - name: Abrasion # (Mis)-treating this with hemostatic gauze should consume the supply
+            location: right thigh
+            status: visible
+          - name: Abrasion # (Mis)-treating this with hemostatic gauze should consume the supply
+            location: left calf
+            status: visible
+    restricted_actions:
+      - TAG_CHARACTER
+      - CHECK_RESPIRATION
+      - CHECK_PULSE
+      - CHECK_ALL_VITALS
+      - DIRECT_MOBILE_CHARACTERS
+      - SITREP
+      - CHECK_BLOOD_OXYGEN
+    action_mapping:
+      - action_id: treat-andrew-left-face
+        action_type: APPLY_TREATMENT
+        unstructured: Treat Andrew's left face (abrasion) injury
+        character_id: Andrew
+        parameters: { "treatment": "Hemostatic gauze", "location": "left face" }
+        probe_id: test-1
+        choice: test-andrew-left-face
+      - action_id: treat-andrew-right-bicep
+        action_type: APPLY_TREATMENT
+        unstructured: Treat Andrew's right bicep (abrasion) injury
+        character_id: Andrew
+        parameters: { "treatment": "Hemostatic gauze", "location": "right bicep" }
+        probe_id: test-1
+        choice: test-andrew-right-bicep
+      - action_id: treat-andrew-left-forearm
+        action_type: APPLY_TREATMENT
+        unstructured: Treat Andrew's left forearm (abrasion) injury
+        character_id: Andrew
+        parameters: { "treatment": "Hemostatic gauze", "location": "left forearm" }
+        probe_id: test-1
+        choice: test-andrew-left-forearm
+      - action_id: treat-andrew-right-thigh
+        action_type: APPLY_TREATMENT
+        unstructured: Treat Andrew's right thigh (abrasion) injury
+        character_id: Andrew
+        parameters: { "treatment": "Hemostatic gauze", "location": "right thigh" }
+        probe_id: test-1
+        choice: test-andrew-right-thigh
+      - action_id: treat-andrew-left-calf
+        action_type: APPLY_TREATMENT
+        unstructured: Treat Andrew's left calf (abrasion) injury
+        character_id: Andrew
+        parameters: { "treatment": "Hemostatic gauze", "location": "left calf" }
+        probe_id: test-1
+        choice: test-andrew-left-calf
+    transitions:
+      actions:
+        - [treat-andrew-left-face, treat-andrew-right-bicep, treat-andrew-left-forearm, treat-andrew-right-thigh, treat-andrew-left-calf] # actions within a list have "and" semantics
+
+  - id: fix_adam
+    next_scene: fix_kristin
+    end_scene_allowed: false
+    state:
+      unstructured: Testing applying hemostatic gauze to shrapnel injuries where a different treatment is called for.
+      characters:
+      - id: Adam
+        name: Adam
+        unstructured: >
+          Patient with multiple shrapnel injuries that require a pressure bandage or airway, but treating with hemostatic gauze will consume the supply.
+        demographics:
+          age: 34
+          sex: M
+          race: White
+        vitals:
+          avpu: ALERT
+          ambulatory: true
+          mental_status: CALM
+          breathing: NORMAL
+          heart_rate: NORMAL
+          spo2: NORMAL
+        injuries:
+          - name: Shrapnel # Hemostatic gauze will be consumed if applied here
+            location: right face
+            status: visible
+          - name: Shrapnel # Hemostatic gauze will be consumed if applied here
+            location: right calf
+            status: visible
+    restricted_actions:
+      - TAG_CHARACTER
+      - CHECK_RESPIRATION
+      - CHECK_PULSE
+      - CHECK_ALL_VITALS
+      - DIRECT_MOBILE_CHARACTERS
+      - SITREP
+      - CHECK_BLOOD_OXYGEN
+    action_mapping:
+      - action_id: treat-adam-right-face-with-gauze
+        action_type: APPLY_TREATMENT
+        unstructured: Treat Adam's right face (shrapnel) injury with hemostatic gauze
+        character_id: Adam
+        parameters: { "treatment": "Hemostatic gauze", "location": "right face" }
+        probe_id: test-1
+        choice: treat-adam-right-face-with-gauze
+      - action_id: treat-adam-right-face-with-airway
+        action_type: APPLY_TREATMENT
+        unstructured: Treat Adam's right face (shrapnel) injury with airway
+        character_id: Adam
+        parameters: { "treatment": "Nasopharyngeal airway", "location": "right face" }
+        probe_id: test-1
+        choice: treat-adam-right-face-with-airway
+      - action_id: treat-adam-left-face
+        action_type: APPLY_TREATMENT
+        unstructured: >
+          Apply a Nasopharyngeal airway to Adam's left face (unnecessarily).
+          Note: this will create a warning in the ITM Scenario Validator.
+        character_id: Adam
+        parameters: { "treatment": "Nasopharyngeal airway", "location": "left face" }
+        probe_id: test-1
+        choice: treat-adam-left-face
+      - action_id: treat-adam-right-calf
+        action_type: APPLY_TREATMENT
+        unstructured: Treat Adam's right calf (shrapnel) injury
+        character_id: Adam
+        parameters: { "treatment": "Hemostatic gauze", "location": "right calf" }
+        probe_id: test-1
+        choice: test-adam-right-calf
+    transitions:
+      actions:
+        - [treat-adam-right-face-with-gauze, treat-adam-right-face-with-airway, treat-adam-left-face, treat-adam-right-calf] # actions within a list have "and" semantics
+
+  - id: fix_kristin
+    end_scene_allowed: false
+    state:
+      unstructured: Testing applying hemostatic gauze and a pressure bandage to the untreatable open abdominal injury.
+      characters:
+      - id: Kristin
+        name: Kristin
+        unstructured: >
+          Patient has an untreatable open abdominal injury, but treating with hemostatic gauze or pressure bandanges will consume the supply.
+        demographics:
+          age: 34
+          sex: F
+          race: White
+        vitals:
+          avpu: ALERT
+          ambulatory: true
+          mental_status: CALM
+          breathing: NORMAL
+          heart_rate: NORMAL
+          spo2: NORMAL
+        injuries:
+          - name: Open Abdominal Wound # Hemostatic gauze and pressure bandanges will be consumed if applied here
+            location: stomach
+            status: visible
+    restricted_actions:
+      - TAG_CHARACTER
+      - CHECK_RESPIRATION
+      - CHECK_PULSE
+      - CHECK_ALL_VITALS
+      - DIRECT_MOBILE_CHARACTERS
+      - SITREP
+      - CHECK_BLOOD_OXYGEN
+    action_mapping:
+      - action_id: treat-kristin-stomach-with-gauze
+        action_type: APPLY_TREATMENT
+        unstructured: Treat Kristin's stomach (open abdominal wound) injury with hemostatic gauze
+        character_id: Kristin
+        parameters: { "treatment": "Hemostatic gauze", "location": "stomach" }
+        probe_id: test-1
+        choice: treat-kristin-stomach-with-gauze
+      - action_id: treat-kristin-stomach-with-pressure-bandage
+        action_type: APPLY_TREATMENT
+        unstructured: Treat Kristin's stomach (open abdominal wound) injury with a pressure bandage
+        character_id: Kristin
+        parameters: { "treatment": "Pressure bandage", "location": "stomach" }
+        probe_id: test-1
+        choice: treat-kristin-stomach-with-pressure-bandage
+    transitions:
+      actions:
+        - [treat-kristin-stomach-with-gauze, treat-kristin-stomach-with-pressure-bandage] # actions within a list have "and" semantics

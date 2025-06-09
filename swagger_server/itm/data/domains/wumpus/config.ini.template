@@ -1,0 +1,30 @@
+; Copy over this template file and rename it to swagger_server/config.ini
+; Replace the default configurations below with the desired values
+
+[DEFAULT]
+
+EVALUATION_TYPE=wumpus
+SCENARIO_DIRECTORY=swagger_server/itm/data/%(EVALUATION_TYPE)s/scenarios/
+DEFAULT_DOMAIN=wumpus
+SUPPORTED_DOMAINS=wumpus
+
+SAVE_HISTORY=True
+SAVE_HISTORY_TO_S3=False
+ALL_TA1_NAMES=test
+
+HISTORY_DIRECTORY=%(EVALUATION_TYPE)s_history_output
+HISTORY_S3_BUCKET=itm-wumpus-assets
+
+EVAL_NAME=Wumpus Evaluation
+EVAL_NUMBER=6
+
+PLACEHOLDER=placeholder
+
+# All of these keywords must be present in the DEFAULT configuration
+REQUIRED_CONFIG=EVALUATION_TYPE, SCENARIO_DIRECTORY, DEFAULT_DOMAIN, SUPPORTED_DOMAINS, SAVE_HISTORY, SAVE_HISTORY_TO_S3,
+  ALL_TA1_NAMES, HISTORY_DIRECTORY, HISTORY_S3_BUCKET, EVAL_NAME, EVAL_NUMBER, PLACEHOLDER
+
+[CONFIG_2]
+
+EVAL_NAME=Wumpus Evaluation 2
+PLACEHOLDER=placeholder2

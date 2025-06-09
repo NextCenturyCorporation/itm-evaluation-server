@@ -75,10 +75,19 @@ swagger_server/api
 
 # local history output
 itm_history_output
+wumpus_history_output
+june2025_history_output
 
 # local config files
 config.ini
+config.triage.ini
+config.p2triage.ini
+config.wumpus.ini
 
 # local scenarios
 itm_scenarios
+swagger_server/itm/data/phase1
+swagger_server/itm/data/june2025
 
+# local csvs
+*.csv
