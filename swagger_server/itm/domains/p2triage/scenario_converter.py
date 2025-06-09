@@ -1,5 +1,6 @@
 import yaml
 import csv
+import os
 import argparse
 
 # These are constants that cannot be overridden via the command line
@@ -214,9 +215,10 @@ def main():
             set_next_scene(data['scenes'])
 
             # Write the data to a YAML file using dump() function
-            print(f"{'NOT ' if not WRITE_FILES else ''}Writing {len(data['scenes'])} probes to {OUT_PATH}/{outfile}.")
+            print(f"{'NOT ' if not WRITE_FILES else ''}Writing {len(data['scenes'])} probes to {OUT_PATH}{os.sep}{outfile}.")
             if WRITE_FILES:
-                with open(f"{OUT_PATH}/{outfile}", 'w', encoding='utf-8') as file:
+                os.makedirs(OUT_PATH, exist_ok=True)
+                with open(f"{OUT_PATH}{os.sep}{outfile}", 'w', encoding='utf-8') as file:
                     yaml.dump(data, file, sort_keys=False, indent=2)
 
         csvfile.close()
