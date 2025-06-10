@@ -448,7 +448,6 @@ class ITMSession:
             return f"No action handler found for domain `{domain}`", 400
 
         self.kdma_training = kdma_training
-        self.adept_populations = adept_populations
         self.adm_name = adm_name
         self.adm_profile = adm_profile if adm_profile else ''
         if max_scenarios == 0:
