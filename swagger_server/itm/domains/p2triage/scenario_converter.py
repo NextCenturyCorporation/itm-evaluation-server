@@ -120,7 +120,7 @@ def make_mappings(row: dict, acronym: str, training: bool) -> list:
         attribute_base = get_kdma_base(acronym, probe_id)
         kdma_assoc: dict = {'medical': float(row['pb_medical']), attribute_base: float(row[f"pb_{attribute_base}"])}
         mapping['kdma_association'] = kdma_assoc
-    if acronym in ['AF', 'MF']:
+    if acronym in ['AF', 'MF', 'AF-MF']:
         mapping['character_id'] = 'Patient B'
     mappings.append(mapping)
 
