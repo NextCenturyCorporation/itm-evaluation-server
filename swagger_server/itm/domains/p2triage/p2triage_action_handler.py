@@ -37,7 +37,7 @@ class P2TriageActionHandler(ITMActionHandler):
 
         if action.action_type == ActionTypeEnum.TREAT_PATIENT:
             # Character required
-            if not action.action_id:
+            if not character or not character.id:
                 return False, f'Malformed Action: Missing character_id for {action.action_type}', 400
             if character.unseen and not action.intent_action and action.action_type:
                 return False, f'Cannot perform {action.action_type} action with unseen character `{action.character_id}`', 400
