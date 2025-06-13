@@ -58,7 +58,7 @@ def make_state(row: dict, acronym: str, training: str, first_row: str = False) -
         character.update({'medical_condition': float(row['pa_medical'])})
         character.update({'attribute_rating': float(row[f"pa_{attribute_base}"])})
     character_list.append(character)
-    if 'saftey' not in attribute_base:
+    if 'safety' not in attribute_base:
         character = {'id': 'Patient B', 'name': 'Patient B', 'unstructured': row['patient_b_text']}
         if training or not REDACT_EVAL:
             character.update({'medical_condition': float(row['pb_medical'])})
