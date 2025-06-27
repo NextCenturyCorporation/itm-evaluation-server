@@ -450,6 +450,8 @@ class ITMSession:
         self.kdma_training = kdma_training
         self.adm_name = adm_name
         self.adm_profile = adm_profile if adm_profile else ''
+        if 'testrun' in self.adm_name or 'test' in self.adm_profile:
+            self.save_history_to_s3 = False
         if max_scenarios == 0:
             max_scenarios = None
         self.itm_scenarios = []
