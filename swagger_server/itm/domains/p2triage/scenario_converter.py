@@ -16,13 +16,13 @@ OUT_PATH = f"swagger_server/itm/data/{EVALUATION_NAME.lower()}/scenarios"
 IGNORED_LIST = []
 
 kdmas_info: list[dict] = [
-    {'acronym': 'MF', 'full_name': 'Merit Focus', 'filename': 'June2025MeritFocus'},
-    {'acronym': 'AF', 'full_name': 'Affiliation Focus', 'filename': 'June2025AffiliationFocus'},
-    {'acronym': 'SS', 'full_name': 'Search vs Stay', 'filename': 'June2025SearchStay'},
-    {'acronym': 'PS', 'full_name': 'Personal Safety Focus', 'filename': 'June2025PersonalSafety'},
-    {'acronym': 'AF-MF', 'full_name': 'Affiliation Focus Set', 'filename': 'June2025-AF-MF'},
-    {'acronym': 'AF-MF', 'full_name': 'Open World Desert', 'filename': 'June2025-OW-desert'},
-    {'acronym': 'AF-MF', 'full_name': 'Open World Urban', 'filename': 'June2025-OW-urban'}
+    {'acronym': 'MF', 'full_name': 'Merit Focus', 'filename': f'{EVALUATION_NAME}MeritFocus'},
+    {'acronym': 'AF', 'full_name': 'Affiliation Focus', 'filename': f'{EVALUATION_NAME}AffiliationFocus'},
+    {'acronym': 'SS', 'full_name': 'Search vs Stay', 'filename': f'{EVALUATION_NAME}SearchStay'},
+    {'acronym': 'PS', 'full_name': 'Personal Safety Focus', 'filename': f'{EVALUATION_NAME}PersonalSafety'},
+    {'acronym': 'AF-MF', 'full_name': 'Affiliation Focus Set', 'filename': f'{EVALUATION_NAME}-AF-MF'},
+    {'acronym': 'OW', 'full_name': 'Open World Desert', 'filename': 'June2025-OW-desert'},
+    {'acronym': 'OW', 'full_name': 'Open World Urban', 'filename': 'June2025-OW-urban'}
     ]
 
 expected_fields = ['scenario_id', 'scenario_name', 'probe_id', 'intro_text', 'probe_full_text', 'probe_question',
@@ -122,7 +122,7 @@ def make_mappings(row: dict, acronym: str, training: bool) -> list:
         attribute_base = get_kdma_base(acronym, probe_id)
         kdma_assoc: dict = {'medical': float(row['pb_medical']), attribute_base: float(row[f"pb_{attribute_base}"])}
         mapping['kdma_association'] = kdma_assoc
-    if acronym in ['AF', 'MF', 'AF-MF']:
+    if acronym in ['AF', 'MF', 'AF-MF', 'OW']:
         mapping['character_id'] = 'Patient B'
     mappings.append(mapping)
 
@@ -181,6 +181,9 @@ def main():
         acronym = kdma_info['acronym']
         if acronym in IGNORED_LIST:
             continue
+        if acronym == 'OW' and (REDACT_EVAL or not FULL_EVAL):
+            continue
+
         full_name = kdma_info['full_name']
         filename = f"{kdma_info['filename']}.csv" if FULL_EVAL else f"{kdma_info['filename']}_evalset.csv"
         csvfile = open(filename, 'r', encoding='utf-8')
