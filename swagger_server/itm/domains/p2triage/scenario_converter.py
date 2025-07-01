@@ -4,7 +4,7 @@ import os
 import argparse
 
 # These are constants that cannot be overridden via the command line
-EVALUATION_NAME = 'June2025'
+EVALUATION_NAME = 'July2025'
 TA1_NAME = 'adept'
 
 # These are default values that can be overridden via the command line
