@@ -242,7 +242,7 @@ if __name__ == '__main__':
     parser.add_argument('-o', '--outpath', required=False, metavar='outpath',
                         help='Specify location for output files (no spaces)')
     parser.add_argument('-i', '--ignore', nargs='+', metavar='ignore', required=False, type=str,
-                        help="Acronyms of attributes to ignore (AF, MF, PS, SS, AF-MF)")
+                        help="Acronyms of attributes to ignore (AF, MF, PS, SS, AF-MF, OW)")
 
     args = parser.parse_args()
     if args.subset:
