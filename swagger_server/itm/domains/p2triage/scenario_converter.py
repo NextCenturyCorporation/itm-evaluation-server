@@ -129,8 +129,9 @@ def make_mappings(row: dict, acronym: str, training: bool) -> list:
 
 def get_scene(row: dict, acronym: str, training: bool) -> dict:
     probe_id: str = row['probe_id']
+    next_scene = f"Probe {int(probe_id.split()[1]) + 1}"
     probe_config: list = [{'description': row['probe_question']}]
-    return {'id': probe_id, 'next_scene': 'placeholder', 'end_scene_allowed': acronym == 'PS', 'probe_config': probe_config,
+    return {'id': probe_id, 'next_scene': next_scene, 'end_scene_allowed': acronym == 'PS', 'probe_config': probe_config,
             'state': make_state(row, acronym, training), 'action_mapping': make_mappings(row, acronym, training),
             'transitions': {'probes': [probe_id]}}
 
@@ -179,7 +180,6 @@ def main():
         acronym = kdma_info['acronym']
         if acronym in IGNORED_LIST:
             continue
-
         full_name = kdma_info['full_name']
         filename = f"{kdma_info['filename']}.csv" if FULL_EVAL else f"{kdma_info['filename']}_evalset.csv"
         csvfile = open(filename, 'r', encoding='utf-8')
@@ -209,6 +209,7 @@ def main():
                 redact_string = '_redacted' if REDACT_EVAL else ''
                 #data['id'] = f"{EVALUATION_NAME}-{acronym}{eval_scenario_num}-{train_string}"
                 outfile = f"{EVALUATION_NAME.lower()}-{TA1_NAME}-{train_string}-{acronym}{eval_scenario_num}{redact_string}.yaml"
+                eval_scenario_num = 2 if not eval_scenario_num else eval_scenario_num + 1
 
             # Go back and add next_scene property now that we have everything
             set_next_scene(data['scenes'])
