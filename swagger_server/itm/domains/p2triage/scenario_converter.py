@@ -20,7 +20,9 @@ kdmas_info: list[dict] = [
     {'acronym': 'AF', 'full_name': 'Affiliation Focus', 'filename': f'{EVALUATION_NAME}AffiliationFocus'},
     {'acronym': 'SS', 'full_name': 'Search vs Stay', 'filename': f'{EVALUATION_NAME}SearchStay'},
     {'acronym': 'PS', 'full_name': 'Personal Safety Focus', 'filename': f'{EVALUATION_NAME}PersonalSafety'},
-    {'acronym': 'AF-MF', 'full_name': 'Affiliation Focus Set', 'filename': f'{EVALUATION_NAME}-AF-MF'}
+    {'acronym': 'AF-MF', 'full_name': 'Affiliation Focus Set', 'filename': f'{EVALUATION_NAME}-AF-MF'},
+    {'acronym': 'OW', 'full_name': 'Open World Desert', 'filename': f'{EVALUATION_NAME}-OW-desert'},
+    {'acronym': 'OW', 'full_name': 'Open World Urban', 'filename': f'{EVALUATION_NAME}-OW-urban'}
     ]
 
 expected_fields = ['scenario_id', 'scenario_name', 'probe_id', 'intro_text', 'probe_full_text', 'probe_question',
@@ -120,7 +122,7 @@ def make_mappings(row: dict, acronym: str, training: bool) -> list:
         attribute_base = get_kdma_base(acronym, probe_id)
         kdma_assoc: dict = {'medical': float(row['pb_medical']), attribute_base: float(row[f"pb_{attribute_base}"])}
         mapping['kdma_association'] = kdma_assoc
-    if acronym in ['AF', 'MF', 'AF-MF']:
+    if acronym in ['AF', 'MF', 'AF-MF', 'OW']:
         mapping['character_id'] = 'Patient B'
     mappings.append(mapping)
 
@@ -129,9 +131,8 @@ def make_mappings(row: dict, acronym: str, training: bool) -> list:
 
 def get_scene(row: dict, acronym: str, training: bool) -> dict:
     probe_id: str = row['probe_id']
-    next_scene = f"Probe {int(probe_id.split()[1]) + 1}"
     probe_config: list = [{'description': row['probe_question']}]
-    return {'id': probe_id, 'next_scene': next_scene, 'end_scene_allowed': acronym == 'PS', 'probe_config': probe_config,
+    return {'id': probe_id, 'next_scene': 'placeholder', 'end_scene_allowed': acronym == 'PS', 'probe_config': probe_config,
             'state': make_state(row, acronym, training), 'action_mapping': make_mappings(row, acronym, training),
             'transitions': {'probes': [probe_id]}}
 
@@ -180,6 +181,9 @@ def main():
         acronym = kdma_info['acronym']
         if acronym in IGNORED_LIST:
             continue
+        if acronym == 'OW' and (REDACT_EVAL or not FULL_EVAL):
+            continue
+
         full_name = kdma_info['full_name']
         filename = f"{kdma_info['filename']}.csv" if FULL_EVAL else f"{kdma_info['filename']}_evalset.csv"
         csvfile = open(filename, 'r', encoding='utf-8')
@@ -200,16 +204,15 @@ def main():
                 print(f"KDMA mismatch?  {full_name} doesn't match scenario name {data['name']}.  Exiting.")
                 exit(1)
             if 'train' in data['id']:
-                train_string = 'train'
-                #data['id'] = f"{EVALUATION_NAME}-{acronym}{train_scenario_num}-{train_string}"
-                outfile = f"{EVALUATION_NAME.lower()}-{TA1_NAME}-{train_string}-{acronym}{train_scenario_num}.yaml"
+                outfile = f"{EVALUATION_NAME.lower()}-{TA1_NAME}-train-{acronym}{train_scenario_num}.yaml"
                 train_scenario_num = 2 if not train_scenario_num else train_scenario_num + 1
-            else:
-                train_string = 'eval'
+            elif 'eval' in data['id']:
                 redact_string = '_redacted' if REDACT_EVAL else ''
-                #data['id'] = f"{EVALUATION_NAME}-{acronym}{eval_scenario_num}-{train_string}"
-                outfile = f"{EVALUATION_NAME.lower()}-{TA1_NAME}-{train_string}-{acronym}{eval_scenario_num}{redact_string}.yaml"
+                outfile = f"{EVALUATION_NAME.lower()}-{TA1_NAME}-eval-{acronym}{eval_scenario_num}{redact_string}.yaml"
                 eval_scenario_num = 2 if not eval_scenario_num else eval_scenario_num + 1
+            else: # Open World
+                environment = 'desert' if 'Desert' in kdma_info['full_name'] else 'urban'
+                outfile = f"{EVALUATION_NAME.lower()}-OW-{environment}.yaml"
 
             # Go back and add next_scene property now that we have everything
             set_next_scene(data['scenes'])

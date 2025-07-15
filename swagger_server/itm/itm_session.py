@@ -469,6 +469,7 @@ class ITMSession:
         if kdma_training:
             self.return_scenario_history = True
             self.ta1_integration = kdma_training == 'full'
+            self.save_history_to_s3 = False
         if session_type == 'test':
             self.ta1_integration = False
 
