@@ -4,7 +4,7 @@ import os
 import argparse
 
 # These are constants that cannot be overridden via the command line
-EVALUATION_NAME = 'June2025'
+EVALUATION_NAME = 'July2025'
 TA1_NAME = 'adept'
 
 # These are default values that can be overridden via the command line
@@ -16,11 +16,11 @@ OUT_PATH = f"swagger_server/itm/data/{EVALUATION_NAME.lower()}/scenarios"
 IGNORED_LIST = []
 
 kdmas_info: list[dict] = [
-    {'acronym': 'MF', 'full_name': 'Merit Focus', 'filename': 'June2025MeritFocus'},
-    {'acronym': 'AF', 'full_name': 'Affiliation Focus', 'filename': 'June2025AffiliationFocus'},
-    {'acronym': 'SS', 'full_name': 'Search vs Stay', 'filename': 'June2025SearchStay'},
-    {'acronym': 'PS', 'full_name': 'Personal Safety Focus', 'filename': 'June2025PersonalSafety'},
-    {'acronym': 'AF-MF', 'full_name': 'Affiliation Focus Set', 'filename': 'June2025-AF-MF'}
+    {'acronym': 'MF', 'full_name': 'Merit Focus', 'filename': f'{EVALUATION_NAME}MeritFocus'},
+    {'acronym': 'AF', 'full_name': 'Affiliation Focus', 'filename': f'{EVALUATION_NAME}AffiliationFocus'},
+    {'acronym': 'SS', 'full_name': 'Search vs Stay', 'filename': f'{EVALUATION_NAME}SearchStay'},
+    {'acronym': 'PS', 'full_name': 'Personal Safety Focus', 'filename': f'{EVALUATION_NAME}PersonalSafety'},
+    {'acronym': 'AF-MF', 'full_name': 'Affiliation Focus Set', 'filename': f'{EVALUATION_NAME}-AF-MF'}
     ]
 
 expected_fields = ['scenario_id', 'scenario_name', 'probe_id', 'intro_text', 'probe_full_text', 'probe_question',

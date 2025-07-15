@@ -3,7 +3,7 @@
 
 [DEFAULT]
 
-EVALUATION_TYPE=june2025
+EVALUATION_TYPE=july2025
 SCENARIO_DIRECTORY=swagger_server/itm/data/%(EVALUATION_TYPE)s/scenarios/
 DEFAULT_DOMAIN=p2triage
 SUPPORTED_DOMAINS=p2triage
@@ -24,28 +24,28 @@ ALL_TA1_NAMES=adept
 HISTORY_DIRECTORY=%(EVALUATION_TYPE)s_history_output
 HISTORY_S3_BUCKET=itm-ui-assets
 
-EVAL_NAME=Phase 2 June 2025 Collaboration
-EVAL_NUMBER=8
+EVAL_NAME=Phase 2 July 2025 Collaboration
+EVAL_NUMBER=9
 
-ADEPT_EVAL_FILENAMES=june2025-adept-eval-MF1.yaml,june2025-adept-eval-MF2.yaml,june2025-adept-eval-MF3.yaml,june2025-adept-eval-MF.yaml,
-    june2025-adept-eval-AF1.yaml,june2025-adept-eval-AF2.yaml,june2025-adept-eval-AF3.yaml,june2025-adept-eval-AF.yaml,
-    june2025-adept-eval-SS1.yaml,june2025-adept-eval-SS2.yaml,june2025-adept-eval-SS3.yaml,june2025-adept-eval-SS.yaml,
-    june2025-adept-eval-PS1.yaml,june2025-adept-eval-PS2.yaml,june2025-adept-eval-PS3.yaml,june2025-adept-eval-PS.yaml
+ADEPT_EVAL_FILENAMES=july2025-adept-eval-MF1.yaml,july2025-adept-eval-MF2.yaml,july2025-adept-eval-MF3.yaml,july2025-adept-eval-MF.yaml,
+    july2025-adept-eval-AF1.yaml,july2025-adept-eval-AF2.yaml,july2025-adept-eval-AF3.yaml,july2025-adept-eval-AF.yaml,
+    july2025-adept-eval-SS1.yaml,july2025-adept-eval-SS2.yaml,july2025-adept-eval-SS3.yaml,july2025-adept-eval-SS.yaml,
+    july2025-adept-eval-PS1.yaml,july2025-adept-eval-PS2.yaml,july2025-adept-eval-PS3.yaml,july2025-adept-eval-PS.yaml
 
-ADEPT_TRAIN_FILENAMES=june2025-adept-train-MF.yaml,
-    june2025-adept-train-AF.yaml,
-    june2025-adept-train-SS.yaml,
-    june2025-adept-train-PS.yaml
+ADEPT_TRAIN_FILENAMES=july2025-adept-train-MF.yaml,
+    july2025-adept-train-AF.yaml,
+    july2025-adept-train-SS.yaml,
+    july2025-adept-train-PS.yaml
 
-ADEPT_EVAL_K1_SCENARIOS=June2025-MF1-eval,June2025-MF2-eval,June2025-MF3-eval,June2025-MF-eval
-ADEPT_EVAL_K2_SCENARIOS=June2025-AF1-eval,June2025-AF2-eval,June2025-AF3-eval,June2025-AF-eval
-ADEPT_EVAL_K3_SCENARIOS=June2025-SS1-eval,June2025-SS2-eval,June2025-SS3-eval,June2025-SS-eval
-ADEPT_EVAL_K4_SCENARIOS=June2025-PS1-eval,June2025-PS2-eval,June2025-PS3-eval,June2025-PS-eval
+ADEPT_EVAL_K1_SCENARIOS=July2025-MF1-eval,July2025-MF2-eval,July2025-MF3-eval,July2025-MF-eval
+ADEPT_EVAL_K2_SCENARIOS=July2025-AF1-eval,July2025-AF2-eval,July2025-AF3-eval,July2025-AF-eval
+ADEPT_EVAL_K3_SCENARIOS=July2025-SS1-eval,July2025-SS2-eval,July2025-SS3-eval,July2025-SS-eval
+ADEPT_EVAL_K4_SCENARIOS=July2025-PS1-eval,July2025-PS2-eval,July2025-PS3-eval,July2025-PS-eval
 
-ADEPT_TRAIN_K1_SCENARIOS=June2025-MF-train
-ADEPT_TRAIN_K2_SCENARIOS=June2025-AF-train
-ADEPT_TRAIN_K3_SCENARIOS=June2025-SS-train
-ADEPT_TRAIN_K4_SCENARIOS=June2025-PS-train
+ADEPT_TRAIN_K1_SCENARIOS=July2025-MF-train
+ADEPT_TRAIN_K2_SCENARIOS=July2025-AF-train
+ADEPT_TRAIN_K3_SCENARIOS=July2025-SS-train
+ADEPT_TRAIN_K4_SCENARIOS=July2025-PS-train
 
 ADEPT_K1_ALIGNMENT_TARGETS=ADEPT-June2025-merit-0.0,
     ADEPT-June2025-merit-0.1,
@@ -95,11 +95,6 @@ ADEPT_K4_ALIGNMENT_TARGETS=ADEPT-June2025-personal_safety-0.0,
     ADEPT-June2025-personal_safety-0.9,
     ADEPT-June2025-personal_safety-1.0
 
-ADEPT_K1_ALIGNMENT_DISTRIBUTION_TARGET=ADEPT-June2025-merit-Population-All
-ADEPT_K2_ALIGNMENT_DISTRIBUTION_TARGET=ADEPT-June2025-affiliation-Population-All
-ADEPT_K3_ALIGNMENT_DISTRIBUTION_TARGET=ADEPT-June2025-search-Population-All
-ADEPT_K4_ALIGNMENT_DISTRIBUTION_TARGET=ADEPT-June2025-personal_safety-Population-All
-
 # All of these keywords must be present in the DEFAULT configuration
 REQUIRED_CONFIG=EVALUATION_TYPE, SCENARIO_DIRECTORY, ADEPT_URL, SAVE_HISTORY, SAVE_HISTORY_TO_S3,
   ALL_TA1_NAMES, HISTORY_DIRECTORY, HISTORY_S3_BUCKET, EVAL_NAME, EVAL_NUMBER, ADEPT_EVAL_K1_SCENARIOS,
@@ -110,46 +105,46 @@ REQUIRED_CONFIG=EVALUATION_TYPE, SCENARIO_DIRECTORY, ADEPT_URL, SAVE_HISTORY, SA
 
 [GROUP_TARGET]
 
-ADEPT_K1_ALIGNMENT_TARGETS=ADEPT-June2025-merit-Group-Low,
-    ADEPT-June2025-merit-Group-High
+ADEPT_K1_ALIGNMENT_TARGETS=ADEPT-July2025-merit-Group-Low,
+    ADEPT-July2025-merit-Group-High
 
-ADEPT_K2_ALIGNMENT_TARGETS=ADEPT-June2025-affiliation-Group-Low,
-    ADEPT-June2025-affiliation-Group-High
+ADEPT_K2_ALIGNMENT_TARGETS=ADEPT-July2025-affiliation-Group-Low,
+    ADEPT-July2025-affiliation-Group-High
 
-ADEPT_K3_ALIGNMENT_TARGETS=ADEPT-June2025-search-Group-Low,
-    ADEPT-June2025-search-Group-High
+ADEPT_K3_ALIGNMENT_TARGETS=ADEPT-July2025-search-Group-Low,
+    ADEPT-July2025-search-Group-High
 
-ADEPT_K4_ALIGNMENT_TARGETS=ADEPT-June2025-personal_safety-Group-Low,
-    ADEPT-June2025-personal_safety-Group-High
+ADEPT_K4_ALIGNMENT_TARGETS=ADEPT-July2025-personal_safety-Group-Low,
+    ADEPT-July2025-personal_safety-Group-High
 
 [SUBSET_ONLY]
 
-ADEPT_EVAL_FILENAMES=june2025-adept-eval-MF1.yaml,june2025-adept-eval-MF2.yaml,june2025-adept-eval-MF3.yaml,
-    june2025-adept-eval-AF1.yaml,june2025-adept-eval-AF2.yaml,june2025-adept-eval-AF3.yaml,
-    june2025-adept-eval-SS1.yaml,june2025-adept-eval-SS2.yaml,june2025-adept-eval-SS3.yaml,
-    june2025-adept-eval-PS1.yaml,june2025-adept-eval-PS2.yaml,june2025-adept-eval-PS3.yaml
+ADEPT_EVAL_FILENAMES=july2025-adept-eval-MF1.yaml,july2025-adept-eval-MF2.yaml,july2025-adept-eval-MF3.yaml,
+    july2025-adept-eval-AF1.yaml,july2025-adept-eval-AF2.yaml,july2025-adept-eval-AF3.yaml,
+    july2025-adept-eval-SS1.yaml,july2025-adept-eval-SS2.yaml,july2025-adept-eval-SS3.yaml,
+    july2025-adept-eval-PS1.yaml,july2025-adept-eval-PS2.yaml,july2025-adept-eval-PS3.yaml
 
-ADEPT_EVAL_K1_SCENARIOS=June2025-MF1-eval,June2025-MF2-eval,June2025-MF3-eval
-ADEPT_EVAL_K2_SCENARIOS=June2025-AF1-eval,June2025-AF2-eval,June2025-AF3-eval
-ADEPT_EVAL_K3_SCENARIOS=June2025-SS1-eval,June2025-SS2-eval,June2025-SS3-eval
-ADEPT_EVAL_K4_SCENARIOS=June2025-PS1-eval,June2025-PS2-eval,June2025-PS3-eval
+ADEPT_EVAL_K1_SCENARIOS=July2025-MF1-eval,July2025-MF2-eval,July2025-MF3-eval
+ADEPT_EVAL_K2_SCENARIOS=July2025-AF1-eval,July2025-AF2-eval,July2025-AF3-eval
+ADEPT_EVAL_K3_SCENARIOS=July2025-SS1-eval,July2025-SS2-eval,July2025-SS3-eval
+ADEPT_EVAL_K4_SCENARIOS=July2025-PS1-eval,July2025-PS2-eval,July2025-PS3-eval
 
 [FULL_NO_SUBSET]
 
-ADEPT_EVAL_FILENAMES=june2025-adept-eval-MF.yaml,june2025-adept-eval-AF.yaml,june2025-adept-eval-SS.yaml,june2025-adept-eval-PS.yaml
+ADEPT_EVAL_FILENAMES=july2025-adept-eval-MF.yaml,july2025-adept-eval-AF.yaml,july2025-adept-eval-SS.yaml,july2025-adept-eval-PS.yaml
 
-ADEPT_EVAL_K1_SCENARIOS=June2025-MF-eval
-ADEPT_EVAL_K2_SCENARIOS=June2025-AF-eval
-ADEPT_EVAL_K3_SCENARIOS=June2025-SS-eval
-ADEPT_EVAL_K4_SCENARIOS=June2025-PS-eval
+ADEPT_EVAL_K1_SCENARIOS=July2025-MF-eval
+ADEPT_EVAL_K2_SCENARIOS=July2025-AF-eval
+ADEPT_EVAL_K3_SCENARIOS=July2025-SS-eval
+ADEPT_EVAL_K4_SCENARIOS=July2025-PS-eval
 
 [MULTI_KDMA]
 
-ADEPT_EVAL_FILENAMES=june2025-adept-eval-AF-MF1.yaml,june2025-adept-eval-AF-MF2.yaml,june2025-adept-eval-AF-MF3.yaml,june2025-adept-eval-AF-MF.yaml
-ADEPT_TRAIN_FILENAMES=june2025-adept-train-AF-MF.yaml
+ADEPT_EVAL_FILENAMES=july2025-adept-eval-AF-MF1.yaml,july2025-adept-eval-AF-MF2.yaml,july2025-adept-eval-AF-MF3.yaml,july2025-adept-eval-AF-MF.yaml
+ADEPT_TRAIN_FILENAMES=july2025-adept-train-AF-MF.yaml
 
-ADEPT_EVAL_M1_SCENARIOS=June2025-AF-MF1-eval,June2025-AF-MF2-eval,June2025-AF-MF3-eval,June2025-AF-MF-eval
-ADEPT_TRAIN_M1_SCENARIOS=June2025-AF-MF-train
+ADEPT_EVAL_M1_SCENARIOS=July2025-AF-MF1-eval,July2025-AF-MF2-eval,July2025-AF-MF3-eval,July2025-AF-MF-eval
+ADEPT_TRAIN_M1_SCENARIOS=July2025-AF-MF-train
 
 ADEPT_M1_ALIGNMENT_TARGETS=ADEPT-June2025-affiliation_merit-0.0_0.0,
     ADEPT-June2025-affiliation_merit-0.0_1.0,
@@ -160,11 +155,11 @@ REQUIRED_CONFIG=ADEPT_EVAL_M1_SCENARIOS, ADEPT_TRAIN_M1_SCENARIOS, ADEPT_M1_ALIG
 
 [MULTI_KDMA_SUBSET]
 
-ADEPT_EVAL_FILENAMES=june2025-adept-eval-AF-MF1.yaml,june2025-adept-eval-AF-MF2.yaml,june2025-adept-eval-AF-MF3.yaml
-ADEPT_TRAIN_FILENAMES=june2025-adept-train-AF-MF.yaml
+ADEPT_EVAL_FILENAMES=july2025-adept-eval-AF-MF1.yaml,july2025-adept-eval-AF-MF2.yaml,july2025-adept-eval-AF-MF3.yaml
+ADEPT_TRAIN_FILENAMES=july2025-adept-train-AF-MF.yaml
 
-ADEPT_EVAL_M1_SCENARIOS=June2025-AF-MF1-eval,June2025-AF-MF2-eval,June2025-AF-MF3-eval
-ADEPT_TRAIN_M1_SCENARIOS=June2025-AF-MF-train
+ADEPT_EVAL_M1_SCENARIOS=July2025-AF-MF1-eval,July2025-AF-MF2-eval,July2025-AF-MF3-eval
+ADEPT_TRAIN_M1_SCENARIOS=July2025-AF-MF-train
 
 ADEPT_M1_ALIGNMENT_TARGETS=ADEPT-June2025-affiliation_merit-0.0_0.0,
     ADEPT-June2025-affiliation_merit-0.0_1.0,
@@ -175,11 +170,11 @@ REQUIRED_CONFIG=ADEPT_EVAL_M1_SCENARIOS, ADEPT_TRAIN_M1_SCENARIOS, ADEPT_M1_ALIG
 
 [MULTI_KDMA_FULL_NO_SUBSET]
 
-ADEPT_EVAL_FILENAMES=june2025-adept-eval-AF-MF.yaml
-ADEPT_TRAIN_FILENAMES=june2025-adept-train-AF-MF.yaml
+ADEPT_EVAL_FILENAMES=july2025-adept-eval-AF-MF.yaml
+ADEPT_TRAIN_FILENAMES=july2025-adept-train-AF-MF.yaml
 
-ADEPT_EVAL_M1_SCENARIOS=June2025-AF-MF-eval
-ADEPT_TRAIN_M1_SCENARIOS=June2025-AF-MF-train
+ADEPT_EVAL_M1_SCENARIOS=July2025-AF-MF-eval
+ADEPT_TRAIN_M1_SCENARIOS=July2025-AF-MF-train
 
 ADEPT_M1_ALIGNMENT_TARGETS=ADEPT-June2025-affiliation_merit-0.0_0.0,
     ADEPT-June2025-affiliation_merit-0.0_1.0,
