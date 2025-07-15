@@ -1,15 +1,14 @@
 import csv
 
-EVALUATION_NAME = 'June2025'
+EVALUATION_NAME = 'July2025'
 WRITE_FILES = True
 IGNORED_LIST = []
-#IGNORED_LIST = ['MF', 'AF', 'SS', 'PS']
 
 kdmas_info: list[dict] = [
-    {'acronym': 'MF', 'full_name': 'Merit Focus', 'filename': 'June2025MeritFocus'},
-    {'acronym': 'AF', 'full_name': 'Affiliation Focus', 'filename': 'June2025AffiliationFocus'},
-    {'acronym': 'SS', 'full_name': 'Search vs Stay', 'filename': 'June2025SearchStay'},
-    {'acronym': 'PS', 'full_name': 'Personal Safety Focus', 'filename': 'June2025PersonalSafety'}
+    {'acronym': 'MF', 'full_name': 'Merit Focus', 'filename': f'{EVALUATION_NAME}MeritFocus'},
+    {'acronym': 'AF', 'full_name': 'Affiliation Focus', 'filename': f'{EVALUATION_NAME}AffiliationFocus'},
+    {'acronym': 'SS', 'full_name': 'Search vs Stay', 'filename': f'{EVALUATION_NAME}SearchStay'},
+    {'acronym': 'PS', 'full_name': 'Personal Safety Focus', 'filename': f'{EVALUATION_NAME}PersonalSafety'}
     ]
 
 expected_fields = ['scenario_id', 'scenario_name', 'probe_id', 'intro_text', 'probe_full_text', 'probe_question',
@@ -19,12 +18,12 @@ expected_fields = ['scenario_id', 'scenario_name', 'probe_id', 'intro_text', 'pr
 
 # Each inner list is the set of probes to include in a given scenario.
 assessment_sets: dict = {
-    'MF': [['21', '24', '12', '16',  '5', '10'],
-           ['32', '35', '27', '48', '20',  '9'],
-           ['33', '41', '40', '54', '58', '71']],
-    'AF': [['18', '17', '14', '10',  '4',  '1'],
-           ['24', '22', '35', '33', '44', '37'],
-           ['52', '53', '42', '54', '45', '43']],
+    'MF': [['21', '24', '25', '39', '16', '58'],
+           ['32', '35', '37',  '1', '48', '20'],
+           ['33', '41', '42', '40', '54',  '5']],
+    'AF': [['18', '17', '12', '14', '10',  '4'],
+           ['24', '22', '16', '29', '33', '44'],
+           ['52', '53', '47', '42', '54', '45']],
     'SS': [[ '2', '14',  '3', '40', '43', '42'],
            [ '5', '17',  '9', '44', '36', '45'],
            [ '8', '20', '13', '46', '30', '48']],
