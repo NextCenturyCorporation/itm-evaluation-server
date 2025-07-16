@@ -58,6 +58,8 @@ class AdeptTa1Controller(ITMTa1Controller):
             target_ids.extend(AdeptTa1Controller.ADEPT_K3_ALIGNMENT_TARGETS)
         if itm_scenario.id in (AdeptTa1Controller.ADEPT_TRAIN_K4_SCENARIOS if itm_scenario.training else AdeptTa1Controller.ADEPT_EVAL_K4_SCENARIOS):
             target_ids.extend(AdeptTa1Controller.ADEPT_K4_ALIGNMENT_TARGETS)
+        if not itm_scenario.training and itm_scenario.id in AdeptTa1Controller.ADEPT_EVAL_M1_SCENARIOS:
+            target_ids.extend(AdeptTa1Controller.ADEPT_M1_ALIGNMENT_TARGETS)
         return target_ids
 
     def supports_probe_alignment(self) -> bool:
