@@ -4,13 +4,14 @@ import os
 import argparse
 
 # These are constants that cannot be overridden via the command line
-EVALUATION_NAME = 'July2025'
+DEFAULT_EVALUATION_NAME = 'July2025'
 TA1_NAME = 'adept'
 
 # These are default values that can be overridden via the command line
 FULL_EVAL = True
 REDACT_EVAL = False
 VERBOSE = False
+EVALUATION_NAME = DEFAULT_EVALUATION_NAME
 WRITE_FILES = True
 OUT_PATH = f"swagger_server/itm/data/{EVALUATION_NAME.lower()}/scenarios"
 IGNORED_LIST = []
@@ -237,6 +238,8 @@ if __name__ == '__main__':
                         help='Generate redacted evaluation files')
     parser.add_argument('-v', '--verbose', action='store_true', required=False, default=False,
                         help='Verbose logging')
+    parser.add_argument('-e', '--evalname', required=False, metavar='evalname', default=DEFAULT_EVALUATION_NAME,
+                        help=f'Short name for evaluation (no spaces); default {DEFAULT_EVALUATION_NAME}')
     parser.add_argument('-n', '--no_output', action='store_true', required=False, default=False,
                         help='Do not write output files')
     parser.add_argument('-o', '--outpath', required=False, metavar='outpath',
@@ -251,6 +254,11 @@ if __name__ == '__main__':
         REDACT_EVAL = True
     if args.verbose:
         VERBOSE = True
+    if args.evalname:
+        EVALUATION_NAME = args.evalname
+        OUT_PATH.replace(DEFAULT_EVALUATION_NAME, EVALUATION_NAME)
+        for kdma_info in kdmas_info:
+            kdma_info['filename'] = kdma_info['filename'].replace(DEFAULT_EVALUATION_NAME, EVALUATION_NAME)
     if args.no_output:
         WRITE_FILES = False
     if args.outpath:
