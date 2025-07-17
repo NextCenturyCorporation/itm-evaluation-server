@@ -4,13 +4,14 @@ import os
 import argparse
 
 # These are constants that cannot be overridden via the command line
-EVALUATION_NAME = 'July2025'
+DEFAULT_EVALUATION_NAME = 'July2025'
 TA1_NAME = 'adept'
 
 # These are default values that can be overridden via the command line
 FULL_EVAL = True
 REDACT_EVAL = False
 VERBOSE = False
+EVALUATION_NAME = DEFAULT_EVALUATION_NAME
 WRITE_FILES = True
 OUT_PATH = f"swagger_server/itm/data/{EVALUATION_NAME.lower()}/scenarios"
 IGNORED_LIST = []
@@ -181,7 +182,7 @@ def main():
         acronym = kdma_info['acronym']
         if acronym in IGNORED_LIST:
             continue
-        if acronym == 'OW' and (REDACT_EVAL or not FULL_EVAL):
+        if acronym == 'OW' and not FULL_EVAL:
             continue
 
         full_name = kdma_info['full_name']
@@ -211,8 +212,9 @@ def main():
                 outfile = f"{EVALUATION_NAME.lower()}-{TA1_NAME}-eval-{acronym}{eval_scenario_num}{redact_string}.yaml"
                 eval_scenario_num = 2 if not eval_scenario_num else eval_scenario_num + 1
             else: # Open World
+                redact_string = '_redacted' if REDACT_EVAL else ''
                 environment = 'desert' if 'Desert' in kdma_info['full_name'] else 'urban'
-                outfile = f"{EVALUATION_NAME.lower()}-OW-{environment}.yaml"
+                outfile = f"{EVALUATION_NAME.lower()}-OW-{environment}{redact_string}.yaml"
 
             # Go back and add next_scene property now that we have everything
             set_next_scene(data['scenes'])
@@ -237,12 +239,14 @@ if __name__ == '__main__':
                         help='Generate redacted evaluation files')
     parser.add_argument('-v', '--verbose', action='store_true', required=False, default=False,
                         help='Verbose logging')
+    parser.add_argument('-e', '--evalname', required=False, metavar='evalname', default=DEFAULT_EVALUATION_NAME,
+                        help=f'Short name for evaluation (no spaces); default {DEFAULT_EVALUATION_NAME}')
     parser.add_argument('-n', '--no_output', action='store_true', required=False, default=False,
                         help='Do not write output files')
     parser.add_argument('-o', '--outpath', required=False, metavar='outpath',
                         help='Specify location for output files (no spaces)')
     parser.add_argument('-i', '--ignore', nargs='+', metavar='ignore', required=False, type=str,
-                        help="Acronyms of attributes to ignore (AF, MF, PS, SS, AF-MF)")
+                        help="Acronyms of attributes to ignore (AF, MF, PS, SS, AF-MF, OW)")
 
     args = parser.parse_args()
     if args.subset:
@@ -251,6 +255,11 @@ if __name__ == '__main__':
         REDACT_EVAL = True
     if args.verbose:
         VERBOSE = True
+    if args.evalname:
+        EVALUATION_NAME = args.evalname
+        OUT_PATH.replace(DEFAULT_EVALUATION_NAME, EVALUATION_NAME)
+        for kdma_info in kdmas_info:
+            kdma_info['filename'] = kdma_info['filename'].replace(DEFAULT_EVALUATION_NAME, EVALUATION_NAME)
     if args.no_output:
         WRITE_FILES = False
     if args.outpath:
