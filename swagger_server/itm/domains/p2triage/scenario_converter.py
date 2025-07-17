@@ -182,7 +182,7 @@ def main():
         acronym = kdma_info['acronym']
         if acronym in IGNORED_LIST:
             continue
-        if acronym == 'OW' and (REDACT_EVAL or not FULL_EVAL):
+        if acronym == 'OW' and not FULL_EVAL:
             continue
 
         full_name = kdma_info['full_name']
@@ -212,8 +212,9 @@ def main():
                 outfile = f"{EVALUATION_NAME.lower()}-{TA1_NAME}-eval-{acronym}{eval_scenario_num}{redact_string}.yaml"
                 eval_scenario_num = 2 if not eval_scenario_num else eval_scenario_num + 1
             else: # Open World
+                redact_string = '_redacted' if REDACT_EVAL else ''
                 environment = 'desert' if 'Desert' in kdma_info['full_name'] else 'urban'
-                outfile = f"{EVALUATION_NAME.lower()}-OW-{environment}.yaml"
+                outfile = f"{EVALUATION_NAME.lower()}-OW-{environment}{redact_string}.yaml"
 
             # Go back and add next_scene property now that we have everything
             set_next_scene(data['scenes'])
