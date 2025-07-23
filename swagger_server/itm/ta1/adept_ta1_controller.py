@@ -28,7 +28,7 @@ class AdeptTa1Controller(ITMTa1Controller):
             mode = scenarioMatch.group(1).lower()
             group = scenarioMatch.group('group').lower()
             correct_dict = evaluationScenarios if mode == 'eval' else trainingScenarios
-            correct_dict[group] = generate_list(value)
+            correct_dict[group] = set(generate_list(value))
         elif targetMatch := targetRegex.match(key):
             group = targetMatch.group('group').lower()
             alignmentTargets[group] = generate_list(value)
