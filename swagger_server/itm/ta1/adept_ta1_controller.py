@@ -3,9 +3,32 @@ import urllib
 from swagger_server.models import KDMAValue
 from .itm_ta1_controller import ITMTa1Controller
 import re
+import os
+import fnmatch
 
 def generate_list(input_list) -> list[str]:
     return [s.strip() for s in input_list.replace('\n', '').split(',') if s.strip()]
+
+def load_filenames(token_string, scenario_files) -> list[str]:
+        to_return = set()
+        tokens = generate_list(token_string)
+        for token in tokens:
+            matches = set()
+            if token in scenario_files:
+                matches.add(token)
+            else:
+                matches.update(file for file in scenario_files if fnmatch.fnmatch(file, token))
+                if len(matches) == 0:
+                    try:
+                        pattern = token
+                        if not (pattern.startswith('^') and pattern.endswith('$')):
+                            pattern = f'^{pattern}$'
+                        tokenRegex = re.compile(pattern)
+                        matches.update(file for file in scenario_files if tokenRegex.match(file))
+                    except re.error:
+                        pass
+            to_return.update(matches)
+        return sorted(to_return)
 
 scenarioRegex = re.compile(r'^ADEPT_(EVAL|TRAIN)_(?P<group>[^_]+)_SCENARIOS$', re.IGNORECASE)
 targetRegex = re.compile(r'^ADEPT_(?P<group>[^_]+)_ALIGNMENT_TARGETS$', re.IGNORECASE)
@@ -20,15 +43,22 @@ class AdeptTa1Controller(ITMTa1Controller):
 
     cfg = ITMTa1Controller.config[ITMTa1Controller.config_group]
 
-    ADEPT_EVAL_FILENAMES = generate_list(cfg['ADEPT_EVAL_FILENAMES'])
-    ADEPT_TRAIN_FILENAMES = generate_list(cfg['ADEPT_TRAIN_FILENAMES'])
+    scenario_directory = cfg['SCENARIO_DIRECTORY']
+    try:
+        scenario_files = set(os.listdir(scenario_directory))
+    except OSError:
+        print("Invalid filepath in config file. Please check the SCENARIO_DIRECTORY variable in the config.ini file.")
+        scenario_files = set()
+
+    ADEPT_EVAL_FILENAMES = load_filenames(cfg['ADEPT_EVAL_FILENAMES'], scenario_files)
+    ADEPT_TRAIN_FILENAMES = load_filenames(cfg['ADEPT_TRAIN_FILENAMES'], scenario_files)
 
     for key, value in cfg.items():
         if scenarioMatch := scenarioRegex.match(key):
             mode = scenarioMatch.group(1).lower()
             group = scenarioMatch.group('group').lower()
             correct_dict = evaluationScenarios if mode == 'eval' else trainingScenarios
-            correct_dict[group] = generate_list(value)
+            correct_dict[group] = set(generate_list(value))
         elif targetMatch := targetRegex.match(key):
             group = targetMatch.group('group').lower()
             alignmentTargets[group] = generate_list(value)
