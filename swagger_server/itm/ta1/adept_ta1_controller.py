@@ -5,7 +5,8 @@ from .itm_ta1_controller import ITMTa1Controller
 import re
 import os
 import logging
-from swagger_server.itm.utils import generate_list, load_filenames
+import yaml
+from swagger_server.itm.utils import generate_list, resolve_tokens
 
 scenarioRegex = re.compile(r'^ADEPT_(EVAL|TRAIN)_(?P<group>[^_]+)_SCENARIOS$', re.IGNORECASE)
 targetRegex = re.compile(r'^ADEPT_(?P<group>[^_]+)_ALIGNMENT_TARGETS$', re.IGNORECASE)
@@ -26,16 +27,29 @@ class AdeptTa1Controller(ITMTa1Controller):
     except OSError:
         logging.fatal("Invalid filepath. Please check the SCENARIO_DIRECTORY variable in the config.ini file.")
         scenario_files = set()
+    
+    scenario_ids = set()
+    for fname in scenario_files:
+        if fname.endswith('.yaml'):
+            path = os.path.join(scenario_directory, fname)
+            try:
+                with open(path, 'r') as f:
+                    doc = yaml.safe_load(f)
+                    scenario = doc.get('id')
+                    if scenario:
+                        scenario_ids.add(scenario)
+            except Exception:
+                pass
 
-    ADEPT_EVAL_FILENAMES = load_filenames(cfg['ADEPT_EVAL_FILENAMES'], scenario_files)
-    ADEPT_TRAIN_FILENAMES = load_filenames(cfg['ADEPT_TRAIN_FILENAMES'], scenario_files)
+    ADEPT_EVAL_FILENAMES = resolve_tokens(cfg['ADEPT_EVAL_FILENAMES'], scenario_files)
+    ADEPT_TRAIN_FILENAMES = resolve_tokens(cfg['ADEPT_TRAIN_FILENAMES'], scenario_files)
 
     for key, value in cfg.items():
         if scenarioMatch := scenarioRegex.match(key):
             mode = scenarioMatch.group(1).lower()
             group = scenarioMatch.group('group').lower()
             correct_dict = evaluationScenarios if mode == 'eval' else trainingScenarios
-            correct_dict[group] = set(generate_list(value))
+            correct_dict[group] = set(resolve_tokens(value, scenario_ids))
         elif targetMatch := targetRegex.match(key):
             group = targetMatch.group('group').lower()
             alignmentTargets[group] = generate_list(value)

@@ -4,31 +4,32 @@ import fnmatch
 def generate_list(input_list) -> list[str]:
     return [s.strip() for s in input_list.replace('\n', '').split(',') if s.strip()]
 
-def load_filenames(token_string, scenario_files) -> list[str]:
-    to_return = set()
+def resolve_tokens(token_string, universe) -> list[str]:
+    matched = set()
     tokens = generate_list(token_string)
-    remaining = set(scenario_files)
+    remaining = set(universe)
     for token in tokens:
-        matches = set()
+        current_matches = set()
         if token in remaining:
-            matches.add(token)
+            current_matches.add(token)
         else:
-            glob_matches = set(input_file for input_file in remaining if fnmatch.fnmatch(input_file, token))
+            glob_matches = {entry for entry in remaining if fnmatch.fnmatch(entry, token)}
             if len(glob_matches) > 0:
-                matches.update(glob_matches)
+                current_matches.update(glob_matches)
             else:
                 try:
                     pattern = token
                     if not (pattern.startswith('^') and pattern.endswith('$')):
                         pattern = f'^{pattern}$'
                     token_regex = re.compile(pattern)
-                    matches.update(input_file for input_file in remaining if token_regex.match(input_file))
+                    current_matches.update(entry for entry in remaining if token_regex.match(entry))
                 except re.error:
                     pass
 
-        to_return.update(matches)
-        remaining.difference_update(matches)
+        matched.update(current_matches)
+        remaining.difference_update(current_matches)
 
         if len(remaining) == 0:
             break
-    return sorted(to_return)
+
+    return sorted(matched)
