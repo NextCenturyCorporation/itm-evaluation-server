@@ -24,7 +24,7 @@ class AdeptTa1Controller(ITMTa1Controller):
     try:
         scenario_files = set(os.listdir(scenario_directory))
     except OSError:
-        logging.fatal("Invalid filepath in config file. Please check the SCENARIO_DIRECTORY variable in the config.ini file.")
+        logging.fatal("Invalid filepath. Please check the SCENARIO_DIRECTORY variable in the config.ini file.")
         scenario_files = set()
 
     ADEPT_EVAL_FILENAMES = load_filenames(cfg['ADEPT_EVAL_FILENAMES'], scenario_files)
@@ -117,4 +117,3 @@ class AdeptTa1Controller(ITMTa1Controller):
                 "target_id": self.alignment_target_id if not target_id else target_id
             }
         return f"{base_url}?{urllib.parse.urlencode(params)}"
-    

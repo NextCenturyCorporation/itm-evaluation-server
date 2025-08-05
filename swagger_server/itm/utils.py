@@ -7,20 +7,28 @@ def generate_list(input_list) -> list[str]:
 def load_filenames(token_string, scenario_files) -> list[str]:
     to_return = set()
     tokens = generate_list(token_string)
+    remaining = set(scenario_files)
     for token in tokens:
         matches = set()
-        if token in scenario_files:
+        if token in remaining:
             matches.add(token)
         else:
-            matches.update(file for file in scenario_files if fnmatch.fnmatch(file, token))
-            if len(matches) == 0:
+            glob_matches = set(input_file for input_file in remaining if fnmatch.fnmatch(input_file, token))
+            if len(glob_matches) > 0:
+                matches.update(glob_matches)
+            else:
                 try:
                     pattern = token
                     if not (pattern.startswith('^') and pattern.endswith('$')):
                         pattern = f'^{pattern}$'
-                    tokenRegex = re.compile(pattern)
-                    matches.update(file for file in scenario_files if tokenRegex.match(file))
+                    token_regex = re.compile(pattern)
+                    matches.update(input_file for input_file in remaining if token_regex.match(input_file))
                 except re.error:
                     pass
+
         to_return.update(matches)
+        remaining.difference_update(matches)
+
+        if len(remaining) == 0:
+            break
     return sorted(to_return)
