@@ -5,8 +5,7 @@ from .itm_ta1_controller import ITMTa1Controller
 import re
 import os
 import logging
-import yaml
-from swagger_server.itm.utils import generate_list, resolve_tokens
+from swagger_server.itm.utils import generate_list, resolve_tokens, load_scenario_ids, load_alignment_ids
 
 scenarioRegex = re.compile(r'^ADEPT_(EVAL|TRAIN)_(?P<group>[^_]+)_SCENARIOS$', re.IGNORECASE)
 targetRegex = re.compile(r'^ADEPT_(?P<group>[^_]+)_ALIGNMENT_TARGETS$', re.IGNORECASE)
@@ -27,19 +26,9 @@ class AdeptTa1Controller(ITMTa1Controller):
     except OSError:
         logging.fatal("Invalid filepath. Please check the SCENARIO_DIRECTORY variable in the config.ini file.")
         scenario_files = set()
-    
-    scenario_ids = set()
-    for fname in scenario_files:
-        if fname.endswith('.yaml'):
-            path = os.path.join(scenario_directory, fname)
-            try:
-                with open(path, 'r') as f:
-                    doc = yaml.safe_load(f)
-                    scenario = doc.get('id')
-                    if scenario:
-                        scenario_ids.add(scenario)
-            except Exception:
-                pass
+
+    scenario_ids = load_scenario_ids(scenario_directory, scenario_files)
+    alignment_ids = load_alignment_ids(ITMTa1Controller.get_contact_info('adept'), '/api/v1/alignment_target_ids')
 
     ADEPT_EVAL_FILENAMES = resolve_tokens(cfg['ADEPT_EVAL_FILENAMES'], scenario_files)
     ADEPT_TRAIN_FILENAMES = resolve_tokens(cfg['ADEPT_TRAIN_FILENAMES'], scenario_files)
@@ -49,7 +38,7 @@ class AdeptTa1Controller(ITMTa1Controller):
             mode = scenarioMatch.group(1).lower()
             group = scenarioMatch.group('group').lower()
             correct_dict = evaluationScenarios if mode == 'eval' else trainingScenarios
-            correct_dict[group] = set(resolve_tokens(value, scenario_ids))
+            correct_dict[group] = resolve_tokens(value, scenario_ids)
         elif targetMatch := targetRegex.match(key):
             group = targetMatch.group('group').lower()
             alignmentTargets[group] = generate_list(value)

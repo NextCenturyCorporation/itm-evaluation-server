@@ -1,5 +1,10 @@
 import re
 import fnmatch
+import os
+import yaml
+import requests
+import logging
+from swagger_server.itm.ta1.itm_ta1_controller import ITMTa1Controller
 
 def generate_list(input_list) -> list[str]:
     return [s.strip() for s in input_list.replace('\n', '').split(',') if s.strip()]
@@ -33,3 +38,25 @@ def resolve_tokens(token_string, universe) -> list[str]:
             break
 
     return sorted(matched)
+
+def load_scenario_ids(base_path, scenario_files):
+    scenario_ids = set()
+    for fname in scenario_files:
+        if fname.endswith('.yaml'):
+            path = os.path.join(base_path, fname)
+            try:
+                with open(path, 'r') as f:
+                    doc = yaml.safe_load(f)
+                    scenario = doc.get('id')
+                    if scenario:
+                        scenario_ids.add(scenario)
+            except Exception:
+                pass
+    return scenario_ids
+
+def load_alignment_ids(ta1_name, base_url):
+    try:
+        alignment_ids = set(requests.get(f"{ta1_name}{base_url}").json())
+    except Exception as e:
+        logging.fatal("Could not retrieve alignment IDs from TA1 server.")
+    return alignment_ids
