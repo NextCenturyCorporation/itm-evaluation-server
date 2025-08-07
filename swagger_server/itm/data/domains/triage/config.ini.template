@@ -30,27 +30,15 @@ HISTORY_S3_BUCKET=itm-ui-assets
 EVAL_NAME=Phase 1 Evaluation
 EVAL_NUMBER=6
 
-SOARTECH_EVAL_FILENAMES=phase1-soartech-eval-qol2.yaml,
-    phase1-soartech-eval-qol3.yaml,
-    phase1-soartech-eval-qol4.yaml,
-    phase1-soartech-eval-vol2.yaml,
-    phase1-soartech-eval-vol3.yaml,
-    phase1-soartech-eval-vol4.yaml
+SOARTECH_EVAL_FILENAMES=phase1-soartech-eval-{qol,vol}[2-4].yaml
 
-SOARTECH_TRAIN_FILENAMES=phase1-soartech-train-qol1.yaml,
-    phase1-soartech-train-qol2.yaml,
-    phase1-soartech-train-qol3.yaml,
-    phase1-soartech-train-qol4.yaml,
-    phase1-soartech-train-vol1.yaml,
-    phase1-soartech-train-vol2.yaml,
-    phase1-soartech-train-vol3.yaml,
-    phase1-soartech-train-vol4.yaml
+SOARTECH_TRAIN_FILENAMES=phase1-soartech-train-{qol,vol}[1-4].yaml
 
-SOARTECH_EVAL_QOL_SCENARIOS=qol-ph1-eval-2,qol-ph1-eval-3,qol-ph1-eval-4
-SOARTECH_EVAL_VOL_SCENARIOS=vol-ph1-eval-2,vol-ph1-eval-3,vol-ph1-eval-4
+SOARTECH_EVAL_QOL_SCENARIOS=qol-ph1-eval-[2-4]
+SOARTECH_EVAL_VOL_SCENARIOS=vol-ph1-eval-[2-4]
 
-SOARTECH_TRAIN_QOL_SCENARIOS=qol-ph1-train-1,qol-ph1-train-2,qol-ph1-train-3,qol-ph1-train-4
-SOARTECH_TRAIN_VOL_SCENARIOS=vol-ph1-train-1,vol-ph1-train-2,vol-ph1-train-3,vol-ph1-train-4
+SOARTECH_TRAIN_QOL_SCENARIOS=qol-ph1-train-[1-4]
+SOARTECH_TRAIN_VOL_SCENARIOS=vol-ph1-train-[1-4]
 
 SOARTECH_QOL_ALIGNMENT_TARGETS=qol-human-8022671-SplitLowMulti-ph1,
     qol-human-6403274-SplitHighBinary-ph1,
@@ -72,21 +60,15 @@ SOARTECH_VOL_ALIGNMENT_TARGETS=vol-human-8022671-SplitHighMulti-ph1,
     vol-synth-HighCluster-ph1,
     vol-synth-LowCluster-ph1
 
-ADEPT_EVAL_FILENAMES=phase1-adept-eval-MJ2.yaml,
-    phase1-adept-eval-MJ4.yaml,
-    phase1-adept-eval-MJ5.yaml
+ADEPT_EVAL_FILENAMES=phase1-adept-eval-MJ{2,4,5}.yaml
 
-ADEPT_TRAIN_FILENAMES=phase1-adept-train-MJ1.yaml,
-    phase1-adept-train-MJ3.yaml,
-    phase1-adept-train-IO1.yaml,
-    phase1-adept-train-IO2.yaml,
-    phase1-adept-train-IO3.yaml
+ADEPT_TRAIN_FILENAMES=phase1-adept-train-{MJ1,MJ3,IO1,IO2,IO3}.yaml
 
-ADEPT_EVAL_K1_SCENARIOS=DryRunEval-MJ2-eval,DryRunEval-MJ4-eval,DryRunEval-MJ5-eval
-ADEPT_EVAL_K2_SCENARIOS=DryRunEval-MJ2-eval,DryRunEval-MJ4-eval,DryRunEval-MJ5-eval
+ADEPT_EVAL_K1_SCENARIOS=DryRunEval-MJ{2,4,5}-eval
+ADEPT_EVAL_K2_SCENARIOS=DryRunEval-MJ{2,4,5}-eval
 
-ADEPT_TRAIN_K1_SCENARIOS=DryRunEval.MJ1,DryRunEval.MJ3
-ADEPT_TRAIN_K2_SCENARIOS=DryRunEval.IO1,DryRunEval.IO2,DryRunEval.IO3
+ADEPT_TRAIN_K1_SCENARIOS=DryRunEval.MJ[13]
+ADEPT_TRAIN_K2_SCENARIOS=DryRunEval.IO[1-3]
 
 ADEPT_K1_ALIGNMENT_TARGETS=ADEPT-DryRun-Moral judgement-0.2,
     ADEPT-DryRun-Moral judgement-0.3,
