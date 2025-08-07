@@ -9,7 +9,7 @@ from swagger_server.itm.ta1.itm_ta1_controller import ITMTa1Controller
 def generate_list(input_list) -> list[str]:
     return [s.strip() for s in input_list.replace('\n', '').split(',') if s.strip()]
 
-def resolve_tokens(token_string, universe) -> list[str]:
+def resolve_tokens(token_string, universe) -> set[str]:
     matched = set()
     tokens = generate_list(token_string)
     remaining = set(universe)
@@ -37,7 +37,7 @@ def resolve_tokens(token_string, universe) -> list[str]:
         if len(remaining) == 0:
             break
 
-    return sorted(matched)
+    return matched
 
 def load_scenario_ids(base_path, scenario_files):
     scenario_ids = set()
@@ -56,7 +56,7 @@ def load_scenario_ids(base_path, scenario_files):
 
 def load_alignment_ids(ta1_name, base_url):
     try:
-        alignment_ids = set(requests.get(f"{ta1_name}{base_url}").json())
-    except Exception as e:
+        return set(requests.get(f"{ta1_name}{base_url}").json())
+    except Exception:
         logging.fatal("Could not retrieve alignment IDs from TA1 server.")
-    return alignment_ids
+    return set()
