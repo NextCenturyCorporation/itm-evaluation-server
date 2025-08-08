@@ -30,15 +30,27 @@ HISTORY_S3_BUCKET=itm-ui-assets
 EVAL_NAME=Phase 1 Evaluation
 EVAL_NUMBER=6
 
-SOARTECH_EVAL_FILENAMES=phase1-soartech-eval-{qol,vol}[2-4].yaml
+SOARTECH_EVAL_FILENAMES=phase1-soartech-eval-qol2.yaml,
+    phase1-soartech-eval-qol3.yaml,
+    phase1-soartech-eval-qol4.yaml,
+    phase1-soartech-eval-vol2.yaml,
+    phase1-soartech-eval-vol3.yaml,
+    phase1-soartech-eval-vol4.yaml
 
-SOARTECH_TRAIN_FILENAMES=phase1-soartech-train-{qol,vol}[1-4].yaml
+SOARTECH_TRAIN_FILENAMES=phase1-soartech-train-qol1.yaml,
+    phase1-soartech-train-qol2.yaml,
+    phase1-soartech-train-qol3.yaml,
+    phase1-soartech-train-qol4.yaml,
+    phase1-soartech-train-vol1.yaml,
+    phase1-soartech-train-vol2.yaml,
+    phase1-soartech-train-vol3.yaml,
+    phase1-soartech-train-vol4.yaml
 
-SOARTECH_EVAL_QOL_SCENARIOS=qol-ph1-eval-[2-4]
-SOARTECH_EVAL_VOL_SCENARIOS=vol-ph1-eval-[2-4]
+SOARTECH_EVAL_QOL_SCENARIOS=qol-ph1-eval-2,qol-ph1-eval-3,qol-ph1-eval-4
+SOARTECH_EVAL_VOL_SCENARIOS=vol-ph1-eval-2,vol-ph1-eval-3,vol-ph1-eval-4
 
-SOARTECH_TRAIN_QOL_SCENARIOS=qol-ph1-train-[1-4]
-SOARTECH_TRAIN_VOL_SCENARIOS=vol-ph1-train-[1-4]
+SOARTECH_TRAIN_QOL_SCENARIOS=qol-ph1-train-1,qol-ph1-train-2,qol-ph1-train-3,qol-ph1-train-4
+SOARTECH_TRAIN_VOL_SCENARIOS=vol-ph1-train-1,vol-ph1-train-2,vol-ph1-train-3,vol-ph1-train-4
 
 SOARTECH_QOL_ALIGNMENT_TARGETS=qol-human-8022671-SplitLowMulti-ph1,
     qol-human-6403274-SplitHighBinary-ph1,
