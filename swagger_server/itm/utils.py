@@ -4,7 +4,6 @@ import os
 import yaml
 import requests
 import logging
-from swagger_server.itm.ta1.itm_ta1_controller import ITMTa1Controller
 
 def generate_list(input_list) -> list[str]:
     return [s.strip() for s in input_list.replace('\n', '').split(',') if s.strip()]
