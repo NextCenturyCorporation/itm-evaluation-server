@@ -43,7 +43,7 @@ class AdeptTa1Controller(ITMTa1Controller):
             # Do not sort sets into ordered lists for scenario IDs.
             # These sets are used in the get_target_ids() method,
             # and maintaining them as sets allows for O(1) lookup time.
-            correct_dict[group] = sorted(resolve_tokens(value, scenario_ids))
+            correct_dict[group] = resolve_tokens(value, scenario_ids)
         elif targetMatch := targetRegex.match(key):
             group = targetMatch.group('group').lower()
             tokens = sorted(generate_list(value))
@@ -57,7 +57,7 @@ class AdeptTa1Controller(ITMTa1Controller):
         elif distributionMatch := distributionRegex.match(key):
             group = distributionMatch.group('group').lower()
             distributionTargets[group] = value.strip()
-
+    
     target_to_group = {target: group for group, targets in alignmentTargets.items() for target in targets}
    
     def __init__(self, alignment_target_id, alignment_target = None):

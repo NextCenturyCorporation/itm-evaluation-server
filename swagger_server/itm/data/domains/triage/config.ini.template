@@ -72,12 +72,12 @@ SOARTECH_VOL_ALIGNMENT_TARGETS=vol-human-8022671-SplitHighMulti-ph1,
     vol-synth-HighCluster-ph1,
     vol-synth-LowCluster-ph1
 
-ADEPT_EVAL_FILENAMES=phase1-adept-eval-MJ{2,4,5}.yaml
+ADEPT_EVAL_FILENAMES=phase1-adept-eval-MJ[245].yaml
 
-ADEPT_TRAIN_FILENAMES=phase1-adept-train-{MJ1,MJ3,IO1,IO2,IO3}.yaml
+ADEPT_TRAIN_FILENAMES=phase1-adept-train-MJ[13].yaml, phase1-adept-train-IO[1-3].yaml
 
-ADEPT_EVAL_K1_SCENARIOS=DryRunEval-MJ{2,4,5}-eval
-ADEPT_EVAL_K2_SCENARIOS=DryRunEval-MJ{2,4,5}-eval
+ADEPT_EVAL_K1_SCENARIOS=DryRunEval-MJ[245]-eval
+ADEPT_EVAL_K2_SCENARIOS=DryRunEval-MJ[245]-eval
 
 ADEPT_TRAIN_K1_SCENARIOS=DryRunEval.MJ[13]
 ADEPT_TRAIN_K2_SCENARIOS=DryRunEval.IO[1-3]
