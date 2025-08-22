@@ -27,7 +27,7 @@ class AdeptTa1Controller(ITMTa1Controller):
         scenario_files = set(os.listdir(scenario_directory))
     except OSError:
         logging.fatal("Invalid filepath. Please check the SCENARIO_DIRECTORY variable in the config.ini file.")
-        scenario_files = set()
+        exit(1)
 
     scenario_ids = load_scenario_ids(scenario_directory, scenario_files)
     alignment_ids = set() if testingMode else load_alignment_ids(ITMTa1Controller.get_contact_info('adept'), '/api/v1/alignment_target_ids')
@@ -40,9 +40,6 @@ class AdeptTa1Controller(ITMTa1Controller):
             mode = scenarioMatch.group(1).lower()
             group = scenarioMatch.group('group').lower()
             correct_dict = evaluationScenarios if mode == 'eval' else trainingScenarios
-            # Do not sort sets into ordered lists for scenario IDs.
-            # These sets are used in the get_target_ids() method,
-            # and maintaining them as sets allows for O(1) lookup time.
             correct_dict[group] = resolve_tokens(value, scenario_ids)
         elif targetMatch := targetRegex.match(key):
             group = targetMatch.group('group').lower()
@@ -57,7 +54,7 @@ class AdeptTa1Controller(ITMTa1Controller):
         elif distributionMatch := distributionRegex.match(key):
             group = distributionMatch.group('group').lower()
             distributionTargets[group] = value.strip()
-    
+
     target_to_group = {target: group for group, targets in alignmentTargets.items() for target in targets}
    
     def __init__(self, alignment_target_id, alignment_target = None):
