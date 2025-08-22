@@ -3,13 +3,15 @@ import urllib
 from swagger_server.models import KDMAValue
 from .itm_ta1_controller import ITMTa1Controller
 import re
-
-def generate_list(input_list) -> list[str]:
-    return [s.strip() for s in input_list.replace('\n', '').split(',') if s.strip()]
+import os
+import logging
+import builtins
+from swagger_server.itm.utils import generate_list, resolve_tokens, load_scenario_ids, load_alignment_ids
 
 scenarioRegex = re.compile(r'^ADEPT_(EVAL|TRAIN)_(?P<group>[^_]+)_SCENARIOS$', re.IGNORECASE)
 targetRegex = re.compile(r'^ADEPT_(?P<group>[^_]+)_ALIGNMENT_TARGETS$', re.IGNORECASE)
 distributionRegex = re.compile(r'^ADEPT_(?P<group>[^_]+)_ALIGNMENT_DISTRIBUTION_TARGET$', re.IGNORECASE)
+testingMode = getattr(builtins, "testing", False)
 
 class AdeptTa1Controller(ITMTa1Controller):
 
@@ -20,18 +22,35 @@ class AdeptTa1Controller(ITMTa1Controller):
 
     cfg = ITMTa1Controller.config[ITMTa1Controller.config_group]
 
-    ADEPT_EVAL_FILENAMES = generate_list(cfg['ADEPT_EVAL_FILENAMES'])
-    ADEPT_TRAIN_FILENAMES = generate_list(cfg['ADEPT_TRAIN_FILENAMES'])
+    scenario_directory = cfg['SCENARIO_DIRECTORY']
+    try:
+        scenario_files = set(os.listdir(scenario_directory))
+    except OSError:
+        logging.fatal("Invalid filepath. Please check the SCENARIO_DIRECTORY variable in the config.ini file.")
+        exit(1)
+
+    scenario_ids = load_scenario_ids(scenario_directory, scenario_files)
+    alignment_ids = set() if testingMode else load_alignment_ids(ITMTa1Controller.get_contact_info('adept'), '/api/v1/alignment_target_ids')
+
+    ADEPT_EVAL_FILENAMES = sorted(resolve_tokens(cfg['ADEPT_EVAL_FILENAMES'], scenario_files))
+    ADEPT_TRAIN_FILENAMES = sorted(resolve_tokens(cfg['ADEPT_TRAIN_FILENAMES'], scenario_files))
 
     for key, value in cfg.items():
         if scenarioMatch := scenarioRegex.match(key):
             mode = scenarioMatch.group(1).lower()
             group = scenarioMatch.group('group').lower()
             correct_dict = evaluationScenarios if mode == 'eval' else trainingScenarios
-            correct_dict[group] = set(generate_list(value))
+            correct_dict[group] = resolve_tokens(value, scenario_ids)
         elif targetMatch := targetRegex.match(key):
             group = targetMatch.group('group').lower()
-            alignmentTargets[group] = generate_list(value)
+            tokens = sorted(generate_list(value))
+            if testingMode:
+                suspects = [t for t in tokens if any(c in t for c in "*?[]()\\{\\}+^$|")]
+                if len(suspects) > 0:
+                    logging.fatal("Found alignment target IDs suspected to be Glob or Regex patterns. These are not supported in testing mode and will likely cause a server crash.")
+                alignmentTargets[group] = tokens
+            else:
+                alignmentTargets[group] = sorted(resolve_tokens(value, alignment_ids))
         elif distributionMatch := distributionRegex.match(key):
             group = distributionMatch.group('group').lower()
             distributionTargets[group] = value.strip()
