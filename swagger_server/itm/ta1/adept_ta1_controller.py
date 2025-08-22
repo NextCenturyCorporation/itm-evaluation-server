@@ -54,7 +54,7 @@ class AdeptTa1Controller(ITMTa1Controller):
         elif distributionMatch := distributionRegex.match(key):
             group = distributionMatch.group('group').lower()
             distributionTargets[group] = value.strip()
-
+   
     target_to_group = {target: group for group, targets in alignmentTargets.items() for target in targets}
    
     def __init__(self, alignment_target_id, alignment_target = None):
