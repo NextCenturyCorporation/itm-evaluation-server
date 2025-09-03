@@ -2,7 +2,7 @@
 Integration testing harness that automates dummy ADM runs.
 
 Usage:
-  python run_integration_tests.py --group <group_number> --branch <branch_name> [--port <port>]
+  python run_integration_tests.py --group <group_number> --branch <branch_name> [--port <port>] [--auto-port]
   python run_integration_tests.py --validate-only
 
 Existing Groups:
@@ -28,6 +28,7 @@ import requests
 import os
 import sys
 import logging
+import socket
 from configparser import ConfigParser
 
 GROUPS = {
@@ -144,14 +145,46 @@ def wait_for_server_ui(port, timeout=30):
         time.sleep(1.0)
     raise RuntimeError(f"Server UI did not become ready in {timeout}s")
 
+def port_in_range(port):
+    return isinstance(port, int) and 1 <= port <= 65535
+
+def is_port_free(port, host = "127.0.0.1"):
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        try:
+            s.bind((host, port))
+            return True
+        except OSError:
+            return False
+
+def pick_free_port(host = "127.0.0.1"):
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.bind((host, 0))
+        port = s.getsockname()[1]
+    if is_port_free(port, host):
+        return port
+    raise RuntimeError("Unable to find a free local port after multiple attempts.")
+
+def resolve_port(requested_port, auto_port):
+    if auto_port:
+        return pick_free_port()
+    if not port_in_range(requested_port):
+        raise ValueError(f"Port {requested_port} is out of range (1-65535).")
+    if not is_port_free(requested_port):
+        raise RuntimeError(f"Port {requested_port} is already in use. Specify a different --port or use --auto-port.")
+    return requested_port
+
 def main():
     logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
     parser = argparse.ArgumentParser(description="Run integration ADM tests for ITM TA3 server.")
     parser.add_argument('--group', choices=GROUPS.keys(), required=False, help='Which test group to run (required unless --validate-only).')
     parser.add_argument('--branch', required=False, help='Name of the branch under test, for output file naming (required unless --validate-only).')
     parser.add_argument('--port', type=int, default=8080, help='Port the server listens on (default 8080).')
+    parser.add_argument('--auto-port', action='store_true', help='Pick a free local port automatically (overrides --port).')
     parser.add_argument('--validate-only', action='store_true', help='Validate GROUPS against swagger_server/config.ini and exit.')
     args = parser.parse_args()
+
+    port = None
 
     if not args.validate_only:
         missing = []
@@ -161,6 +194,11 @@ def main():
             missing.append('--branch')
         if missing:
             parser.error(f"The following arguments are required: {', '.join(missing)}")
+        try:
+            port = resolve_port(args.port, args.auto_port)
+        except Exception as e:
+            logging.fatal("Port selection error: ", e)
+            sys.exit(1)
 
     config_path = os.path.join(SCRIPT_DIRECTORY, 'swagger_server', 'config.ini')
     try:
@@ -189,12 +227,20 @@ def main():
 
     group_info = GROUPS[args.group]
     for cfg in group_info['cfgs']:
-        server_command = [sys.executable, '-m', 'swagger_server', '-c', cfg, '-p', str(args.port)]
+        if not is_port_free(port):
+            if args.auto_port:
+                logging.info(f"Selected port {port} is now busy. Picking a new free port.")
+                port = pick_free_port()
+                logging.info(f"Switched to port {port}.")
+            else:
+                logging.fatal("Port %s became busy. Use a different --port or --auto-port.", port)
+                sys.exit(1)
+        server_command = [sys.executable, '-m', 'swagger_server', '-c', cfg, '-p', str(port)]
         if group_info['testing']:
             server_command.append('-t')
         server = subprocess.Popen(server_command)
         try:
-            wait_for_server_ui(args.port)
+            wait_for_server_ui(port)
             outfile_name = f"{args.branch}_{cfg}_GROUP_{args.group}.txt"
             with open(outfile_name, 'w', encoding='utf-8') as f:
                 runner_cmd = [CLIENT_VENV_PYTHON, RUNNER_PATH, '--name', 'integration_test', '--session', 'adept']
