@@ -281,7 +281,6 @@ def resolve_and_validate_paths(args):
     return client_root, client_python, runner_path
 
 def main():
-    logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
     parser = argparse.ArgumentParser(description="Run integration ADM tests for ITM TA3 server.")
     parser.add_argument('--group', choices=GROUPS.keys(), required=False, help='Which test group to run (required unless --validate-only).')
     parser.add_argument('--branch', required=False, help='Name of the branch under test, for output file naming (required unless --validate-only).')
