@@ -72,21 +72,15 @@ SOARTECH_VOL_ALIGNMENT_TARGETS=vol-human-8022671-SplitHighMulti-ph1,
     vol-synth-HighCluster-ph1,
     vol-synth-LowCluster-ph1
 
-ADEPT_EVAL_FILENAMES=phase1-adept-eval-MJ2.yaml,
-    phase1-adept-eval-MJ4.yaml,
-    phase1-adept-eval-MJ5.yaml
+ADEPT_EVAL_FILENAMES=phase1-adept-eval-MJ[245].yaml
 
-ADEPT_TRAIN_FILENAMES=phase1-adept-train-MJ1.yaml,
-    phase1-adept-train-MJ3.yaml,
-    phase1-adept-train-IO1.yaml,
-    phase1-adept-train-IO2.yaml,
-    phase1-adept-train-IO3.yaml
+ADEPT_TRAIN_FILENAMES=phase1-adept-train-MJ[13].yaml, phase1-adept-train-IO[1-3].yaml
 
-ADEPT_EVAL_K1_SCENARIOS=DryRunEval-MJ2-eval,DryRunEval-MJ4-eval,DryRunEval-MJ5-eval
-ADEPT_EVAL_K2_SCENARIOS=DryRunEval-MJ2-eval,DryRunEval-MJ4-eval,DryRunEval-MJ5-eval
+ADEPT_EVAL_K1_SCENARIOS=DryRunEval-MJ[245]-eval
+ADEPT_EVAL_K2_SCENARIOS=DryRunEval-MJ[245]-eval
 
-ADEPT_TRAIN_K1_SCENARIOS=DryRunEval.MJ1,DryRunEval.MJ3
-ADEPT_TRAIN_K2_SCENARIOS=DryRunEval.IO1,DryRunEval.IO2,DryRunEval.IO3
+ADEPT_TRAIN_K1_SCENARIOS=DryRunEval.MJ[13]
+ADEPT_TRAIN_K2_SCENARIOS=DryRunEval.IO[1-3]
 
 ADEPT_K1_ALIGNMENT_TARGETS=ADEPT-DryRun-Moral judgement-0.2,
     ADEPT-DryRun-Moral judgement-0.3,
