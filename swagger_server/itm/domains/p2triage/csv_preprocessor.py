@@ -99,10 +99,6 @@ if __name__ == '__main__':
                         help='Verbose logging')
     parser.add_argument('-e', '--evalname', required=False, metavar='evalname', default=DEFAULT_EVALUATION_NAME,
                         help=f'Short name for evaluation (no spaces); default {DEFAULT_EVALUATION_NAME}')
-    parser.add_argument('-n', '--no_output', action='store_true', required=False, default=False,
-                        help='Do not write output files')
-    parser.add_argument('-o', '--outpath', required=False, metavar='outpath',
-                        help='Specify location for output files (no spaces)')
     parser.add_argument('-i', '--ignore', nargs='+', metavar='ignore', required=False, type=str,
                         help="Acronyms of attributes to ignore (AF, MF, PS, SS, AF-MF, PS-AF, OW)")
 
@@ -115,13 +111,8 @@ if __name__ == '__main__':
         VERBOSE = True
     if args.evalname:
         EVALUATION_NAME = args.evalname
-        OUT_PATH.replace(DEFAULT_EVALUATION_NAME, EVALUATION_NAME)
         for kdma_info in kdmas_info:
             kdma_info['filename'] = kdma_info['filename'].replace(DEFAULT_EVALUATION_NAME, EVALUATION_NAME)
-    if args.no_output:
-        WRITE_FILES = False
-    if args.outpath:
-        OUT_PATH = args.outpath
     if args.ignore:
         IGNORED_LIST = args.ignore
     main()
