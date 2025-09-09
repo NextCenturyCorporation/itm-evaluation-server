@@ -91,7 +91,8 @@ class AdeptTa1Controller(ITMTa1Controller):
         return target_ids
 
     def supports_probe_alignment(self) -> bool:
-        return not self.adept_populations
+        #return not self.adept_populations
+        return False # The above is technically right, but for expediency in Phase 2, set it to false to save TA1 round trips
 
     def new_session(self, context=None) -> any:
         url = f"{self.url}/api/v1/new_session"
