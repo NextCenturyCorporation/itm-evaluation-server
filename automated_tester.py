@@ -1,9 +1,9 @@
 """
 Integration testing harness that automates dummy ADM runs.
 
-Usage:
-  python run_integration_tests.py --group <group_number> --branch <branch_name> [--port <port>] [--auto-port]
-  python run_integration_tests.py --validate-only
++Usage:
+python automated_testing.py --group <group_number> --branch <branch_name> [--port <port>] [--auto-port][--client-root PATH] [--client-python PATH] [--runner-path PATH]
+python automated_testing.py --validate-only
 
 Existing Groups:
   Group 1: Phase 2 testing mode  - cfgs: DEFAULT, GROUP_TARGET, SUBSET_ONLY, FULL_NO_SUBSET, MULTI_KDMA, MULTI_KDMA_SUBSET, MULTI_KDMA_FULL_NO_SUBSET, OPEN_WORLD
@@ -29,6 +29,8 @@ import os
 import sys
 import logging
 import socket
+import json
+from pathlib import Path
 from configparser import ConfigParser
 
 GROUPS = {
@@ -49,17 +51,8 @@ GROUPS = {
     }
 }
 
-"""
-The below filepath definitions make simplifying assumptions and may need to be modified depending on the structure of your individual setup.
-These modifications should be fairly trivial and targeted at the definition of CLIENT_ROOT and CLIENT_VENV_PYTHON.
-However, if using a Unix-based machine such as a MacBook, further changes may be required. 
-"""
-SCRIPT_DIRECTORY = os.path.abspath(os.path.dirname(__file__))
-#Assumes that the client repo is a folder with the same hierarchy as the server repo and is named itm-evaluation-client
-CLIENT_ROOT = os.path.abspath(os.path.join(SCRIPT_DIRECTORY, os.pardir, 'itm-evaluation-client'))
-#Assumes that the client virtual environment is a folder with the same hierarchy as the server repo and is named evaluation_client
-CLIENT_VENV_PYTHON = os.path.abspath(os.path.join(SCRIPT_DIRECTORY, os.pardir, 'evaluation_client', 'Scripts', 'python.exe'))
-RUNNER_PATH = os.path.join(CLIENT_ROOT, 'itm_minimal_runner.py')
+REPO_ROOT = Path(__file__).resolve().parent
+TESTER_JSON_NAME = "automated_testing_paths.json"
 
 VALID_GROUP_KEYS = {"cfgs", "testing", "phase"}
 
@@ -174,6 +167,101 @@ def resolve_port(requested_port, auto_port):
         raise RuntimeError(f"Port {requested_port} is already in use. Specify a different --port or use --auto-port.")
     return requested_port
 
+def resolve_user_path(potential_path, base):
+    if not potential_path:
+        return None
+    p = Path(potential_path)
+    return (p if p.is_absolute() else (base / p)).resolve()
+
+def load_tester_json(config_dir):
+    cfg_path = (config_dir / TESTER_JSON_NAME)
+    if not cfg_path.exists():
+        return {}
+    try:
+        with cfg_path.open("r", encoding="utf-8") as fh:
+            data = json.load(fh)
+            if not isinstance(data, dict):
+                logging.warning(f"{cfg_path} does not contain a JSON object.")
+                return {}
+            return data
+    except Exception as e:
+        logging.warning(f"Failed to read {cfg_path}: {e}.")
+        return {}
+
+def is_executable_file(potential_file):
+    try:
+        return potential_file.is_file() and os.access(str(potential_file), os.X_OK)
+    except Exception:
+        return False
+
+def resolve_and_validate_paths(args):
+    cfg = load_tester_json(REPO_ROOT)
+
+    cli_client_root = resolve_user_path(getattr(args, "client_root", None), REPO_ROOT)
+    json_client_root = resolve_user_path(cfg.get("client_root"), REPO_ROOT) if cfg else None
+    client_root = None
+    errors = []
+
+    if cli_client_root and cli_client_root.is_dir():
+        client_root = cli_client_root
+    elif cli_client_root:
+        logging.warning(f"Invalid Client Root From CLI: {cli_client_root}.")
+        if json_client_root and json_client_root.is_dir():
+            client_root = json_client_root
+        else:
+            errors.append(f"Client Root Not Found: {cli_client_root}.")
+    else:
+        if json_client_root and json_client_root.is_dir():
+            client_root = json_client_root
+        else:
+            errors.append("Client Root Is Required (set via --client-root or automated_testing_paths.json).")
+
+    cli_client_py = resolve_user_path(getattr(args, "client_python", None), REPO_ROOT)
+    json_client_py = resolve_user_path(cfg.get("client_python"), REPO_ROOT) if cfg else None
+    client_python = None
+
+    if cli_client_py and is_executable_file(cli_client_py):
+        client_python = cli_client_py
+    elif cli_client_py:
+        logging.warning(f"Invalid Client Python From CLI: {cli_client_py}.")
+        if json_client_py and is_executable_file(json_client_py):
+            client_python = json_client_py
+        else:
+            errors.append(f"Client Python Is Not Executable: {cli_client_py}")
+    else:
+        if json_client_py and is_executable_file(json_client_py):
+            client_python = json_client_py
+        else:
+            errors.append("Client Python Is Required (set via --client-python or automated_testing_paths.json).")
+
+    cli_runner = resolve_user_path(getattr(args, "runner_path", None), REPO_ROOT)
+    json_runner = resolve_user_path(cfg.get("runner_path"), REPO_ROOT) if cfg else None
+    
+    if cli_runner and cli_runner.is_file():
+        runner_path = cli_runner
+    elif cli_runner:
+        logging.warning(f"Invalid Runner Path From CLI (File Not Found): {cli_runner}.")
+        if json_runner and json_runner.is_file():
+            runner_path = json_runner
+        else:
+            runner_path = (client_root / "itm_minimal_runner.py") if client_root else None
+    else:
+        if json_runner and json_runner.is_file():
+            runner_path = json_runner
+        else:
+            runner_path = (client_root / "itm_minimal_runner.py") if client_root else None
+
+    if runner_path is None or not runner_path.is_file():
+        errors.append("Runner Path Is Required (set via --runner-path or automated_testing_paths.json).")
+
+    if errors:
+        logging.error("Path Resolution Failed:")
+        for counter, message in enumerate(errors, 1):
+                print(f"  {counter:02d}. {message}")
+        sys.exit(1)
+
+    return client_root, client_python, runner_path
+
 def main():
     logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
     parser = argparse.ArgumentParser(description="Run integration ADM tests for ITM TA3 server.")
@@ -181,6 +269,9 @@ def main():
     parser.add_argument('--branch', required=False, help='Name of the branch under test, for output file naming (required unless --validate-only).')
     parser.add_argument('--port', type=int, default=8080, help='Port the server listens on (default 8080).')
     parser.add_argument('--auto-port', action='store_true', help='Pick a free local port automatically (overrides --port).')
+    parser.add_argument('--client-root', dest='client_root', help='Path to the evaluation client repo.')
+    parser.add_argument('--client-python', dest='client_python', help='Path to the client venv Python.')
+    parser.add_argument('--runner-path', dest='runner_path', help='Path to the runner script.')
     parser.add_argument('--validate-only', action='store_true', help='Validate GROUPS against swagger_server/config.ini and exit.')
     args = parser.parse_args()
 
@@ -199,8 +290,11 @@ def main():
         except Exception as e:
             logging.fatal("Port selection error: ", e)
             sys.exit(1)
+    
+    if not args.validate_only:
+        CLIENT_ROOT, CLIENT_VENV_PYTHON, RUNNER_PATH = resolve_and_validate_paths(args)
 
-    config_path = os.path.join(SCRIPT_DIRECTORY, 'swagger_server', 'config.ini')
+    config_path = os.path.join(REPO_ROOT, 'swagger_server', 'config.ini')
     try:
         valid_cfgs, resolved_config_path = load_config_sections(config_path)
     except Exception as e:
@@ -243,11 +337,11 @@ def main():
             wait_for_server_ui(port)
             outfile_name = f"{args.branch}_{cfg}_GROUP_{args.group}.txt"
             with open(outfile_name, 'w', encoding='utf-8') as f:
-                runner_cmd = [CLIENT_VENV_PYTHON, RUNNER_PATH, '--name', 'integration_test', '--session', 'adept']
+                runner_cmd = [str(CLIENT_VENV_PYTHON), str(RUNNER_PATH), '--name', 'integration_test', '--session', 'adept']
                 if group_info['phase'] == 1:
                     runner_cmd.append('--domain')
                     runner_cmd.append('triage')
-                subprocess.run(runner_cmd, cwd=CLIENT_ROOT, stdout=f, stderr=subprocess.STDOUT, check=True)
+                subprocess.run(runner_cmd, cwd=str(CLIENT_ROOT), stdout=f, stderr=subprocess.STDOUT, check=True)
         except Exception as e:
             logging.fatal(f"Error during run for config {cfg}: {e}")
         finally:
