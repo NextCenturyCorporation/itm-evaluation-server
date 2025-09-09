@@ -3,7 +3,7 @@ import csv, argparse
 DEFAULT_EVALUATION_NAME = 'Sept2025'
 EVALUATION_NAME = DEFAULT_EVALUATION_NAME
 WRITE_FILES = True
-IGNORED_LIST = ['MF','AF','SS']
+IGNORED_LIST = ['SS']
 
 kdmas_info: list[dict] = [
     {'acronym': 'MF', 'full_name': 'Merit Focus', 'filename': f'{EVALUATION_NAME}MeritFocus'},
