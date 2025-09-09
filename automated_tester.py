@@ -31,7 +31,7 @@ CLI Flags
 --------------------
 --group {…}:          Which test group to run (required unless --validate-only)
 --branch NAME:        Branch label used in output filenames (required unless --validate-only)
---port N:             Port the server should use (default 8080; must be 1-65535 and free)
+--port N:             Port the server should use (default 8080; must be 1-65535 and available)
 --auto-port:          Ask the OS for a free port; overrides --port
 --client-root PATH:   Path to the evaluation client repo (absolute and relative paths both supported)
 --client-python PATH: Path to the client venv Python (absolute and relative paths both supported)
