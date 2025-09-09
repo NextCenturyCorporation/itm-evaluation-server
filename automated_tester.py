@@ -1,24 +1,42 @@
 """
-Integration testing harness that automates dummy ADM runs.
+Integration testing harness that automates dummy ADM runs and pipes the output to an outfile.
 
-+Usage:
-python automated_testing.py --group <group_number> --branch <branch_name> [--port <port>] [--auto-port][--client-root PATH] [--client-python PATH] [--runner-path PATH]
-python automated_testing.py --validate-only
+Purposes
+--------------------
+• Validates the GROUPS dictionary against the active INI (swagger_server/config.ini). Section names (including DEFAULT) must
+  match the cfgs listed in each group.
+• For a selected group, starts the server per cfg (testing or normal mode), validates/chooses a port, waits for readiness,
+  then starts to run the dummy ADM.
+• Writes each runner's combined stdout/stderr to a text file for potential manual review.
 
-Existing Groups:
-  Group 1: Phase 2 testing mode  - cfgs: DEFAULT, GROUP_TARGET, SUBSET_ONLY, FULL_NO_SUBSET, MULTI_KDMA, MULTI_KDMA_SUBSET, MULTI_KDMA_FULL_NO_SUBSET, OPEN_WORLD
-  Group 2: Phase 2 normal mode   - cfgs: DEFAULT, MULTI_KDMA
-  Group 3: Phase 1 testing mode  - cfgs: DEFAULT, GROUP_TARGET
+Usage
+--------------------
+  python automated_tester.py --group <group_number> --branch <branch_name> [--port <port>] [--auto-port] [--client-root PATH] [--client-python PATH] [--runner-path PATH]
+  python automated_tester.py --validate-only
 
-Modifying groups:
-  Edit the GROUPS object below. Each group must define:
-    - cfgs:  list[str], non-empty; each must match a section in swagger_server/config.ini
-    - testing: bool
-    - phase: int in {1, 2}
-  Unknown keys in a group are treated as errors by the validator.
+Current Groups
+--------------------
+  Group 1: Phase 2 testing mode - cfgs: DEFAULT, GROUP_TARGET, SUBSET_ONLY, FULL_NO_SUBSET, MULTI_KDMA, MULTI_KDMA_SUBSET, MULTI_KDMA_FULL_NO_SUBSET, OPEN_WORLD
+  Group 2: Phase 2 normal mode  - cfgs: DEFAULT, MULTI_KDMA
+  Group 3: Phase 1 testing mode - cfgs: DEFAULT, GROUP_TARGET
 
-Validation:
-  Use --validate-only to validate GROUPS against swagger_server/config.ini and exit.
+Modifying Groups
+--------------------
+Edit the GROUPS object below. Each group must define:
+  • cfgs:    list[str], non-empty; each value must match a section in swagger_server/config.ini (DEFAULT allowed)
+  • testing: bool
+  • phase:   int in {1, 2}
+
+CLI Flags
+--------------------
+--group {…}:          Which test group to run (required unless --validate-only)
+--branch NAME:        Branch label used in output filenames (required unless --validate-only)
+--port N:             Port the server should use (default 8080; must be 1-65535 and free)
+--auto-port:          Ask the OS for a free port; overrides --port
+--client-root PATH:   Path to the evaluation client repo (absolute and relative paths both supported)
+--client-python PATH: Path to the client venv Python (absolute and relative paths both supported)
+--runner-path PATH:   Path to the runner script (absolute and relative paths both supported; defaults to <client_root>/itm_minimal_runner.py)
+--validate-only:      Validate GROUPS against swagger_server/config.ini and exit (no path/port checks or execution)
 """
 
 import argparse
