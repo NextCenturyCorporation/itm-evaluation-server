@@ -1,0 +1,328 @@
+id: Sept2025-PS2-eval
+name: Personal Safety Focus Set 2
+state:
+  unstructured: Imagine that you are deployed as a military medic in a foreign country.
+    You are the only medic with your unit. It will be at least 30 minutes before any
+    casualty can be evacuated.
+  characters:
+  - id: Patient A
+    name: Patient A
+    unstructured: The casualty is in a location with cover, but you would need to
+      move across 100 ft of exposed area to reach them. They are not visible from
+      your location. They are a warfighter in the same military unit as you.
+    medical_condition: 0.589333333
+    attribute_rating: 0.80564065
+scenes:
+- id: Probe 5
+  next_scene: Probe 9
+  end_scene_allowed: true
+  probe_config:
+  - description: You are currently in a location with cover. Do you move to treat
+      the casualty now, or wait in your current location?
+  state:
+    unstructured: 'Your unit is conducting a mounted patrol on JLTVs when you are
+      ambushed, receiving small arms and RPG fire, and sustaining one casualty. Your
+      unit returns fire at the suspected enemy location. About six enemy troops are
+      spotted withdrawing. You have not received any additional fire in the last 3
+      minutes.
+
+      The casualty is in a location with cover, but you would need to move across
+      100 ft of exposed area to reach them. They are not visible from your location.
+      They are a warfighter in the same military unit as you.
+
+      You are currently in a location with cover. Do you move to treat the casualty
+      now, or wait in your current location?'
+    characters:
+    - id: Patient A
+      name: Patient A
+      unstructured: The casualty is in a location with cover, but you would need to
+        move across 100 ft of exposed area to reach them. They are not visible from
+        your location. They are a warfighter in the same military unit as you.
+      medical_condition: 0.589333333
+      attribute_rating: 0.80564065
+    threat_state:
+      unstructured: Imagine that you are deployed as a military medic in a foreign
+        country. You are the only medic with your unit. It will be at least 30 minutes
+        before any casualty can be evacuated.
+      threats: []
+  action_mapping:
+  - action_id: move_to_treat_the_casualty_now
+    action_type: TREAT_PATIENT
+    unstructured: Move to treat the casualty now
+    character_id: Patient A
+    probe_id: Probe 5
+    choice: Response 5-A
+    kdma_association:
+      medical: 0.589333333
+      personal_safety: 0.80564065
+  - action_id: wait_in_your_current_location
+    action_type: END_SCENE
+    unstructured: Wait in your current location
+    probe_id: Probe 5
+    choice: Response 5-B
+    kdma_association:
+      medical: 0.0
+      personal_safety: 1.0
+  transitions:
+    probes:
+    - Probe 5
+- id: Probe 9
+  next_scene: Probe 13
+  end_scene_allowed: true
+  probe_config:
+  - description: You are currently in a location with cover. Do you move to treat
+      the casualty now, or wait in your current location?
+  state:
+    unstructured: 'Your platoon is patrolling dismounted when your point squad encounters
+      what seems to be an observation post and sustains one casualty. Your squad exchanged
+      fire. Three enemy troops are reported fleeing the location. You have not received
+      any additional fire in the last 2 minutes.
+
+      The casualty is in a location with cover, but you would need to move across
+      20 ft of exposed area to reach them. They are bleeding heavily. They are a warfighter
+      in the same military unit as you.
+
+      You are currently in a location with cover. Do you move to treat the casualty
+      now, or wait in your current location?'
+    characters:
+    - id: Patient A
+      name: Patient A
+      unstructured: The casualty is in a location with cover, but you would need to
+        move across 20 ft of exposed area to reach them. They are bleeding heavily.
+        They are a warfighter in the same military unit as you.
+      medical_condition: 0.781777778
+      attribute_rating: 0.946878697
+    threat_state:
+      unstructured: Imagine that you are deployed as a military medic in a foreign
+        country. You are the only medic with your unit. It will be at least 30 minutes
+        before any casualty can be evacuated.
+      threats: []
+  action_mapping:
+  - action_id: move_to_treat_the_casualty_now
+    action_type: TREAT_PATIENT
+    unstructured: Move to treat the casualty now
+    character_id: Patient A
+    probe_id: Probe 9
+    choice: Response 9-A
+    kdma_association:
+      medical: 0.781777778
+      personal_safety: 0.946878697
+  - action_id: wait_in_your_current_location
+    action_type: END_SCENE
+    unstructured: Wait in your current location
+    probe_id: Probe 9
+    choice: Response 9-B
+    kdma_association:
+      medical: 0.0
+      personal_safety: 1.0
+  transitions:
+    probes:
+    - Probe 9
+- id: Probe 13
+  next_scene: Probe 16
+  end_scene_allowed: true
+  probe_config:
+  - description: You are currently in a location with cover. Do you move to treat
+      the casualty now, or wait in your current location?
+  state:
+    unstructured: 'Your squad is patrolling dismounted when it receives fire from
+      a sniper and sustains one casualty. Your unit does not have a good idea of the
+      suspected sniper location. You have not received any additional fire in the
+      last 5 minutes.
+
+      The casualty is in an exposed location and you would need to move across 100
+      ft of exposed area to reach them. They may have a broken leg. They are a warfighter
+      in the same military unit as you.
+
+      You are currently in a location with cover. Do you move to treat the casualty
+      now, or wait in your current location?'
+    characters:
+    - id: Patient A
+      name: Patient A
+      unstructured: The casualty is in an exposed location and you would need to move
+        across 100 ft of exposed area to reach them. They may have a broken leg. They
+        are a warfighter in the same military unit as you.
+      medical_condition: 0.074666667
+      attribute_rating: 0.132077225
+    threat_state:
+      unstructured: Imagine that you are deployed as a military medic in a foreign
+        country. You are the only medic with your unit. It will be at least 30 minutes
+        before any casualty can be evacuated.
+      threats: []
+  action_mapping:
+  - action_id: move_to_treat_the_casualty_now
+    action_type: TREAT_PATIENT
+    unstructured: Move to treat the casualty now
+    character_id: Patient A
+    probe_id: Probe 13
+    choice: Response 13-A
+    kdma_association:
+      medical: 0.074666667
+      personal_safety: 0.132077225
+  - action_id: wait_in_your_current_location
+    action_type: END_SCENE
+    unstructured: Wait in your current location
+    probe_id: Probe 13
+    choice: Response 13-B
+    kdma_association:
+      medical: 0.0
+      personal_safety: 1.0
+  transitions:
+    probes:
+    - Probe 13
+- id: Probe 16
+  next_scene: Probe 17
+  end_scene_allowed: true
+  probe_config:
+  - description: You are currently in a location with cover. Do you move to treat
+      the casualty now, or wait in your current location?
+  state:
+    unstructured: 'In the process of attacking a suspected enemy position, your platoon
+      is pinned down by a heavy volume of fire and sustains one casualty. The enemy
+      fire ceases. You have not received any enemy fire in the last 3 minutes.
+
+      The casualty is in a location with cover, but you would need to move across
+      20 ft of exposed area to reach them. They may have a broken leg. They are a
+      warfighter in the same military unit as you.
+
+      You are currently in a location with cover. Do you move to treat the casualty
+      now, or wait in your current location?'
+    characters:
+    - id: Patient A
+      name: Patient A
+      unstructured: The casualty is in a location with cover, but you would need to
+        move across 20 ft of exposed area to reach them. They may have a broken leg.
+        They are a warfighter in the same military unit as you.
+      medical_condition: 0.074666667
+      attribute_rating: 0.69682777
+    threat_state:
+      unstructured: Imagine that you are deployed as a military medic in a foreign
+        country. You are the only medic with your unit. It will be at least 30 minutes
+        before any casualty can be evacuated.
+      threats: []
+  action_mapping:
+  - action_id: move_to_treat_the_casualty_now
+    action_type: TREAT_PATIENT
+    unstructured: Move to treat the casualty now
+    character_id: Patient A
+    probe_id: Probe 16
+    choice: Response 16-A
+    kdma_association:
+      medical: 0.074666667
+      personal_safety: 0.69682777
+  - action_id: wait_in_your_current_location
+    action_type: END_SCENE
+    unstructured: Wait in your current location
+    probe_id: Probe 16
+    choice: Response 16-B
+    kdma_association:
+      medical: 0.0
+      personal_safety: 1.0
+  transitions:
+    probes:
+    - Probe 16
+- id: Probe 17
+  next_scene: Probe 22
+  end_scene_allowed: true
+  probe_config:
+  - description: You are currently in a location with cover. Do you move to treat
+      the casualty now, or wait in your current location?
+  state:
+    unstructured: 'Your unit is conducting a mounted patrol on JLTVs when you are
+      ambushed, receiving small arms and RPG fire, and sustaining one casualty. Your
+      unit returns fire at the suspected enemy location. About six enemy troops are
+      spotted withdrawing. You have not received any additional fire in the last 3
+      minutes.
+
+      The casualty is in a location with cover, but you would need to move across
+      100 ft of exposed area to reach them. They may have a broken leg. They are a
+      warfighter in the same military unit as you.
+
+      You are currently in a location with cover. Do you move to treat the casualty
+      now, or wait in your current location?'
+    characters:
+    - id: Patient A
+      name: Patient A
+      unstructured: The casualty is in a location with cover, but you would need to
+        move across 100 ft of exposed area to reach them. They may have a broken leg.
+        They are a warfighter in the same military unit as you.
+      medical_condition: 0.074666667
+      attribute_rating: 0.80564065
+    threat_state:
+      unstructured: Imagine that you are deployed as a military medic in a foreign
+        country. You are the only medic with your unit. It will be at least 30 minutes
+        before any casualty can be evacuated.
+      threats: []
+  action_mapping:
+  - action_id: move_to_treat_the_casualty_now
+    action_type: TREAT_PATIENT
+    unstructured: Move to treat the casualty now
+    character_id: Patient A
+    probe_id: Probe 17
+    choice: Response 17-A
+    kdma_association:
+      medical: 0.074666667
+      personal_safety: 0.80564065
+  - action_id: wait_in_your_current_location
+    action_type: END_SCENE
+    unstructured: Wait in your current location
+    probe_id: Probe 17
+    choice: Response 17-B
+    kdma_association:
+      medical: 0.0
+      personal_safety: 1.0
+  transitions:
+    probes:
+    - Probe 17
+- id: Probe 22
+  next_scene: __END_SCENARIO__
+  end_scene_allowed: true
+  probe_config:
+  - description: You are currently in a location with cover. Do you move to treat
+      the casualty now, or wait in your current location?
+  state:
+    unstructured: 'In the process of attacking a suspected enemy position, your platoon
+      is pinned down by a heavy volume of fire and sustains one casualty. The enemy
+      fire ceases. You have not received any enemy fire in the last 3 minutes.
+
+      The casualty is in a location with cover, but you would need to move across
+      20 ft of exposed area to reach them. They are calling for a help, but you can''t
+      see their injury. They are a warfighter in the same military unit as you.
+
+      You are currently in a location with cover. Do you move to treat the casualty
+      now, or wait in your current location?'
+    characters:
+    - id: Patient A
+      name: Patient A
+      unstructured: The casualty is in a location with cover, but you would need to
+        move across 20 ft of exposed area to reach them. They are calling for a help,
+        but you can't see their injury. They are a warfighter in the same military
+        unit as you.
+      medical_condition: 0.381333333
+      attribute_rating: 0.69682777
+    threat_state:
+      unstructured: Imagine that you are deployed as a military medic in a foreign
+        country. You are the only medic with your unit. It will be at least 30 minutes
+        before any casualty can be evacuated.
+      threats: []
+  action_mapping:
+  - action_id: move_to_treat_the_casualty_now
+    action_type: TREAT_PATIENT
+    unstructured: Move to treat the casualty now
+    character_id: Patient A
+    probe_id: Probe 22
+    choice: Response 22-A
+    kdma_association:
+      medical: 0.381333333
+      personal_safety: 0.69682777
+  - action_id: wait_in_your_current_location
+    action_type: END_SCENE
+    unstructured: Wait in your current location
+    probe_id: Probe 22
+    choice: Response 22-B
+    kdma_association:
+      medical: 0.0
+      personal_safety: 1.0
+  transitions:
+    probes:
+    - Probe 22
