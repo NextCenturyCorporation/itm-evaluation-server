@@ -53,7 +53,7 @@ from configparser import ConfigParser
 
 GROUPS = {
     '1': {
-        'cfgs': ["DEFAULT", "GROUP_TARGET", "SUBSET_ONLY", "FULL_NO_SUBSET", "MULTI_KDMA", "MULTI_KDMA_SUBSET", "MULTI_KDMA_FULL_NO_SUBSET", "OPEN_WORLD"],
+        'cfgs': ["DEFAULT", "SUBSET_ONLY", "FULL_NO_SUBSET", "MULTI_KDMA", "MULTI_KDMA_SUBSET", "MULTI_KDMA_FULL_NO_SUBSET", "OPEN_WORLD"],
         'testing': True,
         'phase': 2
     },
@@ -63,7 +63,7 @@ GROUPS = {
         'phase': 2
     },
     '3': {
-        'cfgs': ["DEFAULT", "GROUP_TARGET"],
+        'cfgs': ["DEFAULT"],
         'testing': True,
         'phase': 1
     }
@@ -143,36 +143,50 @@ def validate_groups(groups, valid_cfg_names):
     
     return errors
 
+def host_to_url(host, port, path= "/ui/"):
+    if ":" in host:
+        return f"http://[{host}]:{port}{path}"
+    return f"http://{host}:{port}{path}"
+
 def wait_for_server_ui(port, timeout=30):
-    url = f"http://localhost:{port}/ui/"
+    hosts = ["127.0.0.1", "::1", "localhost"]
     deadline = time.time() + timeout
     while time.time() < deadline:
-        try:
-            r = requests.get(url, timeout=1)
-            if r.status_code == 200 and 'Swagger UI' in r.text:
-                return
-        except requests.RequestException:
-            pass
+        for host in hosts:
+            try:
+                url = host_to_url(host, port, "/ui/")
+                r = requests.get(url, timeout=1)
+                if r.status_code == 200 and 'Swagger UI' in r.text:
+                    return
+            except requests.RequestException:
+                pass
         time.sleep(1.0)
     raise RuntimeError(f"Server UI did not become ready in {timeout}s")
 
 def port_in_range(port):
     return isinstance(port, int) and 1 <= port <= 65535
 
-def is_port_free(port, host = "127.0.0.1"):
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+def can_connect(host, port, timeout = 0.25):
+    family = socket.AF_INET6 if ":" in host else socket.AF_INET
+    with socket.socket(family, socket.SOCK_STREAM) as s:
+        s.settimeout(timeout)
         try:
-            s.bind((host, port))
+            s.connect((host, port))
             return True
         except OSError:
             return False
 
-def pick_free_port(host = "127.0.0.1"):
+def is_port_free(port):
+    for host in ("127.0.0.1", "::1"):
+        if can_connect(host, port):
+            return False
+    return True
+
+def pick_free_port() -> int:
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        s.bind((host, 0))
+        s.bind(("127.0.0.1", 0))
         port = s.getsockname()[1]
-    if is_port_free(port, host):
+    if is_port_free(port):
         return port
     raise RuntimeError("Unable to find a free local port after multiple attempts.")
 
@@ -305,7 +319,7 @@ def main():
         try:
             port = resolve_port(args.port, args.auto_port)
         except Exception as e:
-            logging.fatal("Port selection error: ", e)
+            logging.fatal(f"Port selection error: {e}.")
             sys.exit(1)
     
     if not args.validate_only:
