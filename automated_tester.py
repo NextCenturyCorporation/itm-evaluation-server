@@ -372,7 +372,10 @@ def main():
                 if group_info['phase'] == 1:
                     runner_cmd.append('--domain')
                     runner_cmd.append('triage')
-                subprocess.run(runner_cmd, cwd=str(CLIENT_ROOT), stdout=f, stderr=subprocess.STDOUT, check=True)
+                env = os.environ.copy()
+                env["TA3_HOSTNAME"] = "127.0.0.1"
+                env["TA3_PORT"] = str(port)
+                subprocess.run(runner_cmd, cwd=str(CLIENT_ROOT), stdout=f, stderr=subprocess.STDOUT, check=True, env=env)
         except Exception as e:
             logging.fatal(f"Error during run for config {cfg}: {e}")
         finally:
