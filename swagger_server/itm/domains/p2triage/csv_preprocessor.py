@@ -103,10 +103,6 @@ if __name__ == '__main__':
                         help="Acronyms of attributes to ignore (AF, MF, PS, SS, AF-MF, PS-AF, OW)")
 
     args = parser.parse_args()
-    if args.subset:
-        FULL_EVAL = False
-    if args.redact:
-        REDACT_EVAL = True
     if args.verbose:
         VERBOSE = True
     if args.evalname:
