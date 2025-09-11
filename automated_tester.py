@@ -199,6 +199,36 @@ def resolve_port(requested_port, auto_port):
         raise RuntimeError(f"Port {requested_port} is already in use. Specify a different --port or use --auto-port.")
     return requested_port
 
+def wait_for_port_free(port, timeout = 5.0, interval = 0.25):
+    deadline = time.time() + timeout
+    while time.time() < deadline:
+        if is_port_free(port):
+            return True
+        time.sleep(interval)
+    return False
+
+def ensure_server_stopped(proc, port, auto_port):
+    try:
+        proc.terminate()
+        proc.wait(timeout=10)
+    except subprocess.TimeoutExpired:
+        logging.warning("Server did not terminate in time.")
+        try:
+            proc.kill()
+            proc.wait(timeout=5)
+        except Exception as e:
+           logging.warning(f"Failed to kill process cleanly: {e}.")
+
+    if wait_for_port_free(port, timeout=5.0, interval=0.25):
+        return port
+
+    if auto_port:
+        new_port = pick_free_port()
+        return new_port
+    else:
+        logging.fatal(f"Port {port} remained busy after server stop. Rerun with --auto-port or specify a different --port.")
+        sys.exit(1)
+
 def resolve_user_path(potential_path, base):
     if not potential_path:
         return None
@@ -353,13 +383,15 @@ def main():
     group_info = GROUPS[args.group]
     for cfg in group_info['cfgs']:
         if not is_port_free(port):
-            if args.auto_port:
-                logging.info(f"Selected port {port} is now busy. Picking a new free port.")
-                port = pick_free_port()
-                logging.info(f"Switched to port {port}.")
-            else:
-                logging.fatal("Port %s became busy. Use a different --port or --auto-port.", port)
-                sys.exit(1)
+            logging.info(f"Port {port} busy before launching cfg '{cfg}'; Waiting for release.")
+            if not wait_for_port_free(port, timeout=5.0, interval=0.25):
+                if args.auto_port:
+                    logging.info(f"Port {port} still busy; picking a new free port.")
+                    port = pick_free_port()
+                    logging.info(f"Switched to port {port}.")
+                else:
+                    logging.fatal(f"Port {port} became busy. Use a different --port or --auto-port.")
+                    sys.exit(1)
         server_command = [sys.executable, '-m', 'swagger_server', '-c', cfg, '-p', str(port)]
         if group_info['testing']:
             server_command.append('-t')
@@ -380,7 +412,6 @@ def main():
             logging.fatal(f"Error during run for config {cfg}: {e}")
         finally:
             logging.info("Stopping server.")
-            server.terminate()
-            server.wait(timeout=10)
+            port = ensure_server_stopped(server, port, args.auto_port)
             
 main()
