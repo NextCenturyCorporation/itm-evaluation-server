@@ -1,8 +1,9 @@
-import csv
+import csv, argparse
 
-EVALUATION_NAME = 'July2025'
+DEFAULT_EVALUATION_NAME = 'Sept2025'
+EVALUATION_NAME = DEFAULT_EVALUATION_NAME
 WRITE_FILES = True
-IGNORED_LIST = []
+IGNORED_LIST = ['SS']
 
 kdmas_info: list[dict] = [
     {'acronym': 'MF', 'full_name': 'Merit Focus', 'filename': f'{EVALUATION_NAME}MeritFocus'},
@@ -50,7 +51,7 @@ def process_row(out_data: list, row: dict, acronym: str, full_name: str):
             scenario_num += 1
 
 
-if __name__ == '__main__':
+def main():
     for kdma_info in kdmas_info:
         acronym = kdma_info['acronym']
         if acronym in IGNORED_LIST:
@@ -91,3 +92,23 @@ if __name__ == '__main__':
         csv_outfile.close()
 
     print("All files created.  Exiting.")
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Converts TA1 csvs to scenario YAML files.')
+    parser.add_argument('-v', '--verbose', action='store_true', required=False, default=False,
+                        help='Verbose logging')
+    parser.add_argument('-e', '--evalname', required=False, metavar='evalname', default=DEFAULT_EVALUATION_NAME,
+                        help=f'Short name for evaluation (no spaces); default {DEFAULT_EVALUATION_NAME}')
+    parser.add_argument('-i', '--ignore', nargs='+', metavar='ignore', required=False, type=str,
+                        help="Acronyms of attributes to ignore (AF, MF, PS, SS, AF-MF, PS-AF, OW)")
+
+    args = parser.parse_args()
+    if args.verbose:
+        VERBOSE = True
+    if args.evalname:
+        EVALUATION_NAME = args.evalname
+        for kdma_info in kdmas_info:
+            kdma_info['filename'] = kdma_info['filename'].replace(DEFAULT_EVALUATION_NAME, EVALUATION_NAME)
+    if args.ignore:
+        IGNORED_LIST = args.ignore
+    main()

@@ -4,7 +4,7 @@ import os
 import argparse
 
 # These are constants that cannot be overridden via the command line
-DEFAULT_EVALUATION_NAME = 'July2025'
+DEFAULT_EVALUATION_NAME = 'Sept2025'
 TA1_NAME = 'adept'
 
 # These are default values that can be overridden via the command line
@@ -14,7 +14,7 @@ VERBOSE = False
 EVALUATION_NAME = DEFAULT_EVALUATION_NAME
 WRITE_FILES = True
 OUT_PATH = f"swagger_server/itm/data/{EVALUATION_NAME.lower()}/scenarios"
-IGNORED_LIST = []
+IGNORED_LIST = ['AF', 'MF', 'SS', 'AF-MF', 'OW']
 
 kdmas_info: list[dict] = [
     {'acronym': 'MF', 'full_name': 'Merit Focus', 'filename': f'{EVALUATION_NAME}MeritFocus'},
@@ -22,40 +22,41 @@ kdmas_info: list[dict] = [
     {'acronym': 'SS', 'full_name': 'Search vs Stay', 'filename': f'{EVALUATION_NAME}SearchStay'},
     {'acronym': 'PS', 'full_name': 'Personal Safety Focus', 'filename': f'{EVALUATION_NAME}PersonalSafety'},
     {'acronym': 'AF-MF', 'full_name': 'Affiliation Focus Set', 'filename': f'{EVALUATION_NAME}-AF-MF'},
+    {'acronym': 'PS-AF', 'full_name': 'Personal Safety And Affilation Focus Set', 'filename': f'{EVALUATION_NAME}-PS-AF'},
     {'acronym': 'OW', 'full_name': 'Open World Desert', 'filename': f'{EVALUATION_NAME}-OW-desert'},
     {'acronym': 'OW', 'full_name': 'Open World Urban', 'filename': f'{EVALUATION_NAME}-OW-urban'}
     ]
+
+kdma_mapping: dict = {'AF': 'affiliation', 'MF': 'merit', 'SS': 'search', 'PS': 'personal_safety'}
 
 expected_fields = ['scenario_id', 'scenario_name', 'probe_id', 'intro_text', 'probe_full_text', 'probe_question',
                    'patient_a_text', 'patient_b_text', 'pa_medical', 'pb_medical', 'pa_affiliation', 'pa_merit',
                    'pa_search', 'pa_personal_safety', 'pb_affiliation', 'pb_merit', 'pb_search', 'pb_personal_safety',
                    'choice1_text', 'choice2_text']
 
-def get_kdma_base(acronym, probe_id: str) -> str:
-    match acronym:
-        case 'AF':
-            return 'affiliation'
-        case 'MF':
-            return 'merit'
-        case 'PS':
-            return 'personal_safety'
-        case 'SS':
-            return 'search'
-        case _: # Handle multi-kdma case
-            if '-AF-' in probe_id:
-                return 'affiliation'
-            if '-MF-' in probe_id:
-                return 'merit'
-            if '-PS-' in probe_id:
-                return 'personal_safety'
-            if '-SS-' in probe_id:
-                return 'search'
-    print(f"Could not derive KDMA base from acronym {acronym} or probe ID {probe_id}! Exiting.")
-    exit(1)
+
+def get_kdma_bases(acronym, probe_id: str):
+    kdmas = []
+    parts: list = probe_id.split('-')
+    if len(parts) == 1: # single kdma, e.g. "Probe 23"
+        kdma = kdma_mapping.get(acronym)
+        if kdma:
+            kdmas.append(kdma)
+
+    # multi-kdma, e.g. "July2025-AF-eval.Probe 21" or "Sept2025-PS-AF-eval.Probe 12"
+    for part in parts:
+        if part in kdma_mapping.keys():
+            kdmas.append(kdma_mapping[part])
+
+    if len(kdmas) == 0:
+        print(f"Could not derive KDMA base from acronym {acronym} or probe ID {probe_id}! Exiting.")
+        exit(1)
+    return kdmas
+
 
 def make_state(row: dict, acronym: str, training: str, first_row: str = False) -> dict:
     character_list: list = []
-    attribute_base = get_kdma_base(acronym, row['probe_id'])
+    attribute_base = get_kdma_bases(acronym, row['probe_id'])[0]
     character: dict = {'id': 'Patient A', 'name': 'Patient A', 'unstructured': row['patient_a_text']}
     if training or not REDACT_EVAL:
         character.update({'medical_condition': float(row['pa_medical'])})
@@ -89,8 +90,10 @@ def make_mappings(row: dict, acronym: str, training: bool) -> list:
     mapping: dict = {'action_id': action_id, 'action_type': 'TREAT_PATIENT', 'unstructured': choice_text,
                      'character_id': 'Patient A', 'probe_id': probe_id, 'choice': choice_id}
     if training or not REDACT_EVAL:
-        attribute_base = get_kdma_base(acronym, probe_id)
-        kdma_assoc: dict = {'medical': float(row['pa_medical']), attribute_base: float(row[f"pa_{attribute_base}"])}
+        kdma_assoc: dict = {'medical': float(row['pa_medical'])}
+        attribute_bases = get_kdma_bases(acronym, probe_id)
+        for base in attribute_bases:
+            kdma_assoc[base] = float(row[f"pa_{base}"])
         mapping['kdma_association'] = kdma_assoc
     mappings.append(mapping)
 
@@ -107,10 +110,10 @@ def make_mappings(row: dict, acronym: str, training: bool) -> list:
         case 'SS':
             action_type = 'SEARCH'
         case _: # Handle multi-kdma case
-            if '-AF-' in probe_id or '-MF-' in probe_id:
-                action_type = 'TREAT_PATIENT'
-            elif '-PS-' in probe_id:
+            if '-PS-' in probe_id:
                 action_type = 'END_SCENE'
+            elif '-AF-' in probe_id or '-MF-' in probe_id:
+                action_type = 'TREAT_PATIENT'
             elif '-SS-' in probe_id:
                 action_type = 'SEARCH'
             else:
@@ -120,8 +123,10 @@ def make_mappings(row: dict, acronym: str, training: bool) -> list:
     mapping = {'action_id': action_id, 'action_type': action_type, 'unstructured': choice_text,
                'probe_id': probe_id, 'choice': choice_id}
     if training or not REDACT_EVAL:
-        attribute_base = get_kdma_base(acronym, probe_id)
-        kdma_assoc: dict = {'medical': float(row['pb_medical']), attribute_base: float(row[f"pb_{attribute_base}"])}
+        kdma_assoc: dict = {'medical': float(row['pb_medical'])}
+        attribute_bases = get_kdma_bases(acronym, probe_id)
+        for base in attribute_bases:
+            kdma_assoc[base] = float(row[f"pb_{base}"])
         mapping['kdma_association'] = kdma_assoc
     if acronym in ['AF', 'MF', 'AF-MF', 'OW']:
         mapping['character_id'] = 'Patient B'
@@ -133,7 +138,7 @@ def make_mappings(row: dict, acronym: str, training: bool) -> list:
 def get_scene(row: dict, acronym: str, training: bool) -> dict:
     probe_id: str = row['probe_id']
     probe_config: list = [{'description': row['probe_question']}]
-    return {'id': probe_id, 'next_scene': 'placeholder', 'end_scene_allowed': acronym == 'PS', 'probe_config': probe_config,
+    return {'id': probe_id, 'next_scene': 'placeholder', 'end_scene_allowed': 'PS' in acronym, 'probe_config': probe_config,
             'state': make_state(row, acronym, training), 'action_mapping': make_mappings(row, acronym, training),
             'transitions': {'probes': [probe_id]}}
 
@@ -246,7 +251,7 @@ if __name__ == '__main__':
     parser.add_argument('-o', '--outpath', required=False, metavar='outpath',
                         help='Specify location for output files (no spaces)')
     parser.add_argument('-i', '--ignore', nargs='+', metavar='ignore', required=False, type=str,
-                        help="Acronyms of attributes to ignore (AF, MF, PS, SS, AF-MF, OW)")
+                        help="Acronyms of attributes to ignore (AF, MF, PS, SS, AF-MF, PS-AF, OW)")
 
     args = parser.parse_args()
     if args.subset:
