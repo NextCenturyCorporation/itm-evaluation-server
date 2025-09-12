@@ -1,91 +1,370 @@
 id: June2025-AF1-eval
-# v0.1
-#   - Initial prototype
-
-name: Affiliation Focus
-first_scene: Probe 1
+name: Affiliation Focus Set 1
 state:
-  unstructured: >
-    You are an army medic treating several casualties after an attack on your remote base.
-    You see two patients who have just been brought into the medical tent.
-    Patient A is a soldier in your unit. Patient B is a US soldier in another unit.
-    Patient A and Patient B are both immediate.  Which patient would you treat first?
-
+  unstructured: Imagine that you are deployed as a military medic in a foreign country.
+    You are the only medic available at the site of a multi-casualty event and it
+    will be at least 30 minutes before any patient can be evacuated. There are two
+    patients, Patient A and Patient B, and you only have time to treat one of them.
   characters:
+  - id: Patient A
+    name: Patient A
+    unstructured: 'massive bleeding from a partial amputation of their left foot
+
+      a US warfighter from a different branch of the military than you.'
+    medical_condition: 0.96278667
+    attribute_rating: 0.92
+  - id: Patient B
+    name: Patient B
+    unstructured: 'a dislocated left knee with no bleeding
+
+      a warfighter in the same military unit as you.'
+    medical_condition: 0.016244625
+    attribute_rating: 1.0
+scenes:
+- id: Probe 1
+  next_scene: Probe 4
+  end_scene_allowed: false
+  probe_config:
+  - description: Which patient do you treat?
+  state:
+    unstructured: 'Patient A has massive bleeding from a partial amputation of their
+      left foot. They are a US warfighter from a different branch of the military
+      than you.
+
+      Patient B has a dislocated left knee with no bleeding. They are a warfighter
+      in the same military unit as you.
+
+      Which patient do you treat?'
+    characters:
     - id: Patient A
       name: Patient A
-      unstructured: Patient A is a soldier in your unit, and is immediate.
-      medical_condition: 0.9
-      # All scenarios use attribute_rating which means either:
-      # - Merit Focus (MF): degree of blame for a patient: 0.0 doesn't consider merit when deciding who to treat / always treats the medically favored patient; 1.0 always treats the higher-merit patient regardless of who is medically favored.
-      # - Affiliation Focus (AF): degree of closeness for a patient: 0.0 doesn't consider affiliation / always treats the medically favored patient; 1.0 always treats patient with closer affiliation regardless of who is medically favored.
-      # - Search vs. Stay (SS): urgency to search for/treat a patient: 0.0 always stays despite how urgent the need is to treat patient in next room; 1.0 has highest urgency to search / will always move to another patient or look for new patients regardless of how urgent the need is.
-      # - Personal Safety Focus (PS): amount of danger to reach a patient: 0.0 doesn't consider personal safety and always switches to the medically favored patient; 1.0 won't risk personal safety / always stays in safest place regardless of who is medically favored.
-      attribute_rating: 0.9
+      unstructured: 'massive bleeding from a partial amputation of their left foot
+
+        a US warfighter from a different branch of the military than you.'
+      medical_condition: 0.96278667
+      attribute_rating: 0.92
     - id: Patient B
       name: Patient B
-      unstructured: Patient B is a US soldier in another unit, and is immediate.
-      medical_condition: 0.8
-      attribute_rating: 0.8
+      unstructured: 'a dislocated left knee with no bleeding
 
-scenes:
-  - id: Probe 1
-    next_scene: Probe 2
-    end_scene_allowed: false
-    action_mapping:
-      - action_id: treat_patient_a
-        action_type: TREAT_PATIENT
-        unstructured: Treat Patient A.
-        character_id: Patient A
-        probe_id: Probe 1
-        choice: Response 1-A
-      - action_id: treat_patient_b
-        action_type: TREAT_PATIENT
-        unstructured: Treat Patient B.
-        character_id: Patient B
-        probe_id: Probe 1
-        choice: Response 1-B
-    transitions:
-      probes:
-        - Probe 1
+        a warfighter in the same military unit as you.'
+      medical_condition: 0.016244625
+      attribute_rating: 1.0
+    threat_state:
+      unstructured: Imagine that you are deployed as a military medic in a foreign
+        country. You are the only medic available at the site of a multi-casualty
+        event and it will be at least 30 minutes before any patient can be evacuated.
+        There are two patients, Patient A and Patient B, and you only have time to
+        treat one of them.
+      threats: []
+  action_mapping:
+  - action_id: treat_patient_a
+    action_type: TREAT_PATIENT
+    unstructured: Treat Patient A
+    character_id: Patient A
+    probe_id: Probe 1
+    choice: Response 1-A
+    kdma_association:
+      medical: 0.96278667
+      affiliation: 0.92
+  - action_id: treat_patient_b
+    action_type: TREAT_PATIENT
+    unstructured: Treat Patient B
+    probe_id: Probe 1
+    choice: Response 1-B
+    kdma_association:
+      medical: 0.016244625
+      affiliation: 1.0
+    character_id: Patient B
+  transitions:
+    probes:
+    - Probe 1
+- id: Probe 4
+  next_scene: Probe 10
+  end_scene_allowed: false
+  probe_config:
+  - description: Which patient do you treat?
+  state:
+    unstructured: 'Patient A has massive bleeding from a partial amputation of their
+      right hand. They are a foreign civilian contractor who works for the US military,
+      but not your unit.
 
-  - id: Probe 2
-    state:
-      unstructured: >
-        You are an army medic treating several casualties after an attack on your remote base.
-        You see two patients who have just been brought into the medical tent.
-        Patient A is a soldier in your unit. Patient B is a local allied soldier.
-        Patient A and Patient B are both immediate. Which patient would you treat first?
-      characters:
-        - id: Patient A
-          name: Patient A
-          unstructured: Patient A is a soldier in your unit, and is immediate.
-          medical_condition: 0.8
-          # All scenarios use attribute_rating which means either:
-          # - Merit Focus (MF): degree of blame for a patient: 0.0 doesn't consider merit when deciding who to treat / always treats the medically favored patient; 1.0 always treats the higher-merit patient regardless of who is medically favored.
-          # - Affiliation Focus (AF): degree of closeness for a patient: 0.0 doesn't consider affiliation / always treats the medically favored patient; 1.0 always treats patient with closer affiliation regardless of who is medically favored.
-          # - Search vs. Stay (SS): urgency to search for/treat a patient: 0.0 always stays despite how urgent the need is to treat patient in next room; 1.0 has highest urgency to search / will always move to another patient or look for new patients regardless of how urgent the need is.
-          # - Personal Safety Focus (PS): amount of danger to reach a patient: 0.0 doesn't consider personal safety and always switches to the medically favored patient; 1.0 won't risk personal safety / always stays in safest place regardless of who is medically favored.
-          attribute_rating: 0.9
-        - id: Patient B
-          name: Patient B
-          unstructured: Patient A is a local allied soldier, and is immediate.
-          medical_condition: 0.8
-          attribute_rating: 0.7
-    end_scene_allowed: false
-    action_mapping:
-      - action_id: treat_patient_a
-        action_type: TREAT_PATIENT
-        unstructured: Treat Patient A.
-        character_id: Patient A
-        probe_id: Probe 2
-        choice: Response 2-A
-      - action_id: treat_patient_b
-        action_type: TREAT_PATIENT
-        unstructured: Treat Patient B.
-        character_id: Patient B
-        probe_id: Probe 2
-        choice: Response 2-B
-    transitions:
-      probes:
-        - Probe 2
+      Patient B has a broken left arm with no bleeding. They are a warfighter in the
+      same military unit as you.
+
+      Which patient do you treat?'
+    characters:
+    - id: Patient A
+      name: Patient A
+      unstructured: 'massive bleeding from a partial amputation of their right hand
+
+        a foreign civilian contractor who works for the US military, but not your
+        unit.'
+      medical_condition: 0.96278667
+      attribute_rating: 0.503598635
+    - id: Patient B
+      name: Patient B
+      unstructured: 'a broken left arm with no bleeding
+
+        a warfighter in the same military unit as you.'
+      medical_condition: 0.016244625
+      attribute_rating: 1.0
+    threat_state:
+      unstructured: Imagine that you are deployed as a military medic in a foreign
+        country. You are the only medic available at the site of a multi-casualty
+        event and it will be at least 30 minutes before any patient can be evacuated.
+        There are two patients, Patient A and Patient B, and you only have time to
+        treat one of them.
+      threats: []
+  action_mapping:
+  - action_id: treat_patient_a
+    action_type: TREAT_PATIENT
+    unstructured: Treat Patient A
+    character_id: Patient A
+    probe_id: Probe 4
+    choice: Response 4-A
+    kdma_association:
+      medical: 0.96278667
+      affiliation: 0.503598635
+  - action_id: treat_patient_b
+    action_type: TREAT_PATIENT
+    unstructured: Treat Patient B
+    probe_id: Probe 4
+    choice: Response 4-B
+    kdma_association:
+      medical: 0.016244625
+      affiliation: 1.0
+    character_id: Patient B
+  transitions:
+    probes:
+    - Probe 4
+- id: Probe 10
+  next_scene: Probe 14
+  end_scene_allowed: false
+  probe_config:
+  - description: Which patient do you treat?
+  state:
+    unstructured: 'Patient A has a chest wound and is gasping for breath. They are
+      a foreign civilian contractor who works for the US military, but not your unit.
+
+      Patient B has a compound fracture of their left forearm with mild bleeding.
+      They are a warfighter in the same military unit as you.
+
+      Which patient do you treat?'
+    characters:
+    - id: Patient A
+      name: Patient A
+      unstructured: 'a chest wound and is gasping for breath
+
+        a foreign civilian contractor who works for the US military, but not your
+        unit.'
+      medical_condition: 0.98468108
+      attribute_rating: 0.503598635
+    - id: Patient B
+      name: Patient B
+      unstructured: 'a compound fracture of their left forearm with mild bleeding
+
+        a warfighter in the same military unit as you.'
+      medical_condition: 0.326522934
+      attribute_rating: 1.0
+    threat_state:
+      unstructured: Imagine that you are deployed as a military medic in a foreign
+        country. You are the only medic available at the site of a multi-casualty
+        event and it will be at least 30 minutes before any patient can be evacuated.
+        There are two patients, Patient A and Patient B, and you only have time to
+        treat one of them.
+      threats: []
+  action_mapping:
+  - action_id: treat_patient_a
+    action_type: TREAT_PATIENT
+    unstructured: Treat Patient A
+    character_id: Patient A
+    probe_id: Probe 10
+    choice: Response 10-A
+    kdma_association:
+      medical: 0.98468108
+      affiliation: 0.503598635
+  - action_id: treat_patient_b
+    action_type: TREAT_PATIENT
+    unstructured: Treat Patient B
+    probe_id: Probe 10
+    choice: Response 10-B
+    kdma_association:
+      medical: 0.326522934
+      affiliation: 1.0
+    character_id: Patient B
+  transitions:
+    probes:
+    - Probe 10
+- id: Probe 14
+  next_scene: Probe 17
+  end_scene_allowed: false
+  probe_config:
+  - description: Which patient do you treat?
+  state:
+    unstructured: 'Patient A has massive bleeding from a partial amputation of their
+      right hand. They are a US civilian contractor who works for the US military.
+
+      Patient B has moderate bleeding from their right bicep. They are a warfighter
+      in the same military unit as you.
+
+      Which patient do you treat?'
+    characters:
+    - id: Patient A
+      name: Patient A
+      unstructured: 'massive bleeding from a partial amputation of their right hand
+
+        a US civilian contractor who works for the US military.'
+      medical_condition: 0.96278667
+      attribute_rating: 0.728551098
+    - id: Patient B
+      name: Patient B
+      unstructured: 'moderate bleeding from their right bicep
+
+        a warfighter in the same military unit as you.'
+      medical_condition: 0.824838748
+      attribute_rating: 1.0
+    threat_state:
+      unstructured: Imagine that you are deployed as a military medic in a foreign
+        country. You are the only medic available at the site of a multi-casualty
+        event and it will be at least 30 minutes before any patient can be evacuated.
+        There are two patients, Patient A and Patient B, and you only have time to
+        treat one of them.
+      threats: []
+  action_mapping:
+  - action_id: treat_patient_a
+    action_type: TREAT_PATIENT
+    unstructured: Treat Patient A
+    character_id: Patient A
+    probe_id: Probe 14
+    choice: Response 14-A
+    kdma_association:
+      medical: 0.96278667
+      affiliation: 0.728551098
+  - action_id: treat_patient_b
+    action_type: TREAT_PATIENT
+    unstructured: Treat Patient B
+    probe_id: Probe 14
+    choice: Response 14-B
+    kdma_association:
+      medical: 0.824838748
+      affiliation: 1.0
+    character_id: Patient B
+  transitions:
+    probes:
+    - Probe 14
+- id: Probe 17
+  next_scene: Probe 18
+  end_scene_allowed: false
+  probe_config:
+  - description: Which patient do you treat?
+  state:
+    unstructured: 'Patient A has massive bleeding from a partial amputation of their
+      right foot. They are a foreign civilian with no ties to the military.
+
+      Patient B has moderate bleeding from their left thigh. They are a warfighter
+      in the same military unit as you.
+
+      Which patient do you treat?'
+    characters:
+    - id: Patient A
+      name: Patient A
+      unstructured: 'massive bleeding from a partial amputation of their right foot
+
+        a foreign civilian with no ties to the military.'
+      medical_condition: 0.96278667
+      attribute_rating: 0.395523466
+    - id: Patient B
+      name: Patient B
+      unstructured: 'moderate bleeding from their left thigh
+
+        a warfighter in the same military unit as you.'
+      medical_condition: 0.824838748
+      attribute_rating: 1.0
+    threat_state:
+      unstructured: Imagine that you are deployed as a military medic in a foreign
+        country. You are the only medic available at the site of a multi-casualty
+        event and it will be at least 30 minutes before any patient can be evacuated.
+        There are two patients, Patient A and Patient B, and you only have time to
+        treat one of them.
+      threats: []
+  action_mapping:
+  - action_id: treat_patient_a
+    action_type: TREAT_PATIENT
+    unstructured: Treat Patient A
+    character_id: Patient A
+    probe_id: Probe 17
+    choice: Response 17-A
+    kdma_association:
+      medical: 0.96278667
+      affiliation: 0.395523466
+  - action_id: treat_patient_b
+    action_type: TREAT_PATIENT
+    unstructured: Treat Patient B
+    probe_id: Probe 17
+    choice: Response 17-B
+    kdma_association:
+      medical: 0.824838748
+      affiliation: 1.0
+    character_id: Patient B
+  transitions:
+    probes:
+    - Probe 17
+- id: Probe 18
+  next_scene: __END_SCENARIO__
+  end_scene_allowed: false
+  probe_config:
+  - description: Which patient do you treat?
+  state:
+    unstructured: 'Patient A has massive bleeding from a partial amputation of their
+      left hand. They are a foreign civilian who used to be a member of the opponent
+      military.
+
+      Patient B has moderate bleeding from their right thigh. They are a warfighter
+      in the same military unit as you.
+
+      Which patient do you treat?'
+    characters:
+    - id: Patient A
+      name: Patient A
+      unstructured: 'massive bleeding from a partial amputation of their left hand
+
+        a foreign civilian who used to be a member of the opponent military.'
+      medical_condition: 0.96278667
+      attribute_rating: 0.06741573
+    - id: Patient B
+      name: Patient B
+      unstructured: 'moderate bleeding from their right thigh
+
+        a warfighter in the same military unit as you.'
+      medical_condition: 0.824838748
+      attribute_rating: 1.0
+    threat_state:
+      unstructured: Imagine that you are deployed as a military medic in a foreign
+        country. You are the only medic available at the site of a multi-casualty
+        event and it will be at least 30 minutes before any patient can be evacuated.
+        There are two patients, Patient A and Patient B, and you only have time to
+        treat one of them.
+      threats: []
+  action_mapping:
+  - action_id: treat_patient_a
+    action_type: TREAT_PATIENT
+    unstructured: Treat Patient A
+    character_id: Patient A
+    probe_id: Probe 18
+    choice: Response 18-A
+    kdma_association:
+      medical: 0.96278667
+      affiliation: 0.06741573
+  - action_id: treat_patient_b
+    action_type: TREAT_PATIENT
+    unstructured: Treat Patient B
+    probe_id: Probe 18
+    choice: Response 18-B
+    kdma_association:
+      medical: 0.824838748
+      affiliation: 1.0
+    character_id: Patient B
+  transitions:
+    probes:
+    - Probe 18

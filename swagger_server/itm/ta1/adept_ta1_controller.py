@@ -2,28 +2,61 @@ import requests
 import urllib
 from swagger_server.models import KDMAValue
 from .itm_ta1_controller import ITMTa1Controller
+import re
+import os
+import logging
+import builtins
+from swagger_server.itm.utils import generate_list, resolve_tokens, load_scenario_ids, load_alignment_ids
 
+scenarioRegex = re.compile(r'^ADEPT_(EVAL|TRAIN)_(?P<group>[^_]+)_SCENARIOS$', re.IGNORECASE)
+targetRegex = re.compile(r'^ADEPT_(?P<group>[^_]+)_ALIGNMENT_TARGETS$', re.IGNORECASE)
+distributionRegex = re.compile(r'^ADEPT_(?P<group>[^_]+)_ALIGNMENT_DISTRIBUTION_TARGET$', re.IGNORECASE)
+testingMode = getattr(builtins, "testing", False)
 
 class AdeptTa1Controller(ITMTa1Controller):
 
-    ADEPT_EVAL_FILENAMES = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_EVAL_FILENAMES'].replace('\n','').split(',')
-    ADEPT_TRAIN_FILENAMES = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_TRAIN_FILENAMES'].replace('\n','').split(',')
-    ADEPT_EVAL_K1_SCENARIOS = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_EVAL_K1_SCENARIOS'].replace('\n','').split(',')
-    ADEPT_EVAL_K2_SCENARIOS = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_EVAL_K2_SCENARIOS'].replace('\n','').split(',')
-    ADEPT_EVAL_K3_SCENARIOS = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_EVAL_K3_SCENARIOS'].replace('\n','').split(',')
-    ADEPT_EVAL_K4_SCENARIOS = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_EVAL_K4_SCENARIOS'].replace('\n','').split(',')
-    ADEPT_EVAL_M1_SCENARIOS = ITMTa1Controller.config[ITMTa1Controller.config_group].get('ADEPT_EVAL_M1_SCENARIOS', '').replace('\n','').split(',')
-    ADEPT_TRAIN_K1_SCENARIOS = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_TRAIN_K1_SCENARIOS'].replace('\n','').split(',')
-    ADEPT_TRAIN_K2_SCENARIOS = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_TRAIN_K2_SCENARIOS'].replace('\n','').split(',')
-    ADEPT_TRAIN_K3_SCENARIOS = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_TRAIN_K3_SCENARIOS'].replace('\n','').split(',')
-    ADEPT_TRAIN_K4_SCENARIOS = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_TRAIN_K4_SCENARIOS'].replace('\n','').split(',')
-    ADEPT_TRAIN_M1_SCENARIOS = ITMTa1Controller.config[ITMTa1Controller.config_group].get('ADEPT_TRAIN_M1_SCENARIOS', '').replace('\n','').split(',')
-    ADEPT_K1_ALIGNMENT_TARGETS = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_K1_ALIGNMENT_TARGETS'].replace('\n','').split(',')
-    ADEPT_K2_ALIGNMENT_TARGETS = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_K2_ALIGNMENT_TARGETS'].replace('\n','').split(',')
-    ADEPT_K3_ALIGNMENT_TARGETS = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_K3_ALIGNMENT_TARGETS'].replace('\n','').split(',')
-    ADEPT_K4_ALIGNMENT_TARGETS = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_K4_ALIGNMENT_TARGETS'].replace('\n','').split(',')
-    ADEPT_M1_ALIGNMENT_TARGETS = ITMTa1Controller.config[ITMTa1Controller.config_group].get('ADEPT_M1_ALIGNMENT_TARGETS', '').replace('\n','').split(',')
+    evaluationScenarios = {}
+    trainingScenarios = {}
+    alignmentTargets = {}
+    distributionTargets = {}
 
+    cfg = ITMTa1Controller.config[ITMTa1Controller.config_group]
+
+    scenario_directory = cfg['SCENARIO_DIRECTORY']
+    try:
+        scenario_files = set(os.listdir(scenario_directory))
+    except OSError:
+        logging.fatal("Invalid filepath. Please check the SCENARIO_DIRECTORY variable in the config.ini file.")
+        exit(1)
+
+    scenario_ids = load_scenario_ids(scenario_directory, scenario_files)
+    alignment_ids = set() if testingMode else load_alignment_ids(ITMTa1Controller.get_contact_info('adept'), '/api/v1/alignment_target_ids')
+
+    ADEPT_EVAL_FILENAMES = sorted(resolve_tokens(cfg['ADEPT_EVAL_FILENAMES'], scenario_files))
+    ADEPT_TRAIN_FILENAMES = sorted(resolve_tokens(cfg['ADEPT_TRAIN_FILENAMES'], scenario_files))
+
+    for key, value in cfg.items():
+        if scenarioMatch := scenarioRegex.match(key):
+            mode = scenarioMatch.group(1).lower()
+            group = scenarioMatch.group('group').lower()
+            correct_dict = evaluationScenarios if mode == 'eval' else trainingScenarios
+            correct_dict[group] = resolve_tokens(value, scenario_ids)
+        elif targetMatch := targetRegex.match(key):
+            group = targetMatch.group('group').lower()
+            tokens = sorted(generate_list(value))
+            if testingMode:
+                suspects = [t for t in tokens if any(c in t for c in "*?[]()\\{\\}+^$|")]
+                if len(suspects) > 0:
+                    logging.fatal("Found alignment target IDs suspected to be Glob or Regex patterns. These are not supported in testing mode and will likely cause a server crash.")
+                alignmentTargets[group] = tokens
+            else:
+                alignmentTargets[group] = sorted(resolve_tokens(value, alignment_ids))
+        elif distributionMatch := distributionRegex.match(key):
+            group = distributionMatch.group('group').lower()
+            distributionTargets[group] = value.strip()
+   
+    target_to_group = {target: group for group, targets in alignmentTargets.items() for target in targets}
+   
     def __init__(self, alignment_target_id, alignment_target = None):
         super().__init__(self.get_ta1name(), alignment_target_id, alignment_target)
         self.adept_populations = False
@@ -51,20 +84,15 @@ class AdeptTa1Controller(ITMTa1Controller):
     @staticmethod
     def get_target_ids(itm_scenario) -> list[str]:
         target_ids: list[str] = []
-        if itm_scenario.id in (AdeptTa1Controller.ADEPT_TRAIN_K1_SCENARIOS if itm_scenario.training else AdeptTa1Controller.ADEPT_EVAL_K1_SCENARIOS):
-            target_ids.extend(AdeptTa1Controller.ADEPT_K1_ALIGNMENT_TARGETS)
-        if itm_scenario.id in (AdeptTa1Controller.ADEPT_TRAIN_K2_SCENARIOS if itm_scenario.training else AdeptTa1Controller.ADEPT_EVAL_K2_SCENARIOS):
-            target_ids.extend(AdeptTa1Controller.ADEPT_K2_ALIGNMENT_TARGETS)
-        if itm_scenario.id in (AdeptTa1Controller.ADEPT_TRAIN_K3_SCENARIOS if itm_scenario.training else AdeptTa1Controller.ADEPT_EVAL_K3_SCENARIOS):
-            target_ids.extend(AdeptTa1Controller.ADEPT_K3_ALIGNMENT_TARGETS)
-        if itm_scenario.id in (AdeptTa1Controller.ADEPT_TRAIN_K4_SCENARIOS if itm_scenario.training else AdeptTa1Controller.ADEPT_EVAL_K4_SCENARIOS):
-            target_ids.extend(AdeptTa1Controller.ADEPT_K4_ALIGNMENT_TARGETS)
-        if itm_scenario.id in (AdeptTa1Controller.ADEPT_TRAIN_M1_SCENARIOS if itm_scenario.training else AdeptTa1Controller.ADEPT_EVAL_M1_SCENARIOS):
-            target_ids.extend(AdeptTa1Controller.ADEPT_M1_ALIGNMENT_TARGETS)
+        source = AdeptTa1Controller.trainingScenarios if itm_scenario.training else AdeptTa1Controller.evaluationScenarios
+        for group, scenarioList in source.items():
+            if itm_scenario.id in scenarioList:
+                target_ids.extend(AdeptTa1Controller.alignmentTargets.get(group, ()))
         return target_ids
 
     def supports_probe_alignment(self) -> bool:
-        return not self.adept_populations
+        #return not self.adept_populations
+        return False # The above is technically right, but for expediency in Phase 2, set it to false to save TA1 round trips
 
     def new_session(self, context=None) -> any:
         url = f"{self.url}/api/v1/new_session"
@@ -73,11 +101,6 @@ class AdeptTa1Controller(ITMTa1Controller):
         response = self.to_dict(initial_response)
         self.session_id = response
         self.adept_populations = context is None or context.lower() != 'false' # True unless specified as false
-        if self.adept_populations:
-            self.ADEPT_K1_ALIGNMENT_DISTRIBUTION_TARGET = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_K1_ALIGNMENT_DISTRIBUTION_TARGET']
-            self.ADEPT_K2_ALIGNMENT_DISTRIBUTION_TARGET = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_K2_ALIGNMENT_DISTRIBUTION_TARGET']
-            self.ADEPT_K3_ALIGNMENT_DISTRIBUTION_TARGET = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_K3_ALIGNMENT_DISTRIBUTION_TARGET']
-            self.ADEPT_K4_ALIGNMENT_DISTRIBUTION_TARGET = ITMTa1Controller.config[ITMTa1Controller.config_group]['ADEPT_K4_ALIGNMENT_DISTRIBUTION_TARGET']
         return response
 
     @staticmethod
@@ -95,15 +118,11 @@ class AdeptTa1Controller(ITMTa1Controller):
                 "session_id_1_or_target_id": self.session_id,
                 "session_id_2_or_target_id": actual_target_id
             }
-            # TODO: Refactor this to avoid hardcoding
-            if 'Moral' in actual_target_id or 'merit' in actual_target_id:
-                params['target_pop_id'] = self.ADEPT_K1_ALIGNMENT_DISTRIBUTION_TARGET
-            elif 'Ingroup' in actual_target_id or 'affiliation' in actual_target_id:
-                params['target_pop_id'] = self.ADEPT_K2_ALIGNMENT_DISTRIBUTION_TARGET
-            elif 'search' in actual_target_id:
-                params['target_pop_id'] = self.ADEPT_K3_ALIGNMENT_DISTRIBUTION_TARGET
-            elif 'safety' in actual_target_id:
-                params['target_pop_id'] = self.ADEPT_K4_ALIGNMENT_DISTRIBUTION_TARGET
+            group = AdeptTa1Controller.target_to_group.get(actual_target_id)
+            if group:
+                pop_id = AdeptTa1Controller.distributionTargets.get(group)
+                if pop_id:
+                    params['target_pop_id'] = pop_id
         else:
             base_url = f"{self.url}/api/v1/alignment/session"
             params = {
