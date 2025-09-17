@@ -21,6 +21,7 @@ from swagger_server.models import (
 from .itm_scenario import ITMScenario
 from .itm_action_handler import ITMActionHandler
 from swagger_server.itm.ta1.itm_ta1_controller import ITMTa1Controller
+from .itm_alignment_target_reader import ITMAlignmentTargetReader
 from .itm_history import ITMHistory
 from .itm_domain_config import ITMDomainConfig, ITMDomainConfigFactory
 from swagger_server import config_util
@@ -40,8 +41,9 @@ class ITMSession:
     SUPPORTED_DOMAINS = config[config_group]['SUPPORTED_DOMAINS']
     SCENARIO_DIRECTORY = config[config_group]['SCENARIO_DIRECTORY']
     ALL_TA1_NAMES = config[config_group]['ALL_TA1_NAMES'].replace('\n','').split(',')
+    FOUR_K_EXPERIMENT = True
 
-    # maps alignment id to list alignment_targets, as limited by configuration; used whether connecting to TA1 or not
+    # maps alignment target id to alignment target object
     alignment_data = {}
     # have we successfully connected to TA1?
     ta1_connected = False
@@ -83,6 +85,8 @@ class ITMSession:
         self.history: ITMHistory = ITMHistory(ITMSession.config)
         # This determines whether the server returns history in final State after each scenario completes
         self.return_scenario_history = False
+        # maps scenario ID to list of kdma tuples that have been processed for that tuple
+        self.processed_kdmas : dict = {}
 
     def __deepcopy__(self, memo):
         return self # Allows us to deepcopy ITMScenarios
@@ -107,11 +111,38 @@ class ITMSession:
 
     @staticmethod
     def init_ta1_data(ta1_names):
-        # Populate alignment_data_ids from ITMTa1Controller.get_alignment_target_ids
+        # Populate alignment_ids from ITMTa1Controller.get_alignment_target_ids
         for ta1_name in ta1_names:
             ITMSession.alignment_ids[ta1_name] = [
                 alignment_target_id for alignment_target_id in ITMTa1Controller.get_alignment_target_ids(ta1_name)
             ]
+
+
+    @staticmethod
+    def get_alignment_data_from_kdmas() -> list:
+        import csv
+        ow_csv = open('text_kdmas.csv', 'r', encoding='utf-8')
+        reader = csv.reader(ow_csv)
+        next(reader) # Format is PID, Eval, AF, MF, PS, SS
+        alignment_data = {}
+        for line in reader:
+            if len(line) > 5:
+                target_reader = ITMAlignmentTargetReader()
+                target_reader.init_from_kdmas(float(line[2]), float(line[3]), float(line[4]), float(line[5]))
+                alignment_data[target_reader.alignment_target.id] = target_reader.alignment_target
+            else:
+                pass # Blank or otherwise invalid line
+        ow_csv.close()
+        return alignment_data
+
+
+    # ITM-1126 specific one-time initialization
+    @staticmethod
+    def get_4k_target_ids() -> list[str]:
+        if len(ITMSession.alignment_data) == 0:
+            logging.info('Initializing 4K alignment target IDs')
+            ITMSession.alignment_data = ITMSession.get_alignment_data_from_kdmas()
+        return ITMSession.alignment_data.keys()
 
 
     def load_alignment_target(self, target_id, ta1_name):
@@ -119,6 +150,9 @@ class ITMSession:
         if alignment_target: # Previously retrieved specified alignment target
             return alignment_target
         if self.ta1_integration:
+            if self.FOUR_K_EXPERIMENT:
+                logging.fatal(f"Cannot find synthetic 4K alignment target {target_id}.")
+                raise Exception(f"Undefined alignment target `{target_id}`")
             if target_id not in ITMSession.alignment_ids[ta1_name]:
                 logging.fatal(f"Cannot get alignment target {target_id} because it is not defined by {ta1_name}. Check configuration.")
                 raise Exception("Undefined alignment target")
@@ -170,7 +204,7 @@ class ITMSession:
                     "TA1 Session Alignment",
                     {"session_id": self.itm_scenario.ta1_controller.session_id,
                     "target_id": self.itm_scenario.ta1_controller.alignment_target_id},
-                    session_alignment.to_dict()
+                    session_alignment.to_dict() if session_alignment else None
                 )
                 logging.info("Got session alignment score %s from TA1.", session_alignment_score)
                 kdmas = []
@@ -310,6 +344,50 @@ class ITMSession:
         return self.state
 
 
+    """
+        Check current scenario's kdma tuple [af, mf, ps, ss] against list of processed kdmas for the scenario
+        If that tuple has already been processed for this scenario id, skip it and check next entry in the list of scenarios.
+        Otherwise set current scenario to scenario with next unprocessed tuple, and add its tuple to the list for this scenario
+        If there is no next entry, then all scenarios have already been processed, so return None
+    """
+    def skip_duplicate_scenarios(self, cur_index) -> ITMScenario:
+        if cur_index >= len(self.itm_scenarios):
+            return None # All scenarios have already been processed
+
+        cur_scenario: ITMScenario = self.itm_scenarios[cur_index]
+        current_kdmas = (cur_scenario.alignment_target.kdma_values[0].value,
+                         cur_scenario.alignment_target.kdma_values[1].value,
+                         cur_scenario.alignment_target.kdma_values[2].value,
+                         cur_scenario.alignment_target.kdma_values[3].value)
+
+        found_kdma = False
+        for scenario_id in self.processed_kdmas.keys():
+            if scenario_id == cur_scenario.id:
+                kdma_tuples = self.processed_kdmas.get(scenario_id) # what kdma tuples have been processed for this scenario_id?
+                for kdma in kdma_tuples:
+                    found_kdma = True
+                    for kdma_num in range(0, 3):
+                        if current_kdmas[kdma_num] != kdma[kdma_num]:
+                            found_kdma = False
+                            break
+                    if not found_kdma:
+                        break
+
+        if found_kdma: # Already processed this kdma tuple for this scenario, so skip it
+            logging.info(f"Skipping scenario {self.itm_scenarios[cur_index].id} with alignment target {self.itm_scenarios[cur_index].alignment_target}.")
+            self.current_scenario_index += 1
+            return self.skip_duplicate_scenarios(self.current_scenario_index)
+        else: # Save this kdma tuple for this scenario, and return the scenario
+            new_kdma_tuple = (current_kdmas[0], current_kdmas[1], current_kdmas[2], current_kdmas[3])
+            kdma_tuples: list = self.processed_kdmas.get(cur_scenario.id)
+            if kdma_tuples:
+                kdma_tuples.append(new_kdma_tuple) # Add kdma tuple to the list
+            else:
+                kdma_tuples = [new_kdma_tuple] # Create a new list with the new kdma tuple
+                self.processed_kdmas.setdefault(cur_scenario.id, kdma_tuples) # and add it to the dict
+            return self.itm_scenarios[cur_index]
+
+
     def start_scenario(self, scenario_id: str=None) -> Scenario:
         """
         Start a new scenario.
@@ -340,7 +418,9 @@ class ITMSession:
             if self.state and not self.state.scenario_complete:
                 return f'Must end `{self.itm_scenario.id}` before starting a new scenario', 400
             if self.current_scenario_index < len(self.itm_scenarios):
-                self.itm_scenario = self.itm_scenarios[self.current_scenario_index]
+                self.itm_scenario = self.skip_duplicate_scenarios(self.current_scenario_index)
+                if self.itm_scenario is None:
+                    return self._end_session() # Final scenarios were duplicate KDMAs, so end the session
             else:
                 return self._end_session() # No more scenarios means we can end the session
 
@@ -517,6 +597,7 @@ class ITMSession:
                                 session=self, ta1_name=ta1_name, training=self.kdma_training)
                 try:
                     itm_scenario.generate_scenario_data()
+                    logging.info(f"Generating scenario data for {itm_scenario.id}")
                 except FileNotFoundError as fnfe:
                     logging.fatal("Could not read filename '%s.'  Check your TA3 server configuration?", fnfe.filename)
                     return f"Could not read filename '{fnfe.filename}.'  Check your TA3 server configuration?", 503
@@ -543,7 +624,10 @@ class ITMSession:
 
                     try:
                         # Get a list of alignment target IDs that apply to the given scenario so we can create a scenario for each target
-                        scenario_ctr = __load_scenarios(ITMTa1Controller.get_target_ids(ta1_name, itm_scenario), scenario_ctr)
+                        if self.FOUR_K_EXPERIMENT:
+                            scenario_ctr = __load_scenarios(self.get_4k_target_ids(), scenario_ctr)
+                        else:
+                            scenario_ctr = __load_scenarios(ITMTa1Controller.get_target_ids(ta1_name, itm_scenario), scenario_ctr)
                     except Exception as e:
                         logging.exception(e)
                         return f"Problem loading TA3 server configuration.", 503
