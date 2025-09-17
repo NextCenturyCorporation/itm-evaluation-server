@@ -121,7 +121,7 @@ class AdeptTa1Controller(ITMTa1Controller):
             "session_id_2_or_target_id": actual_target_id
             } if self.adept_populations else {
                 "session_id_1": self.session_id,
-                "session_id_2": actual_target_id
+                "session_id_2": "ADEPT-June2025-affiliation-0.2" # ITM-893 specific tweak to prevent TA1 errors
             }
         group = AdeptTa1Controller.target_to_group.get(actual_target_id)
         if group:
