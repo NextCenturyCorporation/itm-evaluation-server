@@ -111,22 +111,21 @@ class AdeptTa1Controller(ITMTa1Controller):
         return kdmas
 
     def get_session_alignment_path(self, target_id: str = None) -> str:
+        base_url = f"{self.url}/api/v1/alignment/compare_sessions"
         if self.adept_populations:
-            base_url = f"{self.url}/api/v1/alignment/compare_sessions_population"
-            actual_target_id = self.alignment_target_id if not target_id else target_id
-            params = {
-                "session_id_1_or_target_id": self.session_id,
-                "session_id_2_or_target_id": actual_target_id
+            base_url += "_population"
+
+        actual_target_id = self.alignment_target_id if not target_id else target_id
+        params = {
+            "session_id_1_or_target_id": self.session_id,
+            "session_id_2_or_target_id": actual_target_id
+            } if self.adept_populations else {
+                "session_id_1": self.session_id,
+                "session_id_2": actual_target_id
             }
-            group = AdeptTa1Controller.target_to_group.get(actual_target_id)
-            if group:
-                pop_id = AdeptTa1Controller.distributionTargets.get(group)
-                if pop_id:
-                    params['target_pop_id'] = pop_id
-        else:
-            base_url = f"{self.url}/api/v1/alignment/session"
-            params = {
-                "session_id": self.session_id,
-                "target_id": self.alignment_target_id if not target_id else target_id
-            }
+        group = AdeptTa1Controller.target_to_group.get(actual_target_id)
+        if group:
+            pop_id = AdeptTa1Controller.distributionTargets.get(group)
+            if pop_id:
+                params['target_pop_id'] = pop_id
         return f"{base_url}?{urllib.parse.urlencode(params)}"
