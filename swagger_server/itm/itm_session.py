@@ -35,7 +35,7 @@ class ITMSession:
     # Class variables
     EVALUATION_TYPE = config[config_group]['EVALUATION_TYPE']
     EVALUATION_NAME = config[config_group]['EVAL_NAME']
-    EVALUATION_NUMBER = config[config_group]['EVAL_NUMBER']
+    EVALUATION_NUMBER = int(config[config_group]['EVAL_NUMBER'])
     DEFAULT_DOMAIN = config[config_group]['DEFAULT_DOMAIN']
     SUPPORTED_DOMAINS = config[config_group]['SUPPORTED_DOMAINS']
     SCENARIO_DIRECTORY = config[config_group]['SCENARIO_DIRECTORY']
@@ -497,7 +497,7 @@ class ITMSession:
         # Get scenario path based on evaluation type and number
         if self.session_type != 'test':
             scenario_path = f"{ITMSession.SCENARIO_DIRECTORY}/"
-        elif ITMSession.EVALUATION_NUMBER <= '5': # through Phase 1
+        elif ITMSession.EVALUATION_NUMBER <= 5: # through Phase 1
             scenario_path = f"swagger_server/itm/data/{ITMSession.EVALUATION_TYPE}/test/"
         else: # after Phase 1
             scenario_path = f"swagger_server/itm/data/domains/{domain}/test/"
