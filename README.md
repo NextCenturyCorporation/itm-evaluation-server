@@ -28,7 +28,9 @@ On Windows, the method to activate depends on the shell:
 
 ## Configuration
 
-Rename `config.ini.template` file to `config.ini`. The default values are for the production server, so you will probably want to change `SOARTECH_URL`, `ADEPT_URL`, `SAVE_HISTORY`, and `SAVE_HISTORY_TO_S3`.
+Rename the `config.ini.template` file from your target domain to `config.ini`, and move it into the `swagger_server` folder. Ensure that the scenarios referenced by `SCENARIO_DIRECTORY` exist. If they do not, obtain the scenarios files from another developer. Create the directory referenced by SCENARIO_DIRECTORY if necessary, then copy the scenarios here.
+
+The default values are configured for the production server, so you will likely want to update `SOARTECH_URL` and `ADEPT_URL` to use the local defaults instead (these should be commented out in the template). Also, you may want to set `SAVE_HISTORY` and `SAVE_HISTORY_TO_S3` to `False`.
 See the template for likely values.
 
 The following properties can be configured:
