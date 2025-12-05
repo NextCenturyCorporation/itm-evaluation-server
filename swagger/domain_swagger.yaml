@@ -2,7 +2,7 @@ openapi: 3.0.3
 info:
   title: ITM TA3 API
   description: |-
-    This is the specification of the TA3 API for In The Moment (ITM).  Currently, the Evaluation API for TA2 supports functionality for the Phase 2 Evaluation.
+    This is the specification of the TA3 API for In The Moment (ITM).  Currently, the Evaluation API for TA2 supports functionality for the Phase 2 Evaluations.
 
     The API is based on the OpenAPI 3.0.3 specification.
   version: 0.5.0

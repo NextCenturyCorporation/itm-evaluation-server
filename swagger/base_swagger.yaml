@@ -2,10 +2,10 @@ openapi: 3.0.3
 info:
   title: ITM TA3 API
   description: |-
-    This is the specification of the TA3 API for In The Moment (ITM).  Currently, the Evaluation API for TA2 supports functionality for the Phase 1 Evaluation.
+    This is the specification of the TA3 API for In The Moment (ITM).  Currently, the Evaluation API for TA2 supports functionality for the Phase 2 Evaluations.
 
     The API is based on the OpenAPI 3.0.3 specification.
-  version: 0.4.0
+  version: 0.5.0
 servers:
   - url: /
 tags:
@@ -582,8 +582,6 @@ components:
           type: number
           format: float
           description: Numeric score for a given KDMA, 0-1 scale
-          minimum: 0.0
-          maximum: 1.0
         scores:
           type: array
           description: Ordered KDMA scores
@@ -598,6 +596,20 @@ components:
           description: KDE Objects representing a KDMA Measurement
           additionalProperties:
             $ref: "#/components/schemas/KDE_Data"
+        parameters:
+          type: array
+          minItems: 3
+          maxItems: 3
+          uniqueItems: true
+          items:
+            type: object
+            required: [name, value]
+            properties:
+              name:
+                type: string
+                enum: [intercept, medical_weight, attr_weight]
+              value:
+                type: number
     BaseState:
       type: object
       required:

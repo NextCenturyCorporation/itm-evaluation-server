@@ -24,6 +24,7 @@ from swagger_server.models.event_type_enum import EventTypeEnum
 from swagger_server.models.kde_data import KDEData
 from swagger_server.models.kdma_profile import KDMAProfile
 from swagger_server.models.kdma_value import KDMAValue
+from swagger_server.models.kdma_value_parameters_inner import KDMAValueParametersInner
 from swagger_server.models.message_type_enum import MessageTypeEnum
 from swagger_server.models.meta_info import MetaInfo
 from swagger_server.models.probe_config import ProbeConfig
