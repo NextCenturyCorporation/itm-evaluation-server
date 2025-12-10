@@ -24,13 +24,13 @@ from .itm_action_handler import ITMActionHandler
 from swagger_server.itm.ta1.itm_ta1_controller import ITMTa1Controller
 from .itm_history import ITMHistory
 from .itm_domain_config import ITMDomainConfig, ITMDomainConfigFactory
-from swagger_server import config_util
+from swagger_server.config_util import Configuration
 
 class ITMSession:
     """
     Class for representing and manipulating a simulation scenario session.
     """
-    config = config_util.read_ini()[0]
+    config = Configuration.get_config()
     config_group = builtins.config_group
 
     # Class variables
