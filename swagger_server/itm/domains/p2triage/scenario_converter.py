@@ -4,7 +4,7 @@ import os
 import argparse
 
 # These are constants that cannot be overridden via the command line
-DEFAULT_EVALUATION_NAME = 'Sept2025'
+DEFAULT_EVALUATION_NAME = 'Feb2026'
 TA1_NAME = 'adept'
 
 # These are default values that can be overridden via the command line
@@ -14,15 +14,15 @@ VERBOSE = False
 EVALUATION_NAME = DEFAULT_EVALUATION_NAME
 WRITE_FILES = True
 OUT_PATH = f"swagger_server/itm/data/{EVALUATION_NAME.lower()}/scenarios"
-IGNORED_LIST = ['AF', 'MF', 'SS', 'AF-MF', 'OW']
+IGNORED_LIST = ['OW']
 
 kdmas_info: list[dict] = [
     {'acronym': 'MF', 'full_name': 'Merit Focus', 'filename': f'{EVALUATION_NAME}MeritFocus'},
     {'acronym': 'AF', 'full_name': 'Affiliation Focus', 'filename': f'{EVALUATION_NAME}AffiliationFocus'},
     {'acronym': 'SS', 'full_name': 'Search vs Stay', 'filename': f'{EVALUATION_NAME}SearchStay'},
     {'acronym': 'PS', 'full_name': 'Personal Safety Focus', 'filename': f'{EVALUATION_NAME}PersonalSafety'},
-    {'acronym': 'AF-MF', 'full_name': 'Affiliation Focus Set', 'filename': f'{EVALUATION_NAME}-AF-MF'},
-    {'acronym': 'PS-AF', 'full_name': 'Personal Safety And Affilation Focus Set', 'filename': f'{EVALUATION_NAME}-PS-AF'},
+    {'acronym': 'MF-SS', 'full_name': 'Merit Focus And Search vs. Stay Set', 'filename': f'{EVALUATION_NAME}-MF-SS'},
+    {'acronym': 'AF-PS', 'full_name': 'Affilation Focus And Personal Safety Set', 'filename': f'{EVALUATION_NAME}-AF-PS'},
     {'acronym': 'OW', 'full_name': 'Open World Desert', 'filename': f'{EVALUATION_NAME}-OW-desert'},
     {'acronym': 'OW', 'full_name': 'Open World Urban', 'filename': f'{EVALUATION_NAME}-OW-urban'}
     ]

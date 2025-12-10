@@ -127,9 +127,9 @@ class ITMSession:
                 logging.info(f"Loading alignment target {target_id} from TA1 {ta1_name}.")
                 alignment_target = ITMTa1Controller.get_alignment_target(ta1_name, target_id)
         else:
-            parameters = [KDMAValueParametersInner("intercept", "0.5"),
-                          KDMAValueParametersInner("medical_weight", "0.5"),
-                          KDMAValueParametersInner("attr_weight", "0.5")]
+            parameters = [KDMAValueParametersInner("intercept", 0.5),
+                          KDMAValueParametersInner("medical_weight", 0.5),
+                          KDMAValueParametersInner("attr_weight", 0.5)]
             alignment_target = AlignmentTarget(target_id, [KDMAValue(kdma='Test_KDMA', value=0.5, parameters=parameters)])
         ITMSession.alignment_data[target_id] = alignment_target
         return alignment_target
@@ -527,9 +527,9 @@ class ITMSession:
 
                 if ta1_name == "test":
                     ta1_scenarios.append(deepcopy(itm_scenario))
-                    parameters = [KDMAValueParametersInner("intercept", "0.5"),
-                                  KDMAValueParametersInner("medical_weight", "0.5"),
-                                  KDMAValueParametersInner("attr_weight", "0.5")]
+                    parameters = [KDMAValueParametersInner("intercept", 0.5),
+                                  KDMAValueParametersInner("medical_weight", 0.5),
+                                  KDMAValueParametersInner("attr_weight", 0.5)]
                     ta1_scenarios[scenario_ctr].alignment_target = AlignmentTarget('Test_Target_ID', [KDMAValue(kdma='Test_KDMA', value=0.5, parameters=parameters)])
                     scenario_ctr += 1
                 else:
