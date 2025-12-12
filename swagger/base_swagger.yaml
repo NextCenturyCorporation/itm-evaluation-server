@@ -500,9 +500,8 @@ components:
         score:
           title: Score
           type: number
-          description: Measured alignment, 0 (completely unaligned) - 1 (completely aligned).
-          minimum: 0
-          maximum: 1
+          description: Measured alignment, negative infinity (completely unaligned) to 0 (completely aligned).
+          maximum: 0
         kdma_values:
           title: KDMA Values
           description: Computed KDMA profile from results

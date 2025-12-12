@@ -550,7 +550,9 @@ class ITMSession:
 
                     try:
                         # Get a list of alignment target IDs that apply to the given scenario so we can create a scenario for each target
-                        scenario_ctr = __load_scenarios(ITMTa1Controller.get_target_ids(ta1_name, itm_scenario), scenario_ctr)
+                        alignment_target_ids = ITMTa1Controller.get_target_ids(ta1_name, itm_scenario)
+                        scenario_ctr = __load_scenarios(alignment_target_ids, scenario_ctr) \
+                            if not self.kdma_training else __load_scenarios([alignment_target_ids[0]], scenario_ctr)
                     except Exception as e:
                         logging.exception(e)
                         return f"Problem loading TA3 server configuration.", 503
@@ -695,13 +697,13 @@ class ITMSession:
                         self.itm_scenario.ta1_controller.get_session_alignment(target_id=target_id)
                     session_alignment.alignment_target_id = target_id
                 else:
-                    session_alignment = AlignmentResults(alignment_source=[], alignment_target_id=target_id, score=0.5)
+                    session_alignment = AlignmentResults(alignment_source=[], alignment_target_id=target_id, score=-0.5)
 
             except:
                 logging.exception("Exception getting session alignment; is a TA1 server running?")
                 return 'Could not get session alignment; is a TA1 server running?', 503
         else:
-            session_alignment = AlignmentResults(alignment_source=[], alignment_target_id=target_id, score=0.5)
+            session_alignment = AlignmentResults(alignment_source=[], alignment_target_id=target_id, score=-0.5)
         logging.info("Got session alignment score %f from TA1 for alignment target id %s.", session_alignment.score, target_id)
         self.history.add_history(
             "Get Session Alignment",

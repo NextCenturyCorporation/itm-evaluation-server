@@ -976,10 +976,9 @@ components:
           title: Alignment Target Id
           type: string
         score:
-          description: "Measured alignment, 0 (completely unaligned) - 1 (completely\
-            \ aligned)."
-          maximum: 1
-          minimum: 0
+          description: "Measured alignment, negative infinity (completely unaligned)\
+            \ to 0 (completely aligned)."
+          maximum: 0
           title: Score
           type: number
         kdma_values:
