@@ -92,7 +92,7 @@ class KDMAValue(Model):
     def value(self) -> float:
         """Gets the value of this KDMAValue.
 
-        Numeric score for a given KDMA, 0-1 scale  # noqa: E501
+        Numeric score for a given KDMA  # noqa: E501
 
         :return: The value of this KDMAValue.
         :rtype: float
@@ -103,7 +103,7 @@ class KDMAValue(Model):
     def value(self, value: float):
         """Sets the value of this KDMAValue.
 
-        Numeric score for a given KDMA, 0-1 scale  # noqa: E501
+        Numeric score for a given KDMA  # noqa: E501
 
         :param value: The value of this KDMAValue.
         :type value: float

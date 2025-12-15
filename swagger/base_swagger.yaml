@@ -572,7 +572,7 @@ components:
       required:
         - kdma
       type: object
-      description: Single KDMA value with value(s) between 0 and 1, or a kernel density estimate of the KDMA value.
+      description: Single KDMA value, or a kernel density estimate of the KDMA value.
       properties:
         kdma:
           type: string
@@ -580,16 +580,14 @@ components:
         value:
           type: number
           format: float
-          description: Numeric score for a given KDMA, 0-1 scale
+          description: Numeric score for a given KDMA
         scores:
           type: array
           description: Ordered KDMA scores
           items:
             type: number
             format: float
-            description: Numeric score for a given KDMA, 0-1 scale
-            minimum: 0.0
-            maximum: 1.0
+            description: Numeric score for a given KDMA
         kdes:
           type: object
           description: KDE Objects representing a KDMA Measurement

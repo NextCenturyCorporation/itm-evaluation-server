@@ -1103,42 +1103,23 @@ components:
       title: KDE_Data
       type: object
     KDMA_Value:
-      description: "Single KDMA value with value(s) between 0 and 1, or a kernel density\
+      description: "Single KDMA value with value(s), or a kernel density\
         \ estimate of the KDMA value."
-      example:
-        scores:
-        - 0.6027456
-        - 0.6027456
-        kdes:
-          key:
-            label: label
-            kde: kde
-        value: 0.8008282
-        parameters:
-        - name: intercept
-          value: 1.4658129805029452
-        - name: intercept
-          value: 1.4658129805029452
-        - name: intercept
-          value: 1.4658129805029452
-        kdma: kdma
       properties:
         kdma:
           description: Name of KDMA
           title: kdma
           type: string
         value:
-          description: "Numeric score for a given KDMA, 0-1 scale"
+          description: "Numeric score for a given KDMA"
           format: float
           title: value
           type: number
         scores:
           description: Ordered KDMA scores
           items:
-            description: "Numeric score for a given KDMA, 0-1 scale"
+            description: "Numeric score for a given KDMA"
             format: float
-            maximum: 1.0
-            minimum: 0.0
             type: number
           title: scores
           type: array
