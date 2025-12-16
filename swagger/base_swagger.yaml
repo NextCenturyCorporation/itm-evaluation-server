@@ -2,10 +2,10 @@ openapi: 3.0.3
 info:
   title: ITM TA3 API
   description: |-
-    This is the specification of the TA3 API for In The Moment (ITM).  Currently, the Evaluation API for TA2 supports functionality for the Phase 1 Evaluation.
+    This is the specification of the TA3 API for In The Moment (ITM).  Currently, the Evaluation API for TA2 supports functionality for the Phase 2 Evaluations.
 
     The API is based on the OpenAPI 3.0.3 specification.
-  version: 0.4.0
+  version: 0.5.0
 servers:
   - url: /
 tags:
@@ -500,9 +500,8 @@ components:
         score:
           title: Score
           type: number
-          description: Measured alignment, 0 (completely unaligned) - 1 (completely aligned).
-          minimum: 0
-          maximum: 1
+          description: Measured alignment, negative infinity (completely unaligned) to 0 (completely aligned).
+          maximum: 0
         kdma_values:
           title: KDMA Values
           description: Computed KDMA profile from results
@@ -573,7 +572,7 @@ components:
       required:
         - kdma
       type: object
-      description: Single KDMA value with value(s) between 0 and 1, or a kernel density estimate of the KDMA value.
+      description: Single KDMA value, or a kernel density estimate of the KDMA value.
       properties:
         kdma:
           type: string
@@ -581,23 +580,33 @@ components:
         value:
           type: number
           format: float
-          description: Numeric score for a given KDMA, 0-1 scale
-          minimum: 0.0
-          maximum: 1.0
+          description: Numeric score for a given KDMA
         scores:
           type: array
           description: Ordered KDMA scores
           items:
             type: number
             format: float
-            description: Numeric score for a given KDMA, 0-1 scale
-            minimum: 0.0
-            maximum: 1.0
+            description: Numeric score for a given KDMA
         kdes:
           type: object
           description: KDE Objects representing a KDMA Measurement
           additionalProperties:
             $ref: "#/components/schemas/KDE_Data"
+        parameters:
+          type: array
+          minItems: 3
+          maxItems: 3
+          uniqueItems: true
+          items:
+            type: object
+            required: [name, value]
+            properties:
+              name:
+                type: string
+                enum: [intercept, medical_weight, attr_weight]
+              value:
+                type: number
     BaseState:
       type: object
       required:

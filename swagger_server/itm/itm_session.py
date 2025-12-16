@@ -14,6 +14,7 @@ from swagger_server.models import (
     AlignmentTarget,
     AlignmentResults,
     KDMAValue,
+    KDMAValueParametersInner,
     Scenario,
     State,
     MetaInfo
@@ -126,7 +127,10 @@ class ITMSession:
                 logging.info(f"Loading alignment target {target_id} from TA1 {ta1_name}.")
                 alignment_target = ITMTa1Controller.get_alignment_target(ta1_name, target_id)
         else:
-            alignment_target = AlignmentTarget(target_id, [KDMAValue(kdma='Test_KDMA', value=0.5)])
+            parameters = [KDMAValueParametersInner("intercept", 0.5),
+                          KDMAValueParametersInner("medical_weight", 0.5),
+                          KDMAValueParametersInner("attr_weight", 0.5)]
+            alignment_target = AlignmentTarget(target_id, [KDMAValue(kdma='Test_KDMA', value=0.5, parameters=parameters)])
         ITMSession.alignment_data[target_id] = alignment_target
         return alignment_target
 
@@ -523,7 +527,10 @@ class ITMSession:
 
                 if ta1_name == "test":
                     ta1_scenarios.append(deepcopy(itm_scenario))
-                    ta1_scenarios[scenario_ctr].alignment_target = AlignmentTarget('Test_Target_ID', [KDMAValue(kdma='Test_KDMA', value=0.5)])
+                    parameters = [KDMAValueParametersInner("intercept", 0.5),
+                                  KDMAValueParametersInner("medical_weight", 0.5),
+                                  KDMAValueParametersInner("attr_weight", 0.5)]
+                    ta1_scenarios[scenario_ctr].alignment_target = AlignmentTarget('Test_Target_ID', [KDMAValue(kdma='Test_KDMA', value=0.5, parameters=parameters)])
                     scenario_ctr += 1
                 else:
                     def __load_scenarios(alignment_target_ids, scenario_ctr):
@@ -543,7 +550,9 @@ class ITMSession:
 
                     try:
                         # Get a list of alignment target IDs that apply to the given scenario so we can create a scenario for each target
-                        scenario_ctr = __load_scenarios(ITMTa1Controller.get_target_ids(ta1_name, itm_scenario), scenario_ctr)
+                        alignment_target_ids = ITMTa1Controller.get_target_ids(ta1_name, itm_scenario)
+                        scenario_ctr = __load_scenarios(alignment_target_ids, scenario_ctr) \
+                            if not self.kdma_training else __load_scenarios([alignment_target_ids[0]], scenario_ctr)
                     except Exception as e:
                         logging.exception(e)
                         return f"Problem loading TA3 server configuration.", 503
@@ -688,13 +697,13 @@ class ITMSession:
                         self.itm_scenario.ta1_controller.get_session_alignment(target_id=target_id)
                     session_alignment.alignment_target_id = target_id
                 else:
-                    session_alignment = AlignmentResults(alignment_source=[], alignment_target_id=target_id, score=0.5)
+                    session_alignment = AlignmentResults(alignment_source=[], alignment_target_id=target_id, score=-0.5)
 
             except:
                 logging.exception("Exception getting session alignment; is a TA1 server running?")
                 return 'Could not get session alignment; is a TA1 server running?', 503
         else:
-            session_alignment = AlignmentResults(alignment_source=[], alignment_target_id=target_id, score=0.5)
+            session_alignment = AlignmentResults(alignment_source=[], alignment_target_id=target_id, score=-0.5)
         logging.info("Got session alignment score %f from TA1 for alignment target id %s.", session_alignment.score, target_id)
         self.history.add_history(
             "Get Session Alignment",

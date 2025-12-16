@@ -4,7 +4,7 @@ import os
 import argparse
 
 # These are constants that cannot be overridden via the command line
-DEFAULT_EVALUATION_NAME = 'Sept2025'
+DEFAULT_EVALUATION_NAME = 'Feb2026'
 TA1_NAME = 'adept'
 
 # These are default values that can be overridden via the command line
@@ -14,15 +14,15 @@ VERBOSE = False
 EVALUATION_NAME = DEFAULT_EVALUATION_NAME
 WRITE_FILES = True
 OUT_PATH = f"swagger_server/itm/data/{EVALUATION_NAME.lower()}/scenarios"
-IGNORED_LIST = ['AF', 'MF', 'SS', 'AF-MF', 'OW']
+IGNORED_LIST = ['OW']
 
 kdmas_info: list[dict] = [
     {'acronym': 'MF', 'full_name': 'Merit Focus', 'filename': f'{EVALUATION_NAME}MeritFocus'},
     {'acronym': 'AF', 'full_name': 'Affiliation Focus', 'filename': f'{EVALUATION_NAME}AffiliationFocus'},
     {'acronym': 'SS', 'full_name': 'Search vs Stay', 'filename': f'{EVALUATION_NAME}SearchStay'},
     {'acronym': 'PS', 'full_name': 'Personal Safety Focus', 'filename': f'{EVALUATION_NAME}PersonalSafety'},
-    {'acronym': 'AF-MF', 'full_name': 'Affiliation Focus Set', 'filename': f'{EVALUATION_NAME}-AF-MF'},
-    {'acronym': 'PS-AF', 'full_name': 'Personal Safety And Affilation Focus Set', 'filename': f'{EVALUATION_NAME}-PS-AF'},
+    {'acronym': 'MF-SS', 'full_name': 'Merit Focus And Search vs. Stay Set', 'filename': f'{EVALUATION_NAME}-MF-SS'},
+    {'acronym': 'AF-PS', 'full_name': 'Affilation Focus And Personal Safety Set', 'filename': f'{EVALUATION_NAME}-AF-PS'},
     {'acronym': 'OW', 'full_name': 'Open World Desert', 'filename': f'{EVALUATION_NAME}-OW-desert'},
     {'acronym': 'OW', 'full_name': 'Open World Urban', 'filename': f'{EVALUATION_NAME}-OW-urban'}
     ]
@@ -135,10 +135,11 @@ def make_mappings(row: dict, acronym: str, training: bool) -> list:
     return mappings
 
 
-def get_scene(row: dict, acronym: str, training: bool) -> dict:
+def get_scene(row: dict, acronym: str, training: bool, scene_num=1) -> dict:
     probe_id: str = row['probe_id']
+    scene_id = f"Scene {scene_num}"
     probe_config: list = [{'description': row['probe_question']}]
-    return {'id': probe_id, 'next_scene': 'placeholder', 'end_scene_allowed': 'PS' in acronym, 'probe_config': probe_config,
+    return {'id': scene_id, 'next_scene': 'placeholder', 'end_scene_allowed': 'PS' in acronym, 'probe_config': probe_config,
             'state': make_state(row, acronym, training), 'action_mapping': make_mappings(row, acronym, training),
             'transitions': {'probes': [probe_id]}}
 
@@ -148,22 +149,24 @@ def process_scenario(reader: csv.DictReader, acronym: str, first_row: dict) -> d
         first_row: dict = next(reader)
 
     scenario_name = str(first_row['scenario_name'])
-    training = 'Set B' in scenario_name
+    training = 'Training' in scenario_name
     data: dict = {'id': first_row['scenario_id'], 'name': scenario_name, 'state': make_state(first_row, acronym, training, True)}
     scenes: list = []
-    scene = get_scene(first_row, acronym, training)
+    scene = get_scene(first_row, acronym, training, 1)
     if VERBOSE:
         print(f"Adding scene {scene['id']}")
     scenes.append(scene)
 
     more_data = False
+    scene_num = 1
     for row in reader:
         if not row['scenario_id'] or not row['scenario_name']:
             continue # Skip scenarios with no ID or name
         if str(row['scenario_name']) != scenario_name:
             more_data = True
             break # Got to the first line of the next scenario
-        scene: dict = get_scene(row, acronym, training)
+        scene_num += 1
+        scene: dict = get_scene(row, acronym, training, scene_num)
         if VERBOSE:
             print(f"Adding scene {scene['id']}")
         scenes.append(scene)
@@ -216,6 +219,8 @@ def main():
                 redact_string = '_redacted' if REDACT_EVAL else ''
                 outfile = f"{EVALUATION_NAME.lower()}-{TA1_NAME}-eval-{acronym}{eval_scenario_num}{redact_string}.yaml"
                 eval_scenario_num = 2 if not eval_scenario_num else eval_scenario_num + 1
+            elif 'assess' in data['id'] or 'observe' in data['id']:
+                continue # Skip these for now
             else: # Open World
                 redact_string = '_redacted' if REDACT_EVAL else ''
                 environment = 'desert' if 'Desert' in kdma_info['full_name'] else 'urban'

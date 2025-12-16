@@ -1,11 +1,11 @@
 openapi: 3.0.3
 info:
   description: |-
-    This is the specification of the TA3 API for In The Moment (ITM).  Currently, the Evaluation API for TA2 supports functionality for the Phase 1 Evaluation.
+    This is the specification of the TA3 API for In The Moment (ITM).  Currently, the Evaluation API for TA2 supports functionality for the Phase 2 Evaluations.
 
     The API is based on the OpenAPI 3.0.3 specification.
   title: ITM TA3 API
-  version: 0.4.0
+  version: 0.5.0
 servers:
 - url: /
 tags:
@@ -940,7 +940,14 @@ components:
             key:
               label: label
               kde: kde
-          value: 0.08008282
+          value: 0.8008282
+          parameters:
+          - name: intercept
+            value: 1.4658129805029452
+          - name: intercept
+            value: 1.4658129805029452
+          - name: intercept
+            value: 1.4658129805029452
           kdma: kdma
         - scores:
           - 0.6027456
@@ -949,7 +956,14 @@ components:
             key:
               label: label
               kde: kde
-          value: 0.08008282
+          value: 0.8008282
+          parameters:
+          - name: intercept
+            value: 1.4658129805029452
+          - name: intercept
+            value: 1.4658129805029452
+          - name: intercept
+            value: 1.4658129805029452
           kdma: kdma
       properties:
         alignment_source:
@@ -962,10 +976,9 @@ components:
           title: Alignment Target Id
           type: string
         score:
-          description: "Measured alignment, 0 (completely unaligned) - 1 (completely\
-            \ aligned)."
-          maximum: 1
-          minimum: 0
+          description: "Measured alignment, negative infinity (completely unaligned)\
+            \ to 0 (completely aligned)."
+          maximum: 0
           title: Score
           type: number
         kdma_values:
@@ -1028,7 +1041,14 @@ components:
             key:
               label: label
               kde: kde
-          value: 0.08008282
+          value: 0.8008282
+          parameters:
+          - name: intercept
+            value: 1.4658129805029452
+          - name: intercept
+            value: 1.4658129805029452
+          - name: intercept
+            value: 1.4658129805029452
           kdma: kdma
         - scores:
           - 0.6027456
@@ -1037,7 +1057,14 @@ components:
             key:
               label: label
               kde: kde
-          value: 0.08008282
+          value: 0.8008282
+          parameters:
+          - name: intercept
+            value: 1.4658129805029452
+          - name: intercept
+            value: 1.4658129805029452
+          - name: intercept
+            value: 1.4658129805029452
           kdma: kdma
         id: id
       properties:
@@ -1076,37 +1103,23 @@ components:
       title: KDE_Data
       type: object
     KDMA_Value:
-      description: "Single KDMA value with value(s) between 0 and 1, or a kernel density\
+      description: "Single KDMA value with value(s), or a kernel density\
         \ estimate of the KDMA value."
-      example:
-        scores:
-        - 0.6027456
-        - 0.6027456
-        kdes:
-          key:
-            label: label
-            kde: kde
-        value: 0.08008282
-        kdma: kdma
       properties:
         kdma:
           description: Name of KDMA
           title: kdma
           type: string
         value:
-          description: "Numeric score for a given KDMA, 0-1 scale"
+          description: "Numeric score for a given KDMA"
           format: float
-          maximum: 1.0
-          minimum: 0.0
           title: value
           type: number
         scores:
           description: Ordered KDMA scores
           items:
-            description: "Numeric score for a given KDMA, 0-1 scale"
+            description: "Numeric score for a given KDMA"
             format: float
-            maximum: 1.0
-            minimum: 0.0
             type: number
           title: scores
           type: array
@@ -1116,6 +1129,14 @@ components:
           description: KDE Objects representing a KDMA Measurement
           title: kdes
           type: object
+        parameters:
+          items:
+            $ref: "#/components/schemas/KDMA_Value_parameters_inner"
+          maxItems: 3
+          minItems: 3
+          title: parameters
+          type: array
+          uniqueItems: true
       required:
       - kdma
       title: KDMA_Value
@@ -2101,4 +2122,24 @@ components:
     DomainConditions:
       description: Domain-specific conditions that specify whether to transition to
         the next scene or send a probe response
+      type: object
+    KDMA_Value_parameters_inner:
+      example:
+        name: intercept
+        value: 1.4658129805029452
+      properties:
+        name:
+          enum:
+          - intercept
+          - medical_weight
+          - attr_weight
+          title: name
+          type: string
+        value:
+          title: value
+          type: number
+      required:
+      - name
+      - value
+      title: KDMA_Value_parameters_inner
       type: object
