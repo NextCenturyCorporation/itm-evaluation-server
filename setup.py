@@ -2,7 +2,7 @@ import sys
 from setuptools import setup, find_packages
 
 NAME = "swagger_server"
-VERSION = "1.0.0"
+VERSION = "0.6.0"
 
 # To install the library, run the following
 #
@@ -31,6 +31,6 @@ setup(
     entry_points={
         'console_scripts': ['swagger_server=swagger_server.__main__:main']},
     long_description="""\
-    This is the specification of the TA3 API for In The Moment (ITM).  Currently, the Evaluation API for TA2 supports functionality for the Phase 1 Evaluation.  The API is based on the OpenAPI 3.0.3 specification.
+    This is the specification of the TA3 API for In The Moment (ITM).  Currently, the Evaluation API for TA2 supports functionality for the Phase 2 Evaluations.  The API is based on the OpenAPI 3.0.3 specification.
     """
 )

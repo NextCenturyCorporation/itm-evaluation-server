@@ -8,10 +8,10 @@ from math import isnan
 from swagger_server.models import (
     ProbeResponse, AlignmentResults, AlignmentTarget
 )
-from swagger_server import config_util
+from swagger_server.config_util import Configuration
 
 class ITMTa1Controller(ABC):
-    config = config_util.read_ini()[0]
+    config = Configuration.get_config()
     config_group = builtins.config_group
 
     def __init__(self, scene_type: str, alignment_target_id, alignment_target = None):
