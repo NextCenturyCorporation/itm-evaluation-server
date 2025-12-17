@@ -200,7 +200,7 @@ def main():
         next(reader) # Skip header
 
         print(f"Processing {full_name} ({acronym}) from {filename}.")
-        train_scenario_num = '' # Training probes are always put in a single file, so no numeral
+        train_scenario_num = 1 # If training probes are put in a single file, set this to ''
         eval_scenario_num = '' if FULL_EVAL else 1  # Subset eval breaks scenarios up into sets, so use numeral
         data: dict = None
         next_row = None
