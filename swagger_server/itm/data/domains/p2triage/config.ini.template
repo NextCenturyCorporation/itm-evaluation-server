@@ -34,16 +34,14 @@ ADEPT_EVAL_FILENAMES=feb2026-adept-eval-MF.yaml,feb2026-adept-eval-MF[1-3].yaml,
 ADEPT_TRAIN_FILENAMES=feb2026-adept-train-MF.yaml,
     feb2026-adept-train-AF-downsampled.yaml,
     feb2026-adept-train-MF-downsampled.yaml,
-    feb2026-adept-train-AF-downsampled.yaml,
-    feb2026-adept-train-MF-downsampled.yaml,
     feb2026-adept-train-AF.yaml,
     feb2026-adept-train-SS.yaml,
     feb2026-adept-train-PS.yaml
 
 ADEPT_EVAL_K1_SCENARIOS=Feb2026-MF-eval,Feb2026-MF[1-3]-eval
 ADEPT_EVAL_K2_SCENARIOS=Feb2026-AF-eval,Feb2026-AF[1-3]-eval
-ADEPT_TRAIN_K1_SCENARIOS=Feb2026-MF-train,Feb2026-MF-train-downsampled
-ADEPT_TRAIN_K2_SCENARIOS=Feb2026-AF-train,Feb2026-AF-train-downsampled
+ADEPT_EVAL_K4_SCENARIOS=Feb2026-PS-eval,Feb2026-PS[1-3]-eval
+
 ADEPT_TRAIN_K1_SCENARIOS=Feb2026-MF-train,Feb2026-MF-train-downsampled
 ADEPT_TRAIN_K2_SCENARIOS=Feb2026-AF-train,Feb2026-AF-train-downsampled
 ADEPT_TRAIN_K3_SCENARIOS=Feb2026-SS-train
