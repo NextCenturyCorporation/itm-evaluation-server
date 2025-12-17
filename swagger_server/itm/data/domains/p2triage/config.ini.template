@@ -17,8 +17,8 @@ SUPPORTED_DOMAINS=p2triage
 ; Prod Default URL (use on production AWS only)
 ADEPT_URL=http://10.216.38.101:8080
 
-SAVE_HISTORY=False
-SAVE_HISTORY_TO_S3=False
+SAVE_HISTORY=True
+SAVE_HISTORY_TO_S3=True
 ALL_TA1_NAMES=adept
 
 HISTORY_DIRECTORY=%(EVALUATION_TYPE)s_history_output
