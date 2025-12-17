@@ -110,7 +110,7 @@ class AlignmentResults(Model):
     def score(self) -> float:
         """Gets the score of this AlignmentResults.
 
-        Measured alignment, 0 (completely unaligned) - 1 (completely aligned).  # noqa: E501
+        Measured alignment, negative infinity (completely unaligned) to 0 (completely aligned).  # noqa: E501
 
         :return: The score of this AlignmentResults.
         :rtype: float
