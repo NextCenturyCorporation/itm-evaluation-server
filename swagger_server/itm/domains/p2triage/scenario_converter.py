@@ -2,6 +2,7 @@ import yaml
 import csv
 import os
 import argparse
+import random
 
 # These are constants that cannot be overridden via the command line
 DEFAULT_EVALUATION_NAME = 'Feb2026'
@@ -202,6 +203,7 @@ def main():
         print(f"Processing {full_name} ({acronym}) from {filename}.")
         train_scenario_num = '' # Training probes are always put in a single file, so no numeral
         eval_scenario_num = '' if FULL_EVAL else 1  # Subset eval breaks scenarios up into sets, so use numeral
+        assess_scenario_num = 1  # Assessment probes are always broken up into sets (scenarios), so use numeral
         data: dict = None
         next_row = None
         more_data = True
@@ -219,14 +221,18 @@ def main():
                 redact_string = '_redacted' if REDACT_EVAL else ''
                 outfile = f"{EVALUATION_NAME.lower()}-{TA1_NAME}-eval-{acronym}{eval_scenario_num}{redact_string}.yaml"
                 eval_scenario_num = 2 if not eval_scenario_num else eval_scenario_num + 1
-            elif 'assess' in data['id'] or 'observe' in data['id']:
+            elif 'observe' in data['id']:
                 continue # Skip these for now
+            elif 'assess' in data['id']:
+                outfile = f"{EVALUATION_NAME.lower()}-{TA1_NAME}-assess-{acronym}{assess_scenario_num}.yaml"
+                assess_scenario_num += 1
             else: # Open World
                 redact_string = '_redacted' if REDACT_EVAL else ''
                 environment = 'desert' if 'Desert' in kdma_info['full_name'] else 'urban'
                 outfile = f"{EVALUATION_NAME.lower()}-OW-{environment}{redact_string}.yaml"
 
             # Go back and add next_scene property now that we have everything
+            random.shuffle(data['scenes'])
             set_next_scene(data['scenes'])
 
             # Write the data to a YAML file using dump() function
