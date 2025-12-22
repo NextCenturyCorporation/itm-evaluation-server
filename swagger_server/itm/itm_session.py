@@ -164,12 +164,14 @@ class ITMSession:
             return
 
         session_alignment_score = None
+        alignment_warning = None
         kdmas: List[KDMAValue] = None
         if self.ta1_integration:
             try:
                 session_alignment: AlignmentResults = \
                     self.itm_scenario.ta1_controller.get_session_alignment()
                 session_alignment_score = session_alignment.score
+                alignment_warning = session_alignment.alignment_warning
                 self.history.add_history(
                     "TA1 Session Alignment",
                     {"session_id": self.itm_scenario.ta1_controller.session_id,
@@ -194,10 +196,10 @@ class ITMSession:
             self.state.unstructured = f'Scenario {self.itm_scenario.adm_id} complete for target {self.itm_scenario.alignment_target.id}. Session alignment score = {session_alignment_score}'
         else:
             self.state.unstructured = f'Test scenario {self.itm_scenario.adm_id} complete.'
-        self._cleanup(scenario_end_time, session_alignment_score, kdmas)
+        self._cleanup(scenario_end_time, session_alignment_score, kdmas, alignment_warning)
 
 
-    def _cleanup(self, scenario_end_time, alignment_score=None, kdmas=None):
+    def _cleanup(self, scenario_end_time, alignment_score=None, kdmas=None, alignment_warning=None):
         self.history.set_metadata({
             "scenario_name": self.itm_scenario.name,
             "scenario_id" : self.itm_scenario.id,
@@ -213,7 +215,8 @@ class ITMSession:
         self.history.set_results(
             ta1_session_id=self.itm_scenario.ta1_controller.session_id if self.itm_scenario.ta1_controller else None,
             alignment_score=alignment_score,
-            kdmas=kdmas
+            kdmas=kdmas,
+            alignment_warning=alignment_warning
             )
         if self.save_history:
             kdma = self.itm_scenario.alignment_target.kdma_values[0].kdma.split(" ")[0].lower()
