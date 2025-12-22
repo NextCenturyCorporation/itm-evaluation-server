@@ -16,13 +16,17 @@ class Scenario(Model):
     Do not edit the class manually.
     """
 
-    def __init__(self, id=None, name=None, first_scene=None, session_complete=None, state=None, scenes=None):  # noqa: E501
+    def __init__(self, id=None, name=None, alt_id=None, alt_name=None, first_scene=None, session_complete=None, state=None, scenes=None):  # noqa: E501
         """Scenario - a model defined in OpenAPI
 
         :param id: The id of this Scenario.  # noqa: E501
         :type id: str
         :param name: The name of this Scenario.  # noqa: E501
         :type name: str
+        :param alt_id: The alt_id of this Scenario.  # noqa: E501
+        :type alt_id: str
+        :param alt_name: The alt_name of this Scenario.  # noqa: E501
+        :type alt_name: str
         :param first_scene: The first_scene of this Scenario.  # noqa: E501
         :type first_scene: str
         :param session_complete: The session_complete of this Scenario.  # noqa: E501
@@ -35,6 +39,8 @@ class Scenario(Model):
         self.openapi_types = {
             'id': str,
             'name': str,
+            'alt_id': str,
+            'alt_name': str,
             'first_scene': str,
             'session_complete': bool,
             'state': State,
@@ -44,6 +50,8 @@ class Scenario(Model):
         self.attribute_map = {
             'id': 'id',
             'name': 'name',
+            'alt_id': 'alt_id',
+            'alt_name': 'alt_name',
             'first_scene': 'first_scene',
             'session_complete': 'session_complete',
             'state': 'state',
@@ -52,6 +60,8 @@ class Scenario(Model):
 
         self._id = id
         self._name = name
+        self._alt_id = alt_id
+        self._alt_name = alt_name
         self._first_scene = first_scene
         self._session_complete = session_complete
         self._state = state
@@ -117,6 +127,52 @@ class Scenario(Model):
             raise ValueError("Invalid value for `name`, must not be `None`")  # noqa: E501
 
         self._name = name
+
+    @property
+    def alt_id(self) -> str:
+        """Gets the alt_id of this Scenario.
+
+        an alternate unique id for the scenario; there is a 1-to-1 mapping from id to alt_id  # noqa: E501
+
+        :return: The alt_id of this Scenario.
+        :rtype: str
+        """
+        return self._alt_id
+
+    @alt_id.setter
+    def alt_id(self, alt_id: str):
+        """Sets the alt_id of this Scenario.
+
+        an alternate unique id for the scenario; there is a 1-to-1 mapping from id to alt_id  # noqa: E501
+
+        :param alt_id: The alt_id of this Scenario.
+        :type alt_id: str
+        """
+
+        self._alt_id = alt_id
+
+    @property
+    def alt_name(self) -> str:
+        """Gets the alt_name of this Scenario.
+
+        an alternate name for the scenario; there is a 1-to-1 mapping from name to alt_name  # noqa: E501
+
+        :return: The alt_name of this Scenario.
+        :rtype: str
+        """
+        return self._alt_name
+
+    @alt_name.setter
+    def alt_name(self, alt_name: str):
+        """Sets the alt_name of this Scenario.
+
+        an alternate name for the scenario; there is a 1-to-1 mapping from name to alt_name  # noqa: E501
+
+        :param alt_name: The alt_name of this Scenario.
+        :type alt_name: str
+        """
+
+        self._alt_name = alt_name
 
     @property
     def first_scene(self) -> str:

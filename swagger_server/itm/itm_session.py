@@ -142,7 +142,7 @@ class ITMSession:
         Args:
             scenario_id: The scenario ID to compare.
         """
-        if not scenario_id == self.itm_scenario.id:
+        if not scenario_id == self.itm_scenario.adm_id:
             return False, f'Scenario ID {scenario_id} not found', 404
         return True, '', 0
 
@@ -159,7 +159,7 @@ class ITMSession:
         self.state.scenario_complete = True
 
         if self.kdma_training:
-            self.state.unstructured = f"Scenario {self.itm_scenario.id} complete."
+            self.state.unstructured = f"Scenario {self.itm_scenario.adm_id} complete."
             self._cleanup(scenario_end_time)
             return
 
@@ -191,9 +191,9 @@ class ITMSession:
                 logging.exception("Exception getting session alignment. Ignoring.")
 
         if (self.session_type != 'test'):
-            self.state.unstructured = f'Scenario {self.itm_scenario.id} complete for target {self.itm_scenario.alignment_target.id}. Session alignment score = {session_alignment_score}'
+            self.state.unstructured = f'Scenario {self.itm_scenario.adm_id} complete for target {self.itm_scenario.alignment_target.id}. Session alignment score = {session_alignment_score}'
         else:
-            self.state.unstructured = f'Test scenario {self.itm_scenario.id} complete.'
+            self.state.unstructured = f'Test scenario {self.itm_scenario.adm_id} complete.'
         self._cleanup(scenario_end_time, session_alignment_score, kdmas)
 
 
@@ -308,7 +308,7 @@ class ITMSession:
 
         self.history.add_history(
             "Get Scenario State",
-            {"session_id": self.session_id, "scenario_id": scenario_id},
+            {"session_id": self.session_id, "scenario_id": self.itm_scenario.id},
             self.state.to_dict())
 
         return self.state
@@ -331,7 +331,7 @@ class ITMSession:
             index = 0
             self.itm_scenario = None
             for scenario in self.itm_scenarios:
-                if scenario_id == scenario.id:
+                if scenario_id == scenario.adm_id:
                     self.itm_scenario = scenario
                     self.current_scenario_index = index
                     break
@@ -342,7 +342,7 @@ class ITMSession:
                 return self._end_session() # We have already run the specified scenario to completion
         else:
             if self.state and not self.state.scenario_complete:
-                return f'Must end `{self.itm_scenario.id}` before starting a new scenario', 400
+                return f'Must end `{self.itm_scenario.adm_id}` before starting a new scenario', 400
             if self.current_scenario_index < len(self.itm_scenarios):
                 self.itm_scenario = self.itm_scenarios[self.current_scenario_index]
             else:
@@ -355,6 +355,8 @@ class ITMSession:
             scenario = Scenario(
                 id=self.itm_scenario.id,
                 name=self.itm_scenario.name,
+                alt_id=self.itm_scenario.adm_id,
+                alt_name=self.itm_scenario.adm_name,
                 session_complete=False,
                 state=self.state
             )
@@ -366,6 +368,10 @@ class ITMSession:
                 {"session_id": self.session_id, "adm_name": self.adm_name, "adm_profile": self.adm_profile,
                  "domain": self.domain, "start_time": self.itm_scenario.start_time}, scenario.to_dict())
             logging.info("Scenario %s starting.", self.itm_scenario.id)
+            scenario.id = self.itm_scenario.adm_id # Redact actual id/name from ADMs
+            scenario.name = self.itm_scenario.adm_name
+            scenario.alt_id = None
+            scenario.alt_name = None
 
             if self.ta1_integration:
                 try:
