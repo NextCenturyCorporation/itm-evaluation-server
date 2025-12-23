@@ -22,8 +22,8 @@ kdmas_info: list[dict] = [
     {'acronym': 'AF', 'full_name': 'Affiliation Focus', 'filename': f'{EVALUATION_NAME}AffiliationFocus'},
     {'acronym': 'SS', 'full_name': 'Search vs Stay', 'filename': f'{EVALUATION_NAME}SearchStay'},
     {'acronym': 'PS', 'full_name': 'Personal Safety Focus', 'filename': f'{EVALUATION_NAME}PersonalSafety'},
-    {'acronym': 'MF-SS', 'full_name': 'Merit Focus And Search vs. Stay Set', 'filename': f'{EVALUATION_NAME}-MF-SS'},
-    {'acronym': 'AF-PS', 'full_name': 'Affilation Focus And Personal Safety Set', 'filename': f'{EVALUATION_NAME}-AF-PS'},
+    {'acronym': 'MF-SS', 'full_name': 'Merit Focus And Search vs Stay', 'filename': f'{EVALUATION_NAME}-MF-SS'},
+    {'acronym': 'AF-PS', 'full_name': 'Affiliation Focus And Personal Safety', 'filename': f'{EVALUATION_NAME}-AF-PS'},
     {'acronym': 'OW', 'full_name': 'Open World Desert', 'filename': f'{EVALUATION_NAME}-OW-desert'},
     {'acronym': 'OW', 'full_name': 'Open World Urban', 'filename': f'{EVALUATION_NAME}-OW-urban'}
     ]
@@ -145,13 +145,21 @@ def get_scene(row: dict, acronym: str, training: bool, scene_num=1) -> dict:
             'transitions': {'probes': [probe_id]}}
 
 
-def process_scenario(reader: csv.DictReader, acronym: str, first_row: dict) -> dict | str:
+def process_scenario(reader: csv.DictReader, acronym: str, full_name: str, first_row: dict) -> dict | str:
     if not first_row:
         first_row: dict = next(reader)
 
+    scenario_id = str(first_row['scenario_id'])
     scenario_name = str(first_row['scenario_name'])
     training = 'Training' in scenario_name
-    data: dict = {'id': first_row['scenario_id'], 'name': scenario_name, 'state': make_state(first_row, acronym, training, True)}
+    if 'Observation Set' in scenario_name:
+        data: dict = {'id': scenario_id, 'name': scenario_name, "alt_id": scenario_id.replace(acronym, ''),
+                      "alt_name": scenario_name.replace(f'{full_name} ', ''), 'state': make_state(first_row, acronym, training, True)}
+    elif 'Evaluation Set' in scenario_name:
+        data: dict = {'id': scenario_id, 'name': scenario_name, "alt_id": scenario_id.replace(f'-{acronym}-', '-'),
+                      "alt_name": scenario_name.replace(f'{full_name} ', ''), 'state': make_state(first_row, acronym, training, True)}
+    else:
+        data: dict = {'id': scenario_id, 'name': scenario_name, 'state': make_state(first_row, acronym, training, True)}
     scenes: list = []
     scene = get_scene(first_row, acronym, training, 1)
     if VERBOSE:
@@ -201,38 +209,45 @@ def main():
         next(reader) # Skip header
 
         print(f"Processing {full_name} ({acronym}) from {filename}.")
-        train_scenario_num = 1 # If training probes are put in a single file, set this to ''
+        train_scenario_num = '' # If training probes are split up into multiple files, set this to 1
         eval_scenario_num = '' if FULL_EVAL else 1  # Subset eval breaks scenarios up into sets, so use numeral
         assess_scenario_num = 1  # Assessment probes are always broken up into sets (scenarios), so use numeral
+        observe_scenario_num = 1  # Observation probes are always broken up into sets (scenarios), so use numeral
         data: dict = None
         next_row = None
         more_data = True
         # Process the csv file writing out all YAML files
         while more_data:
-            data, next_row = process_scenario(reader, acronym, next_row)
+            data, next_row = process_scenario(reader, acronym, full_name, next_row)
             more_data = next_row is not None
+            redact_string = '_redacted' if REDACT_EVAL else ''
             if full_name not in data['name']:
                 print(f"KDMA mismatch?  {full_name} doesn't match scenario name {data['name']}.  Exiting.")
                 exit(1)
             if 'train' in data['id']:
+                if REDACT_EVAL:
+                    continue
                 outfile = f"{EVALUATION_NAME.lower()}-{TA1_NAME}-train-{acronym}{train_scenario_num}.yaml"
                 train_scenario_num = 2 if not train_scenario_num else train_scenario_num + 1
             elif 'eval' in data['id']:
-                redact_string = '_redacted' if REDACT_EVAL else ''
                 outfile = f"{EVALUATION_NAME.lower()}-{TA1_NAME}-eval-{acronym}{eval_scenario_num}{redact_string}.yaml"
                 eval_scenario_num = 2 if not eval_scenario_num else eval_scenario_num + 1
             elif 'observe' in data['id']:
-                continue # Skip these for now
+                outfile = f"{EVALUATION_NAME.lower()}-{TA1_NAME}-observe-{acronym}{observe_scenario_num}{redact_string}.yaml"
+                observe_scenario_num += 1
             elif 'assess' in data['id']:
+                continue # These were already delivered, so don't re-generate (and re-randomize)
+                if REDACT_EVAL:
+                    continue
                 outfile = f"{EVALUATION_NAME.lower()}-{TA1_NAME}-assess-{acronym}{assess_scenario_num}.yaml"
                 assess_scenario_num += 1
             else: # Open World
-                redact_string = '_redacted' if REDACT_EVAL else ''
                 environment = 'desert' if 'Desert' in kdma_info['full_name'] else 'urban'
                 outfile = f"{EVALUATION_NAME.lower()}-OW-{environment}{redact_string}.yaml"
 
             # Go back and add next_scene property now that we have everything
-            random.shuffle(data['scenes'])
+            if 'train' not in data['id']:
+                random.shuffle(data['scenes'])
             set_next_scene(data['scenes'])
 
             # Write the data to a YAML file using dump() function
@@ -249,8 +264,6 @@ def main():
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Converts TA1 csvs to scenario YAML files.')
-    parser.add_argument('-s', '--subset', action='store_true', required=False, default=False,
-                        help='Generate the assessment subset evaluation files')
     parser.add_argument('-r', '--redact', action='store_true', required=False, default=False,
                         help='Generate redacted evaluation files')
     parser.add_argument('-v', '--verbose', action='store_true', required=False, default=False,
@@ -265,8 +278,6 @@ if __name__ == '__main__':
                         help="Acronyms of attributes to ignore (AF, MF, PS, SS, AF-MF, PS-AF, OW)")
 
     args = parser.parse_args()
-    if args.subset:
-        FULL_EVAL = False
     if args.redact:
         REDACT_EVAL = True
     if args.verbose:

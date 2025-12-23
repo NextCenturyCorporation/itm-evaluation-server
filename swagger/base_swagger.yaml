@@ -5,7 +5,7 @@ info:
     This is the specification of the TA3 API for In The Moment (ITM).  Currently, the Evaluation API for TA2 supports functionality for the Phase 2 Evaluations.
 
     The API is based on the OpenAPI 3.0.3 specification.
-  version: 0.5.1
+  version: 0.5.2
 servers:
   - url: /
 tags:
@@ -508,6 +508,10 @@ components:
           type: number
           description: Measured alignment, negative infinity (completely unaligned) to 0 (completely aligned).
           maximum: 0
+        alignment_warning:
+          title: Alignment Warning
+          type: string
+          description: A warning that occurred during alignment calculations
         kdma_values:
           title: KDMA Values
           description: Computed KDMA profile from results

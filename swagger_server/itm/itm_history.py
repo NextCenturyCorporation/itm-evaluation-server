@@ -34,9 +34,10 @@ class ITMHistory:
     def set_metadata(self, metadata: dict):
         self.evaluation_info.update(metadata)
 
-    def set_results(self, ta1_session_id, alignment_score, kdmas):
+    def set_results(self, ta1_session_id, alignment_score, kdmas, alignment_warning=None):
         self.results['ta1_session_id'] = ta1_session_id
         self.results['alignment_score'] = alignment_score
+        self.results['alignment_warning'] = alignment_warning
         self.results['kdmas'] = kdmas
 
     def add_history(self,
