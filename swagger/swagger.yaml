@@ -5,7 +5,7 @@ info:
 
     The API is based on the OpenAPI 3.0.3 specification.
   title: ITM TA3 API
-  version: 0.5.0
+  version: 0.5.2
 servers:
 - url: /
 tags:
@@ -469,6 +469,7 @@ components:
     Scenario:
       description: a scenario requiring decisions by a decision-maker
       example:
+        alt_name: alt_name
         session_complete: true
         name: name
         scenes:
@@ -886,6 +887,7 @@ components:
             when: 0.8008282
             object: object
         first_scene: first_scene
+        alt_id: alt_id
       properties:
         id:
           description: a globally unique id for the scenario
@@ -894,6 +896,16 @@ components:
         name:
           description: "human-readable scenario name, not necessarily unique"
           title: name
+          type: string
+        alt_id:
+          description: an alternate unique id for the scenario; there is a 1-to-1
+            mapping from id to alt_id
+          title: alt_id
+          type: string
+        alt_name:
+          description: an alternate name for the scenario; there is a 1-to-1 mapping
+            from name to alt_name
+          title: alt_name
           type: string
         first_scene:
           description: indicates the first/opening scene ID in the scenario
@@ -921,7 +933,8 @@ components:
     AlignmentResults:
       description: Computed KDMA profile and alignment score for a set of decisions.
       example:
-        score: 0.08008281904610115
+        score: 0.0
+        alignment_warning: alignment_warning
         alignment_source:
         - probes:
           - probes
@@ -934,8 +947,8 @@ components:
         alignment_target_id: alignment_target_id
         kdma_values:
         - scores:
-          - 0.6027456
-          - 0.6027456
+          - 6.0274563
+          - 6.0274563
           kdes:
             key:
               label: label
@@ -950,8 +963,8 @@ components:
             value: 1.4658129805029452
           kdma: kdma
         - scores:
-          - 0.6027456
-          - 0.6027456
+          - 6.0274563
+          - 6.0274563
           kdes:
             key:
               label: label
@@ -981,6 +994,10 @@ components:
           maximum: 0
           title: Score
           type: number
+        alignment_warning:
+          description: A warning that occurred during alignment calculations
+          title: Alignment Warning
+          type: string
         kdma_values:
           description: Computed KDMA profile from results
           items:
@@ -1035,8 +1052,8 @@ components:
       example:
         kdma_values:
         - scores:
-          - 0.6027456
-          - 0.6027456
+          - 6.0274563
+          - 6.0274563
           kdes:
             key:
               label: label
@@ -1051,8 +1068,8 @@ components:
             value: 1.4658129805029452
           kdma: kdma
         - scores:
-          - 0.6027456
-          - 0.6027456
+          - 6.0274563
+          - 6.0274563
           kdes:
             key:
               label: label
@@ -1103,22 +1120,38 @@ components:
       title: KDE_Data
       type: object
     KDMA_Value:
-      description: "Single KDMA value with value(s), or a kernel density\
-        \ estimate of the KDMA value."
+      description: "Single KDMA value, or a kernel density estimate of the KDMA value."
+      example:
+        scores:
+        - 6.0274563
+        - 6.0274563
+        kdes:
+          key:
+            label: label
+            kde: kde
+        value: 0.8008282
+        parameters:
+        - name: intercept
+          value: 1.4658129805029452
+        - name: intercept
+          value: 1.4658129805029452
+        - name: intercept
+          value: 1.4658129805029452
+        kdma: kdma
       properties:
         kdma:
           description: Name of KDMA
           title: kdma
           type: string
         value:
-          description: "Numeric score for a given KDMA"
+          description: Numeric score for a given KDMA
           format: float
           title: value
           type: number
         scores:
           description: Ordered KDMA scores
           items:
-            description: "Numeric score for a given KDMA"
+            description: Numeric score for a given KDMA
             format: float
             type: number
           title: scores

@@ -52,6 +52,8 @@ class ITMScenarioReader:
         scenario = Scenario(
             id=self.yaml_data['id'],
             name=self.yaml_data['name'],
+            alt_id=self.yaml_data.get('alt_id', self.yaml_data['id']),
+            alt_name=self.yaml_data.get('alt_name', self.yaml_data['name']),
             first_scene=self.yaml_data.get('first_scene', scenes[0].id),
             scenes=None,
             state=state,

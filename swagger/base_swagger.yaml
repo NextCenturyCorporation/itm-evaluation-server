@@ -5,7 +5,7 @@ info:
     This is the specification of the TA3 API for In The Moment (ITM).  Currently, the Evaluation API for TA2 supports functionality for the Phase 2 Evaluations.
 
     The API is based on the OpenAPI 3.0.3 specification.
-  version: 0.5.0
+  version: 0.5.2
 servers:
   - url: /
 tags:
@@ -465,6 +465,12 @@ components:
         name:
           type: string
           description: human-readable scenario name, not necessarily unique
+        alt_id:
+          type: string
+          description: an alternate unique id for the scenario; there is a 1-to-1 mapping from id to alt_id
+        alt_name:
+          type: string
+          description: an alternate name for the scenario; there is a 1-to-1 mapping from name to alt_name
         first_scene:
           type: string
           description: indicates the first/opening scene ID in the scenario
@@ -502,6 +508,10 @@ components:
           type: number
           description: Measured alignment, negative infinity (completely unaligned) to 0 (completely aligned).
           maximum: 0
+        alignment_warning:
+          title: Alignment Warning
+          type: string
+          description: A warning that occurred during alignment calculations
         kdma_values:
           title: KDMA Values
           description: Computed KDMA profile from results

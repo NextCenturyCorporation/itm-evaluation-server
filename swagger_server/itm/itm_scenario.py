@@ -29,6 +29,8 @@ class ITMScenario:
         self.isd: ITMScenarioData
         self.id=''
         self.name=''
+        self.adm_id=''
+        self.adm_name=''
         self.start_time = None
 
     @staticmethod
@@ -50,6 +52,8 @@ class ITMScenario:
         self.isd = isd
         self.id = scenario.id
         self.name = scenario.name
+        self.adm_id = scenario.alt_id
+        self.adm_name = scenario.alt_name
 
     def set_controller(self, controller: ITMTa1Controller):
         self.ta1_controller = controller
