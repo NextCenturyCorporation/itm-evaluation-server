@@ -195,6 +195,7 @@ def set_next_scene(scenes: list):
 
 
 def main():
+    eval_filenum = 0
     for kdma_info in kdmas_info:
         acronym = kdma_info['acronym']
         if acronym in IGNORED_LIST:
@@ -232,7 +233,11 @@ def main():
             elif 'eval' in data['id']:
                 outfile = f"{EVALUATION_NAME.lower()}-{TA1_NAME}-eval-{acronym}{eval_scenario_num}{redact_string}.yaml"
                 eval_scenario_num = 2 if not eval_scenario_num else eval_scenario_num + 1
+                eval_filenum += 1
+                data['alt_id'] = f"{data['alt_id']}-{eval_filenum}"
+                data['alt_name'] = f"{data['alt_name']} {eval_filenum}"
             elif 'observe' in data['id']:
+                continue # These were already delivered, so don't re-generate (and re-randomize)
                 outfile = f"{EVALUATION_NAME.lower()}-{TA1_NAME}-observe-{acronym}{observe_scenario_num}{redact_string}.yaml"
                 observe_scenario_num += 1
             elif 'assess' in data['id']:
