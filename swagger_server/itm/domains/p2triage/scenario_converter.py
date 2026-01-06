@@ -129,7 +129,7 @@ def make_mappings(row: dict, acronym: str, training: bool) -> list:
         for base in attribute_bases:
             kdma_assoc[base] = float(row[f"pb_{base}"])
         mapping['kdma_association'] = kdma_assoc
-    if acronym in ['AF', 'MF', 'AF-MF', 'OW']:
+    if acronym in ['AF', 'MF', 'AF-MF', 'OW'] or '-AF-' in probe_id or '-MF-' in probe_id:
         mapping['character_id'] = 'Patient B'
     mappings.append(mapping)
 
@@ -140,7 +140,7 @@ def get_scene(row: dict, acronym: str, training: bool, scene_num=1) -> dict:
     probe_id: str = row['probe_id']
     scene_id = f"Scene {scene_num}"
     probe_config: list = [{'description': row['probe_question']}]
-    return {'id': scene_id, 'next_scene': 'placeholder', 'end_scene_allowed': 'PS' in acronym, 'probe_config': probe_config,
+    return {'id': scene_id, 'next_scene': 'placeholder', 'end_scene_allowed': 'PS' == acronym or '-PS-' in probe_id, 'probe_config': probe_config,
             'state': make_state(row, acronym, training), 'action_mapping': make_mappings(row, acronym, training),
             'transitions': {'probes': [probe_id]}}
 
