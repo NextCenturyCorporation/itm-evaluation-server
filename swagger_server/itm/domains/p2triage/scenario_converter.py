@@ -9,13 +9,12 @@ DEFAULT_EVALUATION_NAME = 'Feb2026'
 TA1_NAME = 'adept'
 
 # These are default values that can be overridden via the command line
-FULL_EVAL = True
 REDACT_EVAL = False
 VERBOSE = False
 EVALUATION_NAME = DEFAULT_EVALUATION_NAME
 WRITE_FILES = True
 OUT_PATH = f"swagger_server/itm/data/{EVALUATION_NAME.lower()}/scenarios"
-IGNORED_LIST = ['OW']
+IGNORED_LIST = ['MF-SS', 'AF-PS', 'OW'] # Not needed for this round
 
 kdmas_info: list[dict] = [
     {'acronym': 'MF', 'full_name': 'Merit Focus', 'filename': f'{EVALUATION_NAME}MeritFocus'},
@@ -24,6 +23,7 @@ kdmas_info: list[dict] = [
     {'acronym': 'PS', 'full_name': 'Personal Safety Focus', 'filename': f'{EVALUATION_NAME}PersonalSafety'},
     {'acronym': 'MF-SS', 'full_name': 'Merit Focus And Search vs Stay', 'filename': f'{EVALUATION_NAME}-MF-SS'},
     {'acronym': 'AF-PS', 'full_name': 'Affiliation Focus And Personal Safety', 'filename': f'{EVALUATION_NAME}-AF-PS'},
+    {'acronym': 'AF-MF-SS-PS', 'full_name': 'Full Evaluation Set', 'filename': f'{EVALUATION_NAME}Eval'},
     {'acronym': 'OW', 'full_name': 'Open World Desert', 'filename': f'{EVALUATION_NAME}-OW-desert'},
     {'acronym': 'OW', 'full_name': 'Open World Urban', 'filename': f'{EVALUATION_NAME}-OW-urban'}
     ]
@@ -155,7 +155,7 @@ def process_scenario(reader: csv.DictReader, acronym: str, full_name: str, first
     if 'Observation Set' in scenario_name:
         data: dict = {'id': scenario_id, 'name': scenario_name, "alt_id": scenario_id.replace(acronym, ''),
                       "alt_name": scenario_name.replace(f'{full_name} ', ''), 'state': make_state(first_row, acronym, training, True)}
-    elif 'Evaluation Set' in scenario_name:
+    elif 'Evaluation Set' in scenario_name and not 'Full Evaluation' in scenario_name:
         data: dict = {'id': scenario_id, 'name': scenario_name, "alt_id": scenario_id.replace(f'-{acronym}-', '-'),
                       "alt_name": scenario_name.replace(f'{full_name} ', ''), 'state': make_state(first_row, acronym, training, True)}
     else:
@@ -195,22 +195,22 @@ def set_next_scene(scenes: list):
 
 
 def main():
+    eval_filenum = 0
     for kdma_info in kdmas_info:
         acronym = kdma_info['acronym']
         if acronym in IGNORED_LIST:
             continue
-        if acronym == 'OW' and not FULL_EVAL:
+        if acronym == 'OW':
             continue
 
         full_name = kdma_info['full_name']
-        filename = f"{kdma_info['filename']}.csv" if FULL_EVAL else f"{kdma_info['filename']}_evalset.csv"
+        filename = f"{kdma_info['filename']}.csv"
         csvfile = open(filename, 'r', encoding='utf-8')
         reader: csv.DictReader = csv.DictReader(csvfile, fieldnames=expected_fields, restkey='junk')
         next(reader) # Skip header
 
         print(f"Processing {full_name} ({acronym}) from {filename}.")
         train_scenario_num = '' # If training probes are split up into multiple files, set this to 1
-        eval_scenario_num = '' if FULL_EVAL else 1  # Subset eval breaks scenarios up into sets, so use numeral
         assess_scenario_num = 1  # Assessment probes are always broken up into sets (scenarios), so use numeral
         observe_scenario_num = 1  # Observation probes are always broken up into sets (scenarios), so use numeral
         data: dict = None
@@ -230,9 +230,15 @@ def main():
                 outfile = f"{EVALUATION_NAME.lower()}-{TA1_NAME}-train-{acronym}{train_scenario_num}.yaml"
                 train_scenario_num = 2 if not train_scenario_num else train_scenario_num + 1
             elif 'eval' in data['id']:
-                outfile = f"{EVALUATION_NAME.lower()}-{TA1_NAME}-eval-{acronym}{eval_scenario_num}{redact_string}.yaml"
-                eval_scenario_num = 2 if not eval_scenario_num else eval_scenario_num + 1
+                if 'Full Evaluation' in full_name:
+                    outfile = f"{EVALUATION_NAME.lower()}-{TA1_NAME}-eval{redact_string}.yaml"
+                else:
+                    outfile = f"{EVALUATION_NAME.lower()}-{TA1_NAME}-eval-{acronym}{redact_string}.yaml"
+                    eval_filenum += 1
+                    data['alt_id'] = f"{data['alt_id']}-{eval_filenum}"
+                    data['alt_name'] = f"{data['alt_name']} {eval_filenum}"
             elif 'observe' in data['id']:
+                continue # These were already delivered, so don't re-generate (and re-randomize)
                 outfile = f"{EVALUATION_NAME.lower()}-{TA1_NAME}-observe-{acronym}{observe_scenario_num}{redact_string}.yaml"
                 observe_scenario_num += 1
             elif 'assess' in data['id']:
