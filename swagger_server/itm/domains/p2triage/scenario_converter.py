@@ -2,60 +2,62 @@ import yaml
 import csv
 import os
 import argparse
+import random
 
 # These are constants that cannot be overridden via the command line
-DEFAULT_EVALUATION_NAME = 'July2025'
+DEFAULT_EVALUATION_NAME = 'Feb2026'
 TA1_NAME = 'adept'
 
 # These are default values that can be overridden via the command line
-FULL_EVAL = True
 REDACT_EVAL = False
 VERBOSE = False
 EVALUATION_NAME = DEFAULT_EVALUATION_NAME
 WRITE_FILES = True
 OUT_PATH = f"swagger_server/itm/data/{EVALUATION_NAME.lower()}/scenarios"
-IGNORED_LIST = []
+IGNORED_LIST = ['MF-SS', 'AF-PS', 'OW'] # Not needed for this round
 
 kdmas_info: list[dict] = [
     {'acronym': 'MF', 'full_name': 'Merit Focus', 'filename': f'{EVALUATION_NAME}MeritFocus'},
     {'acronym': 'AF', 'full_name': 'Affiliation Focus', 'filename': f'{EVALUATION_NAME}AffiliationFocus'},
     {'acronym': 'SS', 'full_name': 'Search vs Stay', 'filename': f'{EVALUATION_NAME}SearchStay'},
     {'acronym': 'PS', 'full_name': 'Personal Safety Focus', 'filename': f'{EVALUATION_NAME}PersonalSafety'},
-    {'acronym': 'AF-MF', 'full_name': 'Affiliation Focus Set', 'filename': f'{EVALUATION_NAME}-AF-MF'},
+    {'acronym': 'MF-SS', 'full_name': 'Merit Focus And Search vs Stay', 'filename': f'{EVALUATION_NAME}-MF-SS'},
+    {'acronym': 'AF-PS', 'full_name': 'Affiliation Focus And Personal Safety', 'filename': f'{EVALUATION_NAME}-AF-PS'},
+    {'acronym': 'AF-MF-SS-PS', 'full_name': 'Full Evaluation Set', 'filename': f'{EVALUATION_NAME}Eval'},
     {'acronym': 'OW', 'full_name': 'Open World Desert', 'filename': f'{EVALUATION_NAME}-OW-desert'},
     {'acronym': 'OW', 'full_name': 'Open World Urban', 'filename': f'{EVALUATION_NAME}-OW-urban'}
     ]
+
+kdma_mapping: dict = {'AF': 'affiliation', 'MF': 'merit', 'SS': 'search', 'PS': 'personal_safety'}
 
 expected_fields = ['scenario_id', 'scenario_name', 'probe_id', 'intro_text', 'probe_full_text', 'probe_question',
                    'patient_a_text', 'patient_b_text', 'pa_medical', 'pb_medical', 'pa_affiliation', 'pa_merit',
                    'pa_search', 'pa_personal_safety', 'pb_affiliation', 'pb_merit', 'pb_search', 'pb_personal_safety',
                    'choice1_text', 'choice2_text']
 
-def get_kdma_base(acronym, probe_id: str) -> str:
-    match acronym:
-        case 'AF':
-            return 'affiliation'
-        case 'MF':
-            return 'merit'
-        case 'PS':
-            return 'personal_safety'
-        case 'SS':
-            return 'search'
-        case _: # Handle multi-kdma case
-            if '-AF-' in probe_id:
-                return 'affiliation'
-            if '-MF-' in probe_id:
-                return 'merit'
-            if '-PS-' in probe_id:
-                return 'personal_safety'
-            if '-SS-' in probe_id:
-                return 'search'
-    print(f"Could not derive KDMA base from acronym {acronym} or probe ID {probe_id}! Exiting.")
-    exit(1)
+
+def get_kdma_bases(acronym, probe_id: str):
+    kdmas = []
+    parts: list = probe_id.split('-')
+    if len(parts) == 1: # single kdma, e.g. "Probe 23"
+        kdma = kdma_mapping.get(acronym)
+        if kdma:
+            kdmas.append(kdma)
+
+    # multi-kdma, e.g. "July2025-AF-eval.Probe 21" or "Sept2025-PS-AF-eval.Probe 12"
+    for part in parts:
+        if part in kdma_mapping.keys():
+            kdmas.append(kdma_mapping[part])
+
+    if len(kdmas) == 0:
+        print(f"Could not derive KDMA base from acronym {acronym} or probe ID {probe_id}! Exiting.")
+        exit(1)
+    return kdmas
+
 
 def make_state(row: dict, acronym: str, training: str, first_row: str = False) -> dict:
     character_list: list = []
-    attribute_base = get_kdma_base(acronym, row['probe_id'])
+    attribute_base = get_kdma_bases(acronym, row['probe_id'])[0]
     character: dict = {'id': 'Patient A', 'name': 'Patient A', 'unstructured': row['patient_a_text']}
     if training or not REDACT_EVAL:
         character.update({'medical_condition': float(row['pa_medical'])})
@@ -89,8 +91,10 @@ def make_mappings(row: dict, acronym: str, training: bool) -> list:
     mapping: dict = {'action_id': action_id, 'action_type': 'TREAT_PATIENT', 'unstructured': choice_text,
                      'character_id': 'Patient A', 'probe_id': probe_id, 'choice': choice_id}
     if training or not REDACT_EVAL:
-        attribute_base = get_kdma_base(acronym, probe_id)
-        kdma_assoc: dict = {'medical': float(row['pa_medical']), attribute_base: float(row[f"pa_{attribute_base}"])}
+        kdma_assoc: dict = {'medical': float(row['pa_medical'])}
+        attribute_bases = get_kdma_bases(acronym, probe_id)
+        for base in attribute_bases:
+            kdma_assoc[base] = float(row[f"pa_{base}"])
         mapping['kdma_association'] = kdma_assoc
     mappings.append(mapping)
 
@@ -107,10 +111,10 @@ def make_mappings(row: dict, acronym: str, training: bool) -> list:
         case 'SS':
             action_type = 'SEARCH'
         case _: # Handle multi-kdma case
-            if '-AF-' in probe_id or '-MF-' in probe_id:
-                action_type = 'TREAT_PATIENT'
-            elif '-PS-' in probe_id:
+            if '-PS-' in probe_id:
                 action_type = 'END_SCENE'
+            elif '-AF-' in probe_id or '-MF-' in probe_id:
+                action_type = 'TREAT_PATIENT'
             elif '-SS-' in probe_id:
                 action_type = 'SEARCH'
             else:
@@ -120,45 +124,58 @@ def make_mappings(row: dict, acronym: str, training: bool) -> list:
     mapping = {'action_id': action_id, 'action_type': action_type, 'unstructured': choice_text,
                'probe_id': probe_id, 'choice': choice_id}
     if training or not REDACT_EVAL:
-        attribute_base = get_kdma_base(acronym, probe_id)
-        kdma_assoc: dict = {'medical': float(row['pb_medical']), attribute_base: float(row[f"pb_{attribute_base}"])}
+        kdma_assoc: dict = {'medical': float(row['pb_medical'])}
+        attribute_bases = get_kdma_bases(acronym, probe_id)
+        for base in attribute_bases:
+            kdma_assoc[base] = float(row[f"pb_{base}"])
         mapping['kdma_association'] = kdma_assoc
-    if acronym in ['AF', 'MF', 'AF-MF', 'OW']:
+    if acronym in ['AF', 'MF', 'AF-MF', 'OW'] or '-AF-' in probe_id or '-MF-' in probe_id:
         mapping['character_id'] = 'Patient B'
     mappings.append(mapping)
 
     return mappings
 
 
-def get_scene(row: dict, acronym: str, training: bool) -> dict:
+def get_scene(row: dict, acronym: str, training: bool, scene_num=1) -> dict:
     probe_id: str = row['probe_id']
+    scene_id = f"Scene {scene_num}"
     probe_config: list = [{'description': row['probe_question']}]
-    return {'id': probe_id, 'next_scene': 'placeholder', 'end_scene_allowed': acronym == 'PS', 'probe_config': probe_config,
+    return {'id': scene_id, 'next_scene': 'placeholder', 'end_scene_allowed': 'PS' == acronym or '-PS-' in probe_id, 'probe_config': probe_config,
             'state': make_state(row, acronym, training), 'action_mapping': make_mappings(row, acronym, training),
             'transitions': {'probes': [probe_id]}}
 
 
-def process_scenario(reader: csv.DictReader, acronym: str, first_row: dict) -> dict | str:
+def process_scenario(reader: csv.DictReader, acronym: str, full_name: str, first_row: dict) -> dict | str:
     if not first_row:
         first_row: dict = next(reader)
 
+    scenario_id = str(first_row['scenario_id'])
     scenario_name = str(first_row['scenario_name'])
-    training = 'Set B' in scenario_name
-    data: dict = {'id': first_row['scenario_id'], 'name': scenario_name, 'state': make_state(first_row, acronym, training, True)}
+    training = 'Training' in scenario_name
+    if 'Observation Set' in scenario_name:
+        data: dict = {'id': scenario_id, 'name': scenario_name, "alt_id": scenario_id.replace(acronym, ''),
+                      "alt_name": scenario_name.replace(f'{full_name} ', ''), 'state': make_state(first_row, acronym, training, True)}
+    elif 'Evaluation Set' in scenario_name and not 'Full Evaluation' in scenario_name:
+        data: dict = {'id': scenario_id, 'name': scenario_name, "alt_id": scenario_id.replace(f'-{acronym}-', '-'),
+                      "alt_name": scenario_name.replace(f'{full_name} ', ''), 'state': make_state(first_row, acronym, training, True)}
+    else:
+        data: dict = {'id': scenario_id, 'name': scenario_name, 'state': make_state(first_row, acronym, training, True)}
     scenes: list = []
-    scene = get_scene(first_row, acronym, training)
+    scene = get_scene(first_row, acronym, training, 1)
     if VERBOSE:
         print(f"Adding scene {scene['id']}")
     scenes.append(scene)
 
     more_data = False
+    scene_num = 1
     for row in reader:
         if not row['scenario_id'] or not row['scenario_name']:
             continue # Skip scenarios with no ID or name
         if str(row['scenario_name']) != scenario_name:
             more_data = True
             break # Got to the first line of the next scenario
-        scene: dict = get_scene(row, acronym, training)
+        scene_num += 1
+        scene: dict = get_scene(row, acronym, training, scene_num)
         if VERBOSE:
             print(f"Adding scene {scene['id']}")
         scenes.append(scene)
@@ -178,45 +195,65 @@ def set_next_scene(scenes: list):
 
 
 def main():
+    eval_filenum = 0
     for kdma_info in kdmas_info:
         acronym = kdma_info['acronym']
         if acronym in IGNORED_LIST:
             continue
-        if acronym == 'OW' and not FULL_EVAL:
+        if acronym == 'OW':
             continue
 
         full_name = kdma_info['full_name']
-        filename = f"{kdma_info['filename']}.csv" if FULL_EVAL else f"{kdma_info['filename']}_evalset.csv"
+        filename = f"{kdma_info['filename']}.csv"
         csvfile = open(filename, 'r', encoding='utf-8')
         reader: csv.DictReader = csv.DictReader(csvfile, fieldnames=expected_fields, restkey='junk')
         next(reader) # Skip header
 
         print(f"Processing {full_name} ({acronym}) from {filename}.")
-        train_scenario_num = '' # Training probes are always put in a single file, so no numeral
-        eval_scenario_num = '' if FULL_EVAL else 1  # Subset eval breaks scenarios up into sets, so use numeral
+        train_scenario_num = '' # If training probes are split up into multiple files, set this to 1
+        assess_scenario_num = 1  # Assessment probes are always broken up into sets (scenarios), so use numeral
+        observe_scenario_num = 1  # Observation probes are always broken up into sets (scenarios), so use numeral
         data: dict = None
         next_row = None
         more_data = True
         # Process the csv file writing out all YAML files
         while more_data:
-            data, next_row = process_scenario(reader, acronym, next_row)
+            data, next_row = process_scenario(reader, acronym, full_name, next_row)
             more_data = next_row is not None
+            redact_string = '_redacted' if REDACT_EVAL else ''
             if full_name not in data['name']:
                 print(f"KDMA mismatch?  {full_name} doesn't match scenario name {data['name']}.  Exiting.")
                 exit(1)
             if 'train' in data['id']:
+                if REDACT_EVAL:
+                    continue
                 outfile = f"{EVALUATION_NAME.lower()}-{TA1_NAME}-train-{acronym}{train_scenario_num}.yaml"
                 train_scenario_num = 2 if not train_scenario_num else train_scenario_num + 1
             elif 'eval' in data['id']:
-                redact_string = '_redacted' if REDACT_EVAL else ''
-                outfile = f"{EVALUATION_NAME.lower()}-{TA1_NAME}-eval-{acronym}{eval_scenario_num}{redact_string}.yaml"
-                eval_scenario_num = 2 if not eval_scenario_num else eval_scenario_num + 1
+                if 'Full Evaluation' in full_name:
+                    outfile = f"{EVALUATION_NAME.lower()}-{TA1_NAME}-eval{redact_string}.yaml"
+                else:
+                    outfile = f"{EVALUATION_NAME.lower()}-{TA1_NAME}-eval-{acronym}{redact_string}.yaml"
+                    eval_filenum += 1
+                    data['alt_id'] = f"{data['alt_id']}-{eval_filenum}"
+                    data['alt_name'] = f"{data['alt_name']} {eval_filenum}"
+            elif 'observe' in data['id']:
+                continue # These were already delivered, so don't re-generate (and re-randomize)
+                outfile = f"{EVALUATION_NAME.lower()}-{TA1_NAME}-observe-{acronym}{observe_scenario_num}{redact_string}.yaml"
+                observe_scenario_num += 1
+            elif 'assess' in data['id']:
+                continue # These were already delivered, so don't re-generate (and re-randomize)
+                if REDACT_EVAL:
+                    continue
+                outfile = f"{EVALUATION_NAME.lower()}-{TA1_NAME}-assess-{acronym}{assess_scenario_num}.yaml"
+                assess_scenario_num += 1
             else: # Open World
-                redact_string = '_redacted' if REDACT_EVAL else ''
                 environment = 'desert' if 'Desert' in kdma_info['full_name'] else 'urban'
                 outfile = f"{EVALUATION_NAME.lower()}-OW-{environment}{redact_string}.yaml"
 
             # Go back and add next_scene property now that we have everything
+            if 'train' not in data['id']:
+                random.shuffle(data['scenes'])
             set_next_scene(data['scenes'])
 
             # Write the data to a YAML file using dump() function
@@ -233,8 +270,6 @@ def main():
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Converts TA1 csvs to scenario YAML files.')
-    parser.add_argument('-s', '--subset', action='store_true', required=False, default=False,
-                        help='Generate the assessment subset evaluation files')
     parser.add_argument('-r', '--redact', action='store_true', required=False, default=False,
                         help='Generate redacted evaluation files')
     parser.add_argument('-v', '--verbose', action='store_true', required=False, default=False,
@@ -246,11 +281,9 @@ if __name__ == '__main__':
     parser.add_argument('-o', '--outpath', required=False, metavar='outpath',
                         help='Specify location for output files (no spaces)')
     parser.add_argument('-i', '--ignore', nargs='+', metavar='ignore', required=False, type=str,
-                        help="Acronyms of attributes to ignore (AF, MF, PS, SS, AF-MF, OW)")
+                        help="Acronyms of attributes to ignore (AF, MF, PS, SS, AF-MF, PS-AF, OW)")
 
     args = parser.parse_args()
-    if args.subset:
-        FULL_EVAL = False
     if args.redact:
         REDACT_EVAL = True
     if args.verbose:

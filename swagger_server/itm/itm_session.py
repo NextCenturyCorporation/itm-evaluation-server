@@ -14,6 +14,7 @@ from swagger_server.models import (
     AlignmentTarget,
     AlignmentResults,
     KDMAValue,
+    KDMAValueParametersInner,
     Scenario,
     State,
     MetaInfo
@@ -23,19 +24,19 @@ from .itm_action_handler import ITMActionHandler
 from swagger_server.itm.ta1.itm_ta1_controller import ITMTa1Controller
 from .itm_history import ITMHistory
 from .itm_domain_config import ITMDomainConfig, ITMDomainConfigFactory
-from swagger_server import config_util
+from swagger_server.config_util import Configuration
 
 class ITMSession:
     """
     Class for representing and manipulating a simulation scenario session.
     """
-    config = config_util.read_ini()[0]
+    config = Configuration.get_config()
     config_group = builtins.config_group
 
     # Class variables
     EVALUATION_TYPE = config[config_group]['EVALUATION_TYPE']
     EVALUATION_NAME = config[config_group]['EVAL_NAME']
-    EVALUATION_NUMBER = config[config_group]['EVAL_NUMBER']
+    EVALUATION_NUMBER = int(config[config_group]['EVAL_NUMBER'])
     DEFAULT_DOMAIN = config[config_group]['DEFAULT_DOMAIN']
     SUPPORTED_DOMAINS = config[config_group]['SUPPORTED_DOMAINS']
     SCENARIO_DIRECTORY = config[config_group]['SCENARIO_DIRECTORY']
@@ -126,7 +127,10 @@ class ITMSession:
                 logging.info(f"Loading alignment target {target_id} from TA1 {ta1_name}.")
                 alignment_target = ITMTa1Controller.get_alignment_target(ta1_name, target_id)
         else:
-            alignment_target = AlignmentTarget(target_id, [KDMAValue(kdma='Test_KDMA', value=0.5)])
+            parameters = [KDMAValueParametersInner("intercept", 0.5),
+                          KDMAValueParametersInner("medical_weight", 0.5),
+                          KDMAValueParametersInner("attr_weight", 0.5)]
+            alignment_target = AlignmentTarget(target_id, [KDMAValue(kdma='Test_KDMA', value=0.5, parameters=parameters)])
         ITMSession.alignment_data[target_id] = alignment_target
         return alignment_target
 
@@ -138,7 +142,7 @@ class ITMSession:
         Args:
             scenario_id: The scenario ID to compare.
         """
-        if not scenario_id == self.itm_scenario.id:
+        if not scenario_id == self.itm_scenario.adm_id:
             return False, f'Scenario ID {scenario_id} not found', 404
         return True, '', 0
 
@@ -155,17 +159,19 @@ class ITMSession:
         self.state.scenario_complete = True
 
         if self.kdma_training:
-            self.state.unstructured = f"Scenario {self.itm_scenario.id} complete."
+            self.state.unstructured = f"Scenario {self.itm_scenario.adm_id} complete."
             self._cleanup(scenario_end_time)
             return
 
         session_alignment_score = None
+        alignment_warning = None
         kdmas: List[KDMAValue] = None
         if self.ta1_integration:
             try:
                 session_alignment: AlignmentResults = \
                     self.itm_scenario.ta1_controller.get_session_alignment()
                 session_alignment_score = session_alignment.score
+                alignment_warning = session_alignment.alignment_warning
                 self.history.add_history(
                     "TA1 Session Alignment",
                     {"session_id": self.itm_scenario.ta1_controller.session_id,
@@ -187,13 +193,13 @@ class ITMSession:
                 logging.exception("Exception getting session alignment. Ignoring.")
 
         if (self.session_type != 'test'):
-            self.state.unstructured = f'Scenario {self.itm_scenario.id} complete for target {self.itm_scenario.alignment_target.id}. Session alignment score = {session_alignment_score}'
+            self.state.unstructured = f'Scenario {self.itm_scenario.adm_id} complete for target {self.itm_scenario.alignment_target.id}. Session alignment score = {session_alignment_score}'
         else:
-            self.state.unstructured = f'Test scenario {self.itm_scenario.id} complete.'
-        self._cleanup(scenario_end_time, session_alignment_score, kdmas)
+            self.state.unstructured = f'Test scenario {self.itm_scenario.adm_id} complete.'
+        self._cleanup(scenario_end_time, session_alignment_score, kdmas, alignment_warning)
 
 
-    def _cleanup(self, scenario_end_time, alignment_score=None, kdmas=None):
+    def _cleanup(self, scenario_end_time, alignment_score=None, kdmas=None, alignment_warning=None):
         self.history.set_metadata({
             "scenario_name": self.itm_scenario.name,
             "scenario_id" : self.itm_scenario.id,
@@ -209,7 +215,8 @@ class ITMSession:
         self.history.set_results(
             ta1_session_id=self.itm_scenario.ta1_controller.session_id if self.itm_scenario.ta1_controller else None,
             alignment_score=alignment_score,
-            kdmas=kdmas
+            kdmas=kdmas,
+            alignment_warning=alignment_warning
             )
         if self.save_history:
             kdma = self.itm_scenario.alignment_target.kdma_values[0].kdma.split(" ")[0].lower()
@@ -304,7 +311,7 @@ class ITMSession:
 
         self.history.add_history(
             "Get Scenario State",
-            {"session_id": self.session_id, "scenario_id": scenario_id},
+            {"session_id": self.session_id, "scenario_id": self.itm_scenario.id},
             self.state.to_dict())
 
         return self.state
@@ -327,7 +334,7 @@ class ITMSession:
             index = 0
             self.itm_scenario = None
             for scenario in self.itm_scenarios:
-                if scenario_id == scenario.id:
+                if scenario_id == scenario.adm_id:
                     self.itm_scenario = scenario
                     self.current_scenario_index = index
                     break
@@ -338,7 +345,7 @@ class ITMSession:
                 return self._end_session() # We have already run the specified scenario to completion
         else:
             if self.state and not self.state.scenario_complete:
-                return f'Must end `{self.itm_scenario.id}` before starting a new scenario', 400
+                return f'Must end `{self.itm_scenario.adm_id}` before starting a new scenario', 400
             if self.current_scenario_index < len(self.itm_scenarios):
                 self.itm_scenario = self.itm_scenarios[self.current_scenario_index]
             else:
@@ -351,6 +358,8 @@ class ITMSession:
             scenario = Scenario(
                 id=self.itm_scenario.id,
                 name=self.itm_scenario.name,
+                alt_id=self.itm_scenario.adm_id,
+                alt_name=self.itm_scenario.adm_name,
                 session_complete=False,
                 state=self.state
             )
@@ -362,6 +371,10 @@ class ITMSession:
                 {"session_id": self.session_id, "adm_name": self.adm_name, "adm_profile": self.adm_profile,
                  "domain": self.domain, "start_time": self.itm_scenario.start_time}, scenario.to_dict())
             logging.info("Scenario %s starting.", self.itm_scenario.id)
+            scenario.id = self.itm_scenario.adm_id # Redact actual id/name from ADMs
+            scenario.name = self.itm_scenario.adm_name
+            scenario.alt_id = None
+            scenario.alt_name = None
 
             if self.ta1_integration:
                 try:
@@ -497,7 +510,7 @@ class ITMSession:
         # Get scenario path based on evaluation type and number
         if self.session_type != 'test':
             scenario_path = f"{ITMSession.SCENARIO_DIRECTORY}/"
-        elif ITMSession.EVALUATION_NUMBER <= '5': # through Phase 1
+        elif ITMSession.EVALUATION_NUMBER <= 5: # through Phase 1
             scenario_path = f"swagger_server/itm/data/{ITMSession.EVALUATION_TYPE}/test/"
         else: # after Phase 1
             scenario_path = f"swagger_server/itm/data/domains/{domain}/test/"
@@ -523,7 +536,10 @@ class ITMSession:
 
                 if ta1_name == "test":
                     ta1_scenarios.append(deepcopy(itm_scenario))
-                    ta1_scenarios[scenario_ctr].alignment_target = AlignmentTarget('Test_Target_ID', [KDMAValue(kdma='Test_KDMA', value=0.5)])
+                    parameters = [KDMAValueParametersInner("intercept", 0.5),
+                                  KDMAValueParametersInner("medical_weight", 0.5),
+                                  KDMAValueParametersInner("attr_weight", 0.5)]
+                    ta1_scenarios[scenario_ctr].alignment_target = AlignmentTarget('Test_Target_ID', [KDMAValue(kdma='Test_KDMA', value=0.5, parameters=parameters)])
                     scenario_ctr += 1
                 else:
                     def __load_scenarios(alignment_target_ids, scenario_ctr):
@@ -543,7 +559,9 @@ class ITMSession:
 
                     try:
                         # Get a list of alignment target IDs that apply to the given scenario so we can create a scenario for each target
-                        scenario_ctr = __load_scenarios(ITMTa1Controller.get_target_ids(ta1_name, itm_scenario), scenario_ctr)
+                        alignment_target_ids = ITMTa1Controller.get_target_ids(ta1_name, itm_scenario)
+                        scenario_ctr = __load_scenarios(alignment_target_ids, scenario_ctr) \
+                            if not self.kdma_training else __load_scenarios([alignment_target_ids[0]], scenario_ctr)
                     except Exception as e:
                         logging.exception(e)
                         return f"Problem loading TA3 server configuration.", 503
@@ -688,13 +706,13 @@ class ITMSession:
                         self.itm_scenario.ta1_controller.get_session_alignment(target_id=target_id)
                     session_alignment.alignment_target_id = target_id
                 else:
-                    session_alignment = AlignmentResults(alignment_source=[], alignment_target_id=target_id, score=0.5)
+                    session_alignment = AlignmentResults(alignment_source=[], alignment_target_id=target_id, score=-0.5)
 
             except:
                 logging.exception("Exception getting session alignment; is a TA1 server running?")
                 return 'Could not get session alignment; is a TA1 server running?', 503
         else:
-            session_alignment = AlignmentResults(alignment_source=[], alignment_target_id=target_id, score=0.5)
+            session_alignment = AlignmentResults(alignment_source=[], alignment_target_id=target_id, score=-0.5)
         logging.info("Got session alignment score %f from TA1 for alignment target id %s.", session_alignment.score, target_id)
         self.history.add_history(
             "Get Session Alignment",

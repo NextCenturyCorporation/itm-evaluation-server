@@ -28,7 +28,9 @@ On Windows, the method to activate depends on the shell:
 
 ## Configuration
 
-Rename `config.ini.template` file to `config.ini`. The default values are for the production server, so you will probably want to change `SOARTECH_URL`, `ADEPT_URL`, `SAVE_HISTORY`, and `SAVE_HISTORY_TO_S3`.
+Rename the `config.ini.template` file from your target domain to `config.ini`, and move it into the `swagger_server` folder. Ensure that the scenarios referenced by `SCENARIO_DIRECTORY` exist. If they do not, obtain the scenarios files from another developer. Create the directory referenced by SCENARIO_DIRECTORY if necessary, then copy the scenarios here.
+
+The default values are configured for the production server, so you will likely want to update `SOARTECH_URL` and `ADEPT_URL` to use the local defaults instead (these should be commented out in the template). Also, you may want to set `SAVE_HISTORY` and `SAVE_HISTORY_TO_S3` to `False`.
 See the template for likely values.
 
 The following properties can be configured:
@@ -82,12 +84,14 @@ pip3 install -r requirements.txt
 ### Running from the command line
 To run the server, please execute from the root directory with the following usage:
 ```
-usage: python -m swagger_server [-h] [-t] [-c CONFIG_GROUP] [-p PORT]
+usage: python -m swagger_server [-h] [-t] [-c CONFIG_GROUP] [-f CONFIG_FILE] [-p PORT]
 
 options:
   -h, --help            show this help message and exit
   -c CONFIG_GROUP, --config_group CONFIG_GROUP
                                Specify the configuration group in `config.ini` used to launch the Swagger server (default = DEFAULT)
+  -f CONFIG_FILE, --config_file CONFIG_FILE
+                               Specify the configuration file (within ./swagger_server) used to launch the Swagger server (default = config.ini)
   -p PORT, --port PORT         Specify the port the Swagger server will listen on (default = 8080)
   -t, --testing                Put the server in test mode which will run standalone and not connect to TA1.
   --max_sessions MAX_SESSIONS  Hard maximum for number of simultaneous active sessions (default 100)
@@ -117,14 +121,14 @@ tox
 To run the server on a Docker container, please execute the following from the root directory:
 
 ```bash
-# Build and run the image with the default domain, port, and configuration target
+# Build and run the image with the default domain, port, configuration file, and configuration group
 docker build --no-cache -t swagger_server .
 docker run -p 8080:8080 swagger_server
 
-# Build the image with the specified domain, port, and configuration target
+# Build the image with the specified domain, port, configuration file, and configuration group
 ./gradle -Pdomain=<my_domain>
-docker build --no-cache --build-arg domain=<my_domain> -t swagger_server .
-docker run -p <my_port>:<my_port> -e "TA3_PORT=<my_port>" -e "CONFIG_GROUP=<MY_CONFIG_TARGET>" swagger_server
+docker build --no-cache --build-arg domain=<my_domain> config=<my_config_file> -t swagger_server .
+docker run -p <my_port>:<my_port> -e "TA3_PORT=<my_port>" -e "CONFIG_GROUP=<MY_CONFIG_GROUP>" swagger_server
 ```
 
 ## Updating models

@@ -16,7 +16,7 @@ class AlignmentResults(Model):
     Do not edit the class manually.
     """
 
-    def __init__(self, alignment_source=None, alignment_target_id=None, score=None, kdma_values=None):  # noqa: E501
+    def __init__(self, alignment_source=None, alignment_target_id=None, score=None, alignment_warning=None, kdma_values=None):  # noqa: E501
         """AlignmentResults - a model defined in OpenAPI
 
         :param alignment_source: The alignment_source of this AlignmentResults.  # noqa: E501
@@ -25,6 +25,8 @@ class AlignmentResults(Model):
         :type alignment_target_id: str
         :param score: The score of this AlignmentResults.  # noqa: E501
         :type score: float
+        :param alignment_warning: The alignment_warning of this AlignmentResults.  # noqa: E501
+        :type alignment_warning: str
         :param kdma_values: The kdma_values of this AlignmentResults.  # noqa: E501
         :type kdma_values: List[KDMAValue]
         """
@@ -32,6 +34,7 @@ class AlignmentResults(Model):
             'alignment_source': List[AlignmentSource],
             'alignment_target_id': str,
             'score': float,
+            'alignment_warning': str,
             'kdma_values': List[KDMAValue]
         }
 
@@ -39,12 +42,14 @@ class AlignmentResults(Model):
             'alignment_source': 'alignment_source',
             'alignment_target_id': 'alignment_target_id',
             'score': 'score',
+            'alignment_warning': 'alignment_warning',
             'kdma_values': 'kdma_values'
         }
 
         self._alignment_source = alignment_source
         self._alignment_target_id = alignment_target_id
         self._score = score
+        self._alignment_warning = alignment_warning
         self._kdma_values = kdma_values
 
     @classmethod
@@ -110,7 +115,7 @@ class AlignmentResults(Model):
     def score(self) -> float:
         """Gets the score of this AlignmentResults.
 
-        Measured alignment, 0 (completely unaligned) - 1 (completely aligned).  # noqa: E501
+        Measured alignment, negative infinity (completely unaligned) to 0 (completely aligned).  # noqa: E501
 
         :return: The score of this AlignmentResults.
         :rtype: float
@@ -121,19 +126,40 @@ class AlignmentResults(Model):
     def score(self, score: float):
         """Sets the score of this AlignmentResults.
 
-        Measured alignment, 0 (completely unaligned) - 1 (completely aligned).  # noqa: E501
+        Measured alignment, negative infinity (completely unaligned) to 0 (completely aligned).  # noqa: E501
 
         :param score: The score of this AlignmentResults.
         :type score: float
         """
         if score is None:
             raise ValueError("Invalid value for `score`, must not be `None`")  # noqa: E501
-        if score is not None and score > 1:  # noqa: E501
-            raise ValueError("Invalid value for `score`, must be a value less than or equal to `1`")  # noqa: E501
-        if score is not None and score < 0:  # noqa: E501
-            raise ValueError("Invalid value for `score`, must be a value greater than or equal to `0`")  # noqa: E501
+        if score is not None and score > 0:  # noqa: E501
+            raise ValueError("Invalid value for `score`, must be a value less than or equal to `0`")  # noqa: E501
 
         self._score = score
+
+    @property
+    def alignment_warning(self) -> str:
+        """Gets the alignment_warning of this AlignmentResults.
+
+        A warning that occurred during alignment calculations  # noqa: E501
+
+        :return: The alignment_warning of this AlignmentResults.
+        :rtype: str
+        """
+        return self._alignment_warning
+
+    @alignment_warning.setter
+    def alignment_warning(self, alignment_warning: str):
+        """Sets the alignment_warning of this AlignmentResults.
+
+        A warning that occurred during alignment calculations  # noqa: E501
+
+        :param alignment_warning: The alignment_warning of this AlignmentResults.
+        :type alignment_warning: str
+        """
+
+        self._alignment_warning = alignment_warning
 
     @property
     def kdma_values(self) -> List[KDMAValue]:
