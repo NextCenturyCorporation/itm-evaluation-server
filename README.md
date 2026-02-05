@@ -211,7 +211,7 @@ be able to use its sample clients.  See its README for details.
 ### Create and update configuration
 Make the following changes to relevant configurations (`swagger_server/itm/data/domains/<domain_name>/config.ini.template`, replicated in `swagger_server/config.ini`):
 - Add a new all-lowercase ta1 name to `ALL_TA1_NAMES`.
-- Define the following variables in both the `DEFAULT` and `GROUP_TARGET` configuration groups:
+- Define the following variables in the `DEFAULT` and any other configuration group:
   - `<TA1>_EVAL_FILENAMES`, `<TA1>_TRAIN_FILENAMES`
   - For each KDMA, define `<TA1>_EVAL_<KDMA>_SCENARIOS`, `<TA1>_TRAIN_<KDMA>_SCENARIOS`, and `<TA1>_<KDMA>_ALIGNMENT_TARGETS`.
 
