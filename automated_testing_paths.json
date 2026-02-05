@@ -1,0 +1,7 @@
+{
+  "__COMMENT": "Optional config used by automated_tester.py to locate the client repo, its Python, and the runner script.",
+  "__USAGE": "All paths may be absolute or relative to the server repo root (the folder that contains automated_tester.py). CLI flags override these if valid.",
+  "client_root": "../itm-evaluation-client",
+  "client_python": "../evaluation_client/Scripts/python.exe",
+  "runner_path": "itm_minimal_runner.py"
+}
