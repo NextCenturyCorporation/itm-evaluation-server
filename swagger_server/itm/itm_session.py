@@ -49,7 +49,9 @@ class ITMSession:
     # This determines whether the server makes calls to TA1
     ta1_integration = not builtins.testing
     # Cache TA1 alignment target ids and alignment targets if true, else query TA1 every session
-    cache_ta1_targets = config[config_group].getboolean("CACHE_TA1_TARGETS")
+    cache_ta1_targets = config[config_group].getboolean("CACHE_TA1_TARGETS", fallback=False)
+    # Don't request session alignment from TA1 at the end of a session
+    calc_alignment = config[config_group].getboolean("CALC_ALIGNMENT", fallback=True)
     # This determines whether the server saves history to JSON
     save_history = config[config_group].getboolean("SAVE_HISTORY")
     # save_history must also be True
@@ -167,10 +169,10 @@ class ITMSession:
             self._cleanup(scenario_end_time)
             return
 
-        session_alignment_score = None
+        session_alignment_score = 'Not requested' if not self.calc_alignment else 'Not calculated' if not self.ta1_integration else None
         alignment_warning = None
         kdmas: List[KDMAValue] = None
-        if self.ta1_integration:
+        if self.ta1_integration and self.calc_alignment:
             try:
                 session_alignment: AlignmentResults = \
                     self.itm_scenario.ta1_controller.get_session_alignment()
@@ -192,8 +194,10 @@ class ITMSession:
                         logging.warning("\033[92mContamination in session_alignment! scenario is %s but alignment source scenario is %s.\033[00m",
                                         self.itm_scenario.id, alignment_scenario_id)
             except exceptions.HTTPError:
+                session_alignment_score = 'Error'
                 logging.exception("HTTPError from TA1 getting session alignment.")
             except Exception:
+                session_alignment_score = 'Error'
                 logging.exception("Exception getting session alignment. Ignoring.")
 
         if (self.session_type != 'test'):
@@ -575,7 +579,7 @@ class ITMSession:
         scenario_ctr = 0
         logging.info("Scenario load summary:")
         for scenario in self.itm_scenarios:
-            logging.info(f'  Scenario #{scenario_ctr} has ID {scenario.id} and alignment target {scenario.alignment_target.id}.')
+            logging.info(f'  Scenario #{scenario_ctr+1} has ID {scenario.id} and alignment target {scenario.alignment_target.id}.')
             scenario_ctr += 1
 
         if max_scenarios is not None and max_scenarios >= num_read_scenarios:
