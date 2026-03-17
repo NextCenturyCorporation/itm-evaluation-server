@@ -5,7 +5,7 @@ import argparse
 import random
 
 # These are constants that cannot be overridden via the command line
-DEFAULT_EVALUATION_NAME = 'Feb2026'
+DEFAULT_EVALUATION_NAME = 'Apr2026'
 TA1_NAME = 'adept'
 
 # These are default values that can be overridden via the command line
@@ -14,26 +14,24 @@ VERBOSE = False
 EVALUATION_NAME = DEFAULT_EVALUATION_NAME
 WRITE_FILES = True
 OUT_PATH = f"swagger_server/itm/data/{EVALUATION_NAME.lower()}/scenarios"
-IGNORED_LIST = ['OW'] # Not needed for this round
+IGNORED_LIST = ['MF', 'AF', 'SS', 'PS', 'OW'] # Not needed for this round
 
 kdmas_info: list[dict] = [
     {'acronym': 'MF', 'full_name': 'Merit Focus', 'filename': f'{EVALUATION_NAME}MeritFocus'},
     {'acronym': 'AF', 'full_name': 'Affiliation Focus', 'filename': f'{EVALUATION_NAME}AffiliationFocus'},
     {'acronym': 'SS', 'full_name': 'Search vs Stay', 'filename': f'{EVALUATION_NAME}SearchStay'},
     {'acronym': 'PS', 'full_name': 'Personal Safety Focus', 'filename': f'{EVALUATION_NAME}PersonalSafety'},
-    {'acronym': 'MF-SS', 'full_name': 'Merit Focus And Search vs Stay', 'filename': f'{EVALUATION_NAME}-MF-SS'},
-    {'acronym': 'AF-PS', 'full_name': 'Affiliation Focus And Personal Safety', 'filename': f'{EVALUATION_NAME}-AF-PS'},
-    {'acronym': 'AF-MF-SS-PS', 'full_name': 'Full Evaluation Set', 'filename': f'{EVALUATION_NAME}Eval'},
+    {'acronym': 'SB', 'full_name': 'Subpopulation', 'filename': f'{EVALUATION_NAME}Subpopulation'},
     {'acronym': 'OW', 'full_name': 'Open World Desert', 'filename': f'{EVALUATION_NAME}-OW-desert'},
     {'acronym': 'OW', 'full_name': 'Open World Urban', 'filename': f'{EVALUATION_NAME}-OW-urban'}
     ]
 
-kdma_mapping: dict = {'AF': 'affiliation', 'MF': 'merit', 'SS': 'search', 'PS': 'personal_safety'}
+kdma_mapping: dict = {'AF': 'affiliation', 'MF': 'merit', 'SS': 'search', 'PS': 'personal_safety', 'SB': 'subpopulation'}
 
 expected_fields = ['scenario_id', 'scenario_name', 'probe_id', 'intro_text', 'probe_full_text', 'probe_question',
-                   'patient_a_text', 'patient_b_text', 'pa_medical', 'pb_medical', 'pa_affiliation', 'pa_merit',
-                   'pa_search', 'pa_personal_safety', 'pb_affiliation', 'pb_merit', 'pb_search', 'pb_personal_safety',
-                   'choice1_text', 'choice2_text']
+                   'patient_a_text', 'patient_b_text', 'pa_medical', 'pb_medical', 'pa_subpopulation', 'pb_subpopulation',
+                   'pa_affiliation', 'pa_merit', 'pa_search', 'pa_personal_safety', 'pb_affiliation', 'pb_merit',
+                   'pb_search', 'pb_personal_safety', 'choice1_text', 'choice2_text']
 
 
 def get_kdma_bases(acronym, probe_id: str):
@@ -92,9 +90,9 @@ def make_mappings(row: dict, acronym: str, training: bool) -> list:
                      'character_id': 'Patient A', 'probe_id': probe_id, 'choice': choice_id}
     if training or not REDACT_EVAL:
         kdma_assoc: dict = {'medical': float(row['pa_medical'])}
-        attribute_bases = get_kdma_bases(acronym, probe_id)
+        attribute_bases = get_kdma_bases(acronym, probe_id) if acronym != 'SB' else kdma_mapping.values()
         for base in attribute_bases:
-            kdma_assoc[base] = float(row[f"pa_{base}"])
+            kdma_assoc[base] = float(row[f"pa_{base}"]) if base != 'subpopulation' else int(row[f"pa_{base}"])
         mapping['kdma_association'] = kdma_assoc
     mappings.append(mapping)
 
@@ -104,7 +102,7 @@ def make_mappings(row: dict, acronym: str, training: bool) -> list:
     choice_id = f"Response {probe_id.split()[1]}-B"
 
     match acronym:
-        case 'AF' | 'MF':
+        case 'AF' | 'MF' | 'SB':
             action_type = 'TREAT_PATIENT'
         case 'PS':
             action_type = 'END_SCENE'
@@ -125,11 +123,11 @@ def make_mappings(row: dict, acronym: str, training: bool) -> list:
                'probe_id': probe_id, 'choice': choice_id}
     if training or not REDACT_EVAL:
         kdma_assoc: dict = {'medical': float(row['pb_medical'])}
-        attribute_bases = get_kdma_bases(acronym, probe_id)
+        attribute_bases = get_kdma_bases(acronym, probe_id) if acronym != 'SB' else kdma_mapping.values()
         for base in attribute_bases:
-            kdma_assoc[base] = float(row[f"pb_{base}"])
+            kdma_assoc[base] = float(row[f"pb_{base}"]) if base != 'subpopulation' else int(row[f"pb_{base}"])
         mapping['kdma_association'] = kdma_assoc
-    if acronym in ['AF', 'MF', 'AF-MF', 'OW'] or '-AF-' in probe_id or '-MF-' in probe_id:
+    if acronym in ['AF', 'MF', 'SB', 'AF-MF', 'OW'] or '-AF-' in probe_id or '-MF-' in probe_id:
         mapping['character_id'] = 'Patient B'
     mappings.append(mapping)
 
@@ -237,12 +235,12 @@ def main():
                     eval_filenum += 1
                     data['alt_id'] = f"{data['alt_id']}-{eval_filenum}"
                     data['alt_name'] = f"{data['alt_name']} {eval_filenum}"
+            elif 'subpopulation' in data['id']:
+                outfile = f"{EVALUATION_NAME.lower()}-{TA1_NAME}-subpopulation.yaml"
             elif 'observe' in data['id']:
-                continue # These were already delivered, so don't re-generate (and re-randomize)
                 outfile = f"{EVALUATION_NAME.lower()}-{TA1_NAME}-observe-{acronym}{observe_scenario_num}{redact_string}.yaml"
                 observe_scenario_num += 1
             elif 'assess' in data['id']:
-                continue # These were already delivered, so don't re-generate (and re-randomize)
                 if REDACT_EVAL:
                     continue
                 outfile = f"{EVALUATION_NAME.lower()}-{TA1_NAME}-assess-{acronym}{assess_scenario_num}.yaml"
@@ -252,7 +250,7 @@ def main():
                 outfile = f"{EVALUATION_NAME.lower()}-OW-{environment}{redact_string}.yaml"
 
             # Go back and add next_scene property now that we have everything
-            if 'train' not in data['id']:
+            if 'train' not in data['id'] and 'subpopulation' not in data['id']:
                 random.shuffle(data['scenes'])
             set_next_scene(data['scenes'])
 
