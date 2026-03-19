@@ -5,7 +5,7 @@ import argparse
 import random
 
 # These are constants that cannot be overridden via the command line
-DEFAULT_EVALUATION_NAME = 'Apr2026'
+DEFAULT_EVALUATION_NAME = 'April2026'
 TA1_NAME = 'adept'
 
 # These are default values that can be overridden via the command line
@@ -14,7 +14,7 @@ VERBOSE = False
 EVALUATION_NAME = DEFAULT_EVALUATION_NAME
 WRITE_FILES = True
 OUT_PATH = f"swagger_server/itm/data/{EVALUATION_NAME.lower()}/scenarios"
-IGNORED_LIST = ['MF', 'AF', 'SS', 'PS', 'OW'] # Not needed for this round
+IGNORED_LIST = ['SS', 'PS', 'OW'] # Not needed for this round
 
 kdmas_info: list[dict] = [
     {'acronym': 'MF', 'full_name': 'Merit Focus', 'filename': f'{EVALUATION_NAME}MeritFocus'},
@@ -92,7 +92,9 @@ def make_mappings(row: dict, acronym: str, training: bool) -> list:
         kdma_assoc: dict = {'medical': float(row['pa_medical'])}
         attribute_bases = get_kdma_bases(acronym, probe_id) if acronym != 'SB' else kdma_mapping.values()
         for base in attribute_bases:
-            kdma_assoc[base] = float(row[f"pa_{base}"]) if base != 'subpopulation' else int(row[f"pa_{base}"])
+            value = row[f"pa_{base}"]
+            if value:
+                kdma_assoc[base] = float(value) if base != 'subpopulation' else int(value)
         mapping['kdma_association'] = kdma_assoc
     mappings.append(mapping)
 
@@ -125,7 +127,9 @@ def make_mappings(row: dict, acronym: str, training: bool) -> list:
         kdma_assoc: dict = {'medical': float(row['pb_medical'])}
         attribute_bases = get_kdma_bases(acronym, probe_id) if acronym != 'SB' else kdma_mapping.values()
         for base in attribute_bases:
-            kdma_assoc[base] = float(row[f"pb_{base}"]) if base != 'subpopulation' else int(row[f"pb_{base}"])
+            value = row[f"pb_{base}"]
+            if value:
+                kdma_assoc[base] = float(value) if base != 'subpopulation' else int(value)
         mapping['kdma_association'] = kdma_assoc
     if acronym in ['AF', 'MF', 'SB', 'AF-MF', 'OW'] or '-AF-' in probe_id or '-MF-' in probe_id:
         mapping['character_id'] = 'Patient B'
@@ -209,8 +213,8 @@ def main():
 
         print(f"Processing {full_name} ({acronym}) from {filename}.")
         train_scenario_num = '' # If training probes are split up into multiple files, set this to 1
-        assess_scenario_num = 1  # Assessment probes are always broken up into sets (scenarios), so use numeral
-        observe_scenario_num = 1  # Observation probes are always broken up into sets (scenarios), so use numeral
+        assess_scenario_num = ''  # If assessment probes are split up into multiple files, set this to 1
+        observe_scenario_num = ''  # If observation probes are split up into multiple files, set this to 1
         data: dict = None
         next_row = None
         more_data = True
@@ -226,7 +230,8 @@ def main():
                 if REDACT_EVAL:
                     continue
                 outfile = f"{EVALUATION_NAME.lower()}-{TA1_NAME}-train-{acronym}{train_scenario_num}.yaml"
-                train_scenario_num = 2 if not train_scenario_num else train_scenario_num + 1
+                if train_scenario_num:
+                    train_scenario_num += 1
             elif 'eval' in data['id']:
                 if 'Full Evaluation' in full_name:
                     outfile = f"{EVALUATION_NAME.lower()}-{TA1_NAME}-eval{redact_string}.yaml"
@@ -239,12 +244,14 @@ def main():
                 outfile = f"{EVALUATION_NAME.lower()}-{TA1_NAME}-subpopulation.yaml"
             elif 'observe' in data['id']:
                 outfile = f"{EVALUATION_NAME.lower()}-{TA1_NAME}-observe-{acronym}{observe_scenario_num}{redact_string}.yaml"
-                observe_scenario_num += 1
+                if observe_scenario_num:
+                    observe_scenario_num += 1
             elif 'assess' in data['id']:
                 if REDACT_EVAL:
                     continue
                 outfile = f"{EVALUATION_NAME.lower()}-{TA1_NAME}-assess-{acronym}{assess_scenario_num}.yaml"
-                assess_scenario_num += 1
+                if assess_scenario_num:
+                    assess_scenario_num += 1
             else: # Open World
                 environment = 'desert' if 'Desert' in kdma_info['full_name'] else 'urban'
                 outfile = f"{EVALUATION_NAME.lower()}-OW-{environment}{redact_string}.yaml"
