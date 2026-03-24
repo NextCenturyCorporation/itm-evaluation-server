@@ -14,7 +14,7 @@ VERBOSE = False
 EVALUATION_NAME = DEFAULT_EVALUATION_NAME
 WRITE_FILES = True
 OUT_PATH = f"swagger_server/itm/data/{EVALUATION_NAME.lower()}/scenarios"
-IGNORED_LIST = ['OW'] # Not needed for this round
+IGNORED_LIST = ['MF', 'AF', 'SS', 'PS', 'MF-SS', 'AF-PS', 'AF-MF-SS-PS', 'OW'] # Not needed for this round
 
 kdmas_info: list[dict] = [
     {'acronym': 'MF', 'full_name': 'Merit Focus', 'filename': f'{EVALUATION_NAME}MeritFocus'},
@@ -23,6 +23,7 @@ kdmas_info: list[dict] = [
     {'acronym': 'PS', 'full_name': 'Personal Safety Focus', 'filename': f'{EVALUATION_NAME}PersonalSafety'},
     {'acronym': 'MF-SS', 'full_name': 'Merit Focus And Search vs Stay', 'filename': f'{EVALUATION_NAME}-MF-SS'},
     {'acronym': 'AF-PS', 'full_name': 'Affiliation Focus And Personal Safety', 'filename': f'{EVALUATION_NAME}-AF-PS'},
+    {'acronym': 'MF-PS', 'full_name': 'Merit Focus And Personal Safety', 'filename': f'{EVALUATION_NAME}-MF-PS'},
     {'acronym': 'AF-MF-SS-PS', 'full_name': 'Full Evaluation Set', 'filename': f'{EVALUATION_NAME}Eval'},
     {'acronym': 'OW', 'full_name': 'Open World Desert', 'filename': f'{EVALUATION_NAME}-OW-desert'},
     {'acronym': 'OW', 'full_name': 'Open World Urban', 'filename': f'{EVALUATION_NAME}-OW-urban'}
@@ -238,11 +239,9 @@ def main():
                     data['alt_id'] = f"{data['alt_id']}-{eval_filenum}"
                     data['alt_name'] = f"{data['alt_name']} {eval_filenum}"
             elif 'observe' in data['id']:
-                continue # These were already delivered, so don't re-generate (and re-randomize)
                 outfile = f"{EVALUATION_NAME.lower()}-{TA1_NAME}-observe-{acronym}{observe_scenario_num}{redact_string}.yaml"
                 observe_scenario_num += 1
             elif 'assess' in data['id']:
-                continue # These were already delivered, so don't re-generate (and re-randomize)
                 if REDACT_EVAL:
                     continue
                 outfile = f"{EVALUATION_NAME.lower()}-{TA1_NAME}-assess-{acronym}{assess_scenario_num}.yaml"
