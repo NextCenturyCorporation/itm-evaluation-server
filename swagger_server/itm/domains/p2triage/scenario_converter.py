@@ -5,7 +5,7 @@ import argparse
 import random
 
 # These are constants that cannot be overridden via the command line
-DEFAULT_EVALUATION_NAME = 'April2026'
+DEFAULT_EVALUATION_NAME = 'Feb2026'
 TA1_NAME = 'adept'
 
 # These are default values that can be overridden via the command line
@@ -14,7 +14,7 @@ VERBOSE = False
 EVALUATION_NAME = DEFAULT_EVALUATION_NAME
 WRITE_FILES = True
 OUT_PATH = f"swagger_server/itm/data/{EVALUATION_NAME.lower()}/scenarios"
-IGNORED_LIST = ['SS', 'PS', 'OW'] # Not needed for this round
+IGNORED_LIST = ['AF', 'MF', 'SS', 'PS', 'SB'] # Not needed for this round
 
 kdmas_info: list[dict] = [
     {'acronym': 'MF', 'full_name': 'Merit Focus', 'filename': f'{EVALUATION_NAME}MeritFocus'},
@@ -29,7 +29,7 @@ kdmas_info: list[dict] = [
 kdma_mapping: dict = {'AF': 'affiliation', 'MF': 'merit', 'SS': 'search', 'PS': 'personal_safety', 'SB': 'subpopulation'}
 
 expected_fields = ['scenario_id', 'scenario_name', 'probe_id', 'intro_text', 'probe_full_text', 'probe_question',
-                   'patient_a_text', 'patient_b_text', 'pa_medical', 'pb_medical', 'pa_subpopulation', 'pb_subpopulation',
+                   'patient_a_text', 'patient_b_text', 'pa_medical', 'pb_medical',
                    'pa_affiliation', 'pa_merit', 'pa_search', 'pa_personal_safety', 'pb_affiliation', 'pb_merit',
                    'pb_search', 'pb_personal_safety', 'choice1_text', 'choice2_text']
 
@@ -202,8 +202,6 @@ def main():
         acronym = kdma_info['acronym']
         if acronym in IGNORED_LIST:
             continue
-        if acronym == 'OW':
-            continue
 
         full_name = kdma_info['full_name']
         filename = f"{kdma_info['filename']}.csv"
@@ -254,7 +252,7 @@ def main():
                     assess_scenario_num += 1
             else: # Open World
                 environment = 'desert' if 'Desert' in kdma_info['full_name'] else 'urban'
-                outfile = f"{EVALUATION_NAME.lower()}-OW-{environment}{redact_string}.yaml"
+                outfile = f"{EVALUATION_NAME.lower()}-{environment}-openworld{redact_string}.yaml"
 
             # Go back and add next_scene property now that we have everything
             if 'train' not in data['id'] and 'subpopulation' not in data['id']:
