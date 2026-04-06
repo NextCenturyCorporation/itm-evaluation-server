@@ -574,9 +574,12 @@ components:
             characters:
             - attribute_rating: 0.14658129
               medical_condition: 0.6027456
+              unstructured_posttreatment: Military member of your unit with a treated
+                torso injury.
               unstructured: 22-year-old male with brown hair
               name: Mike
               rapport: loathing
+              tag: DELAYED
               id: id
               unseen: false
               demographics:
@@ -586,9 +589,12 @@ components:
                 age: 74
             - attribute_rating: 0.14658129
               medical_condition: 0.6027456
+              unstructured_posttreatment: Military member of your unit with a treated
+                torso injury.
               unstructured: 22-year-old male with brown hair
               name: Mike
               rapport: loathing
+              tag: DELAYED
               id: id
               unseen: false
               demographics:
@@ -750,9 +756,12 @@ components:
             characters:
             - attribute_rating: 0.14658129
               medical_condition: 0.6027456
+              unstructured_posttreatment: Military member of your unit with a treated
+                torso injury.
               unstructured: 22-year-old male with brown hair
               name: Mike
               rapport: loathing
+              tag: DELAYED
               id: id
               unseen: false
               demographics:
@@ -762,9 +771,12 @@ components:
                 age: 74
             - attribute_rating: 0.14658129
               medical_condition: 0.6027456
+              unstructured_posttreatment: Military member of your unit with a treated
+                torso injury.
               unstructured: 22-year-old male with brown hair
               name: Mike
               rapport: loathing
+              tag: DELAYED
               id: id
               unseen: false
               demographics:
@@ -830,9 +842,12 @@ components:
           characters:
           - attribute_rating: 0.14658129
             medical_condition: 0.6027456
+            unstructured_posttreatment: Military member of your unit with a treated
+              torso injury.
             unstructured: 22-year-old male with brown hair
             name: Mike
             rapport: loathing
+            tag: DELAYED
             id: id
             unseen: false
             demographics:
@@ -842,9 +857,12 @@ components:
               age: 74
           - attribute_rating: 0.14658129
             medical_condition: 0.6027456
+            unstructured_posttreatment: Military member of your unit with a treated
+              torso injury.
             unstructured: 22-year-old male with brown hair
             name: Mike
             rapport: loathing
+            tag: DELAYED
             id: id
             unseen: false
             demographics:
@@ -1222,9 +1240,12 @@ components:
         characters:
         - attribute_rating: 0.14658129
           medical_condition: 0.6027456
+          unstructured_posttreatment: Military member of your unit with a treated
+            torso injury.
           unstructured: 22-year-old male with brown hair
           name: Mike
           rapport: loathing
+          tag: DELAYED
           id: id
           unseen: false
           demographics:
@@ -1234,9 +1255,12 @@ components:
             age: 74
         - attribute_rating: 0.14658129
           medical_condition: 0.6027456
+          unstructured_posttreatment: Military member of your unit with a treated
+            torso injury.
           unstructured: 22-year-old male with brown hair
           name: Mike
           rapport: loathing
+          tag: DELAYED
           id: id
           unseen: false
           demographics:
@@ -1427,9 +1451,12 @@ components:
       example:
         attribute_rating: 0.14658129
         medical_condition: 0.6027456
+        unstructured_posttreatment: Military member of your unit with a treated torso
+          injury.
         unstructured: 22-year-old male with brown hair
         name: Mike
         rapport: loathing
+        tag: DELAYED
         id: id
         unseen: false
         demographics:
@@ -1576,9 +1603,12 @@ components:
           characters:
           - attribute_rating: 0.14658129
             medical_condition: 0.6027456
+            unstructured_posttreatment: Military member of your unit with a treated
+              torso injury.
             unstructured: 22-year-old male with brown hair
             name: Mike
             rapport: loathing
+            tag: DELAYED
             id: id
             unseen: false
             demographics:
@@ -1588,9 +1618,12 @@ components:
               age: 74
           - attribute_rating: 0.14658129
             medical_condition: 0.6027456
+            unstructured_posttreatment: Military member of your unit with a treated
+              torso injury.
             unstructured: 22-year-old male with brown hair
             name: Mike
             rapport: loathing
+            tag: DELAYED
             id: id
             unseen: false
             demographics:
@@ -2130,8 +2163,25 @@ components:
           minimum: 0.0
           title: attribute_rating
           type: number
+        unstructured_posttreatment:
+          description: unstructured description updated after character treatment
+          example: Military member of your unit with a treated torso injury.
+          title: unstructured_posttreatment
+          type: string
+        tag:
+          $ref: "#/components/schemas/CharacterTagEnum"
       title: DomainCharacter
       type: object
+    CharacterTagEnum:
+      description: the tag assigned to a character
+      enum:
+      - MINIMAL
+      - DELAYED
+      - IMMEDIATE
+      - EXPECTANT
+      example: DELAYED
+      title: CharacterTagEnum
+      type: string
     CharacterRoleEnum:
       description: The primary role a character has in the scene
       enum:
@@ -2150,6 +2200,8 @@ components:
       - MESSAGE
       - SEARCH
       - TREAT_PATIENT
+      - MOVE_TO_EVAC
+      - TAG_CHARACTER
       title: ActionTypeEnum
       type: string
     DomainConditions:
