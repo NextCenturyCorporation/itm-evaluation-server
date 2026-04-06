@@ -2,9 +2,11 @@ import json
 from swagger_server.models import (
     Action,
     ActionTypeEnum,
+    CharacterTagEnum,
     Character
 )
 from swagger_server.itm import ITMActionHandler
+from swagger_server.util import get_swagger_class_enum_values
 
 class P2TriageActionHandler(ITMActionHandler):
     """
@@ -41,10 +43,56 @@ class P2TriageActionHandler(ITMActionHandler):
                 return False, f'Malformed Action: Missing character_id for {action.action_type}', 400
             if character.unseen and not action.intent_action and action.action_type:
                 return False, f'Cannot perform {action.action_type} action with unseen character `{action.character_id}`', 400
+        elif action.action_type == ActionTypeEnum.TAG_CHARACTER:
+            # Requires category parameter
+            if not action.parameters or not 'category' in action.parameters:
+                return False, f'Malformed {action.action_type} Action: Missing `category` parameter', 400
+            else:
+                allowed_values = get_swagger_class_enum_values(CharacterTagEnum)
+                tag = action.parameters.get('category')
+                if not tag in allowed_values:
+                    return False, f'Malformed {action.action_type} Action: Invalid Tag `{tag}`', 400
         else:
             return False, f'Invalid action_type `{action.action_type}`', 400
 
         return True, '', 0
+
+
+    def treat_patient(self, character: Character):
+        """
+        Apply a treatment to the specified character.
+
+        Args:
+            character: The character to treat
+        """
+        if character.unstructured_posttreatment:
+            character.unstructured = character.unstructured_posttreatment
+        return self.times_dict[ActionTypeEnum.TREAT_PATIENT]
+
+
+    def move_to_evac(self, character: Character):
+        """
+        Move the specified character to the evacuation zone (or equivalent).
+
+        Args:
+            character: The character to move to evac
+        """
+        character.unseen = True
+        return self.times_dict[ActionTypeEnum.MOVE_TO_EVAC]
+
+
+    def tag_character(self, character: Character, tag: str):
+        """
+        Tag the specified character with a triage category
+
+        Args:
+            character: The character to tag
+            tag: The tag to assign to the character.
+        """
+        character.tag = tag
+        for isd_character in self.current_scene.state.characters:
+            if isd_character.id == character.id:
+                return self.times_dict[ActionTypeEnum.TAG_CHARACTER]
 
 
     def process_domain_action(self, action: Action, character: Character, parameters: dict) -> int:
@@ -58,6 +106,14 @@ class P2TriageActionHandler(ITMActionHandler):
             parameters: action-specific parameters
         """
         match action.action_type:
+            case ActionTypeEnum.TREAT_PATIENT:
+                time_passed = self.treat_patient(character)
+            case ActionTypeEnum.MOVE_TO_EVAC:
+                time_passed = self.move_to_evac(character)
+            case ActionTypeEnum.TAG_CHARACTER:
+                # The tag is specified in the category parameter
+                time_passed = self.tag_character(character, action.parameters.get('category'))
+                parameters['category'] = action.parameters['category']
             case _: # Nothing to process except the passage of time
                 time_passed = self.times_dict[action.action_type]
 
