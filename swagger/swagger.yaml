@@ -1924,8 +1924,6 @@ components:
       required:
       - action_id
       - action_type
-      - choice
-      - probe_id
       - unstructured
       title: ActionMapping
       type: object

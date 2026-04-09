@@ -328,8 +328,6 @@ class ActionMapping(Model):
         :param probe_id: The probe_id of this ActionMapping.
         :type probe_id: str
         """
-        if probe_id is None:
-            raise ValueError("Invalid value for `probe_id`, must not be `None`")  # noqa: E501
 
         self._probe_id = probe_id
 
@@ -353,8 +351,6 @@ class ActionMapping(Model):
         :param choice: The choice of this ActionMapping.
         :type choice: str
         """
-        if choice is None:
-            raise ValueError("Invalid value for `choice`, must not be `None`")  # noqa: E501
 
         self._choice = choice
 

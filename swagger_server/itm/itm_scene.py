@@ -177,8 +177,8 @@ class ITMScene:
             if mapping.action_id == action.action_id:
                 found_mapping = True
                 next_scene_id = mapping.next_scene
-                # Respond to probes if conditions are met.
-                if self._conditions_met(mapping.probe_conditions, session_state, mapping.probe_condition_semantics):
+                # Respond to probes if one is present and conditions are met
+                if mapping.probe_id and self._conditions_met(mapping.probe_conditions, session_state, mapping.probe_condition_semantics):
                     self.parent_scenario.respond_to_probe(mapping.action_id, mapping.probe_id, mapping.choice, action.justification)
                 break  # action_id's are unique within a scene
 

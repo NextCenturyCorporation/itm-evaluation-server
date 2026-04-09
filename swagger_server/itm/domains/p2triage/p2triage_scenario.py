@@ -17,4 +17,5 @@ class P2triageScenario(ITMScenario):
                 character.medical_condition = None
                 character.attribute_rating = None
 
-    # Nothing domain-specific needed for merge_state, so use base class implementation.
+        for character in state.characters:
+            character.unstructured_posttreatment = None

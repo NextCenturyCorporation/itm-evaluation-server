@@ -884,8 +884,6 @@ components:
         - action_id
         - action_type
         - unstructured
-        - probe_id
-        - choice
       type: object
       description: Details for how a given action maps to a probe response
       properties:

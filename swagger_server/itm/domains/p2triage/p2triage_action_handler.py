@@ -37,13 +37,14 @@ class P2TriageActionHandler(ITMActionHandler):
             character: The character specified in the action, if any
         """
 
-        if action.action_type == ActionTypeEnum.TREAT_PATIENT:
+        if action.action_type in [ActionTypeEnum.TREAT_PATIENT, ActionTypeEnum.TAG_CHARACTER, ActionTypeEnum.MOVE_TO_EVAC]:
             # Character required
             if not character or not character.id:
                 return False, f'Malformed Action: Missing character_id for {action.action_type}', 400
-            if character.unseen and not action.intent_action and action.action_type:
+            if character.unseen and not action.intent_action:
                 return False, f'Cannot perform {action.action_type} action with unseen character `{action.character_id}`', 400
-        elif action.action_type == ActionTypeEnum.TAG_CHARACTER:
+
+        if action.action_type == ActionTypeEnum.TAG_CHARACTER:
             # Requires category parameter
             if not action.parameters or not 'category' in action.parameters:
                 return False, f'Malformed {action.action_type} Action: Missing `category` parameter', 400
@@ -52,6 +53,8 @@ class P2TriageActionHandler(ITMActionHandler):
                 tag = action.parameters.get('category')
                 if not tag in allowed_values:
                     return False, f'Malformed {action.action_type} Action: Invalid Tag `{tag}`', 400
+        elif action.action_type in [ActionTypeEnum.TREAT_PATIENT, ActionTypeEnum.MOVE_TO_EVAC]:
+            pass # Requires nothing
         else:
             return False, f'Invalid action_type `{action.action_type}`', 400
 
@@ -65,8 +68,13 @@ class P2TriageActionHandler(ITMActionHandler):
         Args:
             character: The character to treat
         """
-        if character.unstructured_posttreatment:
-            character.unstructured = character.unstructured_posttreatment
+
+        # Update unstructured text to reflect treatment.
+        for isd_character in self.current_scene.state.characters:
+            if isd_character.id == character.id:
+                if isd_character.unstructured_posttreatment:
+                    character.unstructured = isd_character.unstructured_posttreatment
+
         return self.times_dict[ActionTypeEnum.TREAT_PATIENT]
 
 

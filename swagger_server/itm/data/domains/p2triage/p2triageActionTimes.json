@@ -1,5 +1,5 @@
 {
-    "TREAT_PATIENT": 10,
-    "TAG_CHARACTER": 10,
-    "MOVE_TO_EVAC": 5
+    "TREAT_PATIENT": 0,
+    "TAG_CHARACTER": 0,
+    "MOVE_TO_EVAC": 100
 }
