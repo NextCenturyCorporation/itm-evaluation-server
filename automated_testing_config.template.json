@@ -1,9 +1,9 @@
 {
   "__COMMENT": "Copy this file to automated_testing_config.json and update the values for your local environment.",
-  "__USAGE": "All explicit paths may be absolute or relative to the server repo root. CLI flags override these values if valid.",
+  "__USAGE": "All explicit paths may be absolute or relative to the server repo root. If runner_path is empty, it defaults to <client_root>/itm_minimal_runner.py. CLI flags override these values if valid.",
   "__GROUPS": "Optional. Add a groups object to override or extend the default groups in automated_tester.py.",
   "client_root": "../itm-evaluation-client",
   "client_python": "../itm-evaluation-client/venv/Scripts/python.exe",
-  "runner_path": "itm_minimal_runner.py",
+  "runner_path": "",
   "groups": {}
 }

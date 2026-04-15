@@ -33,7 +33,8 @@ CLI Flags
 --auto-port:          Ask the OS for a free port; overrides --port
 --client-root PATH:   Path to the evaluation client repo (absolute and relative paths both supported)
 --client-python PATH: Path to the client venv Python (absolute and relative paths both supported)
---runner-path PATH:   Path to the runner script (absolute and relative paths both supported; defaults to <client_root>/itm_minimal_runner.py)
+--runner-path PATH:   Path to the runner script. Relative paths are resolved from the server repo root. If omitted,
+                      defaults to <client_root>/itm_minimal_runner.py
 --validate-only:      Validate resolved groups against swagger_server/config.ini and exit (no path or port checks or execution)
 """
 
@@ -170,7 +171,7 @@ def validate_eval_filenames(config_section, scenario_path, cfg_name):
             f"'{scenario_path}': {joined_tokens}"
         )
 
-def preflight_cfg_run(config_path, cfg_name):
+def precheck_cfg_run(config_path, cfg_name):
     parser, _ = load_runtime_config(config_path)
     if cfg_name != 'DEFAULT' and cfg_name not in parser:
         raise RuntimeError(f"Config group '{cfg_name}' does not exist in {config_path}.")
@@ -427,14 +428,16 @@ def resolve_and_validate_paths(args, tester_cfg):
         else:
             errors.append(f"Client Python Is Required (set via --client-python or {TESTER_CONFIG_NAME}).")
 
-    cli_runner = resolve_user_path(getattr(args, "runner_path", None), REPO_ROOT)
-    cfg_runner = resolve_user_path(tester_cfg.get("runner_path"), REPO_ROOT)
+    cli_runner_raw = getattr(args, "runner_path", None)
+    cfg_runner_raw = tester_cfg.get("runner_path")
+    cli_runner = resolve_user_path(cli_runner_raw, REPO_ROOT)
+    cfg_runner = resolve_user_path(cfg_runner_raw, REPO_ROOT)
     runner_path = None
 
     if cli_runner and cli_runner.is_file():
         runner_path = cli_runner
     elif cli_runner:
-        logging.warning(f"Invalid Runner Path From CLI (File Not Found): {cli_runner}.")
+        logging.warning(f"Invalid Runner Path From CLI (File Not Found): {cli_runner}. Relative runner paths are resolved from the server repo root.")
         if cfg_runner and cfg_runner.is_file():
             runner_path = cfg_runner
         else:
@@ -442,11 +445,14 @@ def resolve_and_validate_paths(args, tester_cfg):
     else:
         if cfg_runner and cfg_runner.is_file():
             runner_path = cfg_runner
+        elif cfg_runner_raw:
+            logging.warning(f"Invalid Runner Path From {TESTER_CONFIG_NAME} (File Not Found): {cfg_runner}. Relative runner paths are resolved from the server repo root.")
+            runner_path = (client_root / "itm_minimal_runner.py") if client_root else None
         else:
             runner_path = (client_root / "itm_minimal_runner.py") if client_root else None
 
     if runner_path is None or not runner_path.is_file():
-        errors.append(f"Runner Path Is Required (set via --runner-path or {TESTER_CONFIG_NAME}).")
+        errors.append(f"Runner Path Is Required (set via --runner-path, {TESTER_CONFIG_NAME}, or by ensuring <client_root>/itm_minimal_runner.py exists).")
 
     if errors:
         logging.error("Path Resolution Failed:")
@@ -481,7 +487,7 @@ def parse_args():
     parser.add_argument('--auto-port', action='store_true', help='Pick a free local port automatically (overrides --port).')
     parser.add_argument('--client-root', dest='client_root', help='Path to the evaluation client repo.')
     parser.add_argument('--client-python', dest='client_python', help='Path to the client venv Python.')
-    parser.add_argument('--runner-path', dest='runner_path', help='Path to the runner script.')
+    parser.add_argument('--runner-path', dest='runner_path', help='Path to the runner script. Relative paths are resolved from the server repo root; if omitted, defaults to <client_root>/itm_minimal_runner.py.')
     parser.add_argument('--validate-only', action='store_true', help='Validate resolved groups against swagger_server/config.ini and exit.')
     return parser.parse_args()
 
@@ -543,11 +549,11 @@ def main():
     group_info = groups[args.group]
     for cfg in group_info['cfgs']:
         try:
-            preflight_cfg_run(config_path, cfg)
+            precheck_cfg_run(config_path, cfg)
             if not group_info['testing']:
                 validate_ta1_connectivity(load_runtime_config(config_path)[0][cfg], cfg)
         except Exception as e:
-            logging.fatal(f"Preflight failed for config {cfg}: {e}")
+            logging.fatal(f"Precheck failed for config {cfg}: {e}")
             sys.exit(1)
         if not is_port_free(port):
             logging.info(f"Port {port} busy before launching cfg '{cfg}'; Waiting for release.")
