@@ -44,12 +44,14 @@ class ITMSession:
 
     # maps alignment id to list alignment_targets, as limited by configuration; used whether connecting to TA1 or not
     alignment_data = {}
-    # have we successfully connected to TA1?
-    ta1_connected = False
     # maps ta1_name to list of alignment target IDs obtained from the TA1 server
     alignment_ids = {}
     # This determines whether the server makes calls to TA1
     ta1_integration = not builtins.testing
+    # Cache TA1 alignment target ids and alignment targets if true, else query TA1 every session
+    cache_ta1_targets = config[config_group].getboolean("CACHE_TA1_TARGETS", fallback=False)
+    # Don't request session alignment from TA1 at the end of a session
+    calc_alignment = config[config_group].getboolean("CALC_ALIGNMENT", fallback=True)
     # This determines whether the server saves history to JSON
     save_history = config[config_group].getboolean("SAVE_HISTORY")
     # save_history must also be True
@@ -92,14 +94,16 @@ class ITMSession:
     def initialize():
         logging.basicConfig(level=logging.INFO, format='%(levelname)s %(asctime)s %(message)s', datefmt='%m-%d %I:%M:%S')
         if ITMSession.ta1_integration:
-            try:
-                logging.info("Loading TA1 configuration from TA1 servers...")
-                ITMSession.init_ta1_data(ITMSession.ALL_TA1_NAMES)
-                ITMSession.ta1_connected = True
-                logging.info("Done.")
-            except Exception as e:
-                logging.warning("Could not initialize TA1 data. Running standalone.")
-                logging.exception(e)
+            if ITMSession.cache_ta1_targets:
+                try:
+                    ITMSession.init_ta1_data(ITMSession.ALL_TA1_NAMES)
+                    logging.info("Caching TA1 data. Restart TA1 server if alignment targets or their ids change.")
+                except Exception as e:
+                    logging.fatal("Could not connect to TA1. Exiting.")
+                    logging.exception(e)
+                    exit(1)
+            else: # Don't bother getting TA1 data if it will get requested for each session
+                logging.info("Not caching TA1 data. Alignment targets and their ids will be requested at the start of each session.")
         else:
             logging.info("Running server in testing mode; no connection to TA1 servers.")
 
@@ -108,11 +112,13 @@ class ITMSession:
 
     @staticmethod
     def init_ta1_data(ta1_names):
-        # Populate alignment_data_ids from ITMTa1Controller.get_alignment_target_ids
+        # Populate alignment_ids from ITMTa1Controller.get_alignment_target_ids
+        logging.info("Loading TA1 configuration from TA1 servers...")
         for ta1_name in ta1_names:
             ITMSession.alignment_ids[ta1_name] = [
                 alignment_target_id for alignment_target_id in ITMTa1Controller.get_alignment_target_ids(ta1_name)
             ]
+        logging.info("Done.")
 
 
     def load_alignment_target(self, target_id, ta1_name):
@@ -163,10 +169,10 @@ class ITMSession:
             self._cleanup(scenario_end_time)
             return
 
-        session_alignment_score = None
+        session_alignment_score = 'Not requested' if not self.calc_alignment else 'Not calculated' if not self.ta1_integration else None
         alignment_warning = None
         kdmas: List[KDMAValue] = None
-        if self.ta1_integration:
+        if self.ta1_integration and self.calc_alignment:
             try:
                 session_alignment: AlignmentResults = \
                     self.itm_scenario.ta1_controller.get_session_alignment()
@@ -188,8 +194,10 @@ class ITMSession:
                         logging.warning("\033[92mContamination in session_alignment! scenario is %s but alignment source scenario is %s.\033[00m",
                                         self.itm_scenario.id, alignment_scenario_id)
             except exceptions.HTTPError:
+                session_alignment_score = 'Error'
                 logging.exception("HTTPError from TA1 getting session alignment.")
             except Exception:
+                session_alignment_score = 'Error'
                 logging.exception("Exception getting session alignment. Ignoring.")
 
         if (self.session_type != 'test'):
@@ -495,13 +503,11 @@ class ITMSession:
                 "session_type": session_type},
                 self.session_id)
 
-        if self.ta1_integration and not ITMSession.ta1_connected:
+        if self.ta1_integration and not self.cache_ta1_targets:
             # Try to get TA1 data, otherwise Fail
             try:
-                logging.info("Attempting just-in-time connection to TA1.")
                 ITMSession.init_ta1_data(ta1_names)
-                ITMSession.ta1_connected = True
-                logging.info("Just-in-time connection succeeded.")
+                ITMSession.alignment_data.clear() # Clear alignment data cache
             except:
                 logging.exception("Exception communicating with TA1; is the TA1 server running?  Ending session.")
                 self._end_session() # Exception here ends the session
@@ -568,12 +574,12 @@ class ITMSession:
 
             self.itm_scenarios.extend(ta1_scenarios)
             num_read_scenarios += len(ta1_scenarios)
-            logging.info('Loaded %d scenarios for %s.', len(ta1_scenarios), ta1_name)
+            logging.info('Loaded %d scenario(s) for %s.', len(ta1_scenarios), ta1_name)
 
         scenario_ctr = 0
         logging.info("Scenario load summary:")
         for scenario in self.itm_scenarios:
-            logging.info(f'  Scenario #{scenario_ctr} has ID {scenario.id} and alignment target {scenario.alignment_target.id}.')
+            logging.info(f'  Scenario #{scenario_ctr+1} has ID {scenario.id} and alignment target {scenario.alignment_target.id}.')
             scenario_ctr += 1
 
         if max_scenarios is not None and max_scenarios >= num_read_scenarios:
@@ -583,7 +589,7 @@ class ITMSession:
                 random_index = random.randint(0, num_read_scenarios - 1)
                 self.itm_scenarios.append(deepcopy(self.itm_scenarios[random_index]))
 
-        logging.info("Loaded %d total scenarios from '%s'.", len(self.itm_scenarios), scenario_path)
+        logging.info("Loaded %d total scenario(s) from '%s'.", len(self.itm_scenarios), scenario_path)
         self.current_scenario_index = 0
 
         return self.session_id, 200
