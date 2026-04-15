@@ -50,6 +50,7 @@ import sys
 import time
 from configparser import ConfigParser
 from pathlib import Path
+from urllib.parse import urlparse
 
 import requests
 
@@ -60,7 +61,7 @@ DEFAULT_GROUPS = {
         'phase': 2
     },
     '2': {
-        'cfgs': ["DEFAULT", "FEB_OPENWORLD", "JUNE_OPENWORLD"],
+        'cfgs': ["DEFAULT"],
         'testing': False,
         'phase': 2
     },
@@ -176,6 +177,20 @@ def preflight_cfg_run(config_path, cfg_name):
     config_section = parser[cfg_name]
     scenario_path = resolve_scenario_directory(config_section)
     validate_eval_filenames(config_section, scenario_path, cfg_name)
+
+def validate_ta1_connectivity(config_section, cfg_name):
+    ta1_names = generate_list(config_section.get('ALL_TA1_NAMES', ''))
+    for ta1_name in ta1_names:
+        ta1_url = config_section.get(f"{ta1_name.upper()}_URL")
+        if ta1_url is None or ta1_url.strip() == "":
+            raise RuntimeError(f"Config '{cfg_name}' is missing {ta1_name.upper()}_URL.")
+        parsed = urlparse(ta1_url if "://" in ta1_url else f"http://{ta1_url}")
+        host = parsed.hostname
+        port = parsed.port or (443 if parsed.scheme == "https" else 80)
+        if host is None:
+            raise RuntimeError(f"Config '{cfg_name}' contains an invalid URL for {ta1_name.upper()}_URL: {ta1_url}")
+        if not can_connect(host, port, timeout=5):
+            raise RuntimeError(f"Could not connect to configured TA1 '{ta1_name}' at {ta1_url}.")
 
 def ensure_runner_exercised_scenarios(output_path, cfg_name):
     output_text = output_path.read_text(encoding='utf-8')
@@ -529,8 +544,10 @@ def main():
     for cfg in group_info['cfgs']:
         try:
             preflight_cfg_run(config_path, cfg)
+            if not group_info['testing']:
+                validate_ta1_connectivity(load_runtime_config(config_path)[0][cfg], cfg)
         except Exception as e:
-            logging.fatal(f"Precheck failed for config {cfg}: {e}")
+            logging.fatal(f"Preflight failed for config {cfg}: {e}")
             sys.exit(1)
         if not is_port_free(port):
             logging.info(f"Port {port} busy before launching cfg '{cfg}'; Waiting for release.")

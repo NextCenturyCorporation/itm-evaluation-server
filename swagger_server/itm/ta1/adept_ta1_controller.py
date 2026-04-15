@@ -6,7 +6,7 @@ import re
 import os
 import logging
 import builtins
-from swagger_server.itm.utils import generate_list, resolve_tokens, load_scenario_ids, load_alignment_ids
+from swagger_server.itm.utils import generate_list, resolve_tokens, load_scenario_ids
 
 scenarioRegex = re.compile(r'^ADEPT_(EVAL|TRAIN)_(?P<group>[^_]+)_SCENARIOS$', re.IGNORECASE)
 targetRegex = re.compile(r'^ADEPT_(?P<group>[^_]+)_ALIGNMENT_TARGETS$', re.IGNORECASE)
@@ -18,6 +18,7 @@ class AdeptTa1Controller(ITMTa1Controller):
     evaluationScenarios = {}
     trainingScenarios = {}
     alignmentTargets = {}
+    alignmentTargetTokens = {}
     distributionTargets = {}
 
     cfg = ITMTa1Controller.config[ITMTa1Controller.config_group]
@@ -30,8 +31,6 @@ class AdeptTa1Controller(ITMTa1Controller):
         exit(1)
 
     scenario_ids = load_scenario_ids(scenario_directory, scenario_files)
-    alignment_ids = set() if testingMode else load_alignment_ids(ITMTa1Controller.get_contact_info('adept'), '/api/v1/alignment_target_ids')
-
     ADEPT_EVAL_FILENAMES = sorted(resolve_tokens(cfg['ADEPT_EVAL_FILENAMES'], scenario_files))
     ADEPT_TRAIN_FILENAMES = sorted(resolve_tokens(cfg['ADEPT_TRAIN_FILENAMES'], scenario_files))
 
@@ -50,13 +49,11 @@ class AdeptTa1Controller(ITMTa1Controller):
                     logging.fatal("Found alignment target IDs suspected to be Glob or Regex patterns. These are not supported in testing mode and will likely cause a server crash.")
                 alignmentTargets[group] = tokens
             else:
-                alignmentTargets[group] = sorted(resolve_tokens(value, alignment_ids))
+                alignmentTargetTokens[group] = tokens
         elif distributionMatch := distributionRegex.match(key):
             group = distributionMatch.group('group').lower()
             distributionTargets[group] = value.strip()
-   
-    target_to_group = {target: group for group, targets in alignmentTargets.items() for target in targets}
-   
+
     def __init__(self, alignment_target_id, alignment_target = None):
         super().__init__(self.get_ta1name(), alignment_target_id, alignment_target)
         self.adept_populations = False
@@ -82,13 +79,32 @@ class AdeptTa1Controller(ITMTa1Controller):
         return AdeptTa1Controller.ADEPT_TRAIN_FILENAMES if kdma_training else AdeptTa1Controller.ADEPT_EVAL_FILENAMES
 
     @staticmethod
+    def get_group_targets(group) -> list[str]:
+        if testingMode:
+            return AdeptTa1Controller.alignmentTargets.get(group, [])
+        from swagger_server.itm.itm_session import ITMSession
+        alignment_ids = ITMSession.alignment_ids.get(AdeptTa1Controller.get_ta1name(), [])
+        tokens = AdeptTa1Controller.alignmentTargetTokens.get(group, [])
+        if len(tokens) == 0:
+            return []
+        return sorted(resolve_tokens(','.join(tokens), alignment_ids))
+
+    @staticmethod
     def get_target_ids(itm_scenario) -> list[str]:
         target_ids: list[str] = []
         source = AdeptTa1Controller.trainingScenarios if itm_scenario.training else AdeptTa1Controller.evaluationScenarios
         for group, scenarioList in source.items():
             if itm_scenario.id in scenarioList:
-                target_ids.extend(AdeptTa1Controller.alignmentTargets.get(group, ()))
+                target_ids.extend(AdeptTa1Controller.get_group_targets(group))
         return target_ids
+
+    @staticmethod
+    def get_group_for_target(target_id: str):
+        groups = AdeptTa1Controller.alignmentTargets.keys() if testingMode else AdeptTa1Controller.alignmentTargetTokens.keys()
+        for group in groups:
+            if target_id in AdeptTa1Controller.get_group_targets(group):
+                return group
+        return None
 
     def supports_probe_alignment(self) -> bool:
         #return not self.adept_populations
@@ -96,7 +112,7 @@ class AdeptTa1Controller(ITMTa1Controller):
 
     def new_session(self, context=None) -> any:
         url = f"{self.url}/api/v1/new_session"
-        initial_response = requests.post(url)
+        initial_response = requests.post(url, timeout=ITMTa1Controller.REQUEST_TIMEOUT)
         initial_response.raise_for_status()
         response = self.to_dict(initial_response)
         self.session_id = response
@@ -118,7 +134,7 @@ class AdeptTa1Controller(ITMTa1Controller):
                 "session_id_1_or_target_id": self.session_id,
                 "session_id_2_or_target_id": actual_target_id
             }
-            group = AdeptTa1Controller.target_to_group.get(actual_target_id)
+            group = AdeptTa1Controller.get_group_for_target(actual_target_id)
             if group:
                 pop_id = AdeptTa1Controller.distributionTargets.get(group)
                 if pop_id:

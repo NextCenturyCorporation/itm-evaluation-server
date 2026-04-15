@@ -11,6 +11,7 @@ from swagger_server.models import (
 from swagger_server.config_util import Configuration
 
 class ITMTa1Controller(ABC):
+    REQUEST_TIMEOUT = 5
     config = Configuration.get_config()
     config_group = builtins.config_group
 
@@ -105,7 +106,7 @@ class ITMTa1Controller(ABC):
         ta1_class: ITMTa1Controller = ITMTa1Controller.__get_static_ref(scene_type)
         for alignment_target_id in alignment_target_ids:
           url = ta1_class.get_alignment_target_path(alignment_target_id)
-          response = requests.get(url)
+          response = requests.get(url, timeout=ITMTa1Controller.REQUEST_TIMEOUT)
           alignment_target = ITMTa1Controller.to_dict(response)
           alignments.append(AlignmentTarget.from_dict(alignment_target))
         return alignments
@@ -114,13 +115,13 @@ class ITMTa1Controller(ABC):
     def get_alignment_target_ids(scene_type):
         ta1_class: ITMTa1Controller = ITMTa1Controller.__get_static_ref(scene_type)
         url = ta1_class.get_alignment_ids_path()
-        return json.loads(requests.get(url).content.decode('utf-8'))
+        return json.loads(requests.get(url, timeout=ITMTa1Controller.REQUEST_TIMEOUT).content.decode('utf-8'))
 
     @staticmethod
     def get_alignment_target(scene_type, alignment_target_id):
         ta1_class: ITMTa1Controller = ITMTa1Controller.__get_static_ref(scene_type)
         url = ta1_class.get_alignment_target_path(alignment_target_id)
-        response = requests.get(url)
+        response = requests.get(url, timeout=ITMTa1Controller.REQUEST_TIMEOUT)
         alignment_target = ITMTa1Controller.to_dict(response)
         return AlignmentTarget.from_dict(alignment_target)
 
@@ -131,7 +132,7 @@ class ITMTa1Controller(ABC):
     def post_probe(self, probe_response: ProbeResponse):
         body = {"session_id": self.session_id, "response": probe_response.to_dict()}
         url = f"{self.url}/api/v1/response"
-        self.to_dict(requests.post(url, json=body))
+        self.to_dict(requests.post(url, json=body, timeout=ITMTa1Controller.REQUEST_TIMEOUT))
 
     def get_probe_response_alignment(self, scenario_id, probe_id):
         base_url = f"{self.url}/api/v1/alignment/probe"
@@ -143,14 +144,14 @@ class ITMTa1Controller(ABC):
             "probe_id": probe_id
         }
         url = f"{base_url}?{urllib.parse.urlencode(params)}"
-        initial_response = requests.get(url)
+        initial_response = requests.get(url, timeout=ITMTa1Controller.REQUEST_TIMEOUT)
         initial_response.raise_for_status()
         response = self.to_dict(initial_response)
         return response
 
     def get_session_alignment(self, target_id = None):
         url = self.get_session_alignment_path(target_id)
-        initial_response = requests.get(url)
+        initial_response = requests.get(url, timeout=ITMTa1Controller.REQUEST_TIMEOUT)
         initial_response.raise_for_status()
         response = self.to_dict(initial_response)
         alignment_results: AlignmentResults = AlignmentResults.from_dict(response)
@@ -161,7 +162,7 @@ class ITMTa1Controller(ABC):
             "session_id": self.session_id
         }
         url = f"{base_url}?{urllib.parse.urlencode(params)}"
-        initial_response = requests.get(url)
+        initial_response = requests.get(url, timeout=ITMTa1Controller.REQUEST_TIMEOUT)
         initial_response.raise_for_status()
         response = self.to_dict(initial_response)
 

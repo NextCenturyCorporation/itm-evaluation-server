@@ -52,7 +52,7 @@ class SoartechTa1Controller(ITMTa1Controller):
         if context:
             params = {"user_id": context}
             url = f"{url}?{urllib.parse.urlencode(params)}"
-        initial_response = requests.post(url)
+        initial_response = requests.post(url, timeout=ITMTa1Controller.REQUEST_TIMEOUT)
         initial_response.raise_for_status()
         response = self.to_dict(initial_response)
         self.session_id = response
