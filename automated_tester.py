@@ -42,6 +42,7 @@ import copy
 import json
 import logging
 import os
+import fnmatch
 import re
 import socket
 import subprocess
@@ -84,6 +85,39 @@ RESULTS_ROOT = REPO_ROOT / "automated_test_results"
 
 VALID_GROUP_KEYS = {"cfgs", "testing", "phase"}
 
+def generate_list(input_list):
+    return [s.strip() for s in input_list.replace('\n', '').split(',') if s.strip()]
+
+def resolve_tokens(token_string, universe):
+    matched = set()
+    tokens = generate_list(token_string)
+    remaining = set(universe)
+    for token in tokens:
+        current_matches = set()
+        if token in remaining:
+            current_matches.add(token)
+        else:
+            glob_matches = {entry for entry in remaining if fnmatch.fnmatch(entry, token)}
+            if len(glob_matches) > 0:
+                current_matches.update(glob_matches)
+            else:
+                try:
+                    pattern = token
+                    if not (pattern.startswith('^') and pattern.endswith('$')):
+                        pattern = f'^{pattern}$'
+                    token_regex = re.compile(pattern)
+                    current_matches.update(entry for entry in remaining if token_regex.match(entry))
+                except re.error:
+                    pass
+
+        matched.update(current_matches)
+        remaining.difference_update(current_matches)
+
+        if len(remaining) == 0:
+            break
+
+    return matched
+
 def load_config_sections(config_path):
     final_path = os.path.abspath(os.path.expanduser(config_path))
     try:
@@ -98,6 +132,61 @@ def load_config_sections(config_path):
     sections = set(parser.sections())
     sections.add("DEFAULT")
     return sections, final_path
+
+def load_runtime_config(config_path):
+    final_path = os.path.abspath(os.path.expanduser(config_path))
+    if not os.path.exists(final_path):
+        raise FileNotFoundError(f"Couldn't find file: {final_path}")
+    parser = ConfigParser(os.environ)
+    parser.read(final_path)
+    return parser, final_path
+
+def resolve_scenario_directory(config_section):
+    scenario_directory = config_section.get('SCENARIO_DIRECTORY')
+    scenario_path = resolve_user_path(scenario_directory, REPO_ROOT)
+    if scenario_path is None or not scenario_path.is_dir():
+        raise RuntimeError("Invalid filepath. Please check the SCENARIO_DIRECTORY variable in the config.ini file.")
+    return scenario_path
+
+def validate_eval_filenames(config_section, scenario_path, cfg_name):
+    eval_filenames = config_section.get('ADEPT_EVAL_FILENAMES')
+    if eval_filenames is None:
+        raise RuntimeError(f"Config '{cfg_name}' is missing ADEPT_EVAL_FILENAMES.")
+
+    scenario_files = set(os.listdir(scenario_path))
+    if len(scenario_files) == 0:
+        raise RuntimeError(f"Scenario directory '{scenario_path}' is empty for config '{cfg_name}'.")
+
+    missing_tokens = []
+    for token in generate_list(eval_filenames):
+        if len(resolve_tokens(token, scenario_files)) == 0:
+            missing_tokens.append(token)
+
+    if missing_tokens:
+        joined_tokens = ", ".join(missing_tokens)
+        raise RuntimeError(
+            f"Config '{cfg_name}' references scenario file patterns that did not match any local files in "
+            f"'{scenario_path}': {joined_tokens}"
+        )
+
+def preflight_cfg_run(config_path, cfg_name):
+    parser, _ = load_runtime_config(config_path)
+    if cfg_name != 'DEFAULT' and cfg_name not in parser:
+        raise RuntimeError(f"Config group '{cfg_name}' does not exist in {config_path}.")
+    config_section = parser[cfg_name]
+    scenario_path = resolve_scenario_directory(config_section)
+    validate_eval_filenames(config_section, scenario_path, cfg_name)
+
+def ensure_runner_exercised_scenarios(output_path, cfg_name):
+    output_text = output_path.read_text(encoding='utf-8')
+    if "Scenario name:" in output_text:
+        return
+    if "Session " in output_text and " complete" in output_text:
+        raise RuntimeError(
+            f"Runner completed for config '{cfg_name}' without exercising any scenarios. "
+            "Check the config group and local scenario data."
+        )
+    raise RuntimeError(f"Runner produced no scenario output for config '{cfg_name}'.")
 
 def validate_groups(groups, valid_cfg_names):
     errors = []
@@ -438,6 +527,11 @@ def main():
 
     group_info = groups[args.group]
     for cfg in group_info['cfgs']:
+        try:
+            preflight_cfg_run(config_path, cfg)
+        except Exception as e:
+            logging.fatal(f"Precheck failed for config {cfg}: {e}")
+            sys.exit(1)
         if not is_port_free(port):
             logging.info(f"Port {port} busy before launching cfg '{cfg}'; Waiting for release.")
             if not wait_for_port_free(port, timeout=5.0, interval=0.25):
@@ -461,6 +555,7 @@ def main():
                 env["TA3_HOSTNAME"] = "127.0.0.1"
                 env["TA3_PORT"] = str(port)
                 subprocess.run(runner_cmd, cwd=str(client_root), stdout=fh, stderr=subprocess.STDOUT, check=True, env=env)
+            ensure_runner_exercised_scenarios(output_path, cfg)
         except Exception as e:
             logging.fatal(f"Error during run for config {cfg}: {e}")
         finally:
