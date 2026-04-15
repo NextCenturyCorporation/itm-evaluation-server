@@ -23,8 +23,7 @@ Default Groups
 Local Config
 --------------------
 Copy automated_testing_config.template.json to automated_testing_config.json for local paths and optional local group
-overrides. automated_testing_config.json is ignored by Git. If it does not exist, the tester falls back to
-automated_testing_paths.json for backward compatibility.
+overrides. automated_testing_config.json is ignored by Git.
 
 CLI Flags
 --------------------
@@ -81,7 +80,6 @@ DEFAULT_TESTER_CONFIG = {
 REPO_ROOT = Path(__file__).resolve().parent
 TESTER_CONFIG_NAME = "automated_testing_config.json"
 TESTER_CONFIG_TEMPLATE_NAME = "automated_testing_config.template.json"
-LEGACY_TESTER_CONFIG_NAME = "automated_testing_paths.json"
 RESULTS_ROOT = REPO_ROOT / "automated_test_results"
 
 VALID_GROUP_KEYS = {"cfgs", "testing", "phase"}
@@ -247,8 +245,6 @@ def resolve_user_path(potential_path, base):
 
 def load_tester_json(config_dir):
     cfg_path = config_dir / TESTER_CONFIG_NAME
-    if not cfg_path.exists():
-        cfg_path = config_dir / LEGACY_TESTER_CONFIG_NAME
     if not cfg_path.exists():
         return {}, None
     try:
