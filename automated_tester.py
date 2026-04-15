@@ -86,6 +86,10 @@ TESTER_CONFIG_TEMPLATE_NAME = "automated_testing_config.template.json"
 RESULTS_ROOT = REPO_ROOT / "automated_test_results"
 
 VALID_GROUP_KEYS = {"cfgs", "testing", "phase"}
+TA1_ALIGNMENT_ID_PATHS = {
+    "adept": "/api/v1/alignment_target_ids",
+    "soartech": "/api/v1/alignment_targets"
+}
 
 def generate_list(input_list):
     return [s.strip() for s in input_list.replace('\n', '').split(',') if s.strip()]
@@ -192,6 +196,16 @@ def validate_ta1_connectivity(config_section, cfg_name):
             raise RuntimeError(f"Config '{cfg_name}' contains an invalid URL for {ta1_name.upper()}_URL: {ta1_url}")
         if not can_connect(host, port, timeout=5):
             raise RuntimeError(f"Could not connect to configured TA1 '{ta1_name}' at {ta1_url}.")
+        alignment_path = TA1_ALIGNMENT_ID_PATHS.get(ta1_name.lower())
+        if alignment_path:
+            base_url = ta1_url.rstrip("/")
+            try:
+                response = requests.get(f"{base_url}{alignment_path}", timeout=5)
+                response.raise_for_status()
+            except requests.RequestException as e:
+                raise RuntimeError(
+                    f"Could not retrieve alignment IDs from configured TA1 '{ta1_name}' at {base_url}{alignment_path}: {e}"
+                )
 
 def ensure_runner_exercised_scenarios(output_path, cfg_name):
     output_text = output_path.read_text(encoding='utf-8')
