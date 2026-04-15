@@ -1,64 +1,66 @@
 """
-Integration testing harness that automates dummy ADM runs and pipes the output to an outfile.
+Integration testing harness that automates dummy ADM runs and pipes the output to outfiles.
 
 Purposes
 --------------------
-• Validates the GROUPS dictionary against the active INI (swagger_server/config.ini). Section names (including DEFAULT) must
-  match the cfgs listed in each group.
-• For a selected group, starts the server per cfg (testing or normal mode), validates/chooses a port, waits for readiness,
-  then starts to run the dummy ADM.
-• Writes each runner's combined stdout/stderr to a text file for potential manual review.
+• Validates the resolved test groups against the active INI (swagger_server/config.ini). Section names (including DEFAULT)
+  must match the cfgs listed in each group.
+• For a selected group, starts the server per cfg (testing or normal mode), validates or chooses a port, waits for
+  readiness, then runs the dummy ADM.
+• Writes each runner's combined stdout and stderr to branch-scoped text files for potential manual review.
 
 Usage
 --------------------
-  python automated_tester.py --group <group_number> --branch <branch_name> [--port <port>] [--auto-port] [--client-root PATH] [--client-python PATH] [--runner-path PATH]
-  python automated_tester.py --validate-only
+  python3 automated_tester.py --group <group_number> --branch <branch_name> [--port <port>] [--auto-port] [--client-root PATH] [--client-python PATH] [--runner-path PATH]
+  python3 automated_tester.py --validate-only
 
-Current Groups
+Default Groups
 --------------------
-  Group 1: Phase 2 testing mode - cfgs: DEFAULT, GROUP_TARGET, SUBSET_ONLY, FULL_NO_SUBSET, MULTI_KDMA, MULTI_KDMA_SUBSET, MULTI_KDMA_FULL_NO_SUBSET, OPEN_WORLD
-  Group 2: Phase 2 normal mode  - cfgs: DEFAULT, MULTI_KDMA
-  Group 3: Phase 1 testing mode - cfgs: DEFAULT, GROUP_TARGET
+  Group 1: Phase 2 testing mode - cfgs: DEFAULT, FEB_OPENWORLD, JUNE_OPENWORLD
+  Group 2: Phase 2 normal mode  - cfgs: DEFAULT, FEB_OPENWORLD, JUNE_OPENWORLD
+  Group 3: Phase 1 testing mode - cfgs: DEFAULT
 
-Modifying Groups
+Local Config
 --------------------
-Edit the GROUPS object below. Each group must define:
-  • cfgs:    list[str], non-empty; each value must match a section in swagger_server/config.ini (DEFAULT allowed)
-  • testing: bool
-  • phase:   int in {1, 2}
+Copy automated_testing_config.template.json to automated_testing_config.json for local paths and optional local group
+overrides. automated_testing_config.json is ignored by Git. If it does not exist, the tester falls back to
+automated_testing_paths.json for backward compatibility.
 
 CLI Flags
 --------------------
 --group {…}:          Which test group to run (required unless --validate-only)
---branch NAME:        Branch label used in output filenames (required unless --validate-only)
+--branch NAME:        Branch label used in output directory naming (required unless --validate-only)
 --port N:             Port the server should use (default 8080; must be 1-65535 and available)
 --auto-port:          Ask the OS for a free port; overrides --port
 --client-root PATH:   Path to the evaluation client repo (absolute and relative paths both supported)
 --client-python PATH: Path to the client venv Python (absolute and relative paths both supported)
 --runner-path PATH:   Path to the runner script (absolute and relative paths both supported; defaults to <client_root>/itm_minimal_runner.py)
---validate-only:      Validate GROUPS against swagger_server/config.ini and exit (no path/port checks or execution)
+--validate-only:      Validate resolved groups against swagger_server/config.ini and exit (no path or port checks or execution)
 """
 
 import argparse
-import subprocess
-import time
-import requests
-import os
-import sys
-import logging
-import socket
+import copy
 import json
-from pathlib import Path
+import logging
+import os
+import re
+import socket
+import subprocess
+import sys
+import time
 from configparser import ConfigParser
+from pathlib import Path
 
-GROUPS = {
+import requests
+
+DEFAULT_GROUPS = {
     '1': {
-        'cfgs': ["DEFAULT", "SUBSET_ONLY", "FULL_NO_SUBSET", "MULTI_KDMA", "MULTI_KDMA_SUBSET", "MULTI_KDMA_FULL_NO_SUBSET", "OPEN_WORLD"],
+        'cfgs': ["DEFAULT", "FEB_OPENWORLD", "JUNE_OPENWORLD"],
         'testing': True,
         'phase': 2
     },
     '2': {
-        'cfgs': ["DEFAULT", "MULTI_KDMA"],
+        'cfgs': ["DEFAULT", "FEB_OPENWORLD", "JUNE_OPENWORLD"],
         'testing': False,
         'phase': 2
     },
@@ -69,8 +71,18 @@ GROUPS = {
     }
 }
 
+DEFAULT_TESTER_CONFIG = {
+    'client_root': None,
+    'client_python': None,
+    'runner_path': None,
+    'groups': {}
+}
+
 REPO_ROOT = Path(__file__).resolve().parent
-TESTER_JSON_NAME = "automated_testing_paths.json"
+TESTER_CONFIG_NAME = "automated_testing_config.json"
+TESTER_CONFIG_TEMPLATE_NAME = "automated_testing_config.template.json"
+LEGACY_TESTER_CONFIG_NAME = "automated_testing_paths.json"
+RESULTS_ROOT = REPO_ROOT / "automated_test_results"
 
 VALID_GROUP_KEYS = {"cfgs", "testing", "phase"}
 
@@ -137,13 +149,12 @@ def validate_groups(groups, valid_cfg_names):
         phase = definition.get("phase")
         if not isinstance(phase, int):
             errors.append(f"Group {name}: 'phase' must be an integer 1 or 2.")
-        else:
-            if phase not in (1, 2):
-                errors.append(f"Group {name}: 'phase' must be 1 or 2, got {phase}.")
-    
+        elif phase not in (1, 2):
+            errors.append(f"Group {name}: 'phase' must be 1 or 2, got {phase}.")
+
     return errors
 
-def host_to_url(host, port, path= "/ui/"):
+def host_to_url(host, port, path="/ui/"):
     if ":" in host:
         return f"http://[{host}]:{port}{path}"
     return f"http://{host}:{port}{path}"
@@ -155,8 +166,8 @@ def wait_for_server_ui(port, timeout=30):
         for host in hosts:
             try:
                 url = host_to_url(host, port, "/ui/")
-                r = requests.get(url, timeout=1)
-                if r.status_code == 200 and 'Swagger UI' in r.text:
+                response = requests.get(url, timeout=1)
+                if response.status_code == 200 and 'Swagger UI' in response.text:
                     return
             except requests.RequestException:
                 pass
@@ -166,12 +177,12 @@ def wait_for_server_ui(port, timeout=30):
 def port_in_range(port):
     return isinstance(port, int) and 1 <= port <= 65535
 
-def can_connect(host, port, timeout = 0.25):
+def can_connect(host, port, timeout=0.25):
     family = socket.AF_INET6 if ":" in host else socket.AF_INET
-    with socket.socket(family, socket.SOCK_STREAM) as s:
-        s.settimeout(timeout)
+    with socket.socket(family, socket.SOCK_STREAM) as sock:
+        sock.settimeout(timeout)
         try:
-            s.connect((host, port))
+            sock.connect((host, port))
             return True
         except OSError:
             return False
@@ -182,10 +193,10 @@ def is_port_free(port):
             return False
     return True
 
-def pick_free_port() -> int:
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        s.bind(("127.0.0.1", 0))
-        port = s.getsockname()[1]
+def pick_free_port():
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+        sock.bind(("127.0.0.1", 0))
+        port = sock.getsockname()[1]
     if is_port_free(port):
         return port
     raise RuntimeError("Unable to find a free local port after multiple attempts.")
@@ -199,7 +210,7 @@ def resolve_port(requested_port, auto_port):
         raise RuntimeError(f"Port {requested_port} is already in use. Specify a different --port or use --auto-port.")
     return requested_port
 
-def wait_for_port_free(port, timeout = 5.0, interval = 0.25):
+def wait_for_port_free(port, timeout=5.0, interval=0.25):
     deadline = time.time() + timeout
     while time.time() < deadline:
         if is_port_free(port):
@@ -217,38 +228,60 @@ def ensure_server_stopped(proc, port, auto_port):
             proc.kill()
             proc.wait(timeout=5)
         except Exception as e:
-           logging.warning(f"Failed to kill process cleanly: {e}.")
+            logging.warning(f"Failed to kill process cleanly: {e}.")
 
     if wait_for_port_free(port, timeout=5.0, interval=0.25):
         return port
 
     if auto_port:
-        new_port = pick_free_port()
-        return new_port
-    else:
-        logging.fatal(f"Port {port} remained busy after server stop. Rerun with --auto-port or specify a different --port.")
-        sys.exit(1)
+        return pick_free_port()
+
+    logging.fatal(f"Port {port} remained busy after server stop. Rerun with --auto-port or specify a different --port.")
+    sys.exit(1)
 
 def resolve_user_path(potential_path, base):
     if not potential_path:
         return None
-    p = Path(potential_path)
-    return (p if p.is_absolute() else (base / p)).resolve()
+    potential = Path(potential_path)
+    return (potential if potential.is_absolute() else (base / potential)).resolve()
 
 def load_tester_json(config_dir):
-    cfg_path = (config_dir / TESTER_JSON_NAME)
+    cfg_path = config_dir / TESTER_CONFIG_NAME
     if not cfg_path.exists():
-        return {}
+        cfg_path = config_dir / LEGACY_TESTER_CONFIG_NAME
+    if not cfg_path.exists():
+        return {}, None
     try:
         with cfg_path.open("r", encoding="utf-8") as fh:
             data = json.load(fh)
-            if not isinstance(data, dict):
-                logging.warning(f"{cfg_path} does not contain a JSON object.")
-                return {}
-            return data
     except Exception as e:
         logging.warning(f"Failed to read {cfg_path}: {e}.")
-        return {}
+        return {}, None
+
+    if not isinstance(data, dict):
+        logging.warning(f"{cfg_path} does not contain a JSON object.")
+        return {}, None
+
+    return data, cfg_path
+
+def resolve_groups(config_groups):
+    groups = copy.deepcopy(DEFAULT_GROUPS)
+    if config_groups is None:
+        return groups
+    if not isinstance(config_groups, dict):
+        raise ValueError("Configured groups must be a JSON object.")
+    for name, definition in config_groups.items():
+        groups[name] = definition
+    return groups
+
+def load_tester_config(config_dir):
+    local_cfg, cfg_path = load_tester_json(config_dir)
+    resolved_cfg = copy.deepcopy(DEFAULT_TESTER_CONFIG)
+    for key in ('client_root', 'client_python', 'runner_path'):
+        if key in local_cfg:
+            resolved_cfg[key] = local_cfg[key]
+    resolved_cfg['groups'] = resolve_groups(local_cfg.get('groups'))
+    return resolved_cfg, cfg_path
 
 def is_executable_file(potential_file):
     try:
@@ -256,11 +289,9 @@ def is_executable_file(potential_file):
     except Exception:
         return False
 
-def resolve_and_validate_paths(args):
-    cfg = load_tester_json(REPO_ROOT)
-
+def resolve_and_validate_paths(args, tester_cfg):
     cli_client_root = resolve_user_path(getattr(args, "client_root", None), REPO_ROOT)
-    json_client_root = resolve_user_path(cfg.get("client_root"), REPO_ROOT) if cfg else None
+    cfg_client_root = resolve_user_path(tester_cfg.get("client_root"), REPO_ROOT)
     client_root = None
     errors = []
 
@@ -268,73 +299,100 @@ def resolve_and_validate_paths(args):
         client_root = cli_client_root
     elif cli_client_root:
         logging.warning(f"Invalid Client Root From CLI: {cli_client_root}.")
-        if json_client_root and json_client_root.is_dir():
-            client_root = json_client_root
+        if cfg_client_root and cfg_client_root.is_dir():
+            client_root = cfg_client_root
         else:
             errors.append(f"Client Root Not Found: {cli_client_root}.")
     else:
-        if json_client_root and json_client_root.is_dir():
-            client_root = json_client_root
+        if cfg_client_root and cfg_client_root.is_dir():
+            client_root = cfg_client_root
         else:
-            errors.append("Client Root Is Required (set via --client-root or automated_testing_paths.json).")
+            errors.append(f"Client Root Is Required (set via --client-root or {TESTER_CONFIG_NAME}).")
 
     cli_client_py = resolve_user_path(getattr(args, "client_python", None), REPO_ROOT)
-    json_client_py = resolve_user_path(cfg.get("client_python"), REPO_ROOT) if cfg else None
+    cfg_client_py = resolve_user_path(tester_cfg.get("client_python"), REPO_ROOT)
     client_python = None
 
     if cli_client_py and is_executable_file(cli_client_py):
         client_python = cli_client_py
     elif cli_client_py:
         logging.warning(f"Invalid Client Python From CLI: {cli_client_py}.")
-        if json_client_py and is_executable_file(json_client_py):
-            client_python = json_client_py
+        if cfg_client_py and is_executable_file(cfg_client_py):
+            client_python = cfg_client_py
         else:
             errors.append(f"Client Python Is Not Executable: {cli_client_py}")
     else:
-        if json_client_py and is_executable_file(json_client_py):
-            client_python = json_client_py
+        if cfg_client_py and is_executable_file(cfg_client_py):
+            client_python = cfg_client_py
         else:
-            errors.append("Client Python Is Required (set via --client-python or automated_testing_paths.json).")
+            errors.append(f"Client Python Is Required (set via --client-python or {TESTER_CONFIG_NAME}).")
 
     cli_runner = resolve_user_path(getattr(args, "runner_path", None), REPO_ROOT)
-    json_runner = resolve_user_path(cfg.get("runner_path"), REPO_ROOT) if cfg else None
-    
+    cfg_runner = resolve_user_path(tester_cfg.get("runner_path"), REPO_ROOT)
+    runner_path = None
+
     if cli_runner and cli_runner.is_file():
         runner_path = cli_runner
     elif cli_runner:
         logging.warning(f"Invalid Runner Path From CLI (File Not Found): {cli_runner}.")
-        if json_runner and json_runner.is_file():
-            runner_path = json_runner
+        if cfg_runner and cfg_runner.is_file():
+            runner_path = cfg_runner
         else:
             runner_path = (client_root / "itm_minimal_runner.py") if client_root else None
     else:
-        if json_runner and json_runner.is_file():
-            runner_path = json_runner
+        if cfg_runner and cfg_runner.is_file():
+            runner_path = cfg_runner
         else:
             runner_path = (client_root / "itm_minimal_runner.py") if client_root else None
 
     if runner_path is None or not runner_path.is_file():
-        errors.append("Runner Path Is Required (set via --runner-path or automated_testing_paths.json).")
+        errors.append(f"Runner Path Is Required (set via --runner-path or {TESTER_CONFIG_NAME}).")
 
     if errors:
         logging.error("Path Resolution Failed:")
         for counter, message in enumerate(errors, 1):
-                print(f"  {counter:02d}. {message}")
+            print(f"  {counter:02d}. {message}")
         sys.exit(1)
 
     return client_root, client_python, runner_path
 
-def main():
+def sanitize_branch_name(branch_name):
+    sanitized = re.sub(r'[\\/]+', '_', branch_name.strip())
+    sanitized = re.sub(r'[^A-Za-z0-9._-]+', '_', sanitized)
+    sanitized = sanitized.strip("._-")
+    return sanitized if sanitized else "unnamed_branch"
+
+def build_output_path(branch_name, cfg, group_name):
+    branch_dir = RESULTS_ROOT / sanitize_branch_name(branch_name)
+    branch_dir.mkdir(parents=True, exist_ok=True)
+    return branch_dir / f"{cfg}_GROUP_{group_name}.txt"
+
+def build_runner_command(client_venv_python, runner_path, phase):
+    runner_cmd = [str(client_venv_python), str(runner_path), '--name', 'integration_test', '--session', 'adept']
+    if phase == 1:
+        runner_cmd.extend(['--domain', 'triage'])
+    return runner_cmd
+
+def parse_args():
     parser = argparse.ArgumentParser(description="Run integration ADM tests for ITM TA3 server.")
-    parser.add_argument('--group', choices=GROUPS.keys(), required=False, help='Which test group to run (required unless --validate-only).')
-    parser.add_argument('--branch', required=False, help='Name of the branch under test, for output file naming (required unless --validate-only).')
+    parser.add_argument('--group', required=False, help='Which test group to run (required unless --validate-only).')
+    parser.add_argument('--branch', required=False, help='Name of the branch under test, for output directory naming (required unless --validate-only).')
     parser.add_argument('--port', type=int, default=8080, help='Port the server listens on (default 8080).')
     parser.add_argument('--auto-port', action='store_true', help='Pick a free local port automatically (overrides --port).')
     parser.add_argument('--client-root', dest='client_root', help='Path to the evaluation client repo.')
     parser.add_argument('--client-python', dest='client_python', help='Path to the client venv Python.')
     parser.add_argument('--runner-path', dest='runner_path', help='Path to the runner script.')
-    parser.add_argument('--validate-only', action='store_true', help='Validate GROUPS against swagger_server/config.ini and exit.')
-    args = parser.parse_args()
+    parser.add_argument('--validate-only', action='store_true', help='Validate resolved groups against swagger_server/config.ini and exit.')
+    return parser.parse_args()
+
+def main():
+    args = parse_args()
+    try:
+        tester_cfg, _ = load_tester_config(REPO_ROOT)
+    except ValueError as e:
+        logging.fatal(f"Tester configuration error: {e}.")
+        sys.exit(1)
+    groups = tester_cfg['groups']
 
     port = None
 
@@ -345,42 +403,44 @@ def main():
         if args.branch is None:
             missing.append('--branch')
         if missing:
-            parser.error(f"The following arguments are required: {', '.join(missing)}")
+            raise SystemExit(f"usage error: The following arguments are required: {', '.join(missing)}")
+        if args.group not in groups:
+            raise SystemExit(f"Unknown group '{args.group}'. Valid groups: {', '.join(sorted(groups.keys()))}")
         try:
             port = resolve_port(args.port, args.auto_port)
         except Exception as e:
             logging.fatal(f"Port selection error: {e}.")
             sys.exit(1)
-    
+
     if not args.validate_only:
-        CLIENT_ROOT, CLIENT_VENV_PYTHON, RUNNER_PATH = resolve_and_validate_paths(args)
+        client_root, client_venv_python, runner_path = resolve_and_validate_paths(args, tester_cfg)
 
     config_path = os.path.join(REPO_ROOT, 'swagger_server', 'config.ini')
     try:
         valid_cfgs, resolved_config_path = load_config_sections(config_path)
-    except Exception as e:
+    except Exception:
         logging.fatal(f"Failed to read config sections from {config_path}.")
         sys.exit(1)
 
-    errors = validate_groups(GROUPS, valid_cfgs)
+    errors = validate_groups(groups, valid_cfgs)
     if args.validate_only:
         if errors:
             print("Validation Failed:")
             for counter, message in enumerate(errors, 1):
                 print(f"  {counter:02d}. {message}")
+            print(f"Groups validated: {len(groups)}")
             print(f"Checked against: {resolved_config_path}")
             sys.exit(1)
-        else:
-            print("Validation Passed.")
-            print(f"Groups validated: {len(GROUPS)}")
-            print(f"Checked against: {resolved_config_path}")
-            sys.exit(0)
+        print("Validation Passed.")
+        print(f"Groups validated: {len(groups)}")
+        print(f"Checked against: {resolved_config_path}")
+        sys.exit(0)
 
     if errors:
         logging.fatal("GROUPS validation failed. Run with --validate-only for details.")
         sys.exit(1)
 
-    group_info = GROUPS[args.group]
+    group_info = groups[args.group]
     for cfg in group_info['cfgs']:
         if not is_port_free(port):
             logging.info(f"Port {port} busy before launching cfg '{cfg}'; Waiting for release.")
@@ -398,20 +458,18 @@ def main():
         server = subprocess.Popen(server_command)
         try:
             wait_for_server_ui(port)
-            outfile_name = f"{args.branch}_{cfg}_GROUP_{args.group}.txt"
-            with open(outfile_name, 'w', encoding='utf-8') as f:
-                runner_cmd = [str(CLIENT_VENV_PYTHON), str(RUNNER_PATH), '--name', 'integration_test', '--session', 'adept']
-                if group_info['phase'] == 1:
-                    runner_cmd.append('--domain')
-                    runner_cmd.append('triage')
+            output_path = build_output_path(args.branch, cfg, args.group)
+            with output_path.open('w', encoding='utf-8') as fh:
+                runner_cmd = build_runner_command(client_venv_python, runner_path, group_info['phase'])
                 env = os.environ.copy()
                 env["TA3_HOSTNAME"] = "127.0.0.1"
                 env["TA3_PORT"] = str(port)
-                subprocess.run(runner_cmd, cwd=str(CLIENT_ROOT), stdout=f, stderr=subprocess.STDOUT, check=True, env=env)
+                subprocess.run(runner_cmd, cwd=str(client_root), stdout=fh, stderr=subprocess.STDOUT, check=True, env=env)
         except Exception as e:
             logging.fatal(f"Error during run for config {cfg}: {e}")
         finally:
             logging.info("Stopping server.")
             port = ensure_server_stopped(server, port, args.auto_port)
-            
-main()
+
+if __name__ == '__main__':
+    main()

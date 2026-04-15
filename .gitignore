@@ -78,6 +78,9 @@ swagger_server/api
 
 # local config files
 config*.ini
+automated_testing_config.json
+automated_testing_paths.json
+automated_test_results/
 
 # local scenarios
 itm_scenarios
