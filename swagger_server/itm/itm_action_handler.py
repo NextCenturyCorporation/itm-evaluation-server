@@ -20,6 +20,7 @@ class ITMActionHandler:
         from.itm_session import ITMSession
         self.session: ITMSession = session
         self.current_scene: ITMScene = None
+        self.current_scenario: ITMScenario = None
         self.times_dict: dict = None
         self.load_action_times()
 
@@ -32,6 +33,7 @@ class ITMActionHandler:
         self.current_scene = scene
 
     def set_scenario(self, scenario: ITMScenario):
+        self.current_scenario = scenario
         self.current_scene = scenario.isd.current_scene
 
 
@@ -163,6 +165,8 @@ class ITMActionHandler:
 
         # Tell Scene what happened
         self.current_scene.action_taken(action=action, session_state=self.session.state)
+        # Tell Scenario what happened
+        self.current_scenario.action_taken(action=action)
 
 
     # Collect base parameters for the intended action for logging purposes

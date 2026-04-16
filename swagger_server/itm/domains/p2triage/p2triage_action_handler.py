@@ -69,12 +69,11 @@ class P2TriageActionHandler(ITMActionHandler):
             character: The character to treat
         """
 
-        # Update unstructured text to reflect treatment.
+        # Update unstructured text to reflect treatment; strip out patient true name first.
         for isd_character in self.current_scene.state.characters:
             if isd_character.id == character.id:
                 if isd_character.unstructured_posttreatment:
-                    character.unstructured = isd_character.unstructured_posttreatment
-
+                    character.unstructured = isd_character.unstructured_posttreatment.split(';')[0]
         return self.times_dict[ActionTypeEnum.TREAT_PATIENT]
 
 
