@@ -12,6 +12,8 @@ class P2TriageActionHandler(ITMActionHandler):
     """
     Class for validating and processing p2triage actions.
     """
+    TAG_TEXT = '. They are currently tagged ' # Added to unstructured text when tagged
+
     def __init__(self, session):
         """
         Initialize a P2TriageActionHandler.
@@ -69,11 +71,16 @@ class P2TriageActionHandler(ITMActionHandler):
             character: The character to treat
         """
 
-        # Update unstructured text to reflect treatment; strip out patient true name first.
+        # Update unstructured text to reflect treatment; strip out patient true name first; preserve tag.
         for isd_character in self.current_scene.state.characters:
             if isd_character.id == character.id:
                 if isd_character.unstructured_posttreatment:
-                    character.unstructured = isd_character.unstructured_posttreatment.split(';')[0]
+                    tag_index = character.unstructured.find(self.TAG_TEXT)
+                    if tag_index > 0: # tagged
+                        character.unstructured = isd_character.unstructured_posttreatment.split(';')[0] + \
+                            character.unstructured[tag_index:]
+                    else: # untagged
+                        character.unstructured = isd_character.unstructured_posttreatment.split(';')[0]
         return self.times_dict[ActionTypeEnum.TREAT_PATIENT]
 
 
@@ -94,11 +101,14 @@ class P2TriageActionHandler(ITMActionHandler):
 
         Args:
             character: The character to tag
-            tag: The tag to assign to the character.
+            tag: The tag to assign to the character. Replaces old tag if present.
         """
         character.tag = tag
+        # Update unstructured text to reflect tagging; support re-tagging.
         for isd_character in self.current_scene.state.characters:
             if isd_character.id == character.id:
+                character.unstructured = \
+                    character.unstructured.split(self.TAG_TEXT)[0] + self.TAG_TEXT + tag + '.'
                 return self.times_dict[ActionTypeEnum.TAG_CHARACTER]
 
 
