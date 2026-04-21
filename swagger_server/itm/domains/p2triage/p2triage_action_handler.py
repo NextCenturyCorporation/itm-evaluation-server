@@ -92,6 +92,10 @@ class P2TriageActionHandler(ITMActionHandler):
             character: The character to move to evac
         """
         character.unseen = True
+        # Update unstructured text to reflect evacuation.
+        for isd_character in self.current_scene.state.characters:
+            if isd_character.id == character.id:
+                character.unstructured += '. This patient has been moved to the evacuation zone.'
         return self.times_dict[ActionTypeEnum.MOVE_TO_EVAC]
 
 
