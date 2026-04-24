@@ -176,13 +176,15 @@ class ITMScenarioReader:
         Returns:
             A character object representing the generated character.
         """
-        demographics_data = character_data.get('demographics', {})
-        demographics = BaseDemographics(
-            age=demographics_data.get('age'),
-            sex=demographics_data.get('sex', 'Unknown'),
-            race=demographics_data.get('race', 'Unknown'),
-            role=demographics_data.get('role')
-        )
+        demographics_data = character_data.get('demographics')
+        demographics = None
+        if demographics_data:
+            demographics = BaseDemographics(
+                age=demographics_data.get('age'),
+                sex=demographics_data.get('sex', 'Unknown'),
+                race=demographics_data.get('race', 'Unknown'),
+                role=demographics_data.get('role')
+            )
         character = BaseCharacter(
             id=character_data['id'],
             unstructured=character_data['unstructured'],

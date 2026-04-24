@@ -1437,7 +1437,6 @@ components:
           title: unseen
           type: boolean
       required:
-      - demographics
       - id
       - name
       - unstructured
