@@ -5,7 +5,7 @@ info:
     This is the specification of the TA3 API for In The Moment (ITM).  Currently, the Evaluation API for TA2 supports functionality for the Phase 2 Evaluations.
 
     The API is based on the OpenAPI 3.0.3 specification.
-  version: 0.5.0
+  version: 0.5.3
 servers:
   - url: /
 paths:
@@ -44,6 +44,21 @@ components:
           format: float
           minimum: 0.0
           maximum: 1.0
+        unstructured_posttreatment:
+          type: string
+          description: unstructured description updated after character treatment
+          example: Military member of your unit with a treated torso injury.
+        tag:
+          $ref: "#/components/schemas/CharacterTagEnum"
+    CharacterTagEnum:
+      type: string
+      description: "the tag assigned to a character"
+      example: DELAYED
+      enum:
+        - MINIMAL
+        - DELAYED
+        - IMMEDIATE
+        - EXPECTANT
     DomainDemographics:
       type: object
       description: Basic domain-specific properties about the character
@@ -67,6 +82,8 @@ components:
       description: An action type [recognized by the ADM Server](https://github.com/NextCenturyCorporation/itm-evaluation-client?tab=readme-ov-file#available-actions)
       enum:
         - TREAT_PATIENT
+        - MOVE_TO_EVAC
+        - TAG_CHARACTER
 # Until oneOf is supported for extensible enums, define ActionTypeEnum here as the BaseActionTypeEnum strings plus DomainActionTypeEnum strings (above).
     ActionTypeEnum:
       type: string
@@ -77,3 +94,5 @@ components:
         - MESSAGE
         - SEARCH
         - TREAT_PATIENT
+        - MOVE_TO_EVAC
+        - TAG_CHARACTER
