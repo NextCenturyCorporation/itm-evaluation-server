@@ -146,7 +146,7 @@ To add a domain, you'll need to:
 2. Implement a domain-specific version of certain ITM server classes;
 3. Create domain-specific tests;
 4. Create and update configuration; and
-5. Document your domain actions in the `itm-client-evaluation` repository.
+5. Document your domain actions in the `itm-evaluation-client` repository.
 
 ### Create YAML definition
 Determine a one-word name for your domain and create the file `swagger/<domain_name>_swagger.yaml`. This file contains certain domain-specific versions of the model and define nested state. Modify the definitions of the domain-specific versions of various state objects (i.e., the model), namely:

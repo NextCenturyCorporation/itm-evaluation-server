@@ -3,10 +3,12 @@ from datetime import date, datetime  # noqa: F401
 from typing import List, Dict  # noqa: F401
 
 from swagger_server.models.base_model import Model
+from swagger_server.models.character_tag_enum import CharacterTagEnum
 from swagger_server.models.demographics import Demographics
 from swagger_server.models.rapport_enum import RapportEnum
 from swagger_server import util
 
+from swagger_server.models.character_tag_enum import CharacterTagEnum  # noqa: E501
 from swagger_server.models.demographics import Demographics  # noqa: E501
 from swagger_server.models.rapport_enum import RapportEnum  # noqa: E501
 
@@ -16,13 +18,17 @@ class Character(Model):
     Do not edit the class manually.
     """
 
-    def __init__(self, medical_condition=None, attribute_rating=None, id=None, name=None, unstructured=None, demographics=None, rapport=None, unseen=False):  # noqa: E501
+    def __init__(self, medical_condition=None, attribute_rating=None, unstructured_posttreatment=None, tag=None, id=None, name=None, unstructured=None, demographics=None, rapport=None, unseen=False):  # noqa: E501
         """Character - a model defined in OpenAPI
 
         :param medical_condition: The medical_condition of this Character.  # noqa: E501
         :type medical_condition: float
         :param attribute_rating: The attribute_rating of this Character.  # noqa: E501
         :type attribute_rating: float
+        :param unstructured_posttreatment: The unstructured_posttreatment of this Character.  # noqa: E501
+        :type unstructured_posttreatment: str
+        :param tag: The tag of this Character.  # noqa: E501
+        :type tag: CharacterTagEnum
         :param id: The id of this Character.  # noqa: E501
         :type id: str
         :param name: The name of this Character.  # noqa: E501
@@ -39,6 +45,8 @@ class Character(Model):
         self.openapi_types = {
             'medical_condition': float,
             'attribute_rating': float,
+            'unstructured_posttreatment': str,
+            'tag': CharacterTagEnum,
             'id': str,
             'name': str,
             'unstructured': str,
@@ -50,6 +58,8 @@ class Character(Model):
         self.attribute_map = {
             'medical_condition': 'medical_condition',
             'attribute_rating': 'attribute_rating',
+            'unstructured_posttreatment': 'unstructured_posttreatment',
+            'tag': 'tag',
             'id': 'id',
             'name': 'name',
             'unstructured': 'unstructured',
@@ -60,6 +70,8 @@ class Character(Model):
 
         self._medical_condition = medical_condition
         self._attribute_rating = attribute_rating
+        self._unstructured_posttreatment = unstructured_posttreatment
+        self._tag = tag
         self._id = id
         self._name = name
         self._unstructured = unstructured
@@ -131,6 +143,50 @@ class Character(Model):
             raise ValueError("Invalid value for `attribute_rating`, must be a value greater than or equal to `0.0`")  # noqa: E501
 
         self._attribute_rating = attribute_rating
+
+    @property
+    def unstructured_posttreatment(self) -> str:
+        """Gets the unstructured_posttreatment of this Character.
+
+        unstructured description updated after character treatment  # noqa: E501
+
+        :return: The unstructured_posttreatment of this Character.
+        :rtype: str
+        """
+        return self._unstructured_posttreatment
+
+    @unstructured_posttreatment.setter
+    def unstructured_posttreatment(self, unstructured_posttreatment: str):
+        """Sets the unstructured_posttreatment of this Character.
+
+        unstructured description updated after character treatment  # noqa: E501
+
+        :param unstructured_posttreatment: The unstructured_posttreatment of this Character.
+        :type unstructured_posttreatment: str
+        """
+
+        self._unstructured_posttreatment = unstructured_posttreatment
+
+    @property
+    def tag(self) -> CharacterTagEnum:
+        """Gets the tag of this Character.
+
+
+        :return: The tag of this Character.
+        :rtype: CharacterTagEnum
+        """
+        return self._tag
+
+    @tag.setter
+    def tag(self, tag: CharacterTagEnum):
+        """Sets the tag of this Character.
+
+
+        :param tag: The tag of this Character.
+        :type tag: CharacterTagEnum
+        """
+
+        self._tag = tag
 
     @property
     def id(self) -> str:
@@ -225,8 +281,6 @@ class Character(Model):
         :param demographics: The demographics of this Character.
         :type demographics: Demographics
         """
-        if demographics is None:
-            raise ValueError("Invalid value for `demographics`, must not be `None`")  # noqa: E501
 
         self._demographics = demographics
 

@@ -161,8 +161,6 @@ class BaseCharacter(Model):
         :param demographics: The demographics of this BaseCharacter.
         :type demographics: Demographics
         """
-        if demographics is None:
-            raise ValueError("Invalid value for `demographics`, must not be `None`")  # noqa: E501
 
         self._demographics = demographics
 

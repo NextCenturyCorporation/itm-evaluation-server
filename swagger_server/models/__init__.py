@@ -15,6 +15,7 @@ from swagger_server.models.base_state import BaseState
 from swagger_server.models.base_threat_type_enum import BaseThreatTypeEnum
 from swagger_server.models.character import Character
 from swagger_server.models.character_role_enum import CharacterRoleEnum
+from swagger_server.models.character_tag_enum import CharacterTagEnum
 from swagger_server.models.conditions import Conditions
 from swagger_server.models.demographic_sex_enum import DemographicSexEnum
 from swagger_server.models.demographics import Demographics
