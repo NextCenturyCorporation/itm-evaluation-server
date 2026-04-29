@@ -176,13 +176,15 @@ class ITMScenarioReader:
         Returns:
             A character object representing the generated character.
         """
-        demographics_data = character_data.get('demographics', {})
-        demographics = BaseDemographics(
-            age=demographics_data.get('age'),
-            sex=demographics_data.get('sex', 'Unknown'),
-            race=demographics_data.get('race', 'Unknown'),
-            role=demographics_data.get('role')
-        )
+        demographics_data = character_data.get('demographics')
+        demographics = None
+        if demographics_data:
+            demographics = BaseDemographics(
+                age=demographics_data.get('age'),
+                sex=demographics_data.get('sex', 'Unknown'),
+                race=demographics_data.get('race', 'Unknown'),
+                role=demographics_data.get('role')
+            )
         character = BaseCharacter(
             id=character_data['id'],
             unstructured=character_data['unstructured'],
@@ -207,8 +209,8 @@ class ITMScenarioReader:
             intent_action=mapping_data.get('intent_action', False),
             threat_state=threat_state,
             parameters=mapping_data.get('parameters'),
-            probe_id=mapping_data['probe_id'],
-            choice=mapping_data['choice'],
+            probe_id=mapping_data.get('probe_id'),
+            choice=mapping_data.get('choice'),
             next_scene=mapping_data.get('next_scene'),
             kdma_association=mapping_data.get('kdma_association'),
             action_condition_semantics=mapping_data.get('action_condition_semantics', SemanticTypeEnum.AND),

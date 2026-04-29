@@ -26,12 +26,13 @@ class ITMScenario:
         self.probe_responses_sent = []
         from.itm_session import ITMSession
         self.session: ITMSession = session
-        self.isd: ITMScenarioData
+        self.isd: ITMScenarioData = None
         self.id=''
         self.name=''
         self.adm_id=''
         self.adm_name=''
         self.start_time = None
+        self.first_scene = None
 
     @staticmethod
     def clear_hidden_data(state: State, training: bool):
@@ -54,6 +55,7 @@ class ITMScenario:
         self.name = scenario.name
         self.adm_id = scenario.alt_id
         self.adm_name = scenario.alt_name
+        self.first_scene = scenario.first_scene
 
     def set_controller(self, controller: ITMTa1Controller):
         self.ta1_controller = controller
@@ -140,11 +142,17 @@ class ITMScenario:
         logging.info("Responding to probe %s from scenario %s with choice %s.",
                      response.probe_id, response.scenario_id, response.choice)
 
+    def action_taken(self, action: Action):
+        pass # Nothing to do at base class level
+
+    def end_scenario(self):
+        self.session.end_scenario()
+
 
     def change_scene(self, next_scene_id):
         if next_scene_id == ITMScene.END_SCENARIO_SENTINEL:
             self.isd.current_scene.state = None # Supports single-scenario sessions
-            self.session.end_scenario()
+            self.end_scenario()
             return
 
         next_scene = [scene for scene in self.isd.scenes if scene.id == next_scene_id]
@@ -155,7 +163,7 @@ class ITMScenario:
             else:
                 logging.error("\033[92mScene configuration issue: next scene '%s' not found; ending scenario.\033[00m", next_scene_id)
             self.isd.current_scene.state = None # Supports single-scenario sessions
-            self.session.end_scenario()
+            self.end_scenario()
             return
 
         previous_scene_characters = self.isd.current_scene.state.characters
@@ -166,7 +174,7 @@ class ITMScenario:
         # If the scene has no action mappings, then the scenario ends.
         if self.isd.current_scene.action_mappings == []:
             logging.warning("Scene has no action mappings; ending scenario.")
-            self.session.end_scenario()
+            self.end_scenario()
             return
 
         # Log the scene change
