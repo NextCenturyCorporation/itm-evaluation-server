@@ -94,7 +94,7 @@ REQUIRED_CONFIG=EVALUATION_TYPE, SCENARIO_DIRECTORY, ADEPT_URL, SAVE_HISTORY, SA
 
 [FEB_OPENWORLD]
 
-EVAL_NAME=Phase 2 Feb 2026 Open World Experiment Part 2
+EVAL_NAME=Feb 2026 Open World Experiment Part 2
 EVAL_NUMBER=15
 INFERRED_RESPONSES=True
 
@@ -102,3 +102,29 @@ ADEPT_EVAL_FILENAMES=feb2026-desert-openworld2.yaml,feb2026-urban-openworld2.yam
 
 ADEPT_EVAL_K1_SCENARIOS=Feb2026-OW_desert2,Feb2026-OW_urban2
 ADEPT_EVAL_K2_SCENARIOS=Feb2026-OW_desert2,Feb2026-OW_urban2
+
+[APRIL_OPENWORLD]
+
+EVALUATION_TYPE=april2026
+SCENARIO_DIRECTORY=swagger_server/itm/data/%(EVALUATION_TYPE)s/scenarios/
+EVAL_NAME=April 2026 Open World Experiment Part 2
+EVAL_NUMBER=16
+INFERRED_RESPONSES=True
+
+ADEPT_EVAL_FILENAMES=april2026-desert-openworld2.yaml,april2026-urban-openworld2.yaml
+
+ADEPT_EVAL_K1_SCENARIOS=April2026-OW_desert2,April2026-OW_urban2
+ADEPT_EVAL_K2_SCENARIOS=April2026-OW_desert2,April2026-OW_urban2
+
+[JUNE_OPENWORLD]
+
+EVALUATION_TYPE=june2025
+SCENARIO_DIRECTORY=swagger_server/itm/data/%(EVALUATION_TYPE)s/scenarios/
+EVAL_NAME=June 2025 Open World Experiment Part 2
+EVAL_NUMBER=8
+INFERRED_RESPONSES=True
+
+ADEPT_EVAL_FILENAMES=june2025-desert-openworld2.yaml,june2025-urban-openworld2.yaml
+
+ADEPT_EVAL_K1_SCENARIOS=June2025-OW_desert2,June2025-OW_urban2
+ADEPT_EVAL_K2_SCENARIOS=June2025-OW_desert2,June2025-OW_urban2

@@ -22,17 +22,18 @@ kdmas_info: list[dict] = [
     {'acronym': 'SS', 'full_name': 'Search vs Stay', 'filename': f'{EVALUATION_NAME}SearchStay'},
     {'acronym': 'PS', 'full_name': 'Personal Safety Focus', 'filename': f'{EVALUATION_NAME}PersonalSafety'},
     {'acronym': 'SB', 'full_name': 'Subpopulation', 'filename': f'{EVALUATION_NAME}Subpopulation'},
-    {'acronym': 'OW', 'full_name': 'Open World Desert', 'filename': f'{EVALUATION_NAME}-OW-desert'},
-    {'acronym': 'OW', 'full_name': 'Open World Urban', 'filename': f'{EVALUATION_NAME}-OW-urban'}
+    {'acronym': 'OW', 'full_name': 'Open World Desert', 'filename': f'{EVALUATION_NAME}-OW-desert2'},
+    {'acronym': 'OW', 'full_name': 'Open World Urban', 'filename': f'{EVALUATION_NAME}-OW-urban2'}
     ]
 
 kdma_mapping: dict = {'AF': 'affiliation', 'MF': 'merit', 'SS': 'search', 'PS': 'personal_safety', 'SB': 'subpopulation'}
 
 expected_fields = ['scenario_id', 'scenario_name', 'probe_id', 'intro_text', 'probe_full_text', 'probe_question',
-                   'patient_a_text', 'patient_b_text', 'pa_medical', 'pb_medical',
+                   'patient_a_text', 'patient_b_text', 'pa_treated', 'pb_treated', 'pa_medical', 'pb_medical',
                    'pa_affiliation', 'pa_merit', 'pa_search', 'pa_personal_safety', 'pb_affiliation', 'pb_merit',
                    'pb_search', 'pb_personal_safety', 'choice1_text', 'choice2_text']
 
+ow_char_info: dict
 
 def get_kdma_bases(acronym, probe_id: str):
     kdmas = []
@@ -48,8 +49,10 @@ def get_kdma_bases(acronym, probe_id: str):
             kdmas.append(kdma_mapping[part])
 
     if len(kdmas) == 0:
-        print(f"Could not derive KDMA base from acronym {acronym} or probe ID {probe_id}! Exiting.")
-        exit(1)
+        if 'Fake' not in probe_id:
+            print(f"WARNING: could not derive KDMA base from acronym {acronym} or probe ID {probe_id}; assuming merit.")
+        kdmas.append('merit')
+
     return kdmas
 
 
@@ -70,10 +73,22 @@ def make_state(row: dict, acronym: str, training: str, first_row: str = False) -
     state: dict = {'unstructured': row['intro_text'] if first_row else row['probe_full_text'], 'characters': character_list}
 
     # Hack to make TA2's life easier.  TBD remove...
-    threats = []
-    threat_state = {'unstructured': row['intro_text'], 'threats': threats}
-    if not first_row:
-        state.update({'threat_state': threat_state})
+    if 'Open World' not in row['scenario_name']:
+        threats = []
+        threat_state = {'unstructured': row['intro_text'], 'threats': threats}
+        if not first_row:
+            state.update({'threat_state': threat_state})
+    else: # save character info for OW scenarios
+        for index, char in enumerate(character_list):
+            patient_name = f"Patient {len(ow_char_info) + 1}"
+            unstructured: str = char['unstructured']
+            char_name = (unstructured.split(';')[-1]).strip()
+            unstructured = unstructured[0:unstructured.rindex(';')]
+            if char_name not in ow_char_info.keys(): # Have we added this patient yet?
+                char_info: dict = {'id': patient_name, 'name': patient_name, 'unstructured': unstructured,
+                                'unstructured_posttreatment': row['pa_treated'] if not index else row['pb_treated'],
+                                'medical_condition': char['medical_condition']}
+                ow_char_info[char_name] = char_info
 
     return state
 
@@ -104,7 +119,7 @@ def make_mappings(row: dict, acronym: str, training: bool) -> list:
     choice_id = f"Response {probe_id.split()[1]}-B"
 
     match acronym:
-        case 'AF' | 'MF' | 'SB':
+        case 'AF' | 'MF' | 'SB' | 'OW':
             action_type = 'TREAT_PATIENT'
         case 'PS':
             action_type = 'END_SCENE'
@@ -160,6 +175,8 @@ def process_scenario(reader: csv.DictReader, acronym: str, full_name: str, first
     elif 'Evaluation Set' in scenario_name and not 'Full Evaluation' in scenario_name:
         data: dict = {'id': scenario_id, 'name': scenario_name, "alt_id": scenario_id.replace(f'-{acronym}-', '-'),
                       "alt_name": scenario_name.replace(f'{full_name} ', ''), 'state': make_state(first_row, acronym, training, True)}
+    elif 'Open World' in scenario_name and 'Part' in scenario_name:
+        data: dict = {'id': scenario_id, 'name': scenario_name, 'first_scene': 'treat_and_tag', 'state': make_state(first_row, acronym, False, True)}
     else:
         data: dict = {'id': scenario_id, 'name': scenario_name, 'state': make_state(first_row, acronym, training, True)}
     scenes: list = []
@@ -196,6 +213,33 @@ def set_next_scene(scenes: list):
     scenes[-1]['next_scene'] = '__END_SCENARIO__'
 
 
+"""
+    Add (mostly fixed) tag+treat and evac scenes
+"""
+def add_ow_scenes(data: dict):
+    if VERBOSE:
+        print(ow_char_info)
+
+    # Add treat_and_tag scene
+    characters: list = [char for char in ow_char_info.values()]
+    action_mapping: list = []
+    action_mapping.append({'action_id': 'treat_patient', 'action_type': 'TREAT_PATIENT', 'unstructured': "Treat a Patient", 'repeatable': True})
+    action_mapping.append({'action_id': 'tag_patient', 'action_type': 'TAG_CHARACTER', 'unstructured': "Place a triage tag on a Patient", 'repeatable': True})
+    state = {'unstructured': data['state']['unstructured'] + " Medevac is inbound. Please treat and tag patients all patients, then end the scene when you are done.",
+             'characters': characters}
+    treat_and_tag_scene = {'id': 'treat_and_tag', 'next_scene': 'evac_decision', 'end_scene_allowed': True, 'restricted_actions': ['MOVE_TO_EVAC'],
+                           'state': state, 'action_mapping': action_mapping, 'transitions': {'elapsed_time_gt': 999}}
+    data['scenes'].append(treat_and_tag_scene)
+
+    # Add evac_decision scene
+    action_mapping = []
+    action_mapping.append({'action_id': 'evac_patient', 'action_type': 'MOVE_TO_EVAC', 'unstructured': "Move a Patient to Medevac", 'repeatable': True})
+    state = {'unstructured': "Medevac has arrived. Three casualty capacity only. Whom are you selecting for transport?"}
+    evac_scene = {'id': 'evac_decision', 'next_scene': '__END_SCENARIO__', 'end_scene_allowed': False, 'restricted_actions': ['TREAT_PATIENT', 'TAG_CHARACTER'],
+                           'persist_characters': True, 'state': state, 'action_mapping': action_mapping, 'transitions': {'elapsed_time_gt': 299}}
+    data['scenes'].append(evac_scene)
+
+
 def main():
     eval_filenum = 0
     for kdma_info in kdmas_info:
@@ -218,6 +262,8 @@ def main():
         more_data = True
         # Process the csv file writing out all YAML files
         while more_data:
+            global ow_char_info
+            ow_char_info = {}
             data, next_row = process_scenario(reader, acronym, full_name, next_row)
             more_data = next_row is not None
             redact_string = '_redacted' if REDACT_EVAL else ''
@@ -252,12 +298,15 @@ def main():
                     assess_scenario_num += 1
             else: # Open World
                 environment = 'desert' if 'Desert' in kdma_info['full_name'] else 'urban'
-                outfile = f"{EVALUATION_NAME.lower()}-{environment}-openworld{redact_string}.yaml"
+                outfile = f"{EVALUATION_NAME.lower()}-{environment}-openworld2{redact_string}.yaml"
 
             # Go back and add next_scene property now that we have everything
             if 'train' not in data['id'] and 'subpopulation' not in data['id']:
                 random.shuffle(data['scenes'])
             set_next_scene(data['scenes'])
+
+            if "Open World" in data['name']:
+                add_ow_scenes(data)
 
             # Write the data to a YAML file using dump() function
             print(f"{'NOT ' if not WRITE_FILES else ''}Writing {len(data['scenes'])} probes to {OUT_PATH}{os.sep}{outfile}.")
