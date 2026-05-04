@@ -63,6 +63,7 @@ class ITMSession:
         Initialize an ITMSession.
         """
         self.session_id = None
+        self.log_id = None
         self.adm_name = ''
         self.adm_profile = ''
         self.time_started = 0
@@ -161,7 +162,7 @@ class ITMSession:
         self.history.add_history(
             "Scenario ended", {"scenario_id": self.itm_scenario.id, "session_id": self.session_id,
                             "end_time": str(scenario_end_time), "simulated_elapsed_time": self.state.elapsed_time}, None)
-        logging.info("Scenario %s ended.", self.itm_scenario.id)
+        logging.info("%s: Scenario %s ended.", self.log_id, self.itm_scenario.id)
         self.state.scenario_complete = True
 
         if self.kdma_training:
@@ -184,15 +185,15 @@ class ITMSession:
                     "target_id": self.itm_scenario.ta1_controller.alignment_target_id},
                     session_alignment.to_dict()
                 )
-                logging.info("Got session alignment score %s from TA1.", session_alignment_score)
+                logging.info("%s: Got session alignment score %s from TA1.", self.log_id, session_alignment_score)
                 kdmas = []
                 for kdma in session_alignment.kdma_values:
                     kdmas.append(kdma.to_dict())
                 if session_alignment.alignment_source:
                     alignment_scenario_id = session_alignment.alignment_source[0].scenario_id
                     if self.itm_scenario.id != alignment_scenario_id:
-                        logging.warning("\033[92mContamination in session_alignment! scenario is %s but alignment source scenario is %s.\033[00m",
-                                        self.itm_scenario.id, alignment_scenario_id)
+                        logging.warning("\033[92m%s: Contamination in session_alignment! scenario is %s but alignment source scenario is %s.\033[00m",
+                                        self.log_id, self.itm_scenario.id, alignment_scenario_id)
             except exceptions.HTTPError:
                 session_alignment_score = 'Error'
                 logging.exception("HTTPError from TA1 getting session alignment.")
@@ -292,7 +293,7 @@ class ITMSession:
             return 'No alignment target in training sessions', 400
 
         if self.session_type == 'eval' and 'base' in self.adm_profile:
-            logging.warning('\033[92mAn ADM with "base" in the ADM profile is requesting an alignment target during evaluation.\033[00m')
+            logging.warning('\033[92mADM %s with "base" in the ADM profile is requesting an alignment target during evaluation.\033[00m', self.adm_name)
 
         self.history.add_history(
             "Get Alignment Target",
@@ -378,7 +379,7 @@ class ITMSession:
                 "Start Scenario",
                 {"session_id": self.session_id, "adm_name": self.adm_name, "adm_profile": self.adm_profile,
                  "domain": self.domain, "start_time": self.itm_scenario.start_time}, scenario.to_dict())
-            logging.info("Scenario %s starting.", self.itm_scenario.id)
+            logging.info("%s: Scenario %s starting.", self.log_id, self.itm_scenario.id)
             scenario.id = self.itm_scenario.adm_id # Redact actual id/name from ADMs
             scenario.name = self.itm_scenario.adm_name
             scenario.alt_id = None
@@ -391,7 +392,7 @@ class ITMSession:
                     self.history.add_history(
                         "TA1 Session ID", {}, ta1_session_id
                     )
-                    logging.info("Got new session_id '%s' from TA1.", ta1_session_id)
+                    logging.info("%s: Got new session_id '%s' from TA1.", self.log_id, ta1_session_id)
                 except exceptions.HTTPError:
                     self._end_session() # Exception here ends the session
                     logging.exception("HTTPError from TA1 starting session.")
@@ -404,7 +405,7 @@ class ITMSession:
             # Get alignment target; was previously obtained from TA1 unless testing.
             if not self.kdma_training:
                 alignment_target = self.itm_scenario.alignment_target
-                logging.info("Using alignment target %s.", alignment_target.id)
+                logging.info("%s: Using alignment target %s.", self.log_id, alignment_target.id)
                 self.history.add_history(
                     "Alignment Target",
                     {"session_id": self.itm_scenario.ta1_controller.session_id if self.ta1_integration else None,
@@ -414,7 +415,7 @@ class ITMSession:
 
             return scenario
         except:
-            logging.exception("Exception getting next scenario; ending session.")
+            logging.exception("%s: Exception getting next scenario; ending session.", self.log_id)
             self._end_session() # Exception here ends the session
             return 'Exception getting next scenario; ending session.', 503
 
@@ -452,6 +453,7 @@ class ITMSession:
 
         if self.session_id is None:
             self.session_id = str(uuid.uuid4())
+            self.log_id = self.session_id.split('-')[-1]
         else:
             return 'System Overload', 503 # itm_ta2_eval_controller should prevent this
 
@@ -574,10 +576,10 @@ class ITMSession:
 
             self.itm_scenarios.extend(ta1_scenarios)
             num_read_scenarios += len(ta1_scenarios)
-            logging.info('Loaded %d scenario(s) for %s.', len(ta1_scenarios), ta1_name)
+            logging.info('%s: Loaded %d scenario(s) for %s.', self.log_id, len(ta1_scenarios), ta1_name)
 
         scenario_ctr = 0
-        logging.info("Scenario load summary:")
+        logging.info("%s: Scenario load summary:", self.log_id)
         for scenario in self.itm_scenarios:
             logging.info(f'  Scenario #{scenario_ctr+1} has ID {scenario.id} and alignment target {scenario.alignment_target.id}.')
             scenario_ctr += 1
@@ -589,7 +591,7 @@ class ITMSession:
                 random_index = random.randint(0, num_read_scenarios - 1)
                 self.itm_scenarios.append(deepcopy(self.itm_scenarios[random_index]))
 
-        logging.info("Loaded %d total scenario(s) from '%s'.", len(self.itm_scenarios), scenario_path)
+        logging.info("%s: Loaded %d total scenario(s) from '%s'.", self.log_id, len(self.itm_scenarios), scenario_path)
         self.current_scenario_index = 0
 
         return self.session_id, 200
@@ -679,7 +681,7 @@ class ITMSession:
             The current state of the scenario as a State object.
         """
 
-        message = f"ADM {'intended' if intent_only else 'chose'} action {adm_action.action_type}"
+        message = f"{self.log_id}: ADM {'intended' if intent_only else 'chose'} action {adm_action.action_type}"
         if adm_action.character_id:
             message += f" with character {adm_action.character_id}"
             if adm_action.parameters:
@@ -719,7 +721,8 @@ class ITMSession:
                 return 'Could not get session alignment; is a TA1 server running?', 503
         else:
             session_alignment = AlignmentResults(alignment_source=[], alignment_target_id=target_id, score=-0.5)
-        logging.info("Got session alignment score %f from TA1 for alignment target id %s.", session_alignment.score, target_id)
+        logging.info("%s: Got session alignment score %f from TA1 for alignment target id %s.",
+                     self.log_id, session_alignment.score, target_id)
         self.history.add_history(
             "Get Session Alignment",
             {"scenario_id": self.itm_scenario.id, "session_id": self.session_id, "target_id": target_id},
