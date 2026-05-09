@@ -16,9 +16,8 @@ Usage
 
 Default Groups
 --------------------
-  Group 1: Phase 2 testing mode - cfgs: DEFAULT, FEB_OPENWORLD, JUNE_OPENWORLD
-  Group 2: Phase 2 normal mode  - cfgs: DEFAULT, FEB_OPENWORLD, JUNE_OPENWORLD
-  Group 3: Phase 1 testing mode - cfgs: DEFAULT
+  Group 1: Phase 2 testing mode - cfgs: FEB_OPENWORLD, JUNE_OPENWORLD, APRIL_OPENWORLD
+  Group 2: Phase 2 normal mode  - cfgs: FEB_OPENWORLD, JUNE_OPENWORLD, APRIL_OPENWORLD
 
 Local Config
 --------------------
@@ -56,20 +55,15 @@ from urllib.parse import urlparse
 import requests
 
 DEFAULT_GROUPS = {
-    '1': {
-        'cfgs': ["DEFAULT", "FEB_OPENWORLD", "JUNE_OPENWORLD"],
-        'testing': True,
-        'phase': 2
+    "1": {
+        "cfgs": ["FEB_OPENWORLD", "JUNE_OPENWORLD", "APRIL_OPENWORLD"],
+        "testing": True,
+        "phase": 2
     },
-    '2': {
-        'cfgs': ["DEFAULT"],
-        'testing': False,
-        'phase': 2
-    },
-    '3': {
-        'cfgs': ["DEFAULT"],
-        'testing': True,
-        'phase': 1
+    "2": {
+        "cfgs": ["FEB_OPENWORLD", "JUNE_OPENWORLD", "APRIL_OPENWORLD"],
+        "testing": False,
+        "phase": 2
     }
 }
 
@@ -482,10 +476,16 @@ def sanitize_branch_name(branch_name):
     sanitized = sanitized.strip("._-")
     return sanitized if sanitized else "unnamed_branch"
 
-def build_output_path(branch_name, cfg, group_name):
+def build_output_dir(branch_name):
     branch_dir = RESULTS_ROOT / sanitize_branch_name(branch_name)
     branch_dir.mkdir(parents=True, exist_ok=True)
-    return branch_dir / f"{cfg}_GROUP_{group_name}.txt"
+    return branch_dir
+
+def build_client_output_path(branch_name, cfg, group_name):
+    return build_output_dir(branch_name) / f"client_{cfg}_{group_name}.txt"
+
+def build_server_output_path(branch_name, cfg, group_name):
+    return build_output_dir(branch_name) / f"server_{cfg}_{group_name}.txt"
 
 def build_runner_command(client_venv_python, runner_path, phase):
     runner_cmd = [str(client_venv_python), str(runner_path), '--name', 'integration_test', '--session', 'adept']
@@ -582,22 +582,25 @@ def main():
         server_command = [sys.executable, '-m', 'swagger_server', '-c', cfg, '-p', str(port)]
         if group_info['testing']:
             server_command.append('-t')
-        server = subprocess.Popen(server_command)
+        server_output_path = build_server_output_path(args.branch, cfg, args.group)
+        server_fh = server_output_path.open('w', encoding='utf-8')
+        server = subprocess.Popen(server_command, stdout=server_fh, stderr=subprocess.STDOUT)
         try:
             wait_for_server_ui(port)
-            output_path = build_output_path(args.branch, cfg, args.group)
-            with output_path.open('w', encoding='utf-8') as fh:
+            client_output_path = build_client_output_path(args.branch, cfg, args.group)
+            with client_output_path.open('w', encoding='utf-8') as client_fh:
                 runner_cmd = build_runner_command(client_venv_python, runner_path, group_info['phase'])
                 env = os.environ.copy()
                 env["TA3_HOSTNAME"] = "127.0.0.1"
                 env["TA3_PORT"] = str(port)
-                subprocess.run(runner_cmd, cwd=str(client_root), stdout=fh, stderr=subprocess.STDOUT, check=True, env=env)
-            ensure_runner_exercised_scenarios(output_path, cfg)
+                subprocess.run(runner_cmd, cwd=str(client_root), stdout=client_fh, stderr=subprocess.STDOUT, check=True, env=env)
+            ensure_runner_exercised_scenarios(client_output_path, cfg)
         except Exception as e:
             logging.fatal(f"Error during run for config {cfg}: {e}")
         finally:
             logging.info("Stopping server.")
             port = ensure_server_stopped(server, port, args.auto_port)
+            server_fh.close()
 
 if __name__ == '__main__':
     main()
