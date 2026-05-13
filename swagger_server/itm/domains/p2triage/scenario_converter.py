@@ -5,7 +5,7 @@ import argparse
 import random
 
 # These are constants that cannot be overridden via the command line
-DEFAULT_EVALUATION_NAME = 'Feb2026'
+DEFAULT_EVALUATION_NAME = 'June2026'
 TA1_NAME = 'adept'
 
 # These are default values that can be overridden via the command line
@@ -14,7 +14,7 @@ VERBOSE = False
 EVALUATION_NAME = DEFAULT_EVALUATION_NAME
 WRITE_FILES = True
 OUT_PATH = f"swagger_server/itm/data/{EVALUATION_NAME.lower()}/scenarios"
-IGNORED_LIST = ['AF', 'MF', 'SS', 'PS', 'SB'] # Not needed for this round
+IGNORED_LIST = ['AF', 'MF', 'SS', 'SB', 'OW'] # Not needed for this round
 
 kdmas_info: list[dict] = [
     {'acronym': 'MF', 'full_name': 'Merit Focus', 'filename': f'{EVALUATION_NAME}MeritFocus'},
@@ -29,7 +29,7 @@ kdmas_info: list[dict] = [
 kdma_mapping: dict = {'AF': 'affiliation', 'MF': 'merit', 'SS': 'search', 'PS': 'personal_safety', 'SB': 'subpopulation'}
 
 expected_fields = ['scenario_id', 'scenario_name', 'probe_id', 'intro_text', 'probe_full_text', 'probe_question',
-                   'patient_a_text', 'patient_b_text', 'pa_treated', 'pb_treated', 'pa_medical', 'pb_medical',
+                   'patient_a_text', 'patient_b_text', 'pa_medical', 'pb_medical',
                    'pa_affiliation', 'pa_merit', 'pa_search', 'pa_personal_safety', 'pb_affiliation', 'pb_merit',
                    'pb_search', 'pb_personal_safety', 'choice1_text', 'choice2_text']
 
@@ -254,9 +254,9 @@ def main():
         next(reader) # Skip header
 
         print(f"Processing {full_name} ({acronym}) from {filename}.")
-        train_scenario_num = '' # If training probes are split up into multiple files, set this to 1
-        assess_scenario_num = ''  # If assessment probes are split up into multiple files, set this to 1
-        observe_scenario_num = ''  # If observation probes are split up into multiple files, set this to 1
+        train_scenario_num = 1 # If training probes are not split up into multiple files, set this to ''
+        assess_scenario_num = 1  # If assessment probes are not split up into multiple files, set this to ''
+        observe_scenario_num = 1  # If observation probes are not split up into multiple files, set this to ''
         data: dict = None
         next_row = None
         more_data = True
@@ -273,27 +273,27 @@ def main():
             if 'train' in data['id']:
                 if REDACT_EVAL:
                     continue
-                outfile = f"{EVALUATION_NAME.lower()}-{TA1_NAME}-train-{acronym}{train_scenario_num}.yaml"
+                outfile = f"{EVALUATION_NAME.lower()}-{TA1_NAME}-train-binary-{acronym}{train_scenario_num}.yaml"
                 if train_scenario_num:
                     train_scenario_num += 1
             elif 'eval' in data['id']:
                 if 'Full Evaluation' in full_name:
-                    outfile = f"{EVALUATION_NAME.lower()}-{TA1_NAME}-eval{redact_string}.yaml"
+                    outfile = f"{EVALUATION_NAME.lower()}-{TA1_NAME}-eval-binary-{redact_string}.yaml"
                 else:
-                    outfile = f"{EVALUATION_NAME.lower()}-{TA1_NAME}-eval-{acronym}{redact_string}.yaml"
+                    outfile = f"{EVALUATION_NAME.lower()}-{TA1_NAME}-eval-binary-{acronym}{redact_string}.yaml"
                     eval_filenum += 1
                     data['alt_id'] = f"{data['alt_id']}-{eval_filenum}"
                     data['alt_name'] = f"{data['alt_name']} {eval_filenum}"
             elif 'subpopulation' in data['id']:
                 outfile = f"{EVALUATION_NAME.lower()}-{TA1_NAME}-subpopulation.yaml"
             elif 'observe' in data['id']:
-                outfile = f"{EVALUATION_NAME.lower()}-{TA1_NAME}-observe-{acronym}{observe_scenario_num}{redact_string}.yaml"
+                outfile = f"{EVALUATION_NAME.lower()}-{TA1_NAME}-observe-binary-{acronym}{observe_scenario_num}{redact_string}.yaml"
                 if observe_scenario_num:
                     observe_scenario_num += 1
             elif 'assess' in data['id']:
                 if REDACT_EVAL:
                     continue
-                outfile = f"{EVALUATION_NAME.lower()}-{TA1_NAME}-assess-{acronym}{assess_scenario_num}.yaml"
+                outfile = f"{EVALUATION_NAME.lower()}-{TA1_NAME}-assess-binary-{acronym}{assess_scenario_num}.yaml"
                 if assess_scenario_num:
                     assess_scenario_num += 1
             else: # Open World
@@ -342,7 +342,7 @@ if __name__ == '__main__':
         VERBOSE = True
     if args.evalname:
         EVALUATION_NAME = args.evalname
-        OUT_PATH.replace(DEFAULT_EVALUATION_NAME, EVALUATION_NAME)
+        OUT_PATH = OUT_PATH.replace(DEFAULT_EVALUATION_NAME, EVALUATION_NAME)
         for kdma_info in kdmas_info:
             kdma_info['filename'] = kdma_info['filename'].replace(DEFAULT_EVALUATION_NAME, EVALUATION_NAME)
     if args.no_output:
