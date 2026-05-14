@@ -196,10 +196,10 @@ class ITMSession:
                                         self.log_id, self.itm_scenario.id, alignment_scenario_id)
             except exceptions.HTTPError:
                 session_alignment_score = 'Error'
-                logging.exception("HTTPError from TA1 getting session alignment.")
+                logging.exception("%s: HTTPError from TA1 getting session alignment.", self.log_id)
             except Exception:
                 session_alignment_score = 'Error'
-                logging.exception("Exception getting session alignment. Ignoring.")
+                logging.exception("%s: Exception getting session alignment. Ignoring.", self.log_id)
 
         if (self.session_type != 'test'):
             self.state.unstructured = f'Scenario {self.itm_scenario.adm_id} complete for target {self.itm_scenario.alignment_target.id}. Session alignment score = {session_alignment_score}'
@@ -395,10 +395,10 @@ class ITMSession:
                     logging.info("%s: Got new session_id '%s' from TA1.", self.log_id, ta1_session_id)
                 except exceptions.HTTPError:
                     self._end_session() # Exception here ends the session
-                    logging.exception("HTTPError from TA1 starting session.")
+                    logging.exception("%s: HTTPError from TA1 starting session.", self.log_id)
                     return 'Could not get new session.  Ending session.', 503
                 except:
-                    logging.exception("Exception communicating with TA1; is the TA1 server running?  Ending session.")
+                    logging.exception("%s: Exception communicating with TA1; is the TA1 server running?  Ending session.", self.log_id)
                     self._end_session() # Exception here ends the session
                     return 'Exception communicating with TA1; is the TA1 server running?  Ending session.', 503
 
@@ -511,7 +511,7 @@ class ITMSession:
                 ITMSession.init_ta1_data(ta1_names)
                 ITMSession.alignment_data.clear() # Clear alignment data cache
             except:
-                logging.exception("Exception communicating with TA1; is the TA1 server running?  Ending session.")
+                logging.exception("%s: Exception communicating with TA1; is the TA1 server running?  Ending session.", self.log_id)
                 self._end_session() # Exception here ends the session
                 return 'Exception communicating with TA1; is the TA1 server running?  Ending session.', 503
 
@@ -561,7 +561,8 @@ class ITMSession:
                                         ITMTa1Controller.create_controller(ta1_name, target_id, alignment_target))
                                 scenario_ctr += 1
                             except Exception as e:
-                                logging.fatal(f"Couldn't obtain alignment target '{target_id}'. Check your TA3 server configuration or connection to TA1.")
+                                logging.fatal("%s: Couldn't obtain alignment target '%s'. Check your TA3 server configuration or connection to TA1.",
+                                              self.log_id, target_id)
                                 raise e
                         return scenario_ctr
 
@@ -717,7 +718,7 @@ class ITMSession:
                     session_alignment = AlignmentResults(alignment_source=[], alignment_target_id=target_id, score=-0.5)
 
             except:
-                logging.exception("Exception getting session alignment; is a TA1 server running?")
+                logging.exception("%s: Exception getting session alignment; is a TA1 server running?", self.log_id)
                 return 'Could not get session alignment; is a TA1 server running?', 503
         else:
             session_alignment = AlignmentResults(alignment_source=[], alignment_target_id=target_id, score=-0.5)

@@ -110,7 +110,7 @@ class ITMScenario:
             try:
                 self.ta1_controller.post_probe(probe_response=response)
             except exceptions.HTTPError:
-                logging.exception("HTTPError from TA1 posting probe.")
+                logging.exception("%s: HTTPError from TA1 posting probe.", self.session.log_id)
             try:
                 # Get and log probe response alignment if not training and TA1 supports it.
                 if not self.session.kdma_training and self.ta1_controller.supports_probe_alignment():
@@ -135,9 +135,9 @@ class ITMScenario:
                                             self.session.log_id, self.id, alignment_scenario_id)
             except exceptions.HTTPError:
                 # Consider changing to logging.exception when this exception isn't so common.
-                logging.error("HTTPError from TA1 getting probe alignment.")
+                logging.error("%s: HTTPError from TA1 getting probe alignment.", self.session.log_id)
             except:
-                logging.exception("Exception getting probe alignment from TA1.")
+                logging.exception("%s: Exception getting probe alignment from TA1.", self.session.log_id)
         self.probes_sent.append(probe_id)
         self.probe_responses_sent.append(choice_id)
         logging.info("%s: Responding to probe %s from scenario %s with choice %s.",
