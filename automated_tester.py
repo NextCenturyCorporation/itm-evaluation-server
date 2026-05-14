@@ -7,7 +7,7 @@ Purposes
   must match the cfgs listed in each group.
 • For a selected group, starts the server per cfg (testing or normal mode), validates or chooses a port, waits for
   readiness, then runs the dummy ADM.
-• Writes each runner's combined stdout and stderr to branch-scoped text files for potential manual review.
+• Writes each runner's and server's combined stdout and stderr to branch-scoped text files for potential manual review.
 
 Usage
 --------------------
@@ -482,10 +482,10 @@ def build_output_dir(branch_name):
     return branch_dir
 
 def build_client_output_path(branch_name, cfg, group_name):
-    return build_output_dir(branch_name) / f"client_{cfg}_{group_name}.txt"
+    return build_output_dir(branch_name) / f"{cfg}_{group_name}_client.txt"
 
 def build_server_output_path(branch_name, cfg, group_name):
-    return build_output_dir(branch_name) / f"server_{cfg}_{group_name}.txt"
+    return build_output_dir(branch_name) / f"{cfg}_{group_name}_server.txt"
 
 def build_runner_command(client_venv_python, runner_path, phase):
     runner_cmd = [str(client_venv_python), str(runner_path), '--name', 'integration_test', '--session', 'adept']
@@ -562,6 +562,7 @@ def main():
 
     group_info = groups[args.group]
     for cfg in group_info['cfgs']:
+        print(f"Processing group {args.group}, config {cfg}...", flush=True)
         try:
             precheck_cfg_run(config_path, cfg)
             if not group_info['testing']:
@@ -587,6 +588,7 @@ def main():
         server = subprocess.Popen(server_command, stdout=server_fh, stderr=subprocess.STDOUT)
         try:
             wait_for_server_ui(port)
+            print(f"Server ready for group {args.group}, config {cfg}. Running client...", flush=True)
             client_output_path = build_client_output_path(args.branch, cfg, args.group)
             with client_output_path.open('w', encoding='utf-8') as client_fh:
                 runner_cmd = build_runner_command(client_venv_python, runner_path, group_info['phase'])
@@ -595,6 +597,7 @@ def main():
                 env["TA3_PORT"] = str(port)
                 subprocess.run(runner_cmd, cwd=str(client_root), stdout=client_fh, stderr=subprocess.STDOUT, check=True, env=env)
             ensure_runner_exercised_scenarios(client_output_path, cfg)
+            print(f"Finished group {args.group}, config {cfg}.", flush=True)
         except Exception as e:
             logging.fatal(f"Error during run for config {cfg}: {e}")
         finally:
