@@ -342,7 +342,7 @@ if __name__ == '__main__':
         VERBOSE = True
     if args.evalname:
         EVALUATION_NAME = args.evalname
-        OUT_PATH.replace(DEFAULT_EVALUATION_NAME, EVALUATION_NAME)
+        OUT_PATH = OUT_PATH.replace(DEFAULT_EVALUATION_NAME, EVALUATION_NAME)
         for kdma_info in kdmas_info:
             kdma_info['filename'] = kdma_info['filename'].replace(DEFAULT_EVALUATION_NAME, EVALUATION_NAME)
     if args.no_output:
