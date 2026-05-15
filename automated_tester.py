@@ -16,8 +16,8 @@ Usage
 
 Default Groups
 --------------------
-  Group 1: Phase 2 testing mode - cfgs: FEB_OPENWORLD, JUNE_OPENWORLD, APRIL_OPENWORLD
-  Group 2: Phase 2 normal mode  - cfgs: FEB_OPENWORLD, JUNE_OPENWORLD, APRIL_OPENWORLD
+  Group 1: Phase 2 testing mode - cfgs: OBSERVE_BI", OBSERVE_TRI, OBSERVE_MULTI, EVAL_BI, EVAL_TRI, EVAL_MULTI
+  Group 2: Phase 2 normal mode  - cfgs: OBSERVE_BI", OBSERVE_TRI, OBSERVE_MULTI, EVAL_BI, EVAL_TRI, EVAL_MULTI
 
 Local Config
 --------------------
@@ -56,12 +56,12 @@ import requests
 
 DEFAULT_GROUPS = {
     "1": {
-        "cfgs": ["FEB_OPENWORLD", "JUNE_OPENWORLD", "APRIL_OPENWORLD"],
+        "cfgs": ["OBSERVE_BI", "OBSERVE_TRI", "OBSERVE_MULTI", "EVAL_BI", "EVAL_TRI", "EVAL_MULTI"],
         "testing": True,
         "phase": 2
     },
     "2": {
-        "cfgs": ["FEB_OPENWORLD", "JUNE_OPENWORLD", "APRIL_OPENWORLD"],
+        "cfgs": ["OBSERVE_BI", "OBSERVE_TRI", "OBSERVE_MULTI", "EVAL_BI", "EVAL_TRI", "EVAL_MULTI"],
         "testing": False,
         "phase": 2
     }
