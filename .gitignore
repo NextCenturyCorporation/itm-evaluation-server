@@ -2,6 +2,7 @@
 __pycache__/
 *.py[cod]
 *$py.class
+.DS_Store
 
 # C extensions
 *.so
@@ -78,6 +79,8 @@ swagger_server/api
 
 # local config files
 config*.ini
+automated_testing_config.json
+automated_test_results/
 
 # local scenarios
 itm_scenarios
