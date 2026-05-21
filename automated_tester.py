@@ -17,9 +17,11 @@ Usage
 Default Groups
 --------------------
 Default groups are currently defined as follows:
-- testing: exercising all observe/eval scenarios without TA1
+- test-bi: exercising all binary observe/eval scenarios without TA1
+- test-tri: exercising all trinary observe/eval scenarios without TA1
 - train-solo: exercising training scenarios without TA1
-- ta1: running all observe/eval scenarios with scores from TA1
+- ta1-observe: running all observe scenarios with scores from TA1
+- ta1-eval: running all eval scenarios with scores from TA1
 - train-full: running training scenarios with scores from TA1
 
 Local Config
@@ -71,10 +73,10 @@ DEFAULT_GROUPS = {
         "testing": True,
         "training": "solo"
     },
-    "ta1_observe": {
+    "ta1-observe": {
         "cfgs": ["OBSERVE_BI", "OBSERVE_TRI", "OBSERVE_MULTI"]
     },
-    "ta1_eval": {
+    "ta1-eval": {
         "cfgs": ["EVAL_BI", "EVAL_TRI", "EVAL_MULTI"]
     },
     "train-full": {
