@@ -492,6 +492,9 @@ class ITMSession:
         if kdma_training:
             self.return_scenario_history = True
             self.ta1_integration = kdma_training == 'full'
+            if self.save_history_to_s3:
+                logging.warning("\033[92m%s: Request to upload training output to S3 overridden.\033[00m", self.session.log_id)
+                self.save_history_to_s3 = False
         if session_type == 'test':
             self.ta1_integration = False
 

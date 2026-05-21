@@ -58,22 +58,29 @@ from urllib.parse import urlparse
 import requests
 
 DEFAULT_GROUPS = {
-    "testing": {
-        "cfgs": ["OBSERVE_BI", "OBSERVE_TRI", "OBSERVE_MULTI", "EVAL_BI", "EVAL_TRI", "EVAL_MULTI"],
+    "test-bi": {
+        "cfgs": ["OBSERVE_BI", "OBSERVE_MULTI", "EVAL_BI", "EVAL_MULTI"],
+        "testing": True
+    },
+    "test-tri": {
+        "cfgs": ["OBSERVE_TRI", "EVAL_TRI"],
         "testing": True
     },
     "train-solo": {
         "cfgs": ["TRAIN_BI", "TRAIN_TRI"],
         "testing": True,
-        "training": "solo",
+        "training": "solo"
     },
-    "ta1": {
-        "cfgs": ["OBSERVE_BI", "OBSERVE_TRI", "OBSERVE_MULTI", "EVAL_BI", "EVAL_TRI", "EVAL_MULTI"],
+    "ta1_observe": {
+        "cfgs": ["OBSERVE_BI", "OBSERVE_TRI", "OBSERVE_MULTI"]
+    },
+    "ta1_eval": {
+        "cfgs": ["EVAL_BI", "EVAL_TRI", "EVAL_MULTI"]
     },
     "train-full": {
         "cfgs": ["TRAIN_BI", "TRAIN_TRI"],
-        "training": "full",
-    },
+        "training": "full"
+    }
 }
 
 DEFAULT_TESTER_CONFIG = {
@@ -510,7 +517,7 @@ def build_runner_command(client_venv_python, runner_path, phase, training):
     if phase == 1:
         runner_cmd.extend(['--domain', 'triage'])
     if training:
-        runner_cmd.extend(['--training', 0 if training == 'solo' else 'full'])
+        runner_cmd.extend(['--training', '0' if training == 'solo' else '1000'])
     return runner_cmd
 
 def parse_args():

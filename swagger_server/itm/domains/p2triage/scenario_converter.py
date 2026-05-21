@@ -14,13 +14,14 @@ VERBOSE = False
 EVALUATION_NAME = DEFAULT_EVALUATION_NAME
 WRITE_FILES = True
 OUT_PATH = f"swagger_server/itm/data/{EVALUATION_NAME.lower()}/scenarios"
-IGNORED_LIST = ['AF', 'MF', 'SS', 'SB', 'OW'] # Not needed for this round
+IGNORED_LIST = ['SB', 'OW'] # Not needed for this round
 
 kdmas_info: list[dict] = [
     {'acronym': 'MF', 'full_name': 'Merit Focus', 'filename': f'{EVALUATION_NAME}MeritFocus'},
     {'acronym': 'AF', 'full_name': 'Affiliation Focus', 'filename': f'{EVALUATION_NAME}AffiliationFocus'},
     {'acronym': 'SS', 'full_name': 'Search vs Stay', 'filename': f'{EVALUATION_NAME}SearchStay'},
     {'acronym': 'PS', 'full_name': 'Personal Safety Focus', 'filename': f'{EVALUATION_NAME}PersonalSafety'},
+    {'acronym': 'AF-SS', 'full_name': 'Affiliation Focus And Search vs Stay', 'filename': f'{EVALUATION_NAME}AF-SS'},
     {'acronym': 'SB', 'full_name': 'Subpopulation', 'filename': f'{EVALUATION_NAME}Subpopulation'},
     {'acronym': 'OW', 'full_name': 'Open World Desert', 'filename': f'{EVALUATION_NAME}-OW-desert2'},
     {'acronym': 'OW', 'full_name': 'Open World Urban', 'filename': f'{EVALUATION_NAME}-OW-urban2'}
@@ -254,9 +255,9 @@ def main():
         next(reader) # Skip header
 
         print(f"Processing {full_name} ({acronym}) from {filename}.")
-        train_scenario_num = 1 # If training probes are not split up into multiple files, set this to ''
-        assess_scenario_num = 1  # If assessment probes are not split up into multiple files, set this to ''
-        observe_scenario_num = 1  # If observation probes are not split up into multiple files, set this to ''
+        train_scenario_num = '' # If training probes are not split up into multiple files, set this to ''
+        assess_scenario_num = ''  # If assessment probes are not split up into multiple files, set this to ''
+        observe_scenario_num = ''  # If observation probes are not split up into multiple files, set this to ''
         data: dict = None
         next_row = None
         more_data = True
@@ -273,27 +274,27 @@ def main():
             if 'train' in data['id']:
                 if REDACT_EVAL:
                     continue
-                outfile = f"{EVALUATION_NAME.lower()}-{TA1_NAME}-train-binary-{acronym}{train_scenario_num}.yaml"
+                outfile = f"{EVALUATION_NAME.lower()}-{TA1_NAME}-train-{acronym}{train_scenario_num}.yaml"
                 if train_scenario_num:
                     train_scenario_num += 1
             elif 'eval' in data['id']:
                 if 'Full Evaluation' in full_name:
-                    outfile = f"{EVALUATION_NAME.lower()}-{TA1_NAME}-eval-binary-{redact_string}.yaml"
+                    outfile = f"{EVALUATION_NAME.lower()}-{TA1_NAME}-eval-{redact_string}.yaml"
                 else:
-                    outfile = f"{EVALUATION_NAME.lower()}-{TA1_NAME}-eval-binary-{acronym}{redact_string}.yaml"
+                    outfile = f"{EVALUATION_NAME.lower()}-{TA1_NAME}-eval-{acronym}{redact_string}.yaml"
                     eval_filenum += 1
                     data['alt_id'] = f"{data['alt_id']}-{eval_filenum}"
                     data['alt_name'] = f"{data['alt_name']} {eval_filenum}"
             elif 'subpopulation' in data['id']:
                 outfile = f"{EVALUATION_NAME.lower()}-{TA1_NAME}-subpopulation.yaml"
             elif 'observe' in data['id']:
-                outfile = f"{EVALUATION_NAME.lower()}-{TA1_NAME}-observe-binary-{acronym}{observe_scenario_num}{redact_string}.yaml"
+                outfile = f"{EVALUATION_NAME.lower()}-{TA1_NAME}-observe-{acronym}{observe_scenario_num}{redact_string}.yaml"
                 if observe_scenario_num:
                     observe_scenario_num += 1
             elif 'assess' in data['id']:
                 if REDACT_EVAL:
                     continue
-                outfile = f"{EVALUATION_NAME.lower()}-{TA1_NAME}-assess-binary-{acronym}{assess_scenario_num}.yaml"
+                outfile = f"{EVALUATION_NAME.lower()}-{TA1_NAME}-assess-{acronym}{assess_scenario_num}.yaml"
                 if assess_scenario_num:
                     assess_scenario_num += 1
             else: # Open World
@@ -333,7 +334,7 @@ if __name__ == '__main__':
     parser.add_argument('-o', '--outpath', required=False, metavar='outpath',
                         help='Specify location for output files (no spaces)')
     parser.add_argument('-i', '--ignore', nargs='+', metavar='ignore', required=False, type=str,
-                        help="Acronyms of attributes to ignore (AF, MF, PS, SS, AF-MF, PS-AF, OW)")
+                        help="Acronyms of attributes to ignore (AF, MF, PS, SS, AF-SS, SB, OW)")
 
     args = parser.parse_args()
     if args.redact:

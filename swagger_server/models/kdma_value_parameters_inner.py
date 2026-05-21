@@ -12,25 +12,30 @@ class KDMAValueParametersInner(Model):
     Do not edit the class manually.
     """
 
-    def __init__(self, name=None, value=None):  # noqa: E501
+    def __init__(self, name=None, type=None, value=None):  # noqa: E501
         """KDMAValueParametersInner - a model defined in OpenAPI
 
         :param name: The name of this KDMAValueParametersInner.  # noqa: E501
         :type name: str
+        :param type: The type of this KDMAValueParametersInner.  # noqa: E501
+        :type type: str
         :param value: The value of this KDMAValueParametersInner.  # noqa: E501
         :type value: float
         """
         self.openapi_types = {
             'name': str,
+            'type': str,
             'value': float
         }
 
         self.attribute_map = {
             'name': 'name',
+            'type': 'type',
             'value': 'value'
         }
 
         self._name = name
+        self._type = type
         self._value = value
 
     @classmethod
@@ -62,7 +67,7 @@ class KDMAValueParametersInner(Model):
         :param name: The name of this KDMAValueParametersInner.
         :type name: str
         """
-        allowed_values = ["intercept", "medical_weight", "attr_weight"]  # noqa: E501
+        allowed_values = ["intercept", "medical_weight", "attr_weight", "optA", "optB"]  # noqa: E501
         if name not in allowed_values:
             raise ValueError(
                 "Invalid value for `name` ({0}), must be one of {1}"
@@ -70,6 +75,33 @@ class KDMAValueParametersInner(Model):
             )
 
         self._name = name
+
+    @property
+    def type(self) -> str:
+        """Gets the type of this KDMAValueParametersInner.
+
+
+        :return: The type of this KDMAValueParametersInner.
+        :rtype: str
+        """
+        return self._type
+
+    @type.setter
+    def type(self, type: str):
+        """Sets the type of this KDMAValueParametersInner.
+
+
+        :param type: The type of this KDMAValueParametersInner.
+        :type type: str
+        """
+        allowed_values = ["single", "multi"]  # noqa: E501
+        if type not in allowed_values:
+            raise ValueError(
+                "Invalid value for `type` ({0}), must be one of {1}"
+                .format(type, allowed_values)
+            )
+
+        self._type = type
 
     @property
     def value(self) -> float:

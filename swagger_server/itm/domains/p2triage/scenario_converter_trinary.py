@@ -27,15 +27,15 @@ EVALUATION_NAME = DEFAULT_EVALUATION_NAME
 WRITE_FILES = True
 OUT_PATH = f"out"
 CSV_FILE_OVERRIDES: dict[str, list[str]] = {}
-IGNORED_LIST = [] # Process all configured CSVs by default; use --ignore to skip any acronym
+IGNORED_LIST = ['MF', 'SS', 'SB', 'OW'] # Process all configured CSVs by default; use --ignore to skip any acronym
 SHUFFLE_SCENES = True  # True means randomize the scene order of certain scenarios
 
 
 kdmas_info: list[dict] = [
-    {'acronym': 'MF', 'full_name': 'Merit Focus', 'filename': f'{EVALUATION_NAME}MeritFocus'},
-    {'acronym': 'AF', 'full_name': 'Affiliation Focus', 'filename': f'{EVALUATION_NAME}AffiliationFocus'},
-    {'acronym': 'SS', 'full_name': 'Search vs Stay', 'filename': f'{EVALUATION_NAME}SearchStay'},
-    {'acronym': 'PS', 'full_name': 'Personal Safety Focus', 'filename': f'{EVALUATION_NAME}PersonalSafety'},
+    {'acronym': 'MF', 'full_name': 'Merit Focus', 'filename': f'{EVALUATION_NAME}MeritFocusTrinary'},
+    {'acronym': 'AF', 'full_name': 'Affiliation Focus', 'filename': f'{EVALUATION_NAME}AffiliationFocusTrinary'},
+    {'acronym': 'SS', 'full_name': 'Search vs Stay', 'filename': f'{EVALUATION_NAME}SearchStayTrinary'},
+    {'acronym': 'PS', 'full_name': 'Personal Safety Focus', 'filename': f'{EVALUATION_NAME}PersonalSafetyTrinary'},
     {'acronym': 'SB', 'full_name': 'Subpopulation', 'filename': f'{EVALUATION_NAME}Subpopulation'},
     {'acronym': 'OW', 'full_name': 'Open World Desert', 'filename': f'{EVALUATION_NAME}-OW-desert2'},
     {'acronym': 'OW', 'full_name': 'Open World Urban', 'filename': f'{EVALUATION_NAME}-OW-urban2'}

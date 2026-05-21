@@ -175,8 +175,8 @@ class KDMAValue(Model):
         :param parameters: The parameters of this KDMAValue.
         :type parameters: list[KDMAValueParametersInner]
         """
-        if parameters is not None and len(parameters) > 3:
-            raise ValueError("Invalid value for `parameters`, number of items must be less than or equal to `3`")  # noqa: E501
+        if parameters is not None and len(parameters) > 4:
+            raise ValueError("Invalid value for `parameters`, number of items must be less than or equal to `4`")  # noqa: E501
         if parameters is not None and len(parameters) < 3:
             raise ValueError("Invalid value for `parameters`, number of items must be greater than or equal to `3`")  # noqa: E501
 
