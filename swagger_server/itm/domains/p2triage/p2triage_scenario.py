@@ -102,7 +102,7 @@ class P2triageScenario(ITMScenario):
 
 
     def action_taken(self, action: Action):
-        if action.action_type == ActionTypeEnum.TREAT_PATIENT:
+        if self.inferred_responses and action.action_type == ActionTypeEnum.TREAT_PATIENT:
             if action.character_id not in self.treatment_order:
                 self.treatment_order.append(action.character_id)
 

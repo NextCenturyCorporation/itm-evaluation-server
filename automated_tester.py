@@ -16,8 +16,13 @@ Usage
 
 Default Groups
 --------------------
-  Group 1: Phase 2 testing mode - cfgs: FEB_OPENWORLD, JUNE_OPENWORLD, APRIL_OPENWORLD
-  Group 2: Phase 2 normal mode  - cfgs: FEB_OPENWORLD, JUNE_OPENWORLD, APRIL_OPENWORLD
+Default groups are currently defined as follows:
+- test-bi: exercising all binary observe/eval scenarios without TA1
+- test-tri: exercising all trinary observe/eval scenarios without TA1
+- train-solo: exercising training scenarios without TA1
+- ta1-observe: running all observe scenarios with scores from TA1
+- ta1-eval: running all eval scenarios with scores from TA1
+- train-full: running training scenarios with scores from TA1
 
 Local Config
 --------------------
@@ -55,15 +60,28 @@ from urllib.parse import urlparse
 import requests
 
 DEFAULT_GROUPS = {
-    "1": {
-        "cfgs": ["FEB_OPENWORLD", "JUNE_OPENWORLD", "APRIL_OPENWORLD"],
-        "testing": True,
-        "phase": 2
+    "test-bi": {
+        "cfgs": ["OBSERVE_BI", "OBSERVE_MULTI", "EVAL_BI", "EVAL_MULTI"],
+        "testing": True
     },
-    "2": {
-        "cfgs": ["FEB_OPENWORLD", "JUNE_OPENWORLD", "APRIL_OPENWORLD"],
-        "testing": False,
-        "phase": 2
+    "test-tri": {
+        "cfgs": ["OBSERVE_TRI", "EVAL_TRI"],
+        "testing": True
+    },
+    "train-solo": {
+        "cfgs": ["TRAIN_BI", "TRAIN_TRI"],
+        "testing": True,
+        "training": "solo"
+    },
+    "ta1-observe": {
+        "cfgs": ["OBSERVE_BI", "OBSERVE_TRI", "OBSERVE_MULTI"]
+    },
+    "ta1-eval": {
+        "cfgs": ["EVAL_BI", "EVAL_TRI", "EVAL_MULTI"]
+    },
+    "train-full": {
+        "cfgs": ["TRAIN_BI", "TRAIN_TRI"],
+        "training": "full"
     }
 }
 
@@ -79,7 +97,10 @@ TESTER_CONFIG_NAME = "automated_testing_config.json"
 TESTER_CONFIG_TEMPLATE_NAME = "automated_testing_config.template.json"
 RESULTS_ROOT = REPO_ROOT / "automated_test_results"
 
-VALID_GROUP_KEYS = {"cfgs", "testing", "phase"}
+VALID_GROUP_KEYS = {"cfgs", "testing", "training", "phase"}
+REQUIRED_GROUP_KEYS = {"cfgs"}
+DEFAULT_PHASE = 2
+
 TA1_ALIGNMENT_ID_PATHS = {
     "adept": "/api/v1/alignment_target_ids",
     "soartech": "/api/v1/alignment_targets"
@@ -225,7 +246,7 @@ def validate_groups(groups, valid_cfg_names):
             continue
 
         keys = set(definition.keys())
-        missing = VALID_GROUP_KEYS - keys
+        missing = REQUIRED_GROUP_KEYS - keys
         extra = keys - VALID_GROUP_KEYS
         if missing:
             errors.append(f"Group {name}: missing required keys {missing}.")
@@ -254,14 +275,20 @@ def validate_groups(groups, valid_cfg_names):
                     errors.append(f"Group {name}: cfg '{cfg}' not found in config.ini sections.")
 
         testing = definition.get("testing")
-        if not isinstance(testing, bool):
-            errors.append(f"Group {name}: 'testing' must be a boolean.")
+        if testing:
+            if not isinstance(testing, bool):
+                errors.append(f"Group {name}: 'testing' must be a boolean.")
+
+        training: str = definition.get("training")
+        if training and training.lower() not in ["solo", "full"]:
+            errors.append(f"Training {training} must be either 'solo' or 'full'.")
 
         phase = definition.get("phase")
-        if not isinstance(phase, int):
-            errors.append(f"Group {name}: 'phase' must be an integer 1 or 2.")
-        elif phase not in (1, 2):
-            errors.append(f"Group {name}: 'phase' must be 1 or 2, got {phase}.")
+        if phase:
+            if not isinstance(phase, int):
+                errors.append(f"Group {name}: 'phase' must be an integer 1 or 2.")
+            elif phase not in (1, 2):
+                errors.append(f"Group {name}: 'phase' must be 1 or 2, got {phase}.")
 
     return errors
 
@@ -487,10 +514,12 @@ def build_client_output_path(branch_name, cfg, group_name):
 def build_server_output_path(branch_name, cfg, group_name):
     return build_output_dir(branch_name) / f"{cfg}_{group_name}_server.txt"
 
-def build_runner_command(client_venv_python, runner_path, phase):
+def build_runner_command(client_venv_python, runner_path, phase, training):
     runner_cmd = [str(client_venv_python), str(runner_path), '--name', 'integration_test', '--session', 'adept']
     if phase == 1:
         runner_cmd.extend(['--domain', 'triage'])
+    if training:
+        runner_cmd.extend(['--training', '0' if training == 'solo' else '1000'])
     return runner_cmd
 
 def parse_args():
@@ -562,10 +591,13 @@ def main():
 
     group_info = groups[args.group]
     for cfg in group_info['cfgs']:
+        phase = group_info.get('phase', DEFAULT_PHASE)
+        training = group_info.get('training', False)
+        testing = group_info.get('testing', False)
         print(f"Processing group {args.group}, config {cfg}...", flush=True)
         try:
             precheck_cfg_run(config_path, cfg)
-            if not group_info['testing']:
+            if not testing:
                 validate_ta1_connectivity(load_runtime_config(config_path)[0][cfg], cfg)
         except Exception as e:
             logging.fatal(f"Precheck failed for config {cfg}: {e}")
@@ -581,7 +613,7 @@ def main():
                     logging.fatal(f"Port {port} became busy. Use a different --port or --auto-port.")
                     sys.exit(1)
         server_command = [sys.executable, '-m', 'swagger_server', '-c', cfg, '-p', str(port)]
-        if group_info['testing']:
+        if testing:
             server_command.append('-t')
         server_output_path = build_server_output_path(args.branch, cfg, args.group)
         server_fh = server_output_path.open('w', encoding='utf-8')
@@ -591,7 +623,7 @@ def main():
             print(f"Server ready for group {args.group}, config {cfg}. Running client...", flush=True)
             client_output_path = build_client_output_path(args.branch, cfg, args.group)
             with client_output_path.open('w', encoding='utf-8') as client_fh:
-                runner_cmd = build_runner_command(client_venv_python, runner_path, group_info['phase'])
+                runner_cmd = build_runner_command(client_venv_python, runner_path, phase, training)
                 env = os.environ.copy()
                 env["TA3_HOSTNAME"] = "127.0.0.1"
                 env["TA3_PORT"] = str(port)

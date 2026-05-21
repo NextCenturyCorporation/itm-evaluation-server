@@ -134,9 +134,9 @@ class ITMSession:
                 logging.info(f"Loading alignment target {target_id} from TA1 {ta1_name}.")
                 alignment_target = ITMTa1Controller.get_alignment_target(ta1_name, target_id)
         else:
-            parameters = [KDMAValueParametersInner("intercept", 0.5),
-                          KDMAValueParametersInner("medical_weight", 0.5),
-                          KDMAValueParametersInner("attr_weight", 0.5)]
+            parameters = [KDMAValueParametersInner("intercept", "single", 0.5),
+                          KDMAValueParametersInner("medical_weight", "single", 0.5),
+                          KDMAValueParametersInner("attr_weight", "single", 0.5)]
             alignment_target = AlignmentTarget(target_id, [KDMAValue(kdma='Test_KDMA', value=0.5, parameters=parameters)])
         ITMSession.alignment_data[target_id] = alignment_target
         return alignment_target
@@ -492,6 +492,9 @@ class ITMSession:
         if kdma_training:
             self.return_scenario_history = True
             self.ta1_integration = kdma_training == 'full'
+            if self.save_history_to_s3:
+                logging.warning("\033[92m%s: Request to upload training output to S3 overridden.\033[00m", self.session.log_id)
+                self.save_history_to_s3 = False
         if session_type == 'test':
             self.ta1_integration = False
 
@@ -544,9 +547,9 @@ class ITMSession:
 
                 if ta1_name == "test":
                     ta1_scenarios.append(deepcopy(itm_scenario))
-                    parameters = [KDMAValueParametersInner("intercept", 0.5),
-                                  KDMAValueParametersInner("medical_weight", 0.5),
-                                  KDMAValueParametersInner("attr_weight", 0.5)]
+                    parameters = [KDMAValueParametersInner("intercept", "single", 0.5),
+                                KDMAValueParametersInner("medical_weight", "single", 0.5),
+                                KDMAValueParametersInner("attr_weight", "single", 0.5)]
                     ta1_scenarios[scenario_ctr].alignment_target = AlignmentTarget('Test_Target_ID', [KDMAValue(kdma='Test_KDMA', value=0.5, parameters=parameters)])
                     scenario_ctr += 1
                 else:

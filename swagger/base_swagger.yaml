@@ -5,7 +5,7 @@ info:
     This is the specification of the TA3 API for In The Moment (ITM).  Currently, the Evaluation API for TA2 supports functionality for the Phase 2 Evaluations.
 
     The API is based on the OpenAPI 3.0.3 specification.
-  version: 0.5.2
+  version: 0.5.3
 servers:
   - url: /
 tags:
@@ -606,7 +606,7 @@ components:
         parameters:
           type: array
           minItems: 3
-          maxItems: 3
+          maxItems: 4
           uniqueItems: true
           items:
             type: object
@@ -614,7 +614,10 @@ components:
             properties:
               name:
                 type: string
-                enum: [intercept, medical_weight, attr_weight]
+                enum: [intercept, medical_weight, attr_weight, optA, optB]
+              type:
+                type: string
+                enum: [single, multi]
               value:
                 type: number
     BaseState:

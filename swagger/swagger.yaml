@@ -5,7 +5,7 @@ info:
 
     The API is based on the OpenAPI 3.0.3 specification.
   title: ITM TA3 API
-  version: 0.5.2
+  version: 0.5.3
 servers:
 - url: /
 tags:
@@ -974,10 +974,16 @@ components:
           value: 0.8008282
           parameters:
           - name: intercept
+            type: single
             value: 1.4658129805029452
           - name: intercept
+            type: single
             value: 1.4658129805029452
           - name: intercept
+            type: single
+            value: 1.4658129805029452
+          - name: intercept
+            type: single
             value: 1.4658129805029452
           kdma: kdma
         - scores:
@@ -990,10 +996,16 @@ components:
           value: 0.8008282
           parameters:
           - name: intercept
+            type: single
             value: 1.4658129805029452
           - name: intercept
+            type: single
             value: 1.4658129805029452
           - name: intercept
+            type: single
+            value: 1.4658129805029452
+          - name: intercept
+            type: single
             value: 1.4658129805029452
           kdma: kdma
       properties:
@@ -1079,10 +1091,16 @@ components:
           value: 0.8008282
           parameters:
           - name: intercept
+            type: single
             value: 1.4658129805029452
           - name: intercept
+            type: single
             value: 1.4658129805029452
           - name: intercept
+            type: single
+            value: 1.4658129805029452
+          - name: intercept
+            type: single
             value: 1.4658129805029452
           kdma: kdma
         - scores:
@@ -1095,10 +1113,16 @@ components:
           value: 0.8008282
           parameters:
           - name: intercept
+            type: single
             value: 1.4658129805029452
           - name: intercept
+            type: single
             value: 1.4658129805029452
           - name: intercept
+            type: single
+            value: 1.4658129805029452
+          - name: intercept
+            type: single
             value: 1.4658129805029452
           kdma: kdma
         id: id
@@ -1150,10 +1174,16 @@ components:
         value: 0.8008282
         parameters:
         - name: intercept
+          type: single
           value: 1.4658129805029452
         - name: intercept
+          type: single
           value: 1.4658129805029452
         - name: intercept
+          type: single
+          value: 1.4658129805029452
+        - name: intercept
+          type: single
           value: 1.4658129805029452
         kdma: kdma
       properties:
@@ -1183,7 +1213,7 @@ components:
         parameters:
           items:
             $ref: "#/components/schemas/KDMA_Value_parameters_inner"
-          maxItems: 3
+          maxItems: 4
           minItems: 3
           title: parameters
           type: array
@@ -2208,6 +2238,7 @@ components:
     KDMA_Value_parameters_inner:
       example:
         name: intercept
+        type: single
         value: 1.4658129805029452
       properties:
         name:
@@ -2215,7 +2246,15 @@ components:
           - intercept
           - medical_weight
           - attr_weight
+          - optA
+          - optB
           title: name
+          type: string
+        type:
+          enum:
+          - single
+          - multi
+          title: type
           type: string
         value:
           title: value
