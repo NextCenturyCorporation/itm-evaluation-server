@@ -69,7 +69,7 @@ DEFAULT_GROUPS = {
         "testing": True
     },
     "train-solo": {
-        "cfgs": ["TRAIN_BI", "TRAIN_TRI"],
+        "cfgs": ["TRAINING"],
         "testing": True,
         "training": "solo"
     },
@@ -80,7 +80,7 @@ DEFAULT_GROUPS = {
         "cfgs": ["EVAL_BI", "EVAL_TRI", "EVAL_MULTI"]
     },
     "train-full": {
-        "cfgs": ["TRAIN_BI", "TRAIN_TRI"],
+        "cfgs": ["TRAINING"],
         "training": "full"
     }
 }
