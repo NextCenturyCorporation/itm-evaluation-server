@@ -110,7 +110,7 @@ class ITMScenario:
             try:
                 self.ta1_controller.post_probe(probe_response=response)
             except exceptions.HTTPError:
-                logging.exception("HTTPError from TA1 posting probe.")
+                logging.exception("%s: HTTPError from TA1 posting probe.", self.session.log_id)
             try:
                 # Get and log probe response alignment if not training and TA1 supports it.
                 if not self.session.kdma_training and self.ta1_controller.supports_probe_alignment():
@@ -119,7 +119,7 @@ class ITMScenario:
                         response.scenario_id,
                         response.probe_id
                     )
-                    logging.info(f"Probe alignment score: {probe_response_alignment.get('score', 'nan')}")
+                    logging.info(f"{self.session.log_id}: Probe alignment score: {probe_response_alignment.get('score', 'nan')}")
                     self.session.history.add_history(
                         "TA1 Probe Response Alignment",
                         {"session_id": self.ta1_controller.session_id,
@@ -131,16 +131,17 @@ class ITMScenario:
                     if probe_response_alignment.get('alignment_source'):
                         alignment_scenario_id = probe_response_alignment['alignment_source'][0]['scenario_id']
                         if self.id != alignment_scenario_id:
-                            logging.warning("\033[92mContamination in probe alignment! scenario is %s but alignment source scenario is %s.\033[00m", self.id, alignment_scenario_id)
+                            logging.warning("\033[92m%sContamination in probe alignment! scenario is %s but alignment source scenario is %s.\033[00m",
+                                            self.session.log_id, self.id, alignment_scenario_id)
             except exceptions.HTTPError:
                 # Consider changing to logging.exception when this exception isn't so common.
-                logging.error("HTTPError from TA1 getting probe alignment.")
+                logging.error("%s: HTTPError from TA1 getting probe alignment.", self.session.log_id)
             except:
-                logging.exception("Exception getting probe alignment from TA1.")
+                logging.exception("%s: Exception getting probe alignment from TA1.", self.session.log_id)
         self.probes_sent.append(probe_id)
         self.probe_responses_sent.append(choice_id)
-        logging.info("Responding to probe %s from scenario %s with choice %s.",
-                     response.probe_id, response.scenario_id, response.choice)
+        logging.info("%s: Responding to probe %s from scenario %s with choice %s.",
+                     self.session.log_id, response.probe_id, response.scenario_id, response.choice)
 
     def action_taken(self, action: Action):
         pass # Nothing to do at base class level
@@ -161,7 +162,8 @@ class ITMScenario:
                 and self.isd.current_scene.id == next_scene_id - 1:
                 pass # This is expected when scenario ids are simple indices
             else:
-                logging.error("\033[92mScene configuration issue: next scene '%s' not found; ending scenario.\033[00m", next_scene_id)
+                logging.error("\033[92m%sScene configuration issue: next scene '%s' not found; ending scenario.\033[00m",
+                              self.session.log_id, next_scene_id)
             self.isd.current_scene.state = None # Supports single-scenario sessions
             self.end_scenario()
             return
@@ -173,12 +175,12 @@ class ITMScenario:
 
         # If the scene has no action mappings, then the scenario ends.
         if self.isd.current_scene.action_mappings == []:
-            logging.warning("Scene has no action mappings; ending scenario.")
+            logging.warning("%s: Scene has no action mappings; ending scenario.", self.session.log_id)
             self.end_scenario()
             return
 
         # Log the scene change
-        logging.info("Changing to scene ID %s.", self.isd.current_scene.id)
+        logging.info("%s: Changing to scene ID %s.", self.session.log_id, self.isd.current_scene.id)
         self.session.history.add_history(
             "Change scene",
             {"session_id": self.session.session_id,
@@ -229,7 +231,8 @@ class ITMScenario:
                     if character.id in getattr(self.isd.current_scene, 'removed_characters', [])
                 ]
                 if len(filtered_out_characters) > 0:
-                    logging.warning("\033[92mScene configuration issue: target state includes character that was removed\033[00m")
+                    logging.warning("\033[92m%sScene configuration issue: target state includes character that was removed\033[00m",
+                                    self.session.log_id)
 
                 # Replace them with the new versions, plus add new characters.
                 current_state.characters.extend(deepcopy(target_state.characters))

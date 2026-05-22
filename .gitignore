@@ -2,6 +2,7 @@
 __pycache__/
 *.py[cod]
 *$py.class
+.DS_Store
 
 # C extensions
 *.so
@@ -78,15 +79,17 @@ swagger_server/api
 
 # local config files
 config*.ini
+automated_testing_config.json
+automated_test_results/
 
 # local scenarios
 itm_scenarios
 swagger_server/itm/data/phase1
-swagger_server/itm/data/june2025
-swagger_server/itm/data/july2025
-swagger_server/itm/data/sept2025
 swagger_server/itm/data/feb2026
 swagger_server/itm/data/april2026
+swagger_server/itm/data/june202*
+swagger_server/itm/data/july202*
+swagger_server/itm/data/sept202*
 swagger_server/itm/data/phase2
 
 # local csvs
