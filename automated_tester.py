@@ -60,12 +60,8 @@ from urllib.parse import urlparse
 import requests
 
 DEFAULT_GROUPS = {
-    "test-bi": {
-        "cfgs": ["OBSERVE_BI", "OBSERVE_MULTI", "EVAL_BI", "EVAL_MULTI"],
-        "testing": True
-    },
-    "test-tri": {
-        "cfgs": ["OBSERVE_TRI", "EVAL_TRI"],
+    "testing": {
+        "cfgs": ["OBSERVE_BI", "OBSERVE_TRI", "OBSERVE_MULTI", "EVAL_BI", "EVAL_TRI", "EVAL_MULTI"],
         "testing": True
     },
     "train-solo": {
