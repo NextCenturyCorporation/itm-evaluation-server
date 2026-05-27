@@ -17,8 +17,7 @@ Usage
 Default Groups
 --------------------
 Default groups are currently defined as follows:
-- test-bi: exercising all binary observe/eval scenarios without TA1
-- test-tri: exercising all trinary observe/eval scenarios without TA1
+- testing: exercising all observe/eval scenarios without TA1
 - train-solo: exercising training scenarios without TA1
 - ta1-observe: running all observe scenarios with scores from TA1
 - ta1-eval: running all eval scenarios with scores from TA1
