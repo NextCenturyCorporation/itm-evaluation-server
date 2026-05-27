@@ -511,7 +511,7 @@ def build_server_output_path(branch_name, cfg, group_name):
     return build_output_dir(branch_name) / f"{cfg}_{group_name}_server.txt"
 
 def build_runner_command(client_venv_python, runner_path, phase, training):
-    runner_cmd = [str(client_venv_python), str(runner_path), '--name', 'integration_test', '--session', 'adept']
+    runner_cmd = [str(client_venv_python), str(runner_path), '--name', 'integration_test', '--session', 'adept', '--profile', 'test']
     if phase == 1:
         runner_cmd.extend(['--domain', 'triage'])
     if training:
