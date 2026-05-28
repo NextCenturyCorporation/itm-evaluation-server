@@ -28,17 +28,17 @@ HISTORY_S3_BUCKET=itm-ui-assets
 EVAL_NAME=Phase 2 June 2026 Evaluation
 EVAL_NUMBER=17
 
-# NOTE: The DEFAULT configuration covers training of MF, AF, SS, and PS binary probes.
-
 ADEPT_TRAIN_FILENAMES=june2026-adept-train-MF[0-9].yaml,
     june2026-adept-train-AF[0-9].yaml,
     june2026-adept-train-SS[0-9].yaml,
-    june2026-adept-train-PS[0-9].yaml
+    june2026-adept-train-PS[0-9].yaml,
+    june2026-adept-train-trinary-AF[0-9].yaml,
+    june2026-adept-train-trinary-PS[0-9].yaml
 
 ADEPT_TRAIN_K1_SCENARIOS=June2026-MF[0-9]-train
-ADEPT_TRAIN_K2_SCENARIOS=June2026-AF[0-9]-train
+ADEPT_TRAIN_K2_SCENARIOS=June2026-AF[0-9]-train,June2026-AF[0-9]-train-trinary
 ADEPT_TRAIN_K3_SCENARIOS=June2026-SS[0-9]-train
-ADEPT_TRAIN_K4_SCENARIOS=June2026-PS[0-9]-train
+ADEPT_TRAIN_K4_SCENARIOS=June2026-PS[0-9]-train,June2026-PS[0-9]-train-trinary
 
 ADEPT_EVAL_FILENAMES=june2026-adept-eval-AF.yaml,june2026-adept-eval-PS.yaml
 
@@ -56,14 +56,14 @@ ADEPT_K1_ALIGNMENT_TARGETS=Jun2026-MF-1,
     Jun2026-MF-7,
     Jun2026-MF-8
 
-ADEPT_K2_ALIGNMENT_TARGETS=Jun2026-AF-1,
-    Jun2026-AF-2,
-    Jun2026-AF-3,
-    Jun2026-AF-4,
-    Jun2026-AF-5,
-    Jun2026-AF-6,
-    Jun2026-AF-7,
-    Jun2026-AF-8
+ADEPT_K2_ALIGNMENT_TARGETS=Jun2026-AF-binomial-1,
+    Jun2026-AF-binomial-2,
+    Jun2026-AF-binomial-3,
+    Jun2026-AF-binomial-4,
+    Jun2026-AF-binomial-5,
+    Jun2026-AF-binomial-6,
+    Jun2026-AF-binomial-7,
+    Jun2026-AF-binomial-8
 
 ADEPT_K3_ALIGNMENT_TARGETS=Jun2026-SS-1,
     Jun2026-SS-2,
@@ -74,14 +74,14 @@ ADEPT_K3_ALIGNMENT_TARGETS=Jun2026-SS-1,
     Jun2026-SS-7,
     Jun2026-SS-8
 
-ADEPT_K4_ALIGNMENT_TARGETS=Jun2026-PS-1,
-    Jun2026-PS-2,
-    Jun2026-PS-3,
-    Jun2026-PS-4,
-    Jun2026-PS-5,
-    Jun2026-PS-6,
-    Jun2026-PS-7,
-    Jun2026-PS-8
+ADEPT_K4_ALIGNMENT_TARGETS=Jun2026-PS-binomial-1,
+    Jun2026-PS-binomial-2,
+    Jun2026-PS-binomial-3,
+    Jun2026-PS-binomial-4,
+    Jun2026-PS-binomial-5,
+    Jun2026-PS-binomial-6,
+    Jun2026-PS-binomial-7,
+    Jun2026-PS-binomial-8
 
 ADEPT_M1_ALIGNMENT_TARGETS=Jun2026-AF1-SS1, Jun2026-AF1-SS2, Jun2026-AF1-SS3, Jun2026-AF1-SS4, Jun2026-AF1-SS5, Jun2026-AF1-SS6, Jun2026-AF1-SS7, Jun2026-AF1-SS8,
     Jun2026-AF2-SS1, Jun2026-AF2-SS2, Jun2026-AF2-SS3, Jun2026-AF2-SS4, Jun2026-AF2-SS5, Jun2026-AF2-SS6, Jun2026-AF2-SS7, Jun2026-AF2-SS8,
@@ -100,21 +100,9 @@ REQUIRED_CONFIG=EVALUATION_TYPE, SCENARIO_DIRECTORY, ADEPT_URL, SAVE_HISTORY, SA
   ADEPT_K2_ALIGNMENT_TARGETS, ADEPT_K3_ALIGNMENT_TARGETS, ADEPT_K4_ALIGNMENT_TARGETS, ADEPT_EVAL_FILENAMES,
   ADEPT_TRAIN_FILENAMES, DEFAULT_DOMAIN, SUPPORTED_DOMAINS
 
-[TRAIN_BI]
+[TRAINING]
 
 SAVE_HISTORY_TO_S3=False
-
-[TRAIN_TRI]
-
-SAVE_HISTORY_TO_S3=False
-
-ADEPT_TRAIN_FILENAMES=june2026-adept-train-trinary-AF[0-9].yaml,
-    june2026-adept-train-trinary-PS[0-9].yaml
-
-ADEPT_TRAIN_K1_SCENARIOS=
-ADEPT_TRAIN_K2_SCENARIOS=June2026-AF[0-9]-train-trinary
-ADEPT_TRAIN_K3_SCENARIOS=
-ADEPT_TRAIN_K4_SCENARIOS=June2026-PS[0-9]-train-trinary
 
 [EVAL_BI]
 
@@ -130,6 +118,24 @@ ADEPT_EVAL_FILENAMES=june2026-adept-eval-trinary-AF.yaml,june2026-adept-eval-tri
 
 ADEPT_EVAL_K2_SCENARIOS=June2026-AF-eval-trinary
 ADEPT_EVAL_K4_SCENARIOS=June2026-PS-eval-trinary
+
+ADEPT_K2_ALIGNMENT_TARGETS=Jun2026-AF-trinomial-1,
+    Jun2026-AF-trinomial-2,
+    Jun2026-AF-trinomial-3,
+    Jun2026-AF-trinomial-4,
+    Jun2026-AF-trinomial-5,
+    Jun2026-AF-trinomial-6,
+    Jun2026-AF-trinomial-7,
+    Jun2026-AF-trinomial-8
+
+ADEPT_K4_ALIGNMENT_TARGETS=Jun2026-PS-trinomial-1,
+    Jun2026-PS-trinomial-2,
+    Jun2026-PS-trinomial-3,
+    Jun2026-PS-trinomial-4,
+    Jun2026-PS-trinomial-5,
+    Jun2026-PS-trinomial-6,
+    Jun2026-PS-trinomial-7,
+    Jun2026-PS-trinomial-8
 
 [EVAL_MULTI]
 
@@ -158,6 +164,24 @@ ADEPT_EVAL_K1_SCENARIOS=
 ADEPT_EVAL_K2_SCENARIOS=June2026-AF-observe-trinary
 ADEPT_EVAL_K3_SCENARIOS=
 ADEPT_EVAL_K4_SCENARIOS=June2026-PS-observe-trinary
+
+ADEPT_K2_ALIGNMENT_TARGETS=Jun2026-AF-trinomial-1,
+    Jun2026-AF-trinomial-2,
+    Jun2026-AF-trinomial-3,
+    Jun2026-AF-trinomial-4,
+    Jun2026-AF-trinomial-5,
+    Jun2026-AF-trinomial-6,
+    Jun2026-AF-trinomial-7,
+    Jun2026-AF-trinomial-8
+
+ADEPT_K4_ALIGNMENT_TARGETS=Jun2026-PS-trinomial-1,
+    Jun2026-PS-trinomial-2,
+    Jun2026-PS-trinomial-3,
+    Jun2026-PS-trinomial-4,
+    Jun2026-PS-trinomial-5,
+    Jun2026-PS-trinomial-6,
+    Jun2026-PS-trinomial-7,
+    Jun2026-PS-trinomial-8
 
 [OBSERVE_MULTI]
 
