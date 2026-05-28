@@ -17,8 +17,7 @@ Usage
 Default Groups
 --------------------
 Default groups are currently defined as follows:
-- test-bi: exercising all binary observe/eval scenarios without TA1
-- test-tri: exercising all trinary observe/eval scenarios without TA1
+- testing: exercising all observe/eval scenarios without TA1
 - train-solo: exercising training scenarios without TA1
 - ta1-observe: running all observe scenarios with scores from TA1
 - ta1-eval: running all eval scenarios with scores from TA1
@@ -60,16 +59,12 @@ from urllib.parse import urlparse
 import requests
 
 DEFAULT_GROUPS = {
-    "test-bi": {
-        "cfgs": ["OBSERVE_BI", "OBSERVE_MULTI", "EVAL_BI", "EVAL_MULTI"],
-        "testing": True
-    },
-    "test-tri": {
-        "cfgs": ["OBSERVE_TRI", "EVAL_TRI"],
+    "testing": {
+        "cfgs": ["OBSERVE_BI", "OBSERVE_TRI", "OBSERVE_MULTI", "EVAL_BI", "EVAL_TRI", "EVAL_MULTI"],
         "testing": True
     },
     "train-solo": {
-        "cfgs": ["TRAIN_BI", "TRAIN_TRI"],
+        "cfgs": ["TRAINING"],
         "testing": True,
         "training": "solo"
     },
@@ -80,7 +75,7 @@ DEFAULT_GROUPS = {
         "cfgs": ["EVAL_BI", "EVAL_TRI", "EVAL_MULTI"]
     },
     "train-full": {
-        "cfgs": ["TRAIN_BI", "TRAIN_TRI"],
+        "cfgs": ["TRAINING"],
         "training": "full"
     }
 }
@@ -515,7 +510,7 @@ def build_server_output_path(branch_name, cfg, group_name):
     return build_output_dir(branch_name) / f"{cfg}_{group_name}_server.txt"
 
 def build_runner_command(client_venv_python, runner_path, phase, training):
-    runner_cmd = [str(client_venv_python), str(runner_path), '--name', 'integration_test', '--session', 'adept']
+    runner_cmd = [str(client_venv_python), str(runner_path), '--name', 'integration_test', '--session', 'adept', '--profile', 'test']
     if phase == 1:
         runner_cmd.extend(['--domain', 'triage'])
     if training:
