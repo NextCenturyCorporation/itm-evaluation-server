@@ -107,35 +107,19 @@ SAVE_HISTORY_TO_S3=False
 [EVAL_BI]
 
 CALC_ALIGNMENT=False
+TARGET_SOURCE=june2026_binary.csv
 
 # Everything else is inherited from the DEFAULT configuration.  This is for the 1D binomial evaluation.
 
 [EVAL_TRI]
 
 CALC_ALIGNMENT=False
+TARGET_SOURCE=june2026_trinary.csv
 
 ADEPT_EVAL_FILENAMES=june2026-adept-eval-trinary-AF.yaml,june2026-adept-eval-trinary-PS.yaml
 
 ADEPT_EVAL_K2_SCENARIOS=June2026-AF-eval-trinary
 ADEPT_EVAL_K4_SCENARIOS=June2026-PS-eval-trinary
-
-ADEPT_K2_ALIGNMENT_TARGETS=Jun2026-AF-trinomial-1,
-    Jun2026-AF-trinomial-2,
-    Jun2026-AF-trinomial-3,
-    Jun2026-AF-trinomial-4,
-    Jun2026-AF-trinomial-5,
-    Jun2026-AF-trinomial-6,
-    Jun2026-AF-trinomial-7,
-    Jun2026-AF-trinomial-8
-
-ADEPT_K4_ALIGNMENT_TARGETS=Jun2026-PS-trinomial-1,
-    Jun2026-PS-trinomial-2,
-    Jun2026-PS-trinomial-3,
-    Jun2026-PS-trinomial-4,
-    Jun2026-PS-trinomial-5,
-    Jun2026-PS-trinomial-6,
-    Jun2026-PS-trinomial-7,
-    Jun2026-PS-trinomial-8
 
 [EVAL_MULTI]
 

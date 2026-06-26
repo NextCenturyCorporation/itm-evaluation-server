@@ -21,6 +21,7 @@ from swagger_server.models import (
 )
 from .itm_scenario import ITMScenario
 from .itm_action_handler import ITMActionHandler
+from .itm_alignment_target_reader import ITMAlignmentTargetReader
 from swagger_server.itm.ta1.itm_ta1_controller import ITMTa1Controller
 from .itm_history import ITMHistory
 from .itm_domain_config import ITMDomainConfig, ITMDomainConfigFactory
@@ -40,6 +41,7 @@ class ITMSession:
     DEFAULT_DOMAIN = config[config_group]['DEFAULT_DOMAIN']
     SUPPORTED_DOMAINS = config[config_group]['SUPPORTED_DOMAINS']
     SCENARIO_DIRECTORY = config[config_group]['SCENARIO_DIRECTORY']
+    TARGET_SOURCE = config[config_group].get('TARGET_SOURCE')
     ALL_TA1_NAMES = config[config_group]['ALL_TA1_NAMES'].replace('\n','').split(',')
 
     # maps alignment id to list alignment_targets, as limited by configuration; used whether connecting to TA1 or not
@@ -52,6 +54,8 @@ class ITMSession:
     cache_ta1_targets = config[config_group].getboolean("CACHE_TA1_TARGETS", fallback=False)
     # Don't request session alignment from TA1 at the end of a session
     calc_alignment = config[config_group].getboolean("CALC_ALIGNMENT", fallback=True)
+    # Whether alignment targets are being read from a local file instead of queried from TA1
+    use_local_targets = False if TARGET_SOURCE else True
     # This determines whether the server saves history to JSON
     save_history = config[config_group].getboolean("SAVE_HISTORY")
     # save_history must also be True
@@ -112,13 +116,34 @@ class ITMSession:
 
 
     @staticmethod
+    def load_local_alignment_data(ta1_name: str) -> None:
+        import csv
+        ow_csv = open(ITMSession.TARGET_SOURCE, 'r', encoding='utf-8')
+        reader = csv.reader(ow_csv)
+        header = next(reader) # Format is PID, kdma_name, kdma_acronym, [parameters]
+        for line in reader:
+            if len(line) > 6:
+                target_reader = ITMAlignmentTargetReader()
+                target_reader.init_from_kdmas_new(line[0], line[1], line[2], line[3:])
+                ITMSession.alignment_data[target_reader.alignment_target.id] = target_reader.alignment_target
+                ITMSession.alignment_target_ids.append(target_reader.alignment_target.id)
+            else:
+                logging.warning(f"--> skipping line: {line}")
+        ow_csv.close()
+
+
+    @staticmethod
     def init_ta1_data(ta1_names):
-        # Populate alignment_ids from ITMTa1Controller.get_alignment_target_ids
-        logging.info("Loading TA1 configuration from TA1 servers...")
         for ta1_name in ta1_names:
-            ITMSession.alignment_ids[ta1_name] = [
-                alignment_target_id for alignment_target_id in ITMTa1Controller.get_alignment_target_ids(ta1_name)
-            ]
+            if ITMSession.use_local_targets:
+                logging.info("Loading %s alignment targets from local file...", ta1_name)
+                ITMSession.load_local_alignment_data(ta1_name)
+            else:
+                # Populate alignment_ids from ITMTa1Controller.get_alignment_target_ids
+                logging.info("Loading TA1 configuration from TA1 servers...")
+                ITMSession.alignment_ids[ta1_name] = [
+                    alignment_target_id for alignment_target_id in ITMTa1Controller.get_alignment_target_ids(ta1_name)
+                ]
         logging.info("Done.")
 
 
@@ -128,7 +153,10 @@ class ITMSession:
             return alignment_target
         if self.ta1_integration:
             if target_id not in ITMSession.alignment_ids[ta1_name]:
-                logging.fatal(f"Cannot get alignment target {target_id} because it is not defined by {ta1_name}. Check configuration.")
+                if self.use_local_targets:
+                    logging.fatal(f"Cannot get alignment target {target_id} because it was not loaded from local file {TARGET_SOURCE}.")
+                else:
+                    logging.fatal(f"Cannot get alignment target {target_id} because it is not defined by {ta1_name}. Check configuration.")
                 raise Exception("Undefined alignment target")
             else:
                 logging.info(f"Loading alignment target {target_id} from TA1 {ta1_name}.")
@@ -142,7 +170,7 @@ class ITMSession:
         return alignment_target
 
 
-    def _check_scenario_id(self, scenario_id: str) -> None:
+    def _check_scenario_id(self, scenario_id: str):
         """
         Check if the provided scenario ID matches the session's scenario ID.
 
@@ -362,7 +390,7 @@ class ITMSession:
 
         try:
             self.state = deepcopy(self.itm_scenario.isd.current_scene.state)
-            self.itm_scenario.clear_hidden_data(self.state, self.kdma_training)
+            self.itm_scenario.clear_hidden_data(self.state, True if self.kdma_training else False)
             self.state.meta_info = MetaInfo(scene_id=self.itm_scenario.isd.current_scene.id, probe_response=None)
             scenario = Scenario(
                 id=self.itm_scenario.id,
@@ -425,7 +453,7 @@ class ITMSession:
         return Scenario(session_complete=True, id='', name='',
                         scenes=None, state=None)
 
-    def start_session(self, adm_name: str, session_type: str, adm_profile: str, domain: str, kdma_training: str=None, max_scenarios=None) -> str:
+    def start_session(self, adm_name: str, session_type: str, adm_profile: str, domain: str, kdma_training: str=None, max_scenarios=None):
         """
         Start a new session.
 
@@ -572,6 +600,7 @@ class ITMSession:
                     try:
                         # Get a list of alignment target IDs that apply to the given scenario so we can create a scenario for each target
                         alignment_target_ids = ITMTa1Controller.get_target_ids(ta1_name, itm_scenario)
+                        # TODO: Add section for local alignment targets (based on config var)
                         scenario_ctr = __load_scenarios(alignment_target_ids, scenario_ctr) \
                             if not self.kdma_training else __load_scenarios([alignment_target_ids[0]], scenario_ctr)
                     except Exception as e:
