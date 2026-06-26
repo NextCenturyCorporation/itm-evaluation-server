@@ -108,23 +108,7 @@ SAVE_HISTORY_TO_S3=False
 
 CALC_ALIGNMENT=False
 
-ADEPT_K2_ALIGNMENT_TARGETS=Jun2026-AF-binomial-110,
-    Jun2026-AF-binomial-113,
-    Jun2026-AF-binomial-115,
-    Jun2026-AF-binomial-118,
-    Jun2026-AF-binomial-121,
-    Jun2026-AF-binomial-124,
-    Jun2026-AF-binomial-127,
-    Jun2026-AF-binomial-134
-
-ADEPT_K4_ALIGNMENT_TARGETS=Jun2026-PS-binomial-103,
-    Jun2026-PS-binomial-111,
-    Jun2026-PS-binomial-113,
-    Jun2026-PS-binomial-117,
-    Jun2026-PS-binomial-120,
-    Jun2026-PS-binomial-130,
-    Jun2026-PS-binomial-133,
-    Jun2026-PS-binomial-139
+# Everything else is inherited from the DEFAULT configuration.  This is for the 1D binomial evaluation.
 
 [EVAL_TRI]
 
@@ -135,23 +119,23 @@ ADEPT_EVAL_FILENAMES=june2026-adept-eval-trinary-AF.yaml,june2026-adept-eval-tri
 ADEPT_EVAL_K2_SCENARIOS=June2026-AF-eval-trinary
 ADEPT_EVAL_K4_SCENARIOS=June2026-PS-eval-trinary
 
-ADEPT_K2_ALIGNMENT_TARGETS=Jun2026-AF-binomial-110,
-    Jun2026-AF-binomial-113,
-    Jun2026-AF-binomial-115,
-    Jun2026-AF-binomial-118,
-    Jun2026-AF-binomial-121,
-    Jun2026-AF-binomial-124,
-    Jun2026-AF-binomial-127,
-    Jun2026-AF-binomial-134
+ADEPT_K2_ALIGNMENT_TARGETS=Jun2026-AF-trinomial-1,
+    Jun2026-AF-trinomial-2,
+    Jun2026-AF-trinomial-3,
+    Jun2026-AF-trinomial-4,
+    Jun2026-AF-trinomial-5,
+    Jun2026-AF-trinomial-6,
+    Jun2026-AF-trinomial-7,
+    Jun2026-AF-trinomial-8
 
-ADEPT_K4_ALIGNMENT_TARGETS=Jun2026-PS-binomial-103,
-    Jun2026-PS-binomial-111,
-    Jun2026-PS-binomial-113,
-    Jun2026-PS-binomial-117,
-    Jun2026-PS-binomial-120,
-    Jun2026-PS-binomial-130,
-    Jun2026-PS-binomial-133,
-    Jun2026-PS-binomial-139
+ADEPT_K4_ALIGNMENT_TARGETS=Jun2026-PS-trinomial-1,
+    Jun2026-PS-trinomial-2,
+    Jun2026-PS-trinomial-3,
+    Jun2026-PS-trinomial-4,
+    Jun2026-PS-trinomial-5,
+    Jun2026-PS-trinomial-6,
+    Jun2026-PS-trinomial-7,
+    Jun2026-PS-trinomial-8
 
 [EVAL_MULTI]
 
@@ -180,6 +164,24 @@ ADEPT_EVAL_K1_SCENARIOS=
 ADEPT_EVAL_K2_SCENARIOS=June2026-AF-observe-trinary
 ADEPT_EVAL_K3_SCENARIOS=
 ADEPT_EVAL_K4_SCENARIOS=June2026-PS-observe-trinary
+
+ADEPT_K2_ALIGNMENT_TARGETS=Jun2026-AF-trinomial-1,
+    Jun2026-AF-trinomial-2,
+    Jun2026-AF-trinomial-3,
+    Jun2026-AF-trinomial-4,
+    Jun2026-AF-trinomial-5,
+    Jun2026-AF-trinomial-6,
+    Jun2026-AF-trinomial-7,
+    Jun2026-AF-trinomial-8
+
+ADEPT_K4_ALIGNMENT_TARGETS=Jun2026-PS-trinomial-1,
+    Jun2026-PS-trinomial-2,
+    Jun2026-PS-trinomial-3,
+    Jun2026-PS-trinomial-4,
+    Jun2026-PS-trinomial-5,
+    Jun2026-PS-trinomial-6,
+    Jun2026-PS-trinomial-7,
+    Jun2026-PS-trinomial-8
 
 [OBSERVE_MULTI]
 
