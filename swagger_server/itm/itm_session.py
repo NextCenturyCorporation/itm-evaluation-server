@@ -142,7 +142,7 @@ class ITMSession:
         return alignment_target
 
 
-    def _check_scenario_id(self, scenario_id: str) -> None:
+    def _check_scenario_id(self, scenario_id: str):
         """
         Check if the provided scenario ID matches the session's scenario ID.
 
@@ -362,7 +362,7 @@ class ITMSession:
 
         try:
             self.state = deepcopy(self.itm_scenario.isd.current_scene.state)
-            self.itm_scenario.clear_hidden_data(self.state, self.kdma_training)
+            self.itm_scenario.clear_hidden_data(self.state, True if self.kdma_training else False)
             self.state.meta_info = MetaInfo(scene_id=self.itm_scenario.isd.current_scene.id, probe_response=None)
             scenario = Scenario(
                 id=self.itm_scenario.id,
@@ -425,7 +425,7 @@ class ITMSession:
         return Scenario(session_complete=True, id='', name='',
                         scenes=None, state=None)
 
-    def start_session(self, adm_name: str, session_type: str, adm_profile: str, domain: str, kdma_training: str=None, max_scenarios=None) -> str:
+    def start_session(self, adm_name: str, session_type: str, adm_profile: str, domain: str, kdma_training: str=None, max_scenarios=None):
         """
         Start a new session.
 
