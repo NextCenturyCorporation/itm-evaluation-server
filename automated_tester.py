@@ -60,16 +60,13 @@ import requests
 
 DEFAULT_GROUPS = {
     "testing": {
-        "cfgs": ["OBSERVE_BI", "OBSERVE_TRI", "OBSERVE_MULTI", "EVAL_BI", "EVAL_TRI", "EVAL_MULTI"],
+        "cfgs": ["EVAL_BI", "EVAL_TRI", "EVAL_MULTI"],
         "testing": True
     },
     "train-solo": {
         "cfgs": ["TRAINING"],
         "testing": True,
         "training": "solo"
-    },
-    "ta1-observe": {
-        "cfgs": ["OBSERVE_BI", "OBSERVE_TRI", "OBSERVE_MULTI"]
     },
     "ta1-eval": {
         "cfgs": ["EVAL_BI", "EVAL_TRI", "EVAL_MULTI"]
