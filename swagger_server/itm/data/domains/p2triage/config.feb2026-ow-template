@@ -116,7 +116,7 @@ ADEPT_EVAL_FILENAMES=april2026-desert-openworld2.yaml,april2026-urban-openworld2
 ADEPT_EVAL_K1_SCENARIOS=April2026-OW_desert2,April2026-OW_urban2
 ADEPT_EVAL_K2_SCENARIOS=April2026-OW_desert2,April2026-OW_urban2
 
-[JUNE_OPENWORLD]
+[JUNE25_OPENWORLD]
 
 EVALUATION_TYPE=june2025
 SCENARIO_DIRECTORY=swagger_server/itm/data/%(EVALUATION_TYPE)s/scenarios/
@@ -128,3 +128,7 @@ ADEPT_EVAL_FILENAMES=june2025-desert-openworld2.yaml,june2025-urban-openworld2.y
 
 ADEPT_EVAL_K1_SCENARIOS=June2025-OW_desert2,June2025-OW_urban2
 ADEPT_EVAL_K2_SCENARIOS=June2025-OW_desert2,June2025-OW_urban2
+
+[TRAINING]
+
+SAVE_HISTORY_TO_S3=False

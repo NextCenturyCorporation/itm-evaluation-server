@@ -60,7 +60,7 @@ import requests
 
 DEFAULT_GROUPS = {
     "testing": {
-        "cfgs": ["EVAL_BI", "EVAL_TRI", "EVAL_MULTI"],
+        "cfgs": ["FEB_OPENWORLD", "APRIL_OPENWORLD", "JUNE25_OPENWORLD"],
         "testing": True
     },
     "train-solo": {
@@ -68,8 +68,8 @@ DEFAULT_GROUPS = {
         "testing": True,
         "training": "solo"
     },
-    "ta1-eval": {
-        "cfgs": ["EVAL_BI", "EVAL_TRI", "EVAL_MULTI"]
+    "ta1-ow": {
+        "cfgs": ["FEB_OPENWORLD", "APRIL_OPENWORLD", "JUNE25_OPENWORLD"],
     },
     "train-full": {
         "cfgs": ["TRAINING"],
