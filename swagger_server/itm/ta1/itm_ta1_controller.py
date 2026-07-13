@@ -21,6 +21,11 @@ class ITMTa1Controller(ABC):
         self.url = self.get_contact_info(scene_type)
 
     @staticmethod
+    def set_config(config_group):
+        ITMTa1Controller.config_group = config_group
+        print(f'ITMTa1Controller: Setting config to {config_group}.')
+
+    @staticmethod
     def create_controller(scene_type, alignment_target_id=None, alignment_target=None):
         try:
             klass: ITMTa1Controller = ITMTa1Controller.__get_static_ref(scene_type)

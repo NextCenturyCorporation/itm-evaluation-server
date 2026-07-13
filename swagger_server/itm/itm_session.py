@@ -30,38 +30,28 @@ class ITMSession:
     """
     Class for representing and manipulating a simulation scenario session.
     """
-    config = Configuration.get_config()
-    config_group = builtins.config_group
 
     # Class variables
-    EVALUATION_TYPE = config[config_group]['EVALUATION_TYPE']
-    EVALUATION_NAME = config[config_group]['EVAL_NAME']
-    EVALUATION_NUMBER = int(config[config_group]['EVAL_NUMBER'])
-    DEFAULT_DOMAIN = config[config_group]['DEFAULT_DOMAIN']
-    SUPPORTED_DOMAINS = config[config_group]['SUPPORTED_DOMAINS']
-    SCENARIO_DIRECTORY = config[config_group]['SCENARIO_DIRECTORY']
-    ALL_TA1_NAMES = config[config_group]['ALL_TA1_NAMES'].replace('\n','').split(',')
+    config = Configuration.get_config()
+    initial_config_group = builtins.config_group
+    DEFAULT_DOMAIN = config[initial_config_group]['DEFAULT_DOMAIN']
+    SUPPORTED_DOMAINS = config[initial_config_group]['SUPPORTED_DOMAINS']
+    ALL_TA1_NAMES = config[initial_config_group]['ALL_TA1_NAMES'].replace('\n','').split(',')
 
-    # maps alignment id to list alignment_targets, as limited by configuration; used whether connecting to TA1 or not
-    alignment_data = {}
     # maps ta1_name to list of alignment target IDs obtained from the TA1 server
     alignment_ids = {}
     # This determines whether the server makes calls to TA1
     ta1_integration = not builtins.testing
     # Cache TA1 alignment target ids and alignment targets if true, else query TA1 every session
-    cache_ta1_targets = config[config_group].getboolean("CACHE_TA1_TARGETS", fallback=False)
-    # Don't request session alignment from TA1 at the end of a session
-    calc_alignment = config[config_group].getboolean("CALC_ALIGNMENT", fallback=True)
-    # This determines whether the server saves history to JSON
-    save_history = config[config_group].getboolean("SAVE_HISTORY")
-    # save_history must also be True
-    save_history_to_s3 = config[config_group].getboolean("SAVE_HISTORY_TO_S3")
+    cache_ta1_targets = config[initial_config_group].getboolean("CACHE_TA1_TARGETS", fallback=False)
 
 
     def __init__(self):
         """
         Initialize an ITMSession.
         """
+        self.init_config('DEFAULT')
+
         self.session_id = None
         self.log_id = None
         self.adm_name = ''
@@ -84,9 +74,11 @@ class ITMSession:
         # Action Handler
         self.action_handler: ITMActionHandler = None
         # ADM History
-        self.history: ITMHistory = ITMHistory(ITMSession.config)
+        self.history: ITMHistory = None
         # This determines whether the server returns history in final State after each scenario completes
         self.return_scenario_history = False
+        # maps alignment id to list alignment_targets; used whether connecting to TA1 or not
+        self.alignment_data = {}
 
     def __deepcopy__(self, memo):
         return self # Allows us to deepcopy ITMScenarios
@@ -122,8 +114,23 @@ class ITMSession:
         logging.info("Done.")
 
 
+    def init_config(self, config_group: str):
+        config = ITMSession.config
+        self.SCENARIO_DIRECTORY = config[config_group]['SCENARIO_DIRECTORY']
+        self.EVALUATION_TYPE = config[config_group]['EVALUATION_TYPE']
+        self.EVALUATION_NAME = config[config_group]['EVAL_NAME']
+        self.EVALUATION_NUMBER = int(self.config[config_group]['EVAL_NUMBER'])
+        # Don't request session alignment from TA1 at the end of a session
+        self.calc_alignment = self.config[config_group].getboolean("CALC_ALIGNMENT", fallback=True)
+        # This determines whether the server saves history to JSON
+        self.save_history = self.config[config_group].getboolean("SAVE_HISTORY")
+        # save_history must also be True
+        self.save_history_to_s3 = self.config[config_group].getboolean("SAVE_HISTORY_TO_S3")
+        self.history = ITMHistory(config) # TODO Move to start_session?
+
+
     def load_alignment_target(self, target_id, ta1_name):
-        alignment_target = ITMSession.alignment_data.get(target_id)
+        alignment_target = self.alignment_data.get(target_id)
         if alignment_target: # Previously retrieved specified alignment target
             return alignment_target
         if self.ta1_integration:
@@ -138,7 +145,7 @@ class ITMSession:
                           KDMAValueParametersInner("medical_weight", "single", 0.5),
                           KDMAValueParametersInner("attr_weight", "single", 0.5)]
             alignment_target = AlignmentTarget(target_id, [KDMAValue(kdma='Test_KDMA', value=0.5, parameters=parameters)])
-        ITMSession.alignment_data[target_id] = alignment_target
+        self.alignment_data[target_id] = alignment_target
         return alignment_target
 
 
@@ -232,14 +239,14 @@ class ITMSession:
             alignment_type = kdma + "-" + self.itm_scenario.alignment_target.id
             timestamp = f"{scenario_end_time:%Y%m%d-%H.%M.%S}" # e.g., 20240821-18.22.53
             filename = f"{self.adm_profile.replace(' ','-')}-" if self.adm_profile else ''
-            filename += f"{ITMSession.EVALUATION_TYPE.replace(' ','')}-{self.itm_scenario.id.replace(' ', '_')}-{self.itm_scenario.ta1_name}-{alignment_type.replace(' ', '_')}-{self.adm_name}-{timestamp}"
+            filename += f"{self.EVALUATION_TYPE.replace(' ','')}-{self.itm_scenario.id.replace(' ', '_')}-{self.itm_scenario.ta1_name}-{alignment_type.replace(' ', '_')}-{self.adm_name}-{timestamp}"
             self.history.write_to_json_file(filename, self.save_history_to_s3)
         if self.return_scenario_history:
             if builtins.testing: # Don't print full history
                 self.state.unstructured = dumps({'metadata': self.history.evaluation_info}, indent=2) + os.linesep + self.state.unstructured
             else:
                 self.state.unstructured = dumps({'history': self.history.history, 'metadata': self.history.evaluation_info, 'results': self.history.results}, indent=2) + os.linesep + self.state.unstructured
-        self.history.clear_history()
+        #self.history.clear_history()  # TODO TBDDAG
 
 
     @staticmethod
@@ -479,7 +486,10 @@ class ITMSession:
             max_scenarios = None
         self.itm_scenarios = []
         self.session_type = session_type
-        self.history.clear_history()
+        config_param = adm_profile # TODO Validate?
+        self.init_config(config_param)
+        builtins.config_group = config_param
+        ITMTa1Controller.set_config(config_param)
         self.time_started = time.time()
 
         ta1_names = []
@@ -512,7 +522,7 @@ class ITMSession:
             # Try to get TA1 data, otherwise Fail
             try:
                 ITMSession.init_ta1_data(ta1_names)
-                ITMSession.alignment_data.clear() # Clear alignment data cache
+                self.alignment_data.clear() # Clear alignment data cache
             except:
                 logging.exception("%s: Exception communicating with TA1; is the TA1 server running?  Ending session.", self.log_id)
                 self._end_session() # Exception here ends the session
@@ -520,9 +530,9 @@ class ITMSession:
 
         # Get scenario path based on evaluation type and number
         if self.session_type != 'test':
-            scenario_path = f"{ITMSession.SCENARIO_DIRECTORY}/"
-        elif ITMSession.EVALUATION_NUMBER <= 5: # through Phase 1
-            scenario_path = f"swagger_server/itm/data/{ITMSession.EVALUATION_TYPE}/test/"
+            scenario_path = f"{self.SCENARIO_DIRECTORY}/"
+        elif self.EVALUATION_NUMBER <= 5: # through Phase 1
+            scenario_path = f"swagger_server/itm/data/{self.EVALUATION_TYPE}/test/"
         else: # after Phase 1
             scenario_path = f"swagger_server/itm/data/domains/{domain}/test/"
 
