@@ -2,25 +2,25 @@ import boto3
 import json
 import logging
 import os
-import builtins
 
+from swagger_server.config_util import Configuration
 from typing import Union
 
 class ITMHistory:
     """
     Class for managing ADM action history.
     """
+    config = Configuration.get_config()
 
-    def __init__(self, config):
+    def __init__(self, config_group):
         """
         Initialize an instance of ITMHistory.
         """
-        config_group = builtins.config_group
         self.history = []
-        self.filepath = config[config_group]["HISTORY_DIRECTORY"] + os.sep
-        self.save_history_bucket = config[config_group]["HISTORY_S3_BUCKET"]
-        self.eval_name = config[config_group]['EVAL_NAME']
-        self.eval_number: int = int(config[config_group]['EVAL_NUMBER'])
+        self.filepath = self.config[config_group]["HISTORY_DIRECTORY"] + os.sep
+        self.save_history_bucket = self.config[config_group]["HISTORY_S3_BUCKET"]
+        self.eval_name = self.config[config_group]['EVAL_NAME']
+        self.eval_number: int = int(self.config[config_group]['EVAL_NUMBER'])
         self.clear_history()
 
     def clear_history(self):

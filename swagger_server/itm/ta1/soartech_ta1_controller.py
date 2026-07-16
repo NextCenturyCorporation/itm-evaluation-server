@@ -1,19 +1,23 @@
 import requests
 import urllib
+import builtins
+from swagger_server.config_util import Configuration
 from swagger_server.models import KDMAProfile
 from .itm_ta1_controller import ITMTa1Controller
 
 
 class SoartechTa1Controller(ITMTa1Controller):
 
-    SOARTECH_EVAL_FILENAMES = ITMTa1Controller.config[ITMTa1Controller.config_group]['SOARTECH_EVAL_FILENAMES'].replace('\n','').split(',')
-    SOARTECH_TRAIN_FILENAMES = ITMTa1Controller.config[ITMTa1Controller.config_group]['SOARTECH_TRAIN_FILENAMES'].replace('\n','').split(',')
-    SOARTECH_EVAL_QOL_SCENARIOS = ITMTa1Controller.config[ITMTa1Controller.config_group]['SOARTECH_EVAL_QOL_SCENARIOS'].replace('\n','').split(',')
-    SOARTECH_EVAL_VOL_SCENARIOS = ITMTa1Controller.config[ITMTa1Controller.config_group]['SOARTECH_EVAL_VOL_SCENARIOS'].replace('\n','').split(',')
-    SOARTECH_TRAIN_QOL_SCENARIOS = ITMTa1Controller.config[ITMTa1Controller.config_group]['SOARTECH_TRAIN_QOL_SCENARIOS'].replace('\n','').split(',')
-    SOARTECH_TRAIN_VOL_SCENARIOS = ITMTa1Controller.config[ITMTa1Controller.config_group]['SOARTECH_TRAIN_VOL_SCENARIOS'].replace('\n','').split(',')
-    SOARTECH_QOL_ALIGNMENT_TARGETS = ITMTa1Controller.config[ITMTa1Controller.config_group]['SOARTECH_QOL_ALIGNMENT_TARGETS'].replace('\n','').split(',')
-    SOARTECH_VOL_ALIGNMENT_TARGETS = ITMTa1Controller.config[ITMTa1Controller.config_group]['SOARTECH_VOL_ALIGNMENT_TARGETS'].replace('\n','').split(',')
+    config = Configuration.get_config()[builtins.config_group]
+
+    SOARTECH_EVAL_FILENAMES = config['SOARTECH_EVAL_FILENAMES'].replace('\n','').split(',')
+    SOARTECH_TRAIN_FILENAMES = config['SOARTECH_TRAIN_FILENAMES'].replace('\n','').split(',')
+    SOARTECH_EVAL_QOL_SCENARIOS = config['SOARTECH_EVAL_QOL_SCENARIOS'].replace('\n','').split(',')
+    SOARTECH_EVAL_VOL_SCENARIOS = config['SOARTECH_EVAL_VOL_SCENARIOS'].replace('\n','').split(',')
+    SOARTECH_TRAIN_QOL_SCENARIOS = config['SOARTECH_TRAIN_QOL_SCENARIOS'].replace('\n','').split(',')
+    SOARTECH_TRAIN_VOL_SCENARIOS = config['SOARTECH_TRAIN_VOL_SCENARIOS'].replace('\n','').split(',')
+    SOARTECH_QOL_ALIGNMENT_TARGETS = config['SOARTECH_QOL_ALIGNMENT_TARGETS'].replace('\n','').split(',')
+    SOARTECH_VOL_ALIGNMENT_TARGETS = config['SOARTECH_VOL_ALIGNMENT_TARGETS'].replace('\n','').split(',')
 
     def __init__(self, alignment_target_id, alignment_target = None):
         super().__init__(self.get_ta1name(), alignment_target_id, alignment_target)
