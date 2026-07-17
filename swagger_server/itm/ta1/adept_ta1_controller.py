@@ -79,7 +79,6 @@ class AdeptTa1Controller(ITMTa1Controller):
         target_to_group = {target: group for group, targets in alignmentTargets.items() for target in targets}
 
         ta1_config = AdeptConfig(ta1_name=cls.get_ta1name(),
-                                 contact_url=cfg[f"{cls.get_ta1name().upper()}_URL"],
                                  EVAL_FILENAMES=EVAL_FILENAMES, TRAIN_FILENAMES=TRAIN_FILENAMES,
                                  evaluationScenarios=evaluationScenarios, trainingScenarios=trainingScenarios,
                                  alignmentTargets=alignmentTargets, distributionTargets=distributionTargets,

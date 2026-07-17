@@ -543,7 +543,7 @@ class ITMSession:
         num_read_scenarios = 0
         for ta1_name in ta1_names:
             # Tell TA1 controller to load the specified configuration if it hasn't already
-            ITMTa1Controller.load_config(ta1_name, self.config_group)
+            ITMTa1Controller.set_config(ta1_name, self.config_group)
 
             if self.session_type == 'test':
                 scenarios = ITMSession._get_file_names(scenario_path)

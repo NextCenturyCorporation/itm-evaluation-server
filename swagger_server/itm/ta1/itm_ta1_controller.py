@@ -12,7 +12,6 @@ from dataclasses import dataclass
 @dataclass
 class TA1Config:
     ta1_name: str
-    contact_url: str
 
 
 class ITMTa1Controller(ABC):
@@ -23,7 +22,7 @@ class ITMTa1Controller(ABC):
         self.url = self.get_server_url()
 
     @staticmethod
-    def load_config(scene_type: str, config_group: str):
+    def set_config(scene_type: str, config_group: str):
         ITMTa1Controller.__get_static_ref(scene_type).load_config(config_group)
 
     @staticmethod
@@ -49,6 +48,21 @@ class ITMTa1Controller(ABC):
     @staticmethod
     @abstractmethod
     def get_ta1name() -> str:
+        ...
+
+    @classmethod
+    @abstractmethod
+    def load_config(cls, config_group: str):
+        ...
+
+    @classmethod
+    @abstractmethod
+    def create_config(cls, config_group: str):
+        ...
+
+    @classmethod
+    @abstractmethod
+    def init_config(cls):
         ...
 
     @staticmethod
