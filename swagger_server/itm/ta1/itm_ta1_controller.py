@@ -1,30 +1,35 @@
 import requests
 import json
 import urllib
-import builtins
 from abc import ABC, abstractmethod
 from importlib import import_module
 from math import isnan
 from swagger_server.models import (
     ProbeResponse, AlignmentResults, AlignmentTarget
 )
-from swagger_server.config_util import Configuration
+from dataclasses import dataclass
+
+@dataclass
+class TA1Config:
+    ta1_name: str
+
 
 class ITMTa1Controller(ABC):
-    config = Configuration.get_config()
-    config_group = builtins.config_group
-
-    def __init__(self, scene_type: str, alignment_target_id, alignment_target = None):
+    def __init__(self, alignment_target_id, alignment_target = None):
         self.session_id = ''
         self.alignment_target_id = alignment_target_id
         self.alignment_target = alignment_target
-        self.url = self.get_contact_info(scene_type)
+        self.url = self.get_server_url()
 
     @staticmethod
-    def create_controller(scene_type, alignment_target_id=None, alignment_target=None):
+    def set_config(scene_type: str, config_group: str):
+        ITMTa1Controller.__get_static_ref(scene_type).load_config(config_group)
+
+    @staticmethod
+    def create_controller(scene_type, config_group, alignment_target_id=None, alignment_target=None):
         try:
             klass: ITMTa1Controller = ITMTa1Controller.__get_static_ref(scene_type)
-            instance = klass(alignment_target_id, alignment_target)
+            instance = klass(config_group, alignment_target_id, alignment_target)
             return instance
         except (ImportError, AttributeError, TypeError) as e:
             print(f"Error instantiating '{scene_type}' TA1 controller from factory: {e}")
@@ -36,14 +41,6 @@ class ITMTa1Controller(ABC):
         return getattr(module, f"{scene_type.capitalize()}Ta1Controller")
 
     @staticmethod
-    def get_contact_info(ta1_name: str) -> str:
-        url = ITMTa1Controller.config[ITMTa1Controller.config_group][f"{ta1_name.upper()}_URL"]
-        # Technically this `if` block should never evaluate to True since configs are mandatory, but just in case.
-        if url is None or url == "":
-            url = "localhost"
-        return url
-
-    @staticmethod
     @abstractmethod
     def get_server_url() -> str:
         ...
@@ -51,6 +48,21 @@ class ITMTa1Controller(ABC):
     @staticmethod
     @abstractmethod
     def get_ta1name() -> str:
+        ...
+
+    @classmethod
+    @abstractmethod
+    def load_config(cls, config_group: str):
+        ...
+
+    @classmethod
+    @abstractmethod
+    def create_config(cls, config_group: str):
+        ...
+
+    @classmethod
+    @abstractmethod
+    def init_config(cls):
         ...
 
     @staticmethod
@@ -81,21 +93,16 @@ class ITMTa1Controller(ABC):
 
     @staticmethod
     @abstractmethod
-    def get_filenames(kdma_training):
+    def get_filenames(config_group, kdma_training):
         ...
 
     @staticmethod
-    def get_filenames(ta1_name, kdma_training):
-        return ITMTa1Controller.__get_static_ref(ta1_name).get_filenames(kdma_training)
+    def get_scenarios(ta1_name, config_group, kdma_training):
+        return ITMTa1Controller.__get_static_ref(ta1_name).get_filenames(config_group, kdma_training)
 
     @staticmethod
-    @abstractmethod
-    def get_target_ids(itm_scenario) -> list[str]:
-        ...
-
-    @staticmethod
-    def get_target_ids(ta1_name: str, itm_scenario) -> list[str]:
-        return ITMTa1Controller.__get_static_ref(ta1_name).get_target_ids(itm_scenario)
+    def get_target_ids(ta1_name: str, config_group: str, itm_scenario) -> list[str]:
+        return ITMTa1Controller.__get_static_ref(ta1_name).get_target_ids(config_group, itm_scenario)
 
     # Note: this method is currently unused but remains valid from an API perspective; and we might want to use it someday.
     @staticmethod
