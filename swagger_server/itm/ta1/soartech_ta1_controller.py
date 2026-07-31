@@ -59,7 +59,7 @@ class SoartechTa1Controller(ITMTa1Controller):
 
 
     def __init__(self, config_group, alignment_target_id, alignment_target = None):
-        super().__init__(self.get_ta1name(), alignment_target_id, alignment_target)
+        super().__init__(alignment_target_id, alignment_target)
         self.ta1_config = SoartechTa1Controller.load_config(config_group)
 
     @staticmethod
@@ -80,7 +80,7 @@ class SoartechTa1Controller(ITMTa1Controller):
 
     @staticmethod
     def get_filenames(config_group, kdma_training) -> list[str]:
-        ta1_config: SoartechConfig = SoartechConfig.load_config(config_group)
+        ta1_config: SoartechConfig = SoartechTa1Controller.load_config(config_group)
         return ta1_config.TRAIN_FILENAMES if kdma_training else ta1_config.EVAL_FILENAMES
 
     @staticmethod

@@ -49,8 +49,7 @@ class AdeptTa1Controller(ITMTa1Controller):
         try:
             scenario_files = set(os.listdir(scenario_directory))
         except OSError:
-            logging.fatal("Invalid filepath. Please check the SCENARIO_DIRECTORY variable in the config.ini file.")
-            exit(1)
+            raise RuntimeError("Invalid filepath. Please check the SCENARIO_DIRECTORY variable in the config.ini file.")
 
         scenario_ids = load_scenario_ids(scenario_directory, scenario_files)
         EVAL_FILENAMES = sorted(resolve_tokens(cfg['ADEPT_EVAL_FILENAMES'], scenario_files))
