@@ -5,7 +5,7 @@ info:
 
     The API is based on the OpenAPI 3.0.3 specification.
   title: ITM TA3 API
-  version: 0.5.3
+  version: 0.5.4
 servers:
 - url: /
 tags:
@@ -951,7 +951,7 @@ components:
     AlignmentResults:
       description: Computed KDMA profile and alignment score for a set of decisions.
       example:
-        score: 0.0
+        score: 0.8008281904610115
         alignment_warning: alignment_warning
         alignment_source:
         - probes:
@@ -1019,9 +1019,7 @@ components:
           title: Alignment Target Id
           type: string
         score:
-          description: "Measured alignment, negative infinity (completely unaligned)\
-            \ to 0 (completely aligned)."
-          maximum: 0
+          description: Measured alignment to the target
           title: Score
           type: number
         alignment_warning:

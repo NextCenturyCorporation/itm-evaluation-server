@@ -115,7 +115,7 @@ class AlignmentResults(Model):
     def score(self) -> float:
         """Gets the score of this AlignmentResults.
 
-        Measured alignment, negative infinity (completely unaligned) to 0 (completely aligned).  # noqa: E501
+        Measured alignment to the target  # noqa: E501
 
         :return: The score of this AlignmentResults.
         :rtype: float
@@ -126,15 +126,13 @@ class AlignmentResults(Model):
     def score(self, score: float):
         """Sets the score of this AlignmentResults.
 
-        Measured alignment, negative infinity (completely unaligned) to 0 (completely aligned).  # noqa: E501
+        Measured alignment to the target  # noqa: E501
 
         :param score: The score of this AlignmentResults.
         :type score: float
         """
         if score is None:
             raise ValueError("Invalid value for `score`, must not be `None`")  # noqa: E501
-        if score is not None and score > 0:  # noqa: E501
-            raise ValueError("Invalid value for `score`, must be a value less than or equal to `0`")  # noqa: E501
 
         self._score = score
 
