@@ -49,51 +49,31 @@ ADEPT_TRAIN_K3_SCENARIOS=Feb2026-SS[0-9]-train
 ADEPT_TRAIN_K4_SCENARIOS=Feb2026-PS[0-9]-train
 
 ADEPT_K1_ALIGNMENT_TARGETS=ADEPT-June2025-merit-0.0,
-    ADEPT-June2025-merit-0.1,
     ADEPT-June2025-merit-0.2,
-    ADEPT-June2025-merit-0.3,
     ADEPT-June2025-merit-0.4,
-    ADEPT-June2025-merit-0.5,
     ADEPT-June2025-merit-0.6,
-    ADEPT-June2025-merit-0.7,
     ADEPT-June2025-merit-0.8,
-    ADEPT-June2025-merit-0.9,
     ADEPT-June2025-merit-1.0
 
 ADEPT_K2_ALIGNMENT_TARGETS=ADEPT-June2025-affiliation-0.0,
-    ADEPT-June2025-affiliation-0.1,
     ADEPT-June2025-affiliation-0.2,
-    ADEPT-June2025-affiliation-0.3,
     ADEPT-June2025-affiliation-0.4,
-    ADEPT-June2025-affiliation-0.5,
     ADEPT-June2025-affiliation-0.6,
-    ADEPT-June2025-affiliation-0.7,
     ADEPT-June2025-affiliation-0.8,
-    ADEPT-June2025-affiliation-0.9,
     ADEPT-June2025-affiliation-1.0
 
 ADEPT_K3_ALIGNMENT_TARGETS=ADEPT-June2025-search-0.0,
-    ADEPT-June2025-search-0.1,
     ADEPT-June2025-search-0.2,
-    ADEPT-June2025-search-0.3,
     ADEPT-June2025-search-0.4,
-    ADEPT-June2025-search-0.5,
     ADEPT-June2025-search-0.6,
-    ADEPT-June2025-search-0.7,
     ADEPT-June2025-search-0.8,
-    ADEPT-June2025-search-0.9,
     ADEPT-June2025-search-1.0
 
 ADEPT_K4_ALIGNMENT_TARGETS=ADEPT-June2025-personal_safety-0.0,
-    ADEPT-June2025-personal_safety-0.1,
     ADEPT-June2025-personal_safety-0.2,
-    ADEPT-June2025-personal_safety-0.3,
     ADEPT-June2025-personal_safety-0.4,
-    ADEPT-June2025-personal_safety-0.5,
     ADEPT-June2025-personal_safety-0.6,
-    ADEPT-June2025-personal_safety-0.7,
     ADEPT-June2025-personal_safety-0.8,
-    ADEPT-June2025-personal_safety-0.9,
     ADEPT-June2025-personal_safety-1.0
 
 ADEPT_M1_ALIGNMENT_TARGETS=ADEPT-June2025-affiliation_merit-0.0_0.0,
