@@ -70,6 +70,8 @@ class P2triageScenario(ITMScenario):
                 patient_name_map[character.id] = sim_patient_name
             for mapping in scene.action_mappings:
                 probe_id = mapping.probe_id
+                if 'Fake' in probe_id:
+                    continue # Skip fake probes that are only there to document patients who aren't in any probes
                 choice_id = mapping.choice
                 character_id = mapping.character_id
                 if probe_id and choice_id and character_id in patient_name_map:

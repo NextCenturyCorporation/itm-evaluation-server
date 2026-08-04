@@ -5,7 +5,7 @@ info:
     This is the specification of the TA3 API for In The Moment (ITM).  Currently, the Evaluation API for TA2 supports functionality for the Phase 2 Evaluations.
 
     The API is based on the OpenAPI 3.0.3 specification.
-  version: 0.5.3
+  version: 0.5.4
 servers:
   - url: /
 tags:
@@ -506,8 +506,7 @@ components:
         score:
           title: Score
           type: number
-          description: Measured alignment, negative infinity (completely unaligned) to 0 (completely aligned).
-          maximum: 0
+          description: Measured alignment to the target
         alignment_warning:
           title: Alignment Warning
           type: string
