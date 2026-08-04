@@ -60,19 +60,19 @@ import requests
 
 DEFAULT_GROUPS = {
     "testing": {
-        "cfgs": ["FEB_OPENWORLD", "APRIL_OPENWORLD", "JUNE25_OPENWORLD"],
+        "cfgs": ["FEB_OPENWORLD1", "FEB_OPENWORLD2", "APRIL_OPENWORLD1", "APRIL_OPENWORLD2", "JUNE25_OPENWORLD1", "JUNE25_OPENWORLD2"],
         "testing": True
     },
     "train-solo": {
-        "cfgs": ["TRAINING"],
+        "cfgs": ["DEFAULT"],
         "testing": True,
         "training": "solo"
     },
     "ta1-ow": {
-        "cfgs": ["FEB_OPENWORLD", "APRIL_OPENWORLD", "JUNE25_OPENWORLD"],
+        "cfgs": ["FEB_OPENWORLD1", "FEB_OPENWORLD2", "APRIL_OPENWORLD1", "APRIL_OPENWORLD2", "JUNE25_OPENWORLD1", "JUNE25_OPENWORLD2"],
     },
     "train-full": {
-        "cfgs": ["TRAINING"],
+        "cfgs": ["DEFAULT"],
         "training": "full"
     }
 }
@@ -289,7 +289,7 @@ def host_to_url(host, port, path="/ui/"):
         return f"http://[{host}]:{port}{path}"
     return f"http://{host}:{port}{path}"
 
-def wait_for_server_ui(port, timeout=30):
+def wait_for_server_ui(port, timeout=60):
     hosts = ["127.0.0.1", "::1", "localhost"]
     deadline = time.time() + timeout
     while time.time() < deadline:
@@ -507,7 +507,7 @@ def build_server_output_path(branch_name, cfg, group_name):
     return build_output_dir(branch_name) / f"{cfg}_{group_name}_server.txt"
 
 def build_runner_command(client_venv_python, runner_path, phase, training):
-    runner_cmd = [str(client_venv_python), str(runner_path), '--name', 'integration_test', '--session', 'adept', '--profile', 'test']
+    runner_cmd = [str(client_venv_python), str(runner_path), '--name', 'integration_testrun', '--session', 'adept']
     if phase == 1:
         runner_cmd.extend(['--domain', 'triage'])
     if training:

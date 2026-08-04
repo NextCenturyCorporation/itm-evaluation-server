@@ -1,4 +1,3 @@
-import builtins
 import logging
 from swagger_server.models import (
     Action,
@@ -15,8 +14,8 @@ class P2triageScenario(ITMScenario):
         super().__init__(yaml_path, session, ta1_name, training)
 
         # Tells the server to get its probe data from characters
-        config = Configuration.get_config()
-        self.inferred_responses = config[builtins.config_group].getboolean("INFERRED_RESPONSES", fallback=False)
+        self.inferred_responses = \
+            Configuration.get_config()[session.config_group].getboolean("INFERRED_RESPONSES", fallback=False)
         self.probe_map: dict[str, dict[str, str]] = None
         self.treatment_order: list = None
         self.character_map: dict = None
@@ -71,6 +70,8 @@ class P2triageScenario(ITMScenario):
                 patient_name_map[character.id] = sim_patient_name
             for mapping in scene.action_mappings:
                 probe_id = mapping.probe_id
+                if 'Fake' in probe_id:
+                    continue # Skip fake probes that are only there to document patients who aren't in any probes
                 choice_id = mapping.choice
                 character_id = mapping.character_id
                 if probe_id and choice_id and character_id in patient_name_map:

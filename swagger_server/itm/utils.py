@@ -53,9 +53,9 @@ def load_scenario_ids(base_path, scenario_files):
                 pass
     return scenario_ids
 
-def load_alignment_ids(ta1_name, base_url):
+def load_alignment_ids(url):
     try:
-        return set(requests.get(f"{ta1_name}{base_url}").json())
+        return set(requests.get(url).json())
     except Exception:
-        logging.fatal("Could not retrieve alignment IDs from TA1 server.")
+        logging.fatal(f"Could NOT retrieve alignment IDs from TA1 server at {url}.")
     return set()
