@@ -73,7 +73,7 @@ class OWTriageActionHandler(ITMActionHandler):
                     break
             if not sufficient_supplies:
                 return False, f'Invalid or insufficient `{supply_used}` supplies', 400
-        elif action.action_type == ActionTypeEnum.CHECK_VITALS:
+        elif action.action_type in [ActionTypeEnum.CHECK_VITALS, ActionTypeEnum.MOVE_TO_EVAC]:
             pass # Requires nothing further
         else:
             return False, f'Invalid action_type `{action.action_type}`', 400
@@ -117,7 +117,7 @@ class OWTriageActionHandler(ITMActionHandler):
             if supply.type == supply_used:
                 if supply.quantity:
                     supply.quantity -= 1
-                    logging.info(f"Decrementing {supply.type} to {supply.quantity}")
+                    logging.info("%s: Decrementing %s to %d", self.session.log_id, supply.type, supply.quantity)
 
         return self.times_dict[ActionTypeEnum.TREAT_PATIENT]
 
