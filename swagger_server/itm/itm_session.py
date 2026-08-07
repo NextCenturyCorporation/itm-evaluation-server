@@ -493,7 +493,6 @@ class ITMSession:
         if not self.init_config(self.config_group):
             logging.exception("%s: Invalid configuration profile %s.  Aborting session.", self.log_id, self.config_group)
             return f"Invalid configuration profile {self.config_group}.  Aborting session.", 400
-        #builtins.config_group = self.config_group # TODO TBDDAG remove/change, or keep for SoarTech
         self.time_started = time.time()
 
         ta1_names = []

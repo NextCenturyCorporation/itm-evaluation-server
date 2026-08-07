@@ -254,7 +254,7 @@ def add_ow_scenes(data: dict):
     state = {'unstructured': data['state']['unstructured'] + " Medevac is inbound. Please treat and tag patients as you see fit, then end the scene when you are done.",
              'supplies': supplies, 'characters': characters}
     treat_and_tag_scene = {'id': 'treat_and_tag', 'next_scene': 'building_explosion' if secondary_intro else 'evac_decision', 'end_scene_allowed': True, 'restricted_actions': ['MOVE_TO_EVAC'],
-                           'state': state, 'action_mapping': action_mapping, 'transitions': {'elapsed_time_gt': 150 if secondary_intro else 99999}}
+                           'state': state, 'action_mapping': action_mapping, 'transitions': {'elapsed_time_gt': 99 if secondary_intro else 99999}}
     data['scenes'].append(treat_and_tag_scene)
 
     # Add building_explosion scene
