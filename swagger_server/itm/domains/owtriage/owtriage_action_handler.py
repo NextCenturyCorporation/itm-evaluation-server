@@ -14,13 +14,15 @@ class OWTriageActionHandler(ITMActionHandler):
     """
     Class for validating and processing owtriage actions.
     """
-    TAG_TEXT = '. They are currently tagged ' # Added to unstructured text when tagged
+    TAG_TEXT = ' They are currently tagged ' # Added to unstructured text when tagged
 
     def __init__(self, session):
         """
         Initialize a OWTriageActionHandler.
         """
         super().__init__(session)
+        self.shadow_characters: dict = None # Copies of the characters where obscured info isn't scrubbed
+        self.shadow: Character = None # The shadow character of the current action
 
     def load_action_times(self):
         super().load_action_times()
@@ -32,6 +34,21 @@ class OWTriageActionHandler(ITMActionHandler):
 
     def move_only_to_unseen(self) -> bool:
         return False
+
+
+    def set_scenario(self, scenario):
+        super().set_scenario(scenario)
+        self.shadow_characters = {char.id: deepcopy(char) for char in self.session.state.characters} # One-time initialization
+
+
+    def set_scene(self, scene):
+        super().set_scene(scene)
+        # Add shadow for new characters
+        # NOTE: updating or removing a character via YAML is not currently supported; only adding one
+        for isd_character in self.current_scene.state.characters:
+            if isd_character.id not in self.shadow_characters:
+                logging.info(f"{self.session.log_id}: Adding new character {isd_character.id} to shadow.")
+                self.shadow_characters[isd_character.id] = deepcopy(isd_character)
 
 
     def validate_domain_action(self, action: Action, character: Character):
@@ -53,6 +70,11 @@ class OWTriageActionHandler(ITMActionHandler):
                     return False, f'Cannot perform {action.action_type} action with unseen character `{action.character_id}`', 400
                 if not character.nearby:
                     return False, f'Cannot perform {action.action_type} action with a distant character `{action.character_id}`', 400
+            if self.shadow_characters:
+                if character.id in self.shadow_characters:
+                    self.shadow = self.shadow_characters[character.id]
+                else:
+                    return False, f'Invalid character id `{character.id}`', 400
 
         if action.action_type == ActionTypeEnum.TAG_CHARACTER:
             # Requires category parameter
@@ -81,20 +103,34 @@ class OWTriageActionHandler(ITMActionHandler):
         return True, '', 0
 
 
+    # We assume that `character` and its shadow has been updated based on the current action
+    def update_one_unstructured(self, character: Character):
+        char_id = character.id
+        shadow: Character = self.shadow_characters[char_id]
+
+        # Determine the attribute suffix based on character states
+        treated_suffix = "_treated" if shadow.treated else ""
+        distance_suffix = "_near" if character.nearby else "_far"
+
+        # Dynamically fetch the correct unstructured text from shadow
+        attr_name = f"unstructured{treated_suffix}{distance_suffix}"
+        base_text = getattr(shadow, attr_name)
+
+        # Apply optional tag text
+        if shadow.tag and shadow.nearby:
+            base_text += self.TAG_TEXT + shadow.tag + '.'
+
+        # Assign the final string to both objects
+        character.unstructured = shadow.unstructured = base_text
+
+
+    # We assume that the shadow has been updated based on the current action along with all characters
     def update_unstructured(self, one_character=None):
         if one_character:
-            pass
-        for character in self.session.state.characters:
-            for isd_character in self.current_scene.state.characters:
-                if isd_character.id == character.id:
-                    tag_index = character.unstructured.find(self.TAG_TEXT)
-                    tag_text = character.unstructured[tag_index:]
-                    if character.nearby:
-                        character.unstructured = isd_character.unstructured_treated_near if character.treated else isd_character.unstructured_near
-                        if tag_index > 0: # tagged
-                            character.unstructured += tag_text
-                    else:
-                        character.unstructured = isd_character.unstructured_treated_far if character.treated else isd_character.unstructured_treated_far
+            self.update_one_unstructured(one_character)
+        else:
+            for character in self.session.state.characters:
+                self.update_one_unstructured(character)
 
 
     def treat_patient(self, character: Character, supply_used: str):
@@ -111,6 +147,7 @@ class OWTriageActionHandler(ITMActionHandler):
             return 0
 
         character.treated = True
+        self.shadow_characters[character.id].treated = True
         self.update_unstructured(character)
 
         for supply in self.session.state.supplies:
@@ -130,26 +167,27 @@ class OWTriageActionHandler(ITMActionHandler):
         Args:
             target_character: The character to move to
         """
-        # TODO/TBDDAG: Refactor this; it could be simplified
         # Update visibility and nearness
-        target_distance = target_character.distance
-        logging.info(f"Moving to {'unseen' if target_character.unseen else 'seen'} character {target_character.name}.")
-        if target_character.unseen:
-            for character in self.session.state.characters:
-                if character.unseen:
-                    character.unseen = False
-                    character.nearby = character.distance == target_distance
-                else:
-                    character.unseen = True
-                    character.nearby = False
-        else:
-            for character in self.session.state.characters:
-                if not character.unseen:
-                    character.nearby = character.distance == target_distance
-                    logging.info(f"--> Seen character {character.id}.nearby is now {character.nearby}.")
+        target_distance = self.shadow_characters[target_character.id].distance
+        is_target_unseen = target_character.unseen
+        logging.info(f"{self.session.log_id}: Moving to {'unseen' if target_character.unseen else 'seen'} character {target_character.name}.")
 
-        # Update description
-        self.update_unstructured(self)
+        for character in self.session.state.characters:
+            if is_target_unseen:
+                # Invert the unseen status for all characters
+                character.unseen = not character.unseen
+                # If they are now visible, check proximity to target, otherwise they are distant
+                character.nearby = (not character.unseen) and (self.shadow_characters[character.id].distance == target_distance)
+            elif not character.unseen:
+                # Only update already seen characters
+                character.nearby = self.shadow_characters[character.id].distance == target_distance
+
+        # Update shadows
+        for char in self.session.state.characters:
+            self.shadow_characters[char.id].unseen = char.unseen
+            self.shadow_characters[char.id].nearby = char.nearby
+        # Update description of all characters
+        self.update_unstructured()
 
         return self.times_dict[ActionTypeEnum.MOVE_TO]
 
@@ -164,6 +202,7 @@ class OWTriageActionHandler(ITMActionHandler):
         for isd_character in self.current_scene.state.characters:
             if isd_character.id == character.id:
                 character.vitals = deepcopy(isd_character.vitals)
+                self.shadow.vitals = deepcopy(isd_character.vitals)
                 return self.times_dict[ActionTypeEnum.CHECK_VITALS]
 
 
@@ -175,6 +214,7 @@ class OWTriageActionHandler(ITMActionHandler):
             character: The character to move to evac.
         """
         self.session.state.characters = [char for char in self.session.state.characters if char.id != character.id]
+        self.shadow_characters.pop(character.id, None)
         return self.times_dict[ActionTypeEnum.MOVE_TO_EVAC]
 
 
@@ -188,11 +228,10 @@ class OWTriageActionHandler(ITMActionHandler):
         """
         character.tag = tag
         # Update unstructured text to reflect tagging; support re-tagging.
-        for isd_character in self.current_scene.state.characters:
-            if isd_character.id == character.id:
-                character.unstructured = \
-                    character.unstructured.split(self.TAG_TEXT)[0] + self.TAG_TEXT + tag + '.'
-                return self.times_dict[ActionTypeEnum.TAG_CHARACTER]
+        character.unstructured = character.unstructured.split(self.TAG_TEXT)[0] + self.TAG_TEXT + tag + '.'
+        self.shadow.tag = tag
+        self.shadow.unstructured = character.unstructured
+        return self.times_dict[ActionTypeEnum.TAG_CHARACTER]
 
 
     def process_domain_action(self, action: Action, character: Character, parameters: dict) -> int:

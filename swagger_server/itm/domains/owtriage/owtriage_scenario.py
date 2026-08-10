@@ -10,6 +10,8 @@ from swagger_server.itm import ITMScenario
 
 class OWTriageScenario(ITMScenario):
 
+    UNSEEN_TEXT = "This patient is not currently visible; you would have to move this patient's location."
+
     def __init__(self, yaml_path, session, ta1_name, training = False) -> None:
         super().__init__(yaml_path, session, ta1_name, training)
 
@@ -19,6 +21,7 @@ class OWTriageScenario(ITMScenario):
         self.probe_map = {}
         self.treatment_order = []
         self.last_action = None
+        self.last_character = None
 
 
     def clear_hidden_data(self, state: State, training: bool):
@@ -36,8 +39,10 @@ class OWTriageScenario(ITMScenario):
             character.treated = None
             if not character.nearby:
                 character.tag = None
-            if not self.last_action == ActionTypeEnum.CHECK_VITALS:
-                character.vitals = Vitals()
+            if not (self.last_action == ActionTypeEnum.CHECK_VITALS and character.id == self.last_character):
+                character.vitals = Vitals() # Hide vitals unless just checked on this character
+            if character.unseen:
+                character.unstructured = self.UNSEEN_TEXT
 
 
     # Generates probes for Open World scenarios from Scene data
@@ -73,7 +78,7 @@ class OWTriageScenario(ITMScenario):
 
 
     def send_probes(self):
-        logging.info(f"Patient treatment order: {self.treatment_order}.")
+        logging.info(f"{self.session.log_id}: Patient treatment order: {self.treatment_order}.")
         for probe_id, response_map in self.probe_map.items():
             first_char = self.first_engaged(list(response_map.keys()))
             if first_char:
@@ -82,6 +87,8 @@ class OWTriageScenario(ITMScenario):
 
     def action_taken(self, action: Action):
         self.last_action = action.action_type
+        self.last_character = action.character_id
+        self.clear_hidden_data(self.session.state, self.session.kdma_training)
         if action.action_type == ActionTypeEnum.TREAT_PATIENT:
             if action.character_id not in self.treatment_order:
                 self.treatment_order.append(action.character_id)

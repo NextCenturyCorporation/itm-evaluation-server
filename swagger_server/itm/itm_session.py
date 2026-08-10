@@ -372,6 +372,7 @@ class ITMSession:
 
         try:
             self.state = deepcopy(self.itm_scenario.isd.current_scene.state)
+            self.action_handler.set_scenario(self.itm_scenario)
             self.itm_scenario.clear_hidden_data(self.state, True if self.kdma_training else False)
             self.state.meta_info = MetaInfo(scene_id=self.itm_scenario.isd.current_scene.id, probe_response=None)
             scenario = Scenario(
@@ -382,7 +383,6 @@ class ITMSession:
                 session_complete=False,
                 state=self.state
             )
-            self.action_handler.set_scenario(self.itm_scenario)
             self.current_scenario_index += 1
             self.itm_scenario.start_time = str(datetime.datetime.now())
             self.history.add_history(
