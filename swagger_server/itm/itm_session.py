@@ -242,7 +242,8 @@ class ITMSession:
             alignment_type = kdma + "-" + self.itm_scenario.alignment_target.id
             timestamp = f"{scenario_end_time:%Y%m%d-%H.%M.%S}" # e.g., 20240821-18.22.53
             filename = f"{self.adm_profile.replace(' ','-')}-" if self.adm_profile else ''
-            filename += f"{self.EVALUATION_TYPE.replace(' ','')}-{self.itm_scenario.id.replace(' ', '_')}-{self.itm_scenario.ta1_name}-{alignment_type.replace(' ', '_')}-{self.adm_name}-{timestamp}"
+            filename += f"{self.EVALUATION_TYPE.replace(' ','')}-{self.itm_scenario.id}-{self.itm_scenario.ta1_name}-{alignment_type}-{self.adm_name}-{timestamp}"
+            filename = filename.replace(' ', '_')
             self.history.write_to_json_file(filename, self.save_history_to_s3)
         if self.return_scenario_history:
             if builtins.testing: # Don't print full history
@@ -398,7 +399,8 @@ class ITMSession:
             if self.ta1_integration:
                 try:
                     user_id = f"{self.session_id}_{self.itm_scenario.id}"
-                    ta1_session_id = self.itm_scenario.ta1_controller.new_session(context='false' if self.domain == 'p2triage' else user_id)
+                    ta1_session_id = self.itm_scenario.ta1_controller.new_session(context='false' \
+                                                                        if self.domain in ['owtriage', 'p2triage'] else user_id)
                     self.history.add_history(
                         "TA1 Session ID", {}, ta1_session_id
                     )

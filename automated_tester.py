@@ -60,7 +60,7 @@ import requests
 
 DEFAULT_GROUPS = {
     "testing": {
-        "cfgs": ["FEB_OPENWORLD1", "FEB_OPENWORLD2", "APRIL_OPENWORLD1", "APRIL_OPENWORLD2", "JUNE25_OPENWORLD1", "JUNE25_OPENWORLD2"],
+        "cfgs": ["FEB_OPENWORLD3", "APRIL_OPENWORLD3", "JUNE25_OPENWORLD3"],
         "testing": True
     },
     "train-solo": {
@@ -69,7 +69,7 @@ DEFAULT_GROUPS = {
         "training": "solo"
     },
     "ta1-ow": {
-        "cfgs": ["FEB_OPENWORLD1", "FEB_OPENWORLD2", "APRIL_OPENWORLD1", "APRIL_OPENWORLD2", "JUNE25_OPENWORLD1", "JUNE25_OPENWORLD2"],
+        "cfgs": ["FEB_OPENWORLD3", "APRIL_OPENWORLD3", "JUNE25_OPENWORLD3"],
     },
     "train-full": {
         "cfgs": ["DEFAULT"],
