@@ -74,16 +74,16 @@ components:
           example: Military member of your unit lying down with a broken wrist. They are acting and moving normally.
         unstructured_treated_near:
           type: string
-          description: unstructured description updated after character treatment
+          description: unstructured description of a nearby character after treatment
           example: Military member of your unit lying down with a treated wrist injury. They are acting and moving normally.
         unstructured_far:
           type: string
           description: unstructured description of a distant character prior to treatment
-          example: Military personnel lying down with an wounded arm.
+          example: Military service member lying down with a wounded arm.
         unstructured_treated_far:
           type: string
-          description: unstructured description of a distant character prior to treatment
-          example: Military personnel lying down with an treated arm injury.
+          description: unstructured description of a distant character after treatment
+          example: Military service member lying down with a treated arm injury.
         distance:
           type: number
           format: float
@@ -185,7 +185,7 @@ components:
         - Not specified
     DomainActionTypeEnum:
       type: string
-      description: An action type [recognized by the ADM Server](https://github.com/NextCenturyCorporation/itm-evaluation-client?tab=readme-ov-file#available-actions)
+      description: A domain-specific action type [recognized by the ADM Server](https://github.com/NextCenturyCorporation/itm-evaluation-client/blob/development/README-owtriage.md)
       enum:
         - CHECK_VITALS
         - TREAT_PATIENT

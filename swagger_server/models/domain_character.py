@@ -179,7 +179,7 @@ class DomainCharacter(Model):
     def unstructured_treated_near(self) -> str:
         """Gets the unstructured_treated_near of this DomainCharacter.
 
-        unstructured description updated after character treatment  # noqa: E501
+        unstructured description of a nearby character after treatment  # noqa: E501
 
         :return: The unstructured_treated_near of this DomainCharacter.
         :rtype: str
@@ -190,7 +190,7 @@ class DomainCharacter(Model):
     def unstructured_treated_near(self, unstructured_treated_near: str):
         """Sets the unstructured_treated_near of this DomainCharacter.
 
-        unstructured description updated after character treatment  # noqa: E501
+        unstructured description of a nearby character after treatment  # noqa: E501
 
         :param unstructured_treated_near: The unstructured_treated_near of this DomainCharacter.
         :type unstructured_treated_near: str
@@ -225,7 +225,7 @@ class DomainCharacter(Model):
     def unstructured_treated_far(self) -> str:
         """Gets the unstructured_treated_far of this DomainCharacter.
 
-        unstructured description of a distant character prior to treatment  # noqa: E501
+        unstructured description of a distant character after treatment  # noqa: E501
 
         :return: The unstructured_treated_far of this DomainCharacter.
         :rtype: str
@@ -236,7 +236,7 @@ class DomainCharacter(Model):
     def unstructured_treated_far(self, unstructured_treated_far: str):
         """Sets the unstructured_treated_far of this DomainCharacter.
 
-        unstructured description of a distant character prior to treatment  # noqa: E501
+        unstructured description of a distant character after treatment  # noqa: E501
 
         :param unstructured_treated_far: The unstructured_treated_far of this DomainCharacter.
         :type unstructured_treated_far: str

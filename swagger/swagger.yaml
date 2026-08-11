@@ -581,10 +581,11 @@ components:
               rapport: loathing
               unstructured_near: Military member of your unit lying down with a broken
                 wrist. They are acting and moving normally.
-              unstructured_treated_far: Military personnel lying down with an treated
-                arm injury.
+              unstructured_treated_far: Military service member lying down with a
+                treated arm injury.
               nearby: true
-              unstructured_far: Military personnel lying down with an wounded arm.
+              unstructured_far: Military service member lying down with a wounded
+                arm.
               unstructured: 22-year-old male with brown hair
               name: Mike
               tag: DELAYED
@@ -608,10 +609,11 @@ components:
               rapport: loathing
               unstructured_near: Military member of your unit lying down with a broken
                 wrist. They are acting and moving normally.
-              unstructured_treated_far: Military personnel lying down with an treated
-                arm injury.
+              unstructured_treated_far: Military service member lying down with a
+                treated arm injury.
               nearby: true
-              unstructured_far: Military personnel lying down with an wounded arm.
+              unstructured_far: Military service member lying down with a wounded
+                arm.
               unstructured: 22-year-old male with brown hair
               name: Mike
               tag: DELAYED
@@ -792,10 +794,11 @@ components:
               rapport: loathing
               unstructured_near: Military member of your unit lying down with a broken
                 wrist. They are acting and moving normally.
-              unstructured_treated_far: Military personnel lying down with an treated
-                arm injury.
+              unstructured_treated_far: Military service member lying down with a
+                treated arm injury.
               nearby: true
-              unstructured_far: Military personnel lying down with an wounded arm.
+              unstructured_far: Military service member lying down with a wounded
+                arm.
               unstructured: 22-year-old male with brown hair
               name: Mike
               tag: DELAYED
@@ -819,10 +822,11 @@ components:
               rapport: loathing
               unstructured_near: Military member of your unit lying down with a broken
                 wrist. They are acting and moving normally.
-              unstructured_treated_far: Military personnel lying down with an treated
-                arm injury.
+              unstructured_treated_far: Military service member lying down with a
+                treated arm injury.
               nearby: true
-              unstructured_far: Military personnel lying down with an wounded arm.
+              unstructured_far: Military service member lying down with a wounded
+                arm.
               unstructured: 22-year-old male with brown hair
               name: Mike
               tag: DELAYED
@@ -907,10 +911,10 @@ components:
             rapport: loathing
             unstructured_near: Military member of your unit lying down with a broken
               wrist. They are acting and moving normally.
-            unstructured_treated_far: Military personnel lying down with an treated
+            unstructured_treated_far: Military service member lying down with a treated
               arm injury.
             nearby: true
-            unstructured_far: Military personnel lying down with an wounded arm.
+            unstructured_far: Military service member lying down with a wounded arm.
             unstructured: 22-year-old male with brown hair
             name: Mike
             tag: DELAYED
@@ -934,10 +938,10 @@ components:
             rapport: loathing
             unstructured_near: Military member of your unit lying down with a broken
               wrist. They are acting and moving normally.
-            unstructured_treated_far: Military personnel lying down with an treated
+            unstructured_treated_far: Military service member lying down with a treated
               arm injury.
             nearby: true
-            unstructured_far: Military personnel lying down with an wounded arm.
+            unstructured_far: Military service member lying down with a wounded arm.
             unstructured: 22-year-old male with brown hair
             name: Mike
             tag: DELAYED
@@ -1362,10 +1366,10 @@ components:
           rapport: loathing
           unstructured_near: Military member of your unit lying down with a broken
             wrist. They are acting and moving normally.
-          unstructured_treated_far: Military personnel lying down with an treated
+          unstructured_treated_far: Military service member lying down with a treated
             arm injury.
           nearby: true
-          unstructured_far: Military personnel lying down with an wounded arm.
+          unstructured_far: Military service member lying down with a wounded arm.
           unstructured: 22-year-old male with brown hair
           name: Mike
           tag: DELAYED
@@ -1389,10 +1393,10 @@ components:
           rapport: loathing
           unstructured_near: Military member of your unit lying down with a broken
             wrist. They are acting and moving normally.
-          unstructured_treated_far: Military personnel lying down with an treated
+          unstructured_treated_far: Military service member lying down with a treated
             arm injury.
           nearby: true
-          unstructured_far: Military personnel lying down with an wounded arm.
+          unstructured_far: Military service member lying down with a wounded arm.
           unstructured: 22-year-old male with brown hair
           name: Mike
           tag: DELAYED
@@ -1601,10 +1605,10 @@ components:
         rapport: loathing
         unstructured_near: Military member of your unit lying down with a broken wrist.
           They are acting and moving normally.
-        unstructured_treated_far: Military personnel lying down with an treated arm
-          injury.
+        unstructured_treated_far: Military service member lying down with a treated
+          arm injury.
         nearby: true
-        unstructured_far: Military personnel lying down with an wounded arm.
+        unstructured_far: Military service member lying down with a wounded arm.
         unstructured: 22-year-old male with brown hair
         name: Mike
         tag: DELAYED
@@ -1765,10 +1769,10 @@ components:
             rapport: loathing
             unstructured_near: Military member of your unit lying down with a broken
               wrist. They are acting and moving normally.
-            unstructured_treated_far: Military personnel lying down with an treated
+            unstructured_treated_far: Military service member lying down with a treated
               arm injury.
             nearby: true
-            unstructured_far: Military personnel lying down with an wounded arm.
+            unstructured_far: Military service member lying down with a wounded arm.
             unstructured: 22-year-old male with brown hair
             name: Mike
             tag: DELAYED
@@ -1792,10 +1796,10 @@ components:
             rapport: loathing
             unstructured_near: Military member of your unit lying down with a broken
               wrist. They are acting and moving normally.
-            unstructured_treated_far: Military personnel lying down with an treated
+            unstructured_treated_far: Military service member lying down with a treated
               arm injury.
             nearby: true
-            unstructured_far: Military personnel lying down with an wounded arm.
+            unstructured_far: Military service member lying down with a wounded arm.
             unstructured: 22-year-old male with brown hair
             name: Mike
             tag: DELAYED
@@ -2398,19 +2402,19 @@ components:
           title: unstructured_near
           type: string
         unstructured_treated_near:
-          description: unstructured description updated after character treatment
+          description: unstructured description of a nearby character after treatment
           example: Military member of your unit lying down with a treated wrist injury.
             They are acting and moving normally.
           title: unstructured_treated_near
           type: string
         unstructured_far:
           description: unstructured description of a distant character prior to treatment
-          example: Military personnel lying down with an wounded arm.
+          example: Military service member lying down with a wounded arm.
           title: unstructured_far
           type: string
         unstructured_treated_far:
-          description: unstructured description of a distant character prior to treatment
-          example: Military personnel lying down with an treated arm injury.
+          description: unstructured description of a distant character after treatment
+          example: Military service member lying down with a treated arm injury.
           title: unstructured_treated_far
           type: string
         distance:
