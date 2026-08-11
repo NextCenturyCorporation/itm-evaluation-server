@@ -189,7 +189,7 @@ class ITMScenarioReader:
             id=character_data['id'],
             unstructured=character_data['unstructured'],
             name=character_data.get('name', 'Unknown'),
-            rapport=character_data.get('rapport', 'neutral'),
+            rapport=character_data.get('rapport'),
             unseen=character_data.get('unseen', False),
             demographics=demographics
         )

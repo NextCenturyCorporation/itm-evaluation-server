@@ -121,7 +121,7 @@ class OWTriageActionHandler(ITMActionHandler):
             base_text += self.TAG_TEXT + shadow.tag + '.'
 
         # Assign the final string to both objects
-        character.unstructured = shadow.unstructured = base_text
+        character.unstructured = shadow.unstructured = base_text if base_text else 'Unknown'
 
 
     # We assume that the shadow has been updated based on the current action along with all characters
@@ -182,10 +182,12 @@ class OWTriageActionHandler(ITMActionHandler):
                 # Only update already seen characters
                 character.nearby = self.shadow_characters[character.id].distance == target_distance
 
-        # Update shadows
+        # Update shadows and restore tag of nearby characters
         for char in self.session.state.characters:
             self.shadow_characters[char.id].unseen = char.unseen
             self.shadow_characters[char.id].nearby = char.nearby
+            if char.nearby:
+                char.tag = self.shadow_characters[char.id].tag
         # Update description of all characters
         self.update_unstructured()
 

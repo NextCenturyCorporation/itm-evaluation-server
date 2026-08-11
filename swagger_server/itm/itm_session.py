@@ -115,7 +115,7 @@ class ITMSession:
 
 
     def init_config(self, config_group: str) -> bool:
-        if not self.config.has_section(config_group):
+        if config_group != 'DEFAULT' and not self.config.has_section(config_group):
             return False
         cfg = self.config[config_group]
         self.SCENARIO_DIRECTORY = cfg['SCENARIO_DIRECTORY']
@@ -543,12 +543,11 @@ class ITMSession:
 
         num_read_scenarios = 0
         for ta1_name in ta1_names:
-            # Tell TA1 controller to load the specified configuration if it hasn't already
-            ITMTa1Controller.set_config(ta1_name, self.config_group)
-
             if self.session_type == 'test':
                 scenarios = ITMSession._get_file_names(scenario_path)
             else:
+                # Tell TA1 controller to load the specified configuration if it hasn't already
+                ITMTa1Controller.set_config(ta1_name, self.config_group)
                 scenarios = ITMTa1Controller.get_scenarios(ta1_name, self.config_group, kdma_training)
 
             ta1_scenarios = []
