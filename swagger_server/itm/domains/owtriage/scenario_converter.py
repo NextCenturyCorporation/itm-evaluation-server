@@ -14,7 +14,6 @@ VERBOSE = False
 EVALUATION_NAME = DEFAULT_EVALUATION_NAME
 WRITE_FILES = True
 OUT_PATH = f"swagger_server/itm/data/{EVALUATION_NAME.lower()}/scenarios"
-IGNORED_LIST = [] # Not needed for this round
 
 kdmas_info: list[dict] = [
     {'acronym': 'OW', 'full_name': 'Open World Desert', 'filename': f'{EVALUATION_NAME}-OW-desert3'},
@@ -101,7 +100,7 @@ def make_state(row: dict, acronym: str, training: str, first_row: str = False) -
                                 'unseen': distance > 40,
                                 'nearby': distance == 0,
                                 'treated': False,
-                                'medical_condition': char['medical_condition']}
+                                'medical_condition': char.get('medical_condition')}
                 ow_char_info[char_name] = char_info
 
     return state
@@ -281,8 +280,6 @@ def main():
     eval_filenum = 0
     for kdma_info in kdmas_info:
         acronym = kdma_info['acronym']
-        if acronym in IGNORED_LIST:
-            continue
 
         full_name = kdma_info['full_name']
         filename = f"{kdma_info['filename']}.csv"
@@ -370,8 +367,6 @@ if __name__ == '__main__':
                         help='Do not write output files')
     parser.add_argument('-o', '--outpath', required=False, metavar='outpath',
                         help='Specify location for output files (no spaces)')
-    parser.add_argument('-i', '--ignore', nargs='+', metavar='ignore', required=False, type=str,
-                        help="Acronyms of attributes to ignore (AF, MF, PS, SS, AF-SS, SB, OW)")
 
     args = parser.parse_args()
     if args.redact:
@@ -387,6 +382,4 @@ if __name__ == '__main__':
         WRITE_FILES = False
     if args.outpath:
         OUT_PATH = args.outpath
-    if args.ignore:
-        IGNORED_LIST = args.ignore
     main()
