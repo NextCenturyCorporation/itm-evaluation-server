@@ -1,0 +1,124 @@
+; Copy over this template file and rename it to swagger_server/config.ini
+; Replace the default configurations below with the desired values
+
+[DEFAULT]
+
+EVALUATION_TYPE=feb2026
+SCENARIO_DIRECTORY=swagger_server/itm/data/%(EVALUATION_TYPE)s/scenarios/
+DEFAULT_DOMAIN=owtriage
+SUPPORTED_DOMAINS=owtriage
+
+; Local Default URL
+; ADEPT_URL=http://localhost:8081
+
+; AWS TA1 Default URL (access Prod AWS servers locally)
+; ADEPT_URL=https://darpaitm.caci.com/adept
+
+; Prod Default URL (use on production AWS only)
+ADEPT_URL=http://10.216.38.101:8080
+
+SAVE_HISTORY=True
+SAVE_HISTORY_TO_S3=True
+ALL_TA1_NAMES=adept
+CACHE_TA1_TARGETS=False
+
+HISTORY_DIRECTORY=%(EVALUATION_TYPE)s_history_output
+HISTORY_S3_BUCKET=itm-ui-assets
+
+EVAL_NAME=Phase 2 February 2026 Evaluation
+EVAL_NUMBER=15
+
+ADEPT_EVAL_FILENAMES=feb2026-adept-eval-MF.yaml,
+    feb2026-adept-eval-AF.yaml,
+    feb2026-adept-eval-SS.yaml,
+    feb2026-adept-eval-PS.yaml
+
+ADEPT_TRAIN_FILENAMES=feb2026-adept-train-MF[0-9].yaml,
+    feb2026-adept-train-AF[0-9].yaml,
+    feb2026-adept-train-SS[0-9].yaml,
+    feb2026-adept-train-PS[0-9].yaml
+
+ADEPT_EVAL_K1_SCENARIOS=Feb2026-MF-eval
+ADEPT_EVAL_K2_SCENARIOS=Feb2026-AF-eval
+ADEPT_EVAL_K3_SCENARIOS=Feb2026-SS-eval
+ADEPT_EVAL_K4_SCENARIOS=Feb2026-PS-eval
+
+ADEPT_TRAIN_K1_SCENARIOS=Feb2026-MF[0-9]-train
+ADEPT_TRAIN_K2_SCENARIOS=Feb2026-AF[0-9]-train
+ADEPT_TRAIN_K3_SCENARIOS=Feb2026-SS[0-9]-train
+ADEPT_TRAIN_K4_SCENARIOS=Feb2026-PS[0-9]-train
+
+ADEPT_K1_ALIGNMENT_TARGETS=ADEPT-June2025-merit-0.0,
+    ADEPT-June2025-merit-0.2,
+    ADEPT-June2025-merit-0.4,
+    ADEPT-June2025-merit-0.6,
+    ADEPT-June2025-merit-0.8,
+    ADEPT-June2025-merit-1.0
+
+ADEPT_K2_ALIGNMENT_TARGETS=ADEPT-June2025-affiliation-0.0,
+    ADEPT-June2025-affiliation-0.2,
+    ADEPT-June2025-affiliation-0.4,
+    ADEPT-June2025-affiliation-0.6,
+    ADEPT-June2025-affiliation-0.8,
+    ADEPT-June2025-affiliation-1.0
+
+ADEPT_K3_ALIGNMENT_TARGETS=ADEPT-June2025-search-0.0,
+    ADEPT-June2025-search-0.2,
+    ADEPT-June2025-search-0.4,
+    ADEPT-June2025-search-0.6,
+    ADEPT-June2025-search-0.8,
+    ADEPT-June2025-search-1.0
+
+ADEPT_K4_ALIGNMENT_TARGETS=ADEPT-June2025-personal_safety-0.0,
+    ADEPT-June2025-personal_safety-0.2,
+    ADEPT-June2025-personal_safety-0.4,
+    ADEPT-June2025-personal_safety-0.6,
+    ADEPT-June2025-personal_safety-0.8,
+    ADEPT-June2025-personal_safety-1.0
+
+ADEPT_M1_ALIGNMENT_TARGETS=ADEPT-June2025-affiliation_merit-0.0_0.0,
+    ADEPT-June2025-affiliation_merit-0.0_1.0,
+    ADEPT-June2025-affiliation_merit-1.0_0.0,
+    ADEPT-June2025-affiliation_merit-1.0_1.0
+
+# All of these keywords must be present in the DEFAULT configuration
+REQUIRED_CONFIG=EVALUATION_TYPE, SCENARIO_DIRECTORY, ADEPT_URL, SAVE_HISTORY, SAVE_HISTORY_TO_S3,
+  ALL_TA1_NAMES, HISTORY_DIRECTORY, HISTORY_S3_BUCKET, EVAL_NAME, EVAL_NUMBER, ADEPT_EVAL_K1_SCENARIOS,
+  ADEPT_EVAL_K2_SCENARIOS, ADEPT_EVAL_K3_SCENARIOS, ADEPT_EVAL_K4_SCENARIOS, ADEPT_TRAIN_K1_SCENARIOS,
+  ADEPT_TRAIN_K2_SCENARIOS, ADEPT_TRAIN_K3_SCENARIOS, ADEPT_TRAIN_K4_SCENARIOS, ADEPT_K1_ALIGNMENT_TARGETS,
+  ADEPT_K2_ALIGNMENT_TARGETS, ADEPT_K3_ALIGNMENT_TARGETS, ADEPT_K4_ALIGNMENT_TARGETS, ADEPT_EVAL_FILENAMES,
+  ADEPT_TRAIN_FILENAMES, DEFAULT_DOMAIN, SUPPORTED_DOMAINS
+
+[FEB_OPENWORLD3]
+
+EVAL_NAME=Feb 2026 Open World Experiment Part 3
+EVAL_NUMBER=15
+
+ADEPT_EVAL_FILENAMES=feb2026-desert-openworld3.yaml,feb2026-urban-openworld3.yaml
+
+ADEPT_EVAL_K1_SCENARIOS=Feb2026-OW_desert3,Feb2026-OW_urban3
+ADEPT_EVAL_K2_SCENARIOS=Feb2026-OW_desert3,Feb2026-OW_urban3
+
+[JUNE25_OPENWORLD3]
+
+EVALUATION_TYPE=june2025
+SCENARIO_DIRECTORY=swagger_server/itm/data/%(EVALUATION_TYPE)s/scenarios/
+EVAL_NAME=June 2025 Open World Experiment Part 3
+EVAL_NUMBER=8
+
+ADEPT_EVAL_FILENAMES=june2025-desert-openworld3.yaml,june2025-urban-openworld3.yaml
+
+ADEPT_EVAL_K1_SCENARIOS=June2025-OW_desert3,June2025-OW_urban3
+ADEPT_EVAL_K2_SCENARIOS=June2025-OW_desert3,June2025-OW_urban3
+
+[APRIL_OPENWORLD3]
+
+EVALUATION_TYPE=april2026
+SCENARIO_DIRECTORY=swagger_server/itm/data/%(EVALUATION_TYPE)s/scenarios/
+EVAL_NAME=April 2026 Open World Experiment Part 3
+EVAL_NUMBER=16
+
+ADEPT_EVAL_FILENAMES=april2026-desert-openworld3.yaml,april2026-urban-openworld3.yaml
+
+ADEPT_EVAL_K1_SCENARIOS=April2026-OW_desert3,April2026-OW_urban3
+ADEPT_EVAL_K2_SCENARIOS=April2026-OW_desert3,April2026-OW_urban3

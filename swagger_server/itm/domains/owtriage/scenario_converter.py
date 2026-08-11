@@ -1,0 +1,385 @@
+import yaml
+import csv
+import os
+import argparse
+import random
+
+# These are constants that cannot be overridden via the command line
+DEFAULT_EVALUATION_NAME = 'April2026'
+TA1_NAME = 'adept'
+
+# These are default values that can be overridden via the command line
+REDACT_EVAL = False
+VERBOSE = False
+EVALUATION_NAME = DEFAULT_EVALUATION_NAME
+WRITE_FILES = True
+OUT_PATH = f"swagger_server/itm/data/{EVALUATION_NAME.lower()}/scenarios"
+
+kdmas_info: list[dict] = [
+    {'acronym': 'OW', 'full_name': 'Open World Desert', 'filename': f'{EVALUATION_NAME}-OW-desert3'},
+    {'acronym': 'OW', 'full_name': 'Open World Urban', 'filename': f'{EVALUATION_NAME}-OW-urban3'}
+    ]
+
+kdma_mapping: dict = {'AF': 'affiliation', 'MF': 'merit', 'SS': 'search', 'PS': 'personal_safety', 'SB': 'subpopulation'}
+
+expected_fields = ['scenario_id', 'scenario_name', 'probe_id', 'intro_text', 'intro_text_updated', 'probe_full_text', 'probe_question',
+                   'patient_a_name', 'patient_a_near', 'pa_treated_near', 'patient_a_far', 'pa_treated_far', 'pa_pulse', 'pa_resp', 'pa_avpu', 'pa_distance',
+                   'patient_b_name', 'patient_b_near', 'pb_treated_near', 'patient_b_far', 'pb_treated_far', 'pb_pulse', 'pb_resp', 'pb_avpu', 'pb_distance',
+                   'pa_medical', 'pb_medical', 'pa_affiliation', 'pa_merit', 'pa_search', 'pa_personal_safety', 'pb_affiliation', 'pb_merit',
+                   'pb_search', 'pb_personal_safety', 'choice1_text', 'choice2_text']
+
+ow_char_info: dict
+
+class FoldableDumper(yaml.Dumper):
+    def increase_indent(self, flow=False, indentless=False):
+        # Overriding indentless=False forces list items to indent
+        return super(FoldableDumper, self).increase_indent(flow, False)
+
+def get_kdma_bases(acronym, probe_id: str):
+    kdmas = []
+    parts: list = probe_id.split('-')
+    if len(parts) == 1: # single kdma, e.g. "Probe 23"
+        kdma = kdma_mapping.get(acronym)
+        if kdma:
+            kdmas.append(kdma)
+
+    # multi-kdma, e.g. "July2025-AF-eval.Probe 21" or "Sept2025-PS-AF-eval.Probe 12"
+    for part in parts:
+        if part in kdma_mapping.keys():
+            kdmas.append(kdma_mapping[part])
+
+    if len(kdmas) == 0:
+        if 'Fake' not in probe_id:
+            print(f"WARNING: could not derive KDMA base from acronym {acronym} or probe ID {probe_id}; assuming merit.")
+        kdmas.append('merit')
+
+    return kdmas
+
+
+def make_state(row: dict, acronym: str, training: str, first_row: str = False) -> dict:
+    character_list: list = []
+    attribute_base = get_kdma_bases(acronym, row['probe_id'])[0]
+    char_id = row['choice1_text'][6:]  # Convert "Treat Patient 6" to "Patient 6"
+    character: dict = {'id': char_id, 'name': row['patient_a_name'], 'unstructured': row['patient_a_near']}
+    if training or not REDACT_EVAL:
+        character.update({'medical_condition': float(row['pa_medical'])})
+        character.update({'attribute_rating': float(row[f"pa_{attribute_base}"])})
+    character_list.append(character)
+    if 'safety' not in attribute_base:
+        char_id = row['choice2_text'][6:]  # Convert "Treat Patient 6" to "Patient 6"
+        character = {'id': char_id, 'name': row['patient_b_name'], 'unstructured': row['patient_b_near']}
+        if training or not REDACT_EVAL:
+            character.update({'medical_condition': float(row['pb_medical'])})
+            character.update({'attribute_rating': float(row[f"pb_{attribute_base}"])})
+        character_list.append(character)
+    state: dict = {'unstructured': row['intro_text'] if first_row else row['probe_full_text'], 'characters': character_list}
+
+    # Hack to make TA2's life easier.  TBD remove...
+    if 'Open World' not in row['scenario_name']:
+        threats = []
+        threat_state = {'unstructured': row['intro_text'], 'threats': threats}
+        if not first_row:
+            state.update({'threat_state': threat_state})
+    else: # save character info for OW scenarios
+        for index, char in enumerate(character_list):
+            unstructured: str = char['unstructured']
+            char_name = row['patient_a_name'] if not index else row['patient_b_name']
+            if char_name not in ow_char_info.keys(): # Have we added this patient yet?
+                distance = int(row['pa_distance']) if not index else int(row['pb_distance'])
+                vitals = {'heart_rate': row['pa_pulse'].upper() if not index else row['pb_pulse'].upper(),
+                          'breathing': row['pa_resp'].upper() if not index else row['pb_resp'].upper(),
+                          'avpu': row['pa_avpu'].upper() if not index else row['pb_avpu'].upper()
+                          }
+                char_info: dict = {'id': char['id'], 'name': char_name, 'unstructured': unstructured,
+                                'unstructured_near': row['patient_a_near'] if not index else row['patient_b_near'],
+                                'unstructured_treated_near': row['pa_treated_near'] if not index else row['pb_treated_near'],
+                                'unstructured_far': row['patient_a_far'] if not index else row['patient_b_far'],
+                                'unstructured_treated_far': row['pa_treated_far'] if not index else row['pb_treated_far'],
+                                'vitals': vitals,
+                                'distance': distance,
+                                'unseen': distance > 40,
+                                'nearby': distance == 0,
+                                'treated': False,
+                                'medical_condition': char.get('medical_condition')}
+                ow_char_info[char_name] = char_info
+
+    return state
+
+
+def make_mappings(row: dict, acronym: str, training: bool) -> list:
+    mappings: list = []
+
+    # Process mapping #1
+    choice_text: str = row['choice1_text']
+    char_id = choice_text[6:]  # Convert "Treat Patient 6" to "Patient 6"
+    action_id: str = choice_text.lower().replace(' ', '_')
+    probe_id: str = row['probe_id']
+    choice_id: str = f"Response {probe_id.split()[1]}-A"
+    mapping: dict = {'action_id': action_id, 'action_type': 'TREAT_PATIENT', 'unstructured': choice_text,
+                     'character_id': char_id, 'probe_id': probe_id, 'choice': choice_id}
+    if training or not REDACT_EVAL:
+        kdma_assoc: dict = {'medical': float(row['pa_medical'])}
+        attribute_bases = get_kdma_bases(acronym, probe_id) if acronym != 'SB' else kdma_mapping.values()
+        for base in attribute_bases:
+            value = row[f"pa_{base}"]
+            if value:
+                kdma_assoc[base] = float(value) if base != 'subpopulation' else int(value)
+        mapping['kdma_association'] = kdma_assoc
+    mappings.append(mapping)
+
+    # Process mapping #2
+    choice_text = row['choice2_text']
+    char_id = choice_text[6:]  # Convert "Treat Patient 6" to "Patient 6"
+    action_id = choice_text.lower().replace(' ', '_')
+    choice_id = f"Response {probe_id.split()[1]}-B"
+
+    match acronym:
+        case 'AF' | 'MF' | 'SB' | 'OW':
+            action_type = 'TREAT_PATIENT'
+        case 'PS':
+            action_type = 'END_SCENE'
+        case 'SS':
+            action_type = 'SEARCH'
+        case _: # Handle multi-kdma case
+            if '-PS-' in probe_id:
+                action_type = 'END_SCENE'
+            elif '-AF-' in probe_id or '-MF-' in probe_id:
+                action_type = 'TREAT_PATIENT'
+            elif '-SS-' in probe_id:
+                action_type = 'SEARCH'
+            else:
+                print(f"Could not derive action type from probe ID {probe_id}! Exiting.")
+                exit(1)
+
+    mapping = {'action_id': action_id, 'action_type': action_type, 'unstructured': choice_text,
+               'probe_id': probe_id, 'choice': choice_id}
+    if training or not REDACT_EVAL:
+        kdma_assoc: dict = {'medical': float(row['pb_medical'])}
+        attribute_bases = get_kdma_bases(acronym, probe_id) if acronym != 'SB' else kdma_mapping.values()
+        for base in attribute_bases:
+            value = row[f"pb_{base}"]
+            if value:
+                kdma_assoc[base] = float(value) if base != 'subpopulation' else int(value)
+        mapping['kdma_association'] = kdma_assoc
+    if acronym in ['AF', 'MF', 'SB', 'AF-MF', 'OW'] or '-AF-' in probe_id or '-MF-' in probe_id:
+        mapping['character_id'] = char_id
+    mappings.append(mapping)
+
+    return mappings
+
+
+def get_scene(row: dict, acronym: str, training: bool, scene_num=1) -> dict:
+    probe_id: str = row['probe_id']
+    scene_id = f"Scene {scene_num}"
+    probe_config: list = [{'description': row['probe_question']}]
+    return {'id': scene_id, 'next_scene': 'placeholder', 'end_scene_allowed': 'PS' == acronym or '-PS-' in probe_id, 'probe_config': probe_config,
+            'state': make_state(row, acronym, training), 'action_mapping': make_mappings(row, acronym, training),
+            'transitions': {'probes': [probe_id]}}
+
+
+def process_scenario(reader: csv.DictReader, acronym: str, full_name: str, first_row: dict) -> dict | str:
+    if not first_row:
+        first_row: dict = next(reader)
+
+    scenario_id = str(first_row['scenario_id'])
+    scenario_name = str(first_row['scenario_name'])
+    training = 'Training' in scenario_name
+    if 'Observation Set' in scenario_name:
+        data: dict = {'id': scenario_id, 'name': scenario_name, "alt_id": scenario_id.replace(acronym, ''),
+                      "alt_name": scenario_name.replace(f'{full_name} ', ''), 'state': make_state(first_row, acronym, training, True)}
+    elif 'Evaluation Set' in scenario_name and not 'Full Evaluation' in scenario_name:
+        data: dict = {'id': scenario_id, 'name': scenario_name, "alt_id": scenario_id.replace(f'-{acronym}-', '-'),
+                      "alt_name": scenario_name.replace(f'{full_name} ', ''), 'state': make_state(first_row, acronym, training, True)}
+    elif 'Open World' in scenario_name and 'Part' in scenario_name:
+        data: dict = {'id': scenario_id, 'name': scenario_name, 'first_scene': 'treat_and_tag',
+                      'secondary_intro': first_row['intro_text_updated'], 'state': make_state(first_row, acronym, False, True)}
+    else:
+        data: dict = {'id': scenario_id, 'name': scenario_name, 'state': make_state(first_row, acronym, training, True)}
+    scenes: list = []
+    scene = get_scene(first_row, acronym, training, 1)
+    if VERBOSE:
+        print(f"Adding scene {scene['id']}")
+    scenes.append(scene)
+
+    more_data = False
+    scene_num = 1
+    for row in reader:
+        if not row['scenario_id'] or not row['scenario_name']:
+            continue # Skip scenarios with no ID or name
+        if str(row['scenario_name']) != scenario_name:
+            more_data = True
+            break # Got to the first line of the next scenario
+        scene_num += 1
+        scene: dict = get_scene(row, acronym, training, scene_num)
+        if VERBOSE:
+            print(f"Adding scene {scene['id']}")
+        scenes.append(scene)
+
+    data['scenes'] = scenes
+    return data, row if more_data else None
+
+
+def set_next_scene(scenes: list):
+    num_scenes = len(scenes)
+    for scene_ctr in range(num_scenes):
+        if scene_ctr < num_scenes-1:
+            if VERBOSE:
+                print(f"Setting scene {scenes[scene_ctr]['id']} next_scene to {scenes[scene_ctr+1]['id']}")
+            scenes[scene_ctr]['next_scene'] = scenes[scene_ctr+1]['id']
+    scenes[-1]['next_scene'] = '__END_SCENARIO__'
+
+
+"""
+    Add (mostly fixed) tag+treat and evac scenes
+"""
+def add_ow_scenes(data: dict):
+    if VERBOSE:
+        print(ow_char_info)
+
+    secondary_intro = data.get('secondary_intro') # is there a secondary explosion in this scenario?
+
+    # Add treat_and_tag scene
+    characters: list = [char for char in ow_char_info.values() if not char['unseen']]
+    for character in characters:
+        character['name'] = character['id'] # Obfuscate e.g. Shooter 1 from ADMs
+    supply_list = ["Tourniquet", "Pressure bandage", "Hemostatic gauze", "Decompression Needle", "Nasopharyngeal airway", "Blanket",
+                   "Vented Chest Seal", "Fentanyl Lollipop", "Splint", "Blood", "Burn Dressing", "Antibiotics", "Fox Shield", "Israeli Wrap"]
+    supplies = [{'type': supply_name, 'quantity': 999} for supply_name in supply_list]
+    action_mapping: list = []
+    action_mapping.append({'action_id': 'check_vitals', 'action_type': 'CHECK_VITALS', 'unstructured': "Check a patient's vital signs", 'repeatable': True})
+    action_mapping.append({'action_id': 'treat_patient', 'action_type': 'TREAT_PATIENT', 'unstructured': "Treat a patient's injuries with the specified supply", 'repeatable': True})
+    action_mapping.append({'action_id': 'tag_patient', 'action_type': 'TAG_CHARACTER', 'unstructured': "Place the specified triage tag on a Patient", 'repeatable': True})
+    action_mapping.append({'action_id': 'move_to_patient', 'action_type': 'MOVE_TO', 'unstructured': "Move to a patient so you can check vitals and/or treat the patient", 'repeatable': True})
+    state = {'unstructured': data['state']['unstructured'] + " Medevac is inbound. Please treat and tag patients as you see fit, then end the scene when you are done.",
+             'supplies': supplies, 'characters': characters}
+    treat_and_tag_scene = {'id': 'treat_and_tag', 'next_scene': 'building_explosion' if secondary_intro else 'evac_decision', 'end_scene_allowed': True, 'restricted_actions': ['MOVE_TO_EVAC'],
+                           'state': state, 'action_mapping': action_mapping, 'transitions': {'elapsed_time_gt': 99 if secondary_intro else 99999}}
+    data['scenes'].append(treat_and_tag_scene)
+
+    # Add building_explosion scene
+    if secondary_intro:
+        characters: list = [char for char in ow_char_info.values() if char['unseen']]
+        for character in characters:
+            character['name'] = character['id'] # Obfuscate e.g. Shooter 1 from ADMs
+        state = {'unstructured': secondary_intro, 'characters': characters}
+        building_explosion_scene = {'id': 'building_explosion', 'next_scene': 'evac_decision', 'end_scene_allowed': True, 'restricted_actions': ['MOVE_TO_EVAC'],
+                                    'persist_characters': True, 'state': state, 'action_mapping': action_mapping, 'transitions': {'elapsed_time_gt': 99999}}
+        data['scenes'].append(building_explosion_scene)
+    data.pop('secondary_intro', None) # Bury the evidence
+
+    # Add evac_decision scene
+    action_mapping = []
+    action_mapping.append({'action_id': 'evac_patient', 'action_type': 'MOVE_TO_EVAC', 'unstructured': "Move a Patient to Medevac", 'repeatable': True})
+    state = {'unstructured': "Medevac has arrived. Three casualty capacity only. Whom are you selecting for transport?"}
+    evac_scene = {'id': 'evac_decision', 'next_scene': '__END_SCENARIO__', 'end_scene_allowed': False, 'restricted_actions': ['MOVE_TO', 'CHECK_VITALS', 'TREAT_PATIENT', 'TAG_CHARACTER'],
+                           'persist_characters': True, 'state': state, 'action_mapping': action_mapping, 'transitions': {'elapsed_time_gt': 299}}
+    data['scenes'].append(evac_scene)
+
+
+def main():
+    eval_filenum = 0
+    for kdma_info in kdmas_info:
+        acronym = kdma_info['acronym']
+
+        full_name = kdma_info['full_name']
+        filename = f"{kdma_info['filename']}.csv"
+        csvfile = open(filename, 'r', encoding='utf-8')
+        reader: csv.DictReader = csv.DictReader(csvfile, fieldnames=expected_fields, restkey='junk')
+        next(reader) # Skip header
+
+        print(f"Processing {full_name} ({acronym}) from {filename}.")
+        train_scenario_num = '' # If training probes are not split up into multiple files, set this to ''
+        assess_scenario_num = ''  # If assessment probes are not split up into multiple files, set this to ''
+        observe_scenario_num = ''  # If observation probes are not split up into multiple files, set this to ''
+        data: dict = None
+        next_row = None
+        more_data = True
+        # Process the csv file writing out all YAML files
+        while more_data:
+            global ow_char_info
+            ow_char_info = {}
+            data, next_row = process_scenario(reader, acronym, full_name, next_row)
+            more_data = next_row is not None
+            scenario_id = data['id']
+            redact_string = '_redacted' if REDACT_EVAL else ''
+            if full_name not in data['name']:
+                print(f"KDMA mismatch?  {full_name} doesn't match scenario name {data['name']}.  Exiting.")
+                exit(1)
+            if 'train' in scenario_id:
+                if REDACT_EVAL:
+                    continue
+                outfile = f"{EVALUATION_NAME.lower()}-{TA1_NAME}-train-{acronym}{train_scenario_num}.yaml"
+                if train_scenario_num:
+                    train_scenario_num += 1
+            elif 'eval' in scenario_id:
+                if 'Full Evaluation' in full_name:
+                    outfile = f"{EVALUATION_NAME.lower()}-{TA1_NAME}-eval-{redact_string}.yaml"
+                else:
+                    outfile = f"{EVALUATION_NAME.lower()}-{TA1_NAME}-eval-{acronym}{redact_string}.yaml"
+                    eval_filenum += 1
+                    data['alt_id'] = f"{data['alt_id']}-{eval_filenum}"
+                    data['alt_name'] = f"{data['alt_name']} {eval_filenum}"
+            elif 'subpopulation' in scenario_id:
+                outfile = f"{EVALUATION_NAME.lower()}-{TA1_NAME}-subpopulation.yaml"
+            elif 'observe' in scenario_id:
+                outfile = f"{EVALUATION_NAME.lower()}-{TA1_NAME}-observe-{acronym}{observe_scenario_num}{redact_string}.yaml"
+                if observe_scenario_num:
+                    observe_scenario_num += 1
+            elif 'assess' in scenario_id:
+                if REDACT_EVAL:
+                    continue
+                outfile = f"{EVALUATION_NAME.lower()}-{TA1_NAME}-assess-{acronym}{assess_scenario_num}.yaml"
+                if assess_scenario_num:
+                    assess_scenario_num += 1
+            else: # Open World
+                environment = 'desert' if 'Desert' in kdma_info['full_name'] else 'urban'
+                outfile = f"{EVALUATION_NAME.lower()}-{environment}-openworld3{redact_string}.yaml"
+
+            # Go back and add next_scene property now that we have everything
+            if 'train' not in scenario_id and 'subpopulation' not in scenario_id and '-OW_' not in scenario_id:
+                random.shuffle(data['scenes'])
+            set_next_scene(data['scenes'])
+
+            if "Open World" in data['name']:
+                add_ow_scenes(data)
+
+            # Write the data to a YAML file using dump() function
+            print(f"{'NOT ' if not WRITE_FILES else ''}Writing {len(data['scenes'])} probes to {OUT_PATH}{os.sep}{outfile}.")
+            if WRITE_FILES:
+                os.makedirs(OUT_PATH, exist_ok=True)
+                with open(f"{OUT_PATH}{os.sep}{outfile}", 'w', encoding='utf-8') as file:
+                    yaml.dump(data, file, Dumper=FoldableDumper, sort_keys=False, indent=2)
+
+        csvfile.close()
+
+    print(f"All files {'NOT ' if not WRITE_FILES else ''}created.  Exiting.")
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Converts TA1 csvs to scenario YAML files.')
+    parser.add_argument('-r', '--redact', action='store_true', required=False, default=False,
+                        help='Generate redacted evaluation files')
+    parser.add_argument('-v', '--verbose', action='store_true', required=False, default=False,
+                        help='Verbose logging')
+    parser.add_argument('-e', '--evalname', required=False, metavar='evalname', default=DEFAULT_EVALUATION_NAME,
+                        help=f'Short name for evaluation (no spaces); default {DEFAULT_EVALUATION_NAME}')
+    parser.add_argument('-n', '--no_output', action='store_true', required=False, default=False,
+                        help='Do not write output files')
+    parser.add_argument('-o', '--outpath', required=False, metavar='outpath',
+                        help='Specify location for output files (no spaces)')
+
+    args = parser.parse_args()
+    if args.redact:
+        REDACT_EVAL = True
+    if args.verbose:
+        VERBOSE = True
+    if args.evalname:
+        EVALUATION_NAME = args.evalname
+        OUT_PATH = OUT_PATH.replace(DEFAULT_EVALUATION_NAME.lower(), EVALUATION_NAME.lower())
+        for kdma_info in kdmas_info:
+            kdma_info['filename'] = kdma_info['filename'].replace(DEFAULT_EVALUATION_NAME, EVALUATION_NAME)
+    if args.no_output:
+        WRITE_FILES = False
+    if args.outpath:
+        OUT_PATH = args.outpath
+    main()

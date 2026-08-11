@@ -11,8 +11,7 @@ class WumpusScenario(ITMScenario):
         super().__init__(yaml_path, session, ta1_name, training)
 
 
-    @staticmethod
-    def clear_hidden_data(state: State, training: bool):
+    def clear_hidden_data(self, state: State, training: bool):
         for character in state.characters:
             if character.foobar:
                 character.foobar = None

@@ -115,7 +115,7 @@ class ITMSession:
 
 
     def init_config(self, config_group: str) -> bool:
-        if not self.config.has_section(config_group):
+        if config_group != 'DEFAULT' and not self.config.has_section(config_group):
             return False
         cfg = self.config[config_group]
         self.SCENARIO_DIRECTORY = cfg['SCENARIO_DIRECTORY']
@@ -242,7 +242,8 @@ class ITMSession:
             alignment_type = kdma + "-" + self.itm_scenario.alignment_target.id
             timestamp = f"{scenario_end_time:%Y%m%d-%H.%M.%S}" # e.g., 20240821-18.22.53
             filename = f"{self.adm_profile.replace(' ','-')}-" if self.adm_profile else ''
-            filename += f"{self.EVALUATION_TYPE.replace(' ','')}-{self.itm_scenario.id.replace(' ', '_')}-{self.itm_scenario.ta1_name}-{alignment_type.replace(' ', '_')}-{self.adm_name}-{timestamp}"
+            filename += f"{self.EVALUATION_TYPE.replace(' ','')}-{self.itm_scenario.id}-{self.itm_scenario.ta1_name}-{alignment_type}-{self.adm_name}-{timestamp}"
+            filename = filename.replace(' ', '_')
             self.history.write_to_json_file(filename, self.save_history_to_s3)
         if self.return_scenario_history:
             if builtins.testing: # Don't print full history
@@ -372,6 +373,7 @@ class ITMSession:
 
         try:
             self.state = deepcopy(self.itm_scenario.isd.current_scene.state)
+            self.action_handler.set_scenario(self.itm_scenario)
             self.itm_scenario.clear_hidden_data(self.state, True if self.kdma_training else False)
             self.state.meta_info = MetaInfo(scene_id=self.itm_scenario.isd.current_scene.id, probe_response=None)
             scenario = Scenario(
@@ -382,7 +384,6 @@ class ITMSession:
                 session_complete=False,
                 state=self.state
             )
-            self.action_handler.set_scenario(self.itm_scenario)
             self.current_scenario_index += 1
             self.itm_scenario.start_time = str(datetime.datetime.now())
             self.history.add_history(
@@ -398,7 +399,8 @@ class ITMSession:
             if self.ta1_integration:
                 try:
                     user_id = f"{self.session_id}_{self.itm_scenario.id}"
-                    ta1_session_id = self.itm_scenario.ta1_controller.new_session(context='false' if self.domain == 'p2triage' else user_id)
+                    ta1_session_id = self.itm_scenario.ta1_controller.new_session(context='false' \
+                                                                        if self.domain in ['owtriage', 'p2triage'] else user_id)
                     self.history.add_history(
                         "TA1 Session ID", {}, ta1_session_id
                     )
@@ -493,7 +495,6 @@ class ITMSession:
         if not self.init_config(self.config_group):
             logging.exception("%s: Invalid configuration profile %s.  Aborting session.", self.log_id, self.config_group)
             return f"Invalid configuration profile {self.config_group}.  Aborting session.", 400
-        #builtins.config_group = self.config_group # TODO TBDDAG remove/change, or keep for SoarTech
         self.time_started = time.time()
 
         ta1_names = []
@@ -542,12 +543,11 @@ class ITMSession:
 
         num_read_scenarios = 0
         for ta1_name in ta1_names:
-            # Tell TA1 controller to load the specified configuration if it hasn't already
-            ITMTa1Controller.set_config(ta1_name, self.config_group)
-
             if self.session_type == 'test':
                 scenarios = ITMSession._get_file_names(scenario_path)
             else:
+                # Tell TA1 controller to load the specified configuration if it hasn't already
+                ITMTa1Controller.set_config(ta1_name, self.config_group)
                 scenarios = ITMTa1Controller.get_scenarios(ta1_name, self.config_group, kdma_training)
 
             ta1_scenarios = []

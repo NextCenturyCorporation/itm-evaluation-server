@@ -34,8 +34,7 @@ class ITMScenario:
         self.start_time = None
         self.first_scene = None
 
-    @staticmethod
-    def clear_hidden_data(state: State, training: bool):
+    def clear_hidden_data(self, state: State, training: bool):
         pass
 
     def generate_scenario_data(self):
