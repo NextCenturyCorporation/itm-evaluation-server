@@ -1,0 +1,7 @@
+{
+    "TREAT_PATIENT": 10,
+    "TAG_CHARACTER": 10,
+    "MOVE_TO_EVAC": 100,
+    "CHECK_VITALS": 0,
+    "MOVE_TO": 0
+}

@@ -25,8 +25,7 @@ class P2triageScenario(ITMScenario):
             self.treatment_order = []
 
 
-    @staticmethod
-    def clear_hidden_data(state: State, training: bool):
+    def clear_hidden_data(self, state: State, training: bool):
         if not training:
             for character in state.characters:
                 character.medical_condition = None

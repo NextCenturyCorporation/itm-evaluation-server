@@ -6,12 +6,14 @@ from swagger_server.models.base_model import Model
 from swagger_server.models.character import Character
 from swagger_server.models.event import Event
 from swagger_server.models.meta_info import MetaInfo
+from swagger_server.models.supplies import Supplies
 from swagger_server.models.threat_state import ThreatState
 from swagger_server import util
 
 from swagger_server.models.character import Character  # noqa: E501
 from swagger_server.models.event import Event  # noqa: E501
 from swagger_server.models.meta_info import MetaInfo  # noqa: E501
+from swagger_server.models.supplies import Supplies  # noqa: E501
 from swagger_server.models.threat_state import ThreatState  # noqa: E501
 
 class State(Model):
@@ -20,9 +22,11 @@ class State(Model):
     Do not edit the class manually.
     """
 
-    def __init__(self, unstructured=None, elapsed_time=None, meta_info=None, events=None, threat_state=None, characters=None, scenario_complete=None):  # noqa: E501
+    def __init__(self, supplies=None, unstructured=None, elapsed_time=None, meta_info=None, events=None, threat_state=None, characters=None, scenario_complete=None):  # noqa: E501
         """State - a model defined in OpenAPI
 
+        :param supplies: The supplies of this State.  # noqa: E501
+        :type supplies: List[Supplies]
         :param unstructured: The unstructured of this State.  # noqa: E501
         :type unstructured: str
         :param elapsed_time: The elapsed_time of this State.  # noqa: E501
@@ -39,6 +43,7 @@ class State(Model):
         :type scenario_complete: bool
         """
         self.openapi_types = {
+            'supplies': List[Supplies],
             'unstructured': str,
             'elapsed_time': int,
             'meta_info': MetaInfo,
@@ -49,6 +54,7 @@ class State(Model):
         }
 
         self.attribute_map = {
+            'supplies': 'supplies',
             'unstructured': 'unstructured',
             'elapsed_time': 'elapsed_time',
             'meta_info': 'meta_info',
@@ -58,6 +64,7 @@ class State(Model):
             'scenario_complete': 'scenario_complete'
         }
 
+        self._supplies = supplies
         self._unstructured = unstructured
         self._elapsed_time = elapsed_time
         self._meta_info = meta_info
@@ -76,6 +83,29 @@ class State(Model):
         :rtype: State
         """
         return util.deserialize_model(dikt, cls)
+
+    @property
+    def supplies(self) -> List[Supplies]:
+        """Gets the supplies of this State.
+
+        A list of supplies available to the medic  # noqa: E501
+
+        :return: The supplies of this State.
+        :rtype: List[Supplies]
+        """
+        return self._supplies
+
+    @supplies.setter
+    def supplies(self, supplies: List[Supplies]):
+        """Sets the supplies of this State.
+
+        A list of supplies available to the medic  # noqa: E501
+
+        :param supplies: The supplies of this State.
+        :type supplies: List[Supplies]
+        """
+
+        self._supplies = supplies
 
     @property
     def unstructured(self) -> str:

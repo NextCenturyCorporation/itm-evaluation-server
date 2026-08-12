@@ -36,6 +36,8 @@ class ITMActionHandler:
         self.current_scenario = scenario
         self.current_scene = scenario.isd.current_scene
 
+    def move_only_to_unseen(self) -> bool:
+        return True
 
     def validate_domain_action(self, action: Action, character: Character):
         return True, '', 0
@@ -89,8 +91,8 @@ class ITMActionHandler:
             # Character is required
             if not character:
                 return False, f'Malformed Action: Missing character_id for {action.action_type}', 400
-            # Can only target unseen characters
-            if not character.unseen:
+            # Can we only target unseen characters?
+            if not character.unseen and self.move_only_to_unseen():
                 return False, f'Can only {action.action_type} an "unseen" character, but `{action.character_id}` is "seen".', 400
         elif action.action_type in [ActionTypeEnum.END_SCENE, ActionTypeEnum.SEARCH]:
             return True, '', 0 # Requires nothing

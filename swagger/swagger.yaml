@@ -572,36 +572,67 @@ components:
           id: id
           state:
             characters:
-            - attribute_rating: 0.14658129
+            - treated: true
+              attribute_rating: 0.14658129
               medical_condition: 0.6027456
-              unstructured_posttreatment: Military member of your unit with a treated
-                torso injury.
+              distance: 5.2
+              unstructured_treated_near: Military member of your unit lying down with
+                a treated wrist injury. They are acting and moving normally.
+              rapport: loathing
+              unstructured_near: Military member of your unit lying down with a broken
+                wrist. They are acting and moving normally.
+              unstructured_treated_far: Military service member lying down with a
+                treated arm injury.
+              nearby: true
+              unstructured_far: Military service member lying down with a wounded
+                arm.
               unstructured: 22-year-old male with brown hair
               name: Mike
-              rapport: loathing
               tag: DELAYED
               id: id
               unseen: false
+              vitals:
+                breathing: NORMAL
+                avpu: ALERT
+                heart_rate: NONE
               demographics:
                 role: Not specified
                 race: American Indian
                 sex: M
                 age: 74
-            - attribute_rating: 0.14658129
+            - treated: true
+              attribute_rating: 0.14658129
               medical_condition: 0.6027456
-              unstructured_posttreatment: Military member of your unit with a treated
-                torso injury.
+              distance: 5.2
+              unstructured_treated_near: Military member of your unit lying down with
+                a treated wrist injury. They are acting and moving normally.
+              rapport: loathing
+              unstructured_near: Military member of your unit lying down with a broken
+                wrist. They are acting and moving normally.
+              unstructured_treated_far: Military service member lying down with a
+                treated arm injury.
+              nearby: true
+              unstructured_far: Military service member lying down with a wounded
+                arm.
               unstructured: 22-year-old male with brown hair
               name: Mike
-              rapport: loathing
               tag: DELAYED
               id: id
               unseen: false
+              vitals:
+                breathing: NORMAL
+                avpu: ALERT
+                heart_rate: NONE
               demographics:
                 role: Not specified
                 race: American Indian
                 sex: M
                 age: 74
+            supplies:
+            - type: Tourniquet
+              quantity: 4
+            - type: Tourniquet
+              quantity: 4
             unstructured: unstructured
             meta_info:
               scene_id: scene_id
@@ -754,36 +785,67 @@ components:
           id: id
           state:
             characters:
-            - attribute_rating: 0.14658129
+            - treated: true
+              attribute_rating: 0.14658129
               medical_condition: 0.6027456
-              unstructured_posttreatment: Military member of your unit with a treated
-                torso injury.
+              distance: 5.2
+              unstructured_treated_near: Military member of your unit lying down with
+                a treated wrist injury. They are acting and moving normally.
+              rapport: loathing
+              unstructured_near: Military member of your unit lying down with a broken
+                wrist. They are acting and moving normally.
+              unstructured_treated_far: Military service member lying down with a
+                treated arm injury.
+              nearby: true
+              unstructured_far: Military service member lying down with a wounded
+                arm.
               unstructured: 22-year-old male with brown hair
               name: Mike
-              rapport: loathing
               tag: DELAYED
               id: id
               unseen: false
+              vitals:
+                breathing: NORMAL
+                avpu: ALERT
+                heart_rate: NONE
               demographics:
                 role: Not specified
                 race: American Indian
                 sex: M
                 age: 74
-            - attribute_rating: 0.14658129
+            - treated: true
+              attribute_rating: 0.14658129
               medical_condition: 0.6027456
-              unstructured_posttreatment: Military member of your unit with a treated
-                torso injury.
+              distance: 5.2
+              unstructured_treated_near: Military member of your unit lying down with
+                a treated wrist injury. They are acting and moving normally.
+              rapport: loathing
+              unstructured_near: Military member of your unit lying down with a broken
+                wrist. They are acting and moving normally.
+              unstructured_treated_far: Military service member lying down with a
+                treated arm injury.
+              nearby: true
+              unstructured_far: Military service member lying down with a wounded
+                arm.
               unstructured: 22-year-old male with brown hair
               name: Mike
-              rapport: loathing
               tag: DELAYED
               id: id
               unseen: false
+              vitals:
+                breathing: NORMAL
+                avpu: ALERT
+                heart_rate: NONE
               demographics:
                 role: Not specified
                 race: American Indian
                 sex: M
                 age: 74
+            supplies:
+            - type: Tourniquet
+              quantity: 4
+            - type: Tourniquet
+              quantity: 4
             unstructured: unstructured
             meta_info:
               scene_id: scene_id
@@ -840,36 +902,65 @@ components:
         id: id
         state:
           characters:
-          - attribute_rating: 0.14658129
+          - treated: true
+            attribute_rating: 0.14658129
             medical_condition: 0.6027456
-            unstructured_posttreatment: Military member of your unit with a treated
-              torso injury.
+            distance: 5.2
+            unstructured_treated_near: Military member of your unit lying down with
+              a treated wrist injury. They are acting and moving normally.
+            rapport: loathing
+            unstructured_near: Military member of your unit lying down with a broken
+              wrist. They are acting and moving normally.
+            unstructured_treated_far: Military service member lying down with a treated
+              arm injury.
+            nearby: true
+            unstructured_far: Military service member lying down with a wounded arm.
             unstructured: 22-year-old male with brown hair
             name: Mike
-            rapport: loathing
             tag: DELAYED
             id: id
             unseen: false
+            vitals:
+              breathing: NORMAL
+              avpu: ALERT
+              heart_rate: NONE
             demographics:
               role: Not specified
               race: American Indian
               sex: M
               age: 74
-          - attribute_rating: 0.14658129
+          - treated: true
+            attribute_rating: 0.14658129
             medical_condition: 0.6027456
-            unstructured_posttreatment: Military member of your unit with a treated
-              torso injury.
+            distance: 5.2
+            unstructured_treated_near: Military member of your unit lying down with
+              a treated wrist injury. They are acting and moving normally.
+            rapport: loathing
+            unstructured_near: Military member of your unit lying down with a broken
+              wrist. They are acting and moving normally.
+            unstructured_treated_far: Military service member lying down with a treated
+              arm injury.
+            nearby: true
+            unstructured_far: Military service member lying down with a wounded arm.
             unstructured: 22-year-old male with brown hair
             name: Mike
-            rapport: loathing
             tag: DELAYED
             id: id
             unseen: false
+            vitals:
+              breathing: NORMAL
+              avpu: ALERT
+              heart_rate: NONE
             demographics:
               role: Not specified
               race: American Indian
               sex: M
               age: 74
+          supplies:
+          - type: Tourniquet
+            quantity: 4
+          - type: Tourniquet
+            quantity: 4
           unstructured: unstructured
           meta_info:
             scene_id: scene_id
@@ -1266,36 +1357,65 @@ components:
       description: The complete state of the scene or scenario
       example:
         characters:
-        - attribute_rating: 0.14658129
+        - treated: true
+          attribute_rating: 0.14658129
           medical_condition: 0.6027456
-          unstructured_posttreatment: Military member of your unit with a treated
-            torso injury.
+          distance: 5.2
+          unstructured_treated_near: Military member of your unit lying down with
+            a treated wrist injury. They are acting and moving normally.
+          rapport: loathing
+          unstructured_near: Military member of your unit lying down with a broken
+            wrist. They are acting and moving normally.
+          unstructured_treated_far: Military service member lying down with a treated
+            arm injury.
+          nearby: true
+          unstructured_far: Military service member lying down with a wounded arm.
           unstructured: 22-year-old male with brown hair
           name: Mike
-          rapport: loathing
           tag: DELAYED
           id: id
           unseen: false
+          vitals:
+            breathing: NORMAL
+            avpu: ALERT
+            heart_rate: NONE
           demographics:
             role: Not specified
             race: American Indian
             sex: M
             age: 74
-        - attribute_rating: 0.14658129
+        - treated: true
+          attribute_rating: 0.14658129
           medical_condition: 0.6027456
-          unstructured_posttreatment: Military member of your unit with a treated
-            torso injury.
+          distance: 5.2
+          unstructured_treated_near: Military member of your unit lying down with
+            a treated wrist injury. They are acting and moving normally.
+          rapport: loathing
+          unstructured_near: Military member of your unit lying down with a broken
+            wrist. They are acting and moving normally.
+          unstructured_treated_far: Military service member lying down with a treated
+            arm injury.
+          nearby: true
+          unstructured_far: Military service member lying down with a wounded arm.
           unstructured: 22-year-old male with brown hair
           name: Mike
-          rapport: loathing
           tag: DELAYED
           id: id
           unseen: false
+          vitals:
+            breathing: NORMAL
+            avpu: ALERT
+            heart_rate: NONE
           demographics:
             role: Not specified
             race: American Indian
             sex: M
             age: 74
+        supplies:
+        - type: Tourniquet
+          quantity: 4
+        - type: Tourniquet
+          quantity: 4
         unstructured: unstructured
         meta_info:
           scene_id: scene_id
@@ -1476,16 +1596,28 @@ components:
       - $ref: "#/components/schemas/BaseCharacter"
       description: a character in the scene
       example:
+        treated: true
         attribute_rating: 0.14658129
         medical_condition: 0.6027456
-        unstructured_posttreatment: Military member of your unit with a treated torso
-          injury.
+        distance: 5.2
+        unstructured_treated_near: Military member of your unit lying down with a
+          treated wrist injury. They are acting and moving normally.
+        rapport: loathing
+        unstructured_near: Military member of your unit lying down with a broken wrist.
+          They are acting and moving normally.
+        unstructured_treated_far: Military service member lying down with a treated
+          arm injury.
+        nearby: true
+        unstructured_far: Military service member lying down with a wounded arm.
         unstructured: 22-year-old male with brown hair
         name: Mike
-        rapport: loathing
         tag: DELAYED
         id: id
         unseen: false
+        vitals:
+          breathing: NORMAL
+          avpu: ALERT
+          heart_rate: NONE
         demographics:
           role: Not specified
           race: American Indian
@@ -1628,36 +1760,65 @@ components:
         id: id
         state:
           characters:
-          - attribute_rating: 0.14658129
+          - treated: true
+            attribute_rating: 0.14658129
             medical_condition: 0.6027456
-            unstructured_posttreatment: Military member of your unit with a treated
-              torso injury.
+            distance: 5.2
+            unstructured_treated_near: Military member of your unit lying down with
+              a treated wrist injury. They are acting and moving normally.
+            rapport: loathing
+            unstructured_near: Military member of your unit lying down with a broken
+              wrist. They are acting and moving normally.
+            unstructured_treated_far: Military service member lying down with a treated
+              arm injury.
+            nearby: true
+            unstructured_far: Military service member lying down with a wounded arm.
             unstructured: 22-year-old male with brown hair
             name: Mike
-            rapport: loathing
             tag: DELAYED
             id: id
             unseen: false
+            vitals:
+              breathing: NORMAL
+              avpu: ALERT
+              heart_rate: NONE
             demographics:
               role: Not specified
               race: American Indian
               sex: M
               age: 74
-          - attribute_rating: 0.14658129
+          - treated: true
+            attribute_rating: 0.14658129
             medical_condition: 0.6027456
-            unstructured_posttreatment: Military member of your unit with a treated
-              torso injury.
+            distance: 5.2
+            unstructured_treated_near: Military member of your unit lying down with
+              a treated wrist injury. They are acting and moving normally.
+            rapport: loathing
+            unstructured_near: Military member of your unit lying down with a broken
+              wrist. They are acting and moving normally.
+            unstructured_treated_far: Military service member lying down with a treated
+              arm injury.
+            nearby: true
+            unstructured_far: Military service member lying down with a wounded arm.
             unstructured: 22-year-old male with brown hair
             name: Mike
-            rapport: loathing
             tag: DELAYED
             id: id
             unseen: false
+            vitals:
+              breathing: NORMAL
+              avpu: ALERT
+              heart_rate: NONE
             demographics:
               role: Not specified
               race: American Indian
               sex: M
               age: 74
+          supplies:
+          - type: Tourniquet
+            quantity: 4
+          - type: Tourniquet
+            quantity: 4
           unstructured: unstructured
           meta_info:
             scene_id: scene_id
@@ -2158,7 +2319,53 @@ components:
     DomainState:
       description: the current tactical & environmental state of the scenario and
         of its characters
+      properties:
+        supplies:
+          description: A list of supplies available to the medic
+          items:
+            $ref: "#/components/schemas/Supplies"
+          title: supplies
+          type: array
+      title: DomainState
       type: object
+    Supplies:
+      description: a single type of medical supply available to the medic
+      example:
+        type: Tourniquet
+        quantity: 4
+      properties:
+        type:
+          $ref: "#/components/schemas/SupplyTypeEnum"
+        quantity:
+          description: Number of items available in the medical bag
+          format: int32
+          maximum: 999
+          minimum: 0
+          type: integer
+      required:
+      - quantity
+      - type
+      title: Supplies
+      type: object
+    SupplyTypeEnum:
+      description: an enumeration of available supply types
+      enum:
+      - Tourniquet
+      - Pressure bandage
+      - Hemostatic gauze
+      - Decompression Needle
+      - Nasopharyngeal airway
+      - Blanket
+      - Vented Chest Seal
+      - Fentanyl Lollipop
+      - Splint
+      - Blood
+      - Burn Dressing
+      - Antibiotics
+      - Fox Shield
+      - Israeli Wrap
+      title: SupplyTypeEnum
+      type: string
     ThreatTypeEnum:
       description: the type or nature of the threat
       enum:
@@ -2188,15 +2395,98 @@ components:
           minimum: 0.0
           title: attribute_rating
           type: number
-        unstructured_posttreatment:
-          description: unstructured description updated after character treatment
-          example: Military member of your unit with a treated torso injury.
-          title: unstructured_posttreatment
+        unstructured_near:
+          description: unstructured description of a nearby character prior to treatment
+          example: Military member of your unit lying down with a broken wrist. They
+            are acting and moving normally.
+          title: unstructured_near
           type: string
+        unstructured_treated_near:
+          description: unstructured description of a nearby character after treatment
+          example: Military member of your unit lying down with a treated wrist injury.
+            They are acting and moving normally.
+          title: unstructured_treated_near
+          type: string
+        unstructured_far:
+          description: unstructured description of a distant character prior to treatment
+          example: Military service member lying down with a wounded arm.
+          title: unstructured_far
+          type: string
+        unstructured_treated_far:
+          description: unstructured description of a distant character after treatment
+          example: Military service member lying down with a treated arm injury.
+          title: unstructured_treated_far
+          type: string
+        distance:
+          description: distance in feet from the medic to the character
+          example: 5.2
+          format: float
+          minimum: 0.0
+          title: distance
+          type: number
+        unseen:
+          description: whether or not the medic can see the character
+          title: unseen
+          type: boolean
+        nearby:
+          description: whether or not the medic is near the character
+          title: nearby
+          type: boolean
+        treated:
+          description: whether or not the patient is treated
+          title: treated
+          type: boolean
+        vitals:
+          $ref: "#/components/schemas/Vitals"
         tag:
           $ref: "#/components/schemas/CharacterTagEnum"
       title: DomainCharacter
       type: object
+    Vitals:
+      description: Vital levels and other indications of health
+      example:
+        breathing: NORMAL
+        avpu: ALERT
+        heart_rate: NONE
+      properties:
+        avpu:
+          $ref: "#/components/schemas/AvpuLevelEnum"
+        breathing:
+          $ref: "#/components/schemas/BreathingLevelEnum"
+        heart_rate:
+          $ref: "#/components/schemas/HeartRateEnum"
+      title: Vitals
+      type: object
+    AvpuLevelEnum:
+      description: "Character level of response; anything but ALERT is considered\
+        \ unconscious.  See [Levels of Response](https://www.firstresponse.org.uk/first-aid-az/3-general/first-aid/79-levels-of-response)\
+        \ for details"
+      enum:
+      - ALERT
+      - VOICE
+      - PAIN
+      - UNRESPONSIVE
+      title: AvpuLevelEnum
+      type: string
+    BreathingLevelEnum:
+      description: Descriptive breathing level
+      enum:
+      - NORMAL
+      - FAST
+      - SLOW
+      - RESTRICTED
+      - NONE
+      title: BreathingLevelEnum
+      type: string
+    HeartRateEnum:
+      description: Descriptive heart rate
+      enum:
+      - NONE
+      - FAINT
+      - NORMAL
+      - FAST
+      title: HeartRateEnum
+      type: string
     CharacterTagEnum:
       description: the tag assigned to a character
       enum:
@@ -2224,6 +2514,7 @@ components:
       - MOVE_TO
       - MESSAGE
       - SEARCH
+      - CHECK_VITALS
       - TREAT_PATIENT
       - MOVE_TO_EVAC
       - TAG_CHARACTER
