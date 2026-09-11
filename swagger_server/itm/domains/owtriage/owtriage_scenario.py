@@ -94,6 +94,11 @@ class OWTriageScenario(ITMScenario):
                 self.treatment_order.append(action.character_id)
 
 
+    def change_scene(self, next_scene_id):
+        super().change_scene(next_scene_id)
+        self.session.state.elapsed_time = 0 # Needed to support evac scene in OW3
+
+
     def end_scenario(self):
         self.send_probes()
         self.session.end_scenario()
