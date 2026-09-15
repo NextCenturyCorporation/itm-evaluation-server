@@ -485,8 +485,6 @@ class ITMSession:
         self.kdma_training = kdma_training
         self.adm_name = adm_name
         self.adm_profile = adm_profile if adm_profile else ''
-        if 'testrun' in self.adm_name or 'test' in self.adm_profile:
-            self.save_history_to_s3 = False
         if max_scenarios == 0:
             max_scenarios = None
         self.itm_scenarios = []
@@ -495,6 +493,10 @@ class ITMSession:
         if not self.init_config(self.config_group):
             logging.exception("%s: Invalid configuration profile %s.  Aborting session.", self.log_id, self.config_group)
             return f"Invalid configuration profile {self.config_group}.  Aborting session.", 400
+        if self.save_history_to_s3:
+            if 'testrun' in self.adm_name.lower() or 'random' in self.adm_name.lower() or 'test' in self.adm_profile.lower():
+                logging.info("%s: Disabling S3 upload in test run.", self.log_id)
+                self.save_history_to_s3 = False
         self.time_started = time.time()
 
         ta1_names = []
@@ -508,7 +510,7 @@ class ITMSession:
             self.return_scenario_history = True
             self.ta1_integration = kdma_training == 'full'
             if self.save_history_to_s3:
-                logging.warning("\033[92m%s: Request to upload training output to S3 overridden.\033[00m", self.session.log_id)
+                logging.warning("\033[92m%s: Request to upload training output to S3 overridden.\033[00m", self.log_id)
                 self.save_history_to_s3 = False
         if session_type == 'test':
             self.ta1_integration = False
