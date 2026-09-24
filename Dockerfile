@@ -2,7 +2,7 @@ FROM python:3.10.0-alpine
 
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
-ARG domain=p2triage
+ARG domain=owtriage
 ARG config=config.ini.template
 ENV CONFIG_GROUP=DEFAULT
 ENV TA3_PORT=8080
