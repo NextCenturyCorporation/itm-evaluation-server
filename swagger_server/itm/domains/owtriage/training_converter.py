@@ -42,6 +42,15 @@ DEFAULT_EVALUATION_NAME = 'Feb2026'
 DEFAULT_OUT_PATH = f"swagger_server/itm/data/{DEFAULT_EVALUATION_NAME.lower()}/scenarios"
 TA1_NAME = 'adept'
 DESCRIPTION_MAP_FILENAME = 'description_map.csv'
+BACKGROUND_INFO = (
+    "Imagine that you are deployed as a military medic in a foreign country "
+    "where there is ongoing warfare. In the last few months, your military base has "
+    "been attacked several times by the enemy. Two members of your unit have been killed "
+    "while on patrol. Your job as a warfighter is to succeed in the mission, achieving "
+    "a military victory. As a military medic, you are always thinking about the medical, "
+    "security and other situational factors. "
+    "You are the only medic available at the site of a multi-casualty event."
+    )
 
 # These are default values that can be overridden via the command line
 NUM_FILES = 10
@@ -135,6 +144,7 @@ def process_yaml_file(kdma, file_num, description_map):
         yaml_data['id'] = f"{old_id[:index]}{'OW3_'}{old_id[index:]}" # Convert Feb2026-AF0-train to Feb2026-OW3_AF0-train
         # Convert "Affiliation Focus Training Set 0" to "Affiliation Focus Open World 3 Training Set 0"
         yaml_data['name'] = f"{KDMA_MAP[kdma]} Open World Part 3 Training Set {file_num}"
+        yaml_data['state']['unstructured'] = BACKGROUND_INFO
 
         # Insert first scene in its typical location
         items = list(yaml_data.items())
