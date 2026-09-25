@@ -127,7 +127,7 @@ docker run -p 8080:8080 swagger_server
 
 # Build the image with the specified domain, port, configuration file, and configuration group
 ./gradle -Pdomain=<my_domain>
-docker build --no-cache --build-arg domain=<my_domain> config=<my_config_file> -t swagger_server .
+docker build --no-cache --build-arg domain=<my_domain> --build-arg config=<my_config_file> -t swagger_server .
 docker run -p <my_port>:<my_port> -e "TA3_PORT=<my_port>" -e "CONFIG_GROUP=<MY_CONFIG_GROUP>" swagger_server
 ```
 
