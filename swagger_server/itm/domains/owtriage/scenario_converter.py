@@ -28,12 +28,12 @@ expected_fields = ['scenario_id', 'scenario_name', 'probe_id', 'intro_text', 'in
                    'pa_medical', 'pb_medical', 'pa_affiliation', 'pa_merit', 'pa_search', 'pa_personal_safety', 'pb_affiliation', 'pb_merit',
                    'pb_search', 'pb_personal_safety', 'choice1_text', 'choice2_text']
 
-ow_char_info: dict
 
 class FoldableDumper(yaml.Dumper):
     def increase_indent(self, flow=False, indentless=False):
         # Overriding indentless=False forces list items to indent
         return super(FoldableDumper, self).increase_indent(flow, False)
+
 
 def get_kdma_bases(acronym, probe_id: str):
     kdmas = []
@@ -56,7 +56,7 @@ def get_kdma_bases(acronym, probe_id: str):
     return kdmas
 
 
-def make_state(row: dict, acronym: str, training: str, first_row: str = False) -> dict:
+def make_state(row: dict, acronym: str, training: str, first_row: str, ow_char_info: dict = None) -> dict:
     character_list: list = []
     attribute_base = get_kdma_bases(acronym, row['probe_id'])[0]
     char_id = row['choice1_text'][6:]  # Convert "Treat Patient 6" to "Patient 6"
@@ -168,35 +168,36 @@ def make_mappings(row: dict, acronym: str, training: bool) -> list:
     return mappings
 
 
-def get_scene(row: dict, acronym: str, training: bool, scene_num=1) -> dict:
+def get_scene(row: dict, acronym: str, training: bool, scene_num: int, ow_info: dict) -> dict:
     probe_id: str = row['probe_id']
     scene_id = f"Scene {scene_num}"
     probe_config: list = [{'description': row['probe_question']}]
     return {'id': scene_id, 'next_scene': 'placeholder', 'end_scene_allowed': 'PS' == acronym or '-PS-' in probe_id, 'probe_config': probe_config,
-            'state': make_state(row, acronym, training), 'action_mapping': make_mappings(row, acronym, training),
+            'state': make_state(row, acronym, training, False, ow_info), 'action_mapping': make_mappings(row, acronym, training),
             'transitions': {'probes': [probe_id]}}
 
 
-def process_scenario(reader: csv.DictReader, acronym: str, full_name: str, first_row: dict) -> dict | str:
+def process_scenario(reader: csv.DictReader, acronym: str, full_name: str, first_row: dict, ow_info: dict) -> dict | str:
     if not first_row:
         first_row: dict = next(reader)
 
     scenario_id = str(first_row['scenario_id'])
     scenario_name = str(first_row['scenario_name'])
     training = 'Training' in scenario_name
+    openworld = 'Open World' in scenario_name and 'Part' in scenario_name
     if 'Observation Set' in scenario_name:
         data: dict = {'id': scenario_id, 'name': scenario_name, "alt_id": scenario_id.replace(acronym, ''),
                       "alt_name": scenario_name.replace(f'{full_name} ', ''), 'state': make_state(first_row, acronym, training, True)}
     elif 'Evaluation Set' in scenario_name and not 'Full Evaluation' in scenario_name:
         data: dict = {'id': scenario_id, 'name': scenario_name, "alt_id": scenario_id.replace(f'-{acronym}-', '-'),
                       "alt_name": scenario_name.replace(f'{full_name} ', ''), 'state': make_state(first_row, acronym, training, True)}
-    elif 'Open World' in scenario_name and 'Part' in scenario_name:
+    elif openworld:
         data: dict = {'id': scenario_id, 'name': scenario_name, 'first_scene': 'treat_and_tag',
-                      'secondary_intro': first_row['intro_text_updated'], 'state': make_state(first_row, acronym, False, True)}
+                      'secondary_intro': first_row['intro_text_updated'], 'state': make_state(first_row, acronym, False, True, ow_info)}
     else:
         data: dict = {'id': scenario_id, 'name': scenario_name, 'state': make_state(first_row, acronym, training, True)}
     scenes: list = []
-    scene = get_scene(first_row, acronym, training, 1)
+    scene = get_scene(first_row, acronym, training, 1, ow_info if openworld else False)
     if VERBOSE:
         print(f"Adding scene {scene['id']}")
     scenes.append(scene)
@@ -210,7 +211,7 @@ def process_scenario(reader: csv.DictReader, acronym: str, full_name: str, first
             more_data = True
             break # Got to the first line of the next scenario
         scene_num += 1
-        scene: dict = get_scene(row, acronym, training, scene_num)
+        scene: dict = get_scene(row, acronym, training, scene_num, ow_info if openworld else False)
         if VERBOSE:
             print(f"Adding scene {scene['id']}")
         scenes.append(scene)
@@ -232,7 +233,7 @@ def set_next_scene(scenes: list):
 """
     Add (mostly fixed) tag+treat and evac scenes
 """
-def add_ow_scenes(data: dict):
+def add_ow_scenes(data: dict, ow_char_info: dict):
     if VERBOSE:
         print(ow_char_info)
 
@@ -296,9 +297,8 @@ def main():
         more_data = True
         # Process the csv file writing out all YAML files
         while more_data:
-            global ow_char_info
-            ow_char_info = {}
-            data, next_row = process_scenario(reader, acronym, full_name, next_row)
+            ow_char_info: dict = {}
+            data, next_row = process_scenario(reader, acronym, full_name, next_row, ow_char_info)
             more_data = next_row is not None
             scenario_id = data['id']
             redact_string = '_redacted' if REDACT_EVAL else ''
@@ -341,7 +341,7 @@ def main():
             set_next_scene(data['scenes'])
 
             if "Open World" in data['name']:
-                add_ow_scenes(data)
+                add_ow_scenes(data, ow_char_info)
 
             # Write the data to a YAML file using dump() function
             print(f"{'NOT ' if not WRITE_FILES else ''}Writing {len(data['scenes'])} probes to {OUT_PATH}{os.sep}{outfile}.")

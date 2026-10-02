@@ -17,11 +17,8 @@ Usage
 Default Groups
 --------------------
 Default groups are currently defined as follows:
-- testing: exercising all observe/eval scenarios without TA1
-- train-solo: exercising training scenarios without TA1
-- ta1-observe: running all observe scenarios with scores from TA1
-- ta1-eval: running all eval scenarios with scores from TA1
-- train-full: running training scenarios with scores from TA1
+- test-ow3training: exercising all OW3 training scenarios without TA1
+- ta1-ow3training: exercising all OW3 training scenarios with scores from TA1
 
 Local Config
 --------------------
@@ -59,21 +56,12 @@ from urllib.parse import urlparse
 import requests
 
 DEFAULT_GROUPS = {
-    "testing": {
-        "cfgs": ["FEB_OPENWORLD3", "APRIL_OPENWORLD3", "JUNE25_OPENWORLD3"],
+    "test-ow3training": {
+        "cfgs": ["TRAINING"],
         "testing": True
     },
-    "train-solo": {
-        "cfgs": ["DEFAULT"],
-        "testing": True,
-        "training": "solo"
-    },
-    "ta1-ow": {
-        "cfgs": ["FEB_OPENWORLD3", "APRIL_OPENWORLD3", "JUNE25_OPENWORLD3"],
-    },
-    "train-full": {
-        "cfgs": ["DEFAULT"],
-        "training": "full"
+    "ta1-ow3training": {
+        "cfgs": ["TRAINING"],
     }
 }
 
