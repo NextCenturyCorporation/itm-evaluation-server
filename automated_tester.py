@@ -19,6 +19,8 @@ Default Groups
 Default groups are currently defined as follows:
 - test-ow3training: exercising all OW3 training scenarios without TA1
 - ta1-ow3training: exercising all OW3 training scenarios with scores from TA1
+- test-ow3-synth: exercising all synthetic OW3 training scenarios without TA1
+- ta1-ow3-synth: exercising all synthetic OW3 training scenarios with scores from TA1
 
 Local Config
 --------------------
@@ -62,6 +64,13 @@ DEFAULT_GROUPS = {
     },
     "ta1-ow3training": {
         "cfgs": ["TRAINING"],
+    },
+    "test-ow3-synth": {
+        "cfgs": ["SYNTH_TRAINING"],
+        "testing": True
+    },
+    "ta1-ow3-synth": {
+        "cfgs": ["SYNTH_TRAINING"],
     }
 }
 

@@ -46,7 +46,6 @@ DEFAULT_EVALUATION_NAME = 'Feb2026'
 DEFAULT_OUT_PATH = f"swagger_server/itm/data/{DEFAULT_EVALUATION_NAME.lower()}/scenarios"
 TA1_NAME = 'adept'
 DESCRIPTION_MAP_FILENAME = 'description_map.csv'
-TRAINING_FILENAME = 'training.csv'
 BACKGROUND_INFO = (
     "Imagine that you are deployed as a military medic in a foreign country "
     "where there is ongoing warfare. In the last few months, your military base has "
