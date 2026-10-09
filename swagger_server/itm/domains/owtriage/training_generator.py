@@ -20,7 +20,7 @@ High-level algorithm:
     - Generate a random patient (can already be in the scenario)
     - Generate a random patient who:
       - if an AF probe, has a non-zero attribute delta from the first patient
-      - if an MF probe, is the vicitm of the first patient
+      - if an MF probe, is the victim of the first patient
     - Save patient info for each patient
     - Create a probe scene where the choice is to treat one of these two patients
   - Add open world scenes via `scenario_converter.add_ow_scenes`
@@ -240,7 +240,7 @@ def create_scene(scene_num: int, kdma: str, ow_char_info: dict, med_map: dict, a
         ow_char_info[ch1_info['id']] = ch1_info
 
     # Create a random second character who:
-    #   if an MF probe, is the vicitm of the first patient
+    #   if an MF probe, is the victim of the first patient
     #   if an AF probe, has a non-zero attribute delta from the first patient
     ch2_info = None
     while not ch2_info:
