@@ -251,11 +251,15 @@ def create_scene(scene_num: int, kdma: str, ow_char_info: dict, med_map: dict, a
             char_attr_desc = random.choice(attr_keys)
         if VERBOSE:
             print(f"Trying `{char_med_desc}` and `{char_attr_desc}`")
-        if ch2_info := find_patient(ow_char_info, med_map[char_med_desc], attr_map[char_attr_desc]):
-            if kdma != 'MF' and valid_pair(ch1_info, ch2_info):
-                ch2_info = None # First and second patient must be a valid pairing
-        else:
+        ch2_info = find_patient(ow_char_info, med_map[char_med_desc], attr_map[char_attr_desc])
+        if not ch2_info:
             ch2_info = make_character(med_map[char_med_desc], attr_map[char_attr_desc], len(ow_char_info) + 1)
+        if kdma != 'MF' and valid_pair(ch1_info, ch2_info):
+            ch2_info = None # First and second patient must be a valid pairing
+
+    if ch1_info['attribute_rating'] == ch2_info['attribute_rating']:
+        print("ERROR: Patients cannot have same attribute rating!")
+        exit(1)
 
     ow_char_info[ch2_info['id']] = ch2_info
 
