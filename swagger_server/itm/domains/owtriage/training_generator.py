@@ -333,13 +333,13 @@ if __name__ == "__main__":
         EVALUATION_NAME = args.evalname
         OUT_PATH = OUT_PATH.replace(DEFAULT_EVALUATION_NAME.lower(), EVALUATION_NAME.lower())
     if args.probes is not None:
-        if args.probes > 2 and args.probes < 20:
+        if 2 < args.probes < 20:
             NUM_PROBES = args.probes
         else:
             print(f"Unsupported number of probes to generate ({args.probes}) provided; must be between 2 and 20.")
             exit(1)
     if args.count is not None:
-        if args.count > 1:
+        if args.count >= 1:
             NUM_FILES = args.count
         else:
             print(f"Unsupported number of training files to process ({args.count}) provided; must be at least 1.")
