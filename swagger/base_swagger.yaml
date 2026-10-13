@@ -608,7 +608,7 @@ components:
           maxItems: 4
           uniqueItems: true
           items:
-            type: object
+            $ref: "#/components/schemas/KDMA_Value_Parameters"
             required: [name, value]
             properties:
               name:
@@ -619,6 +619,18 @@ components:
                 enum: [single, multi]
               value:
                 type: number
+    KDMA_Value_Parameters:
+      type: object
+      required: [name, value]
+      properties:
+        name:
+          type: string
+          enum: [intercept, medical_weight, attr_weight, optA, optB]
+        type:
+          type: string
+          enum: [single, multi]
+        value:
+          type: number
     BaseState:
       type: object
       required:
@@ -654,7 +666,6 @@ components:
       allOf: # Combines the BaseState and the domain-level state
         - $ref: "domain_swagger.yaml#/components/schemas/DomainState"
         - $ref: "#/components/schemas/BaseState"
-      type: object
       description: The complete state of the scene or scenario
     MetaInfo:
       type: object
@@ -762,7 +773,6 @@ components:
       allOf: # Combines the BaseCharacter and the domain-level character
         - $ref: "domain_swagger.yaml#/components/schemas/DomainCharacter"
         - $ref: "#/components/schemas/BaseCharacter"
-      type: object
       description: a character in the scene
     BaseDemographics:
       required:
@@ -787,7 +797,6 @@ components:
       allOf: # Combines the BaseDemographics and the domain-level demographics
         - $ref: "domain_swagger.yaml#/components/schemas/DomainDemographics"
         - $ref: "#/components/schemas/BaseDemographics"
-      type: object
       description: Basic properties about the character
     Scene:
       required:
@@ -979,7 +988,6 @@ components:
       allOf: # Combines the BaseConditions and the domain-level conditions
         - $ref: "domain_swagger.yaml#/components/schemas/DomainConditions"
         - $ref: "#/components/schemas/BaseConditions"
-      type: object
       description: Conditions that specify whether to transition to the next scene or send a probe response
     ProbeConfig:
       type: object
