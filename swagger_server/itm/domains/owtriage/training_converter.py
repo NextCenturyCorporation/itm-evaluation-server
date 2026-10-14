@@ -99,10 +99,13 @@ def add_characters(scene: dict, description_map: dict, ow_char_info: dict):
             # Create the new character
             new_patient_num = len(ow_char_info) + 1
             char_id = f"Patient {new_patient_num}"
-            vitals = {'heart_rate': char_med_info['pulse'].upper(),
-                    'breathing': char_med_info['resp'].upper(),
-                    'avpu': char_med_info['avpu'].upper()
-                    }
+            vitals = {}
+            if char_med_info.get('pulse'):
+                vitals['heart_rate'] = char_med_info['pulse'].upper()
+            if char_med_info.get('resp'):
+                vitals['resp'] = char_med_info['resp'].upper()
+            if char_med_info.get('avpu'):
+                vitals['avpu'] = char_med_info['avpu'].upper()
             character: dict = {'id': char_id, 'name': char_id, 'unstructured': char_near_desc, 'unstructured_near': char_near_desc,
                             'unstructured_treated_near': char_near_treated_desc,
                             'unstructured_far': char_far_desc,
