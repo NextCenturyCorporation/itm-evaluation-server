@@ -96,8 +96,12 @@ class AdeptTa1Controller(ITMTa1Controller):
     def init_config(cls):
         cls.config = Configuration.get_config()
         cls.server_url = cls.config[builtins.config_group][f"{cls.get_ta1name().upper()}_URL"]
-        cls.alignment_ids = set() if testingMode else load_alignment_ids(cls.get_alignment_ids_path())
-        logging.info("Loaded %d alignment ids from TA1 server.", len(cls.alignment_ids))
+        if testingMode:
+            cls.alignment_ids = set()
+            logging.info("Not loading alignment ids from TA1 server in test mode.")
+        else:
+            cls.alignment_ids = load_alignment_ids(cls.get_alignment_ids_path())
+            logging.info("Loaded %d alignment ids from TA1 server.", len(cls.alignment_ids))
         cls.configurations[builtins.config_group] = AdeptTa1Controller.create_config(builtins.config_group)
 
     def __init__(self, config_group, alignment_target_id, alignment_target = None):
