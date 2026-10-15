@@ -156,7 +156,7 @@ def make_character(med_info: dict, attr_info: dict, new_patient_num) -> dict:
     if med_info.get('pulse'):
         vitals['heart_rate'] = med_info['pulse'].upper()
     if med_info.get('resp'):
-        vitals['resp'] = med_info['resp'].upper()
+        vitals['breathing'] = med_info['resp'].upper()
     if med_info.get('avpu'):
         vitals['avpu'] = med_info['avpu'].upper()
     character: dict = {'id': char_id, 'name': char_id, 'unstructured': char_near_desc, 'unstructured_near': char_near_desc,

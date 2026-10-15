@@ -103,7 +103,7 @@ def add_characters(scene: dict, description_map: dict, ow_char_info: dict):
             if char_med_info.get('pulse'):
                 vitals['heart_rate'] = char_med_info['pulse'].upper()
             if char_med_info.get('resp'):
-                vitals['resp'] = char_med_info['resp'].upper()
+                vitals['breathing'] = char_med_info['resp'].upper()
             if char_med_info.get('avpu'):
                 vitals['avpu'] = char_med_info['avpu'].upper()
             character: dict = {'id': char_id, 'name': char_id, 'unstructured': char_near_desc, 'unstructured_near': char_near_desc,
