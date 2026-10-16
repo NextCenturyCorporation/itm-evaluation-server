@@ -4,7 +4,7 @@ import logging
 import builtins
 from dataclasses import dataclass
 from swagger_server.config_util import Configuration
-from swagger_server.models import KDMAProfile
+from swagger_server.owtriage.models import KDMAProfile
 from .itm_ta1_controller import ITMTa1Controller, TA1Config
 
 @dataclass

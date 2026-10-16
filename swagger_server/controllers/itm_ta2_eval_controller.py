@@ -3,7 +3,7 @@ import time
 import builtins
 import logging
 
-from swagger_server.models.action import Action  # noqa: E501
+from swagger_server.owtriage.models.action import Action  # noqa: E501
 from ..itm import ITMSession
 
 MAX_SESSIONS = builtins.max_sessions             # Hard limit on simultaneously active sessions

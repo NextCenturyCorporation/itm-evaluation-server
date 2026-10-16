@@ -4,7 +4,7 @@ import logging
 from random import shuffle
 from inspect import signature
 from typing import List
-from swagger_server.models import (
+from swagger_server.owtriage.models import (
     Action, ActionMapping, ActionTypeEnum, Conditions, Scene, SemanticTypeEnum, State
 )
 from swagger_server.util import get_swagger_class_enum_values

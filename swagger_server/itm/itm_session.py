@@ -9,7 +9,7 @@ from typing import List
 from copy import deepcopy
 from json import dumps
 from requests import exceptions
-from swagger_server.models import (
+from swagger_server.owtriage.models import (
     Action,
     AlignmentTarget,
     AlignmentResults,
