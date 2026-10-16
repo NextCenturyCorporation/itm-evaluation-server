@@ -1,6 +1,6 @@
 from copy import deepcopy
 from typing import List
-from swagger_server.models import (
+from swagger_server.triage.models import (
     InjuryStatusEnum, State, Vitals
 )
 from swagger_server.itm import ITMScenario
