@@ -1,6 +1,6 @@
 import requests
 import urllib
-from swagger_server.models import KDMAValue
+from swagger_server.owtriage.models import KDMAValue
 from .itm_ta1_controller import ITMTa1Controller, TA1Config
 import re
 import os

@@ -1,6 +1,6 @@
 import json
 import logging
-from swagger_server.models import (
+from swagger_server.owtriage.models import (
     Action,
     ActionTypeEnum,
     Character

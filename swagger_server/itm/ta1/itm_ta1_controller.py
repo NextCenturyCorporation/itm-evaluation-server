@@ -4,7 +4,7 @@ import urllib
 from abc import ABC, abstractmethod
 from importlib import import_module
 from math import isnan
-from swagger_server.models import (
+from swagger_server.owtriage.models import (
     ProbeResponse, AlignmentResults, AlignmentTarget
 )
 from dataclasses import dataclass

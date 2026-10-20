@@ -4,7 +4,7 @@ from swagger_server.itm import (
 )
 from .wumpus_scene import WumpusScene
 
-from swagger_server.models import (
+from swagger_server.wumpus.models import (
     BaseState,
     BaseCharacter,
     BaseConditions,

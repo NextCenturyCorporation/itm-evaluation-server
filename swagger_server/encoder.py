@@ -1,6 +1,7 @@
 from connexion.apps.flask_app import FlaskJSONEncoder
 
-from swagger_server.models.base_model import Model
+# TODO: Make this work cross-domain, or have swagger_server/__main__.py use domain-specific encoder
+from swagger_server.owtriage.models.base_model import Model
 
 
 class JSONEncoder(FlaskJSONEncoder):
