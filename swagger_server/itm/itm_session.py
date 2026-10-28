@@ -617,6 +617,10 @@ class ITMSession:
         logging.info("%s: Loaded %d total scenario(s) from '%s'.", self.log_id, len(self.itm_scenarios), scenario_path)
         self.current_scenario_index = 0
 
+        if len(self.itm_scenarios) == 0:
+            logging.error("%s: No scenarios loaded for configured scenario path %s.", self.log_id, scenario_path)
+            return 'No scenarios loaded. This can happen due to a configuration problem or pointing to the wrong TA1 server.', 500
+
         return self.session_id, 200
 
 
