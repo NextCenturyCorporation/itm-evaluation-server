@@ -57,8 +57,7 @@ class AdeptTa1Controller(ITMTa1Controller):
         TRAIN_FILENAMES = sorted(resolve_tokens(cfg['ADEPT_TRAIN_FILENAMES'], scenario_files))
         alignment_algorithm = cfg.get('ADEPT_ALIGNMENT_ALGORITHM')
         midpoint_alignment = alignment_algorithm and alignment_algorithm.lower() == 'midpoint'
-        if midpoint_alignment:
-            logging.info('TA1 server configured for midpoint alignment.')
+        logging.info('TA1 server configured for %s alignment.', 'midpoint' if midpoint_alignment else 'regression')
 
         for key, value in cfg.items():
             if scenarioMatch := scenarioRegex.match(key):
