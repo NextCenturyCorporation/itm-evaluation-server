@@ -4,7 +4,7 @@ from copy import deepcopy
 
 from .itm_scene import ITMScene
 
-from swagger_server.models import (
+from swagger_server.owtriage.models import (
     ActionMapping,
     BaseState,
     BaseCharacter,

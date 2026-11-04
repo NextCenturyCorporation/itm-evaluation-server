@@ -1,5 +1,5 @@
 import json
-from swagger_server.models import (
+from swagger_server.p2triage.models import (
     Action,
     ActionTypeEnum,
     CharacterTagEnum,

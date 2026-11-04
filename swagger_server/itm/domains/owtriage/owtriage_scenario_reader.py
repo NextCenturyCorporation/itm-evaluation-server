@@ -4,7 +4,7 @@ from swagger_server.itm import (
 )
 from .owtriage_scene import OWTriageScene
 
-from swagger_server.models import (
+from swagger_server.owtriage.models import (
     BaseState,
     BaseCharacter,
     Character,

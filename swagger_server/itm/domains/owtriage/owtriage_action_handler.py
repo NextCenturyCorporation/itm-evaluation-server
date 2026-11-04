@@ -1,7 +1,7 @@
 import json
 import logging
 from copy import deepcopy
-from swagger_server.models import (
+from swagger_server.owtriage.models import (
     Action,
     ActionTypeEnum,
     CharacterTagEnum,

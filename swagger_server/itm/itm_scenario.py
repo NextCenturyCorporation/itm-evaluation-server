@@ -3,7 +3,7 @@ from requests import exceptions
 from typing import List
 from dataclasses import dataclass
 from copy import deepcopy
-from swagger_server.models import (
+from swagger_server.owtriage.models import (
     Action, AlignmentTarget, ProbeResponse, State
 )
 from .itm_scene import ITMScene

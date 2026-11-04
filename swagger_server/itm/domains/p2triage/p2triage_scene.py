@@ -1,5 +1,5 @@
-from swagger_server.models import (
-    ActionTypeEnum, Scene, State
+from swagger_server.p2triage.models import (
+    Scene, State
 )
 from swagger_server.itm import ITMScene
 

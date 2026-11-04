@@ -1,7 +1,7 @@
 import json
 import logging
 from copy import deepcopy
-from swagger_server.models import (
+from swagger_server.triage.models import (
     Action,
     ActionTypeEnum,
     AvpuLevelEnum,

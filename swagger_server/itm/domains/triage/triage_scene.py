@@ -1,7 +1,7 @@
 import copy
 import logging
 from typing import List
-from swagger_server.models import (
+from swagger_server.triage.models import (
     ActionTypeEnum, Conditions, Scene, SemanticTypeEnum, State, Supplies, SupplyTypeEnum
 )
 from swagger_server.itm import ITMScene

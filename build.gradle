@@ -61,7 +61,7 @@ openApiGenerate {
     inputSpec = "$projectDir/$apiDirectory/$baseSwaggerFile".toString()
     outputDir = "$projectDir/$generatedApiDirectory".toString()
     ignoreFileOverride = "$projectDir/.openapi-generator-ignore".toString()
-    packageName = "$outputDirectory".toString()
+    packageName = "$outputDirectory.$domain".toString()
     globalProperties = [
             modelDocs: "false"
     ]
@@ -79,8 +79,8 @@ task postGeneration() {
     doLast() {
         // Copy generated model files into models folder
         copy {
-            from "${generatedApiDirectory}/${outputDirectory}/models"
-            into "${outputDirectory}/models"
+            from "${generatedApiDirectory}/${outputDirectory}/${domain}/models"
+            into "${outputDirectory}/${domain}/models"
         }
 
         // Copy generated swagger file (that combines base and domain) into swagger folder

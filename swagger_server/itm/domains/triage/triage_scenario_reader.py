@@ -4,7 +4,7 @@ from swagger_server.itm import (
 )
 from .triage_scene import TriageScene
 
-from swagger_server.models import (
+from swagger_server.triage.models import (
     BaseState,
     BaseCharacter,
     BaseConditions,

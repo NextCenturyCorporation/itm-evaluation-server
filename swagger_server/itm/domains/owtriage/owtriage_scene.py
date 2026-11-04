@@ -1,4 +1,4 @@
-from swagger_server.models import (
+from swagger_server.owtriage.models import (
     Scene, State
 )
 from swagger_server.itm import ITMScene

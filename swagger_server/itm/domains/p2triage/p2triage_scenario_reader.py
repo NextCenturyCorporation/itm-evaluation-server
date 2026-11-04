@@ -4,7 +4,7 @@ from swagger_server.itm import (
 )
 from .p2triage_scene import P2TriageScene
 
-from swagger_server.models import (
+from swagger_server.p2triage.models import (
     BaseCharacter,
     Character,
     Scene

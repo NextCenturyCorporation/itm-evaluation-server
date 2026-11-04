@@ -1301,7 +1301,7 @@ components:
           type: object
         parameters:
           items:
-            $ref: "#/components/schemas/KDMA_Value_parameters_inner"
+            $ref: "#/components/schemas/KDMA_Value_Parameters"
           maxItems: 4
           minItems: 3
           title: parameters
@@ -1310,6 +1310,35 @@ components:
       required:
       - kdma
       title: KDMA_Value
+      type: object
+    KDMA_Value_Parameters:
+      example:
+        name: intercept
+        type: single
+        value: 1.4658129805029452
+      properties:
+        name:
+          enum:
+          - intercept
+          - medical_weight
+          - attr_weight
+          - optA
+          - optB
+          title: name
+          type: string
+        type:
+          enum:
+          - single
+          - multi
+          title: type
+          type: string
+        value:
+          title: value
+          type: number
+      required:
+      - name
+      - value
+      title: KDMA_Value_Parameters
       type: object
     BaseState:
       description: Base state for the scene or scenario
@@ -1451,7 +1480,6 @@ components:
           when: 0.8008282
           object: object
       title: State
-      type: object
     MetaInfo:
       description: Includes meta info to assist with debugging. Only provided during
         training sessions.
@@ -1624,7 +1652,6 @@ components:
           sex: M
           age: 74
       title: Character
-      type: object
     BaseDemographics:
       description: Basic properties about the character
       properties:
@@ -1657,7 +1684,6 @@ components:
         sex: M
         age: 74
       title: Demographics
-      type: object
     Scene:
       description: the specification for a scene in the scenario
       example:
@@ -2179,7 +2205,6 @@ components:
         - - actions
           - actions
       title: Conditions
-      type: object
     ProbeConfig:
       description: Probe configuration for use by TA1
       example:
@@ -2523,33 +2548,4 @@ components:
     DomainConditions:
       description: Domain-specific conditions that specify whether to transition to
         the next scene or send a probe response
-      type: object
-    KDMA_Value_parameters_inner:
-      example:
-        name: intercept
-        type: single
-        value: 1.4658129805029452
-      properties:
-        name:
-          enum:
-          - intercept
-          - medical_weight
-          - attr_weight
-          - optA
-          - optB
-          title: name
-          type: string
-        type:
-          enum:
-          - single
-          - multi
-          title: type
-          type: string
-        value:
-          title: value
-          type: number
-      required:
-      - name
-      - value
-      title: KDMA_Value_parameters_inner
       type: object

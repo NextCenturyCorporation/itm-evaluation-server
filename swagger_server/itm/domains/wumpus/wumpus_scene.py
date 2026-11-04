@@ -1,4 +1,4 @@
-from swagger_server.models import (
+from swagger_server.wumpus.models import (
     Conditions, Scene, SemanticTypeEnum, State
 )
 from swagger_server.itm import ITMScene
