@@ -24,6 +24,7 @@ class AdeptConfig(TA1Config):
     alignmentTargets: dict
     distributionTargets: dict
     target_to_group: dict
+    midpoint_alignment: bool
 
 
 class AdeptTa1Controller(ITMTa1Controller):
@@ -54,6 +55,9 @@ class AdeptTa1Controller(ITMTa1Controller):
         scenario_ids = load_scenario_ids(scenario_directory, scenario_files)
         EVAL_FILENAMES = sorted(resolve_tokens(cfg['ADEPT_EVAL_FILENAMES'], scenario_files))
         TRAIN_FILENAMES = sorted(resolve_tokens(cfg['ADEPT_TRAIN_FILENAMES'], scenario_files))
+        alignment_algorithm = cfg.get('ADEPT_ALIGNMENT_ALGORITHM')
+        midpoint_alignment = alignment_algorithm and alignment_algorithm.lower() == 'midpoint'
+        logging.info('TA1 server configured for %s alignment.', 'midpoint' if midpoint_alignment else 'regression')
 
         for key, value in cfg.items():
             if scenarioMatch := scenarioRegex.match(key):
@@ -81,7 +85,7 @@ class AdeptTa1Controller(ITMTa1Controller):
                                  EVAL_FILENAMES=EVAL_FILENAMES, TRAIN_FILENAMES=TRAIN_FILENAMES,
                                  evaluationScenarios=evaluationScenarios, trainingScenarios=trainingScenarios,
                                  alignmentTargets=alignmentTargets, distributionTargets=distributionTargets,
-                                 target_to_group=target_to_group)
+                                 target_to_group=target_to_group, midpoint_alignment=midpoint_alignment)
         return ta1_config
 
 
@@ -175,6 +179,9 @@ class AdeptTa1Controller(ITMTa1Controller):
                     params['target_pop_id'] = pop_id
         else:
             base_url = f"{self.url}/api/v1/alignment/session"
+            if self.ta1_config.midpoint_alignment:
+                base_url += '_midpoint'
+
             params = {
                 "session_id": self.session_id,
                 "target_id": self.alignment_target_id if not target_id else target_id
