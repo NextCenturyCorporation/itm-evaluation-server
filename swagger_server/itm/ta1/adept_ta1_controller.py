@@ -164,6 +164,12 @@ class AdeptTa1Controller(ITMTa1Controller):
             kdmas.append(KDMAValue.from_dict(kdma_value))
         return kdmas
 
+    def get_kdma_path(self) -> str:
+        kdma_url = super().get_kdma_path()
+        if self.ta1_config.midpoint_alignment:
+            kdma_url += '_midpoint'
+        return kdma_url
+
     def get_session_alignment_path(self, target_id: str = None) -> str:
         if self.adept_populations:
             base_url = f"{self.url}/api/v1/alignment/compare_sessions_population"

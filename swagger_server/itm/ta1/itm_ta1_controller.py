@@ -155,6 +155,9 @@ class ITMTa1Controller(ABC):
         response = self.to_dict(initial_response)
         return response
 
+    def get_kdma_path(self) -> str:
+          return f"{self.get_server_url()}/api/v1/computed_kdma_profile"
+
     def get_session_alignment(self, target_id = None):
         url = self.get_session_alignment_path(target_id)
         initial_response = requests.get(url)
@@ -163,7 +166,7 @@ class ITMTa1Controller(ABC):
         alignment_results: AlignmentResults = AlignmentResults.from_dict(response)
 
         # Need to get KDMAs from a separate endpoint.
-        base_url = f"{self.url}/api/v1/computed_kdma_profile"
+        base_url = self.get_kdma_path()
         params = {
             "session_id": self.session_id
         }
