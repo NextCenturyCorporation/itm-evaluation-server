@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 NAME = "swagger_server"
-VERSION = "0.7.7"
+VERSION = "0.7.8"
 
 # To install the library, run the following
 #
